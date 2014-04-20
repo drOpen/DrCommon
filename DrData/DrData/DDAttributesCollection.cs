@@ -1,0 +1,534 @@
+﻿/*
+  DDAttributesCollection.cs -- collection of data for data of the 'DrData' general purpose Data abstraction layer 1.0.1, January 3, 2014
+ 
+  Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
+ 
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+      1. The origin of this software must not be misrepresented; you must not
+      claim that you wrote the original software. If you use this software
+      in a product, an acknowledgment in the product documentation would be
+      appreciated but is not required.
+
+      2. Altered source versions must be plainly marked as such, and must not be
+      misrepresented as being the original software.
+
+      3. This notice may not be removed or altered from any source distribution.
+
+      Kudryashov Andrey <kudryashov.andrey@gmail.com>
+
+ */
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
+
+namespace DrOpen.DrCommon.DrData
+{
+    /// <summary>
+    /// Represents a collection of DDValue that can be accessed by name.
+    /// </summary>
+    [Serializable]
+    public class DDAttributesCollection : IEnumerable<KeyValuePair<string, DDValue>>, ICloneable, IComparable, ISerializable, IXmlSerializable
+    {
+        public DDAttributesCollection()
+        {
+            attributes = new Dictionary<string, DDValue>();
+        }
+        private Dictionary<string, DDValue> attributes;
+        #region const
+        public const string SerializePropNameAttributes = "Attributes";
+        public const string SerializePropNameAttribute = "Attribute";
+        public const string SerializePropName = "Name";
+        public const string SerializePropCount = "Count";
+        #endregion const
+        #region IXmlSerializable
+        /// <summary>
+        /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
+        /// </summary>
+        /// <returns>null</returns>
+        public XmlSchema GetSchema() { return null; }
+        /// <summary>
+        /// Converts an object into its XML representation.
+        /// </summary>
+        /// <param expected="writer"></param>
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            if (attributes == null) return; // if attributes is null
+            var serializer = new XmlSerializer(typeof(DDValue));
+            if (attributes.Count != 0) writer.WriteAttributeString(SerializePropCount, attributes.Count.ToString()); // write element count for none empty collection
+
+            foreach (var a in attributes)
+            {
+                writer.WriteStartElement(SerializePropNameAttribute);
+                writer.WriteAttributeString(SerializePropName, a.Key);
+                if (a.Value != null) serializer.Serialize(writer, a.Value);  // skip null object
+                writer.WriteEndElement();
+            }
+        }
+
+        /// <summary>
+        /// Generates an object from its XML representation.
+        /// </summary>
+        /// <param expected="reader"></param>
+        public virtual void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+
+            attributes = new Dictionary<string, DDValue>();
+            var serializer = new XmlSerializer(typeof(DDValue));
+            var nameNodeDDNode = typeof(DDValue).Name;
+
+            var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
+            reader.Read(); // read root element
+            if (isEmptyElement) return; // Exit for element without child <DDAttributesCollection />
+
+            var initialDepth = reader.Depth;
+            
+            while ((reader.Depth >= initialDepth)) // do all childs
+            {
+                if ((reader.IsStartElement(SerializePropNameAttribute) == false) || (reader.Depth > initialDepth))
+                {
+                    reader.Skip(); // Skip none <Attribute> elements with childs and subchilds <Attribute> elements 'Deep proptection'
+                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
+                }
+                else
+                {
+                    var name = reader.GetAttribute(SerializePropName);
+                    if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                    if (reader.HasValue) reader.Read(); // read and skip node value
+                    if (name != null)
+                    {
+                        if (reader.IsStartElement(nameNodeDDNode))
+                            attributes.Add(name, (DDValue)serializer.Deserialize(reader));
+                        else
+                            attributes.Add(name, null); // add null value
+                    }
+                    if (reader.HasValue) // read value of element if there is
+                    {
+                        reader.Read(); // read value of element
+                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                    }
+                }
+                reader.MoveToContent();
+            }
+            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement();
+        }
+
+        #endregion IXmlSerializable
+        #region ISerializable
+        /// <summary>
+        /// The special constructor is used to deserialize values.
+        /// </summary>
+        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        public DDAttributesCollection(SerializationInfo info, StreamingContext context)
+        {
+            this.attributes = (Dictionary<string, DDValue>)info.GetValue(SerializePropNameAttributes, typeof(Dictionary<string, DDValue>));
+        }
+        /// <summary>
+        /// Method to serialize data. The method is called on serialization.
+        /// </summary>
+        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(SerializePropNameAttributes, attributes, typeof(Dictionary<string, DDValue>));
+        }
+        #endregion ISerializable
+        #region Enumerator
+        /// <summary>
+        /// Returns an enumerator that iterates through the Attribute Collection (IEnumerator&lt;KeyValuePair&lt;string, IDDValue&gt;&gt;).
+        /// </summary>
+        /// <returns>IEnumerator&lt;KeyValuePair&lt;string, IDDValue&gt;&gt;</returns>
+        public virtual IEnumerator<KeyValuePair<string, DDValue>> GetEnumerator()
+        {
+            foreach (var a in attributes)
+            {
+                yield return a;
+            }
+        }
+        /// <summary>
+        /// Returns an enumerator that iterates through the Attribute Collection (IEnumerator&lt;KeyValuePair&lt;string, IDDValue&gt;&gt;).
+        /// </summary>
+        /// <returns>IEnumerator&lt;KeyValuePair&lt;string, IDDValue&gt;&gt;</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        #endregion Enumerator
+        #region Add
+        /// <summary>
+        /// Add the new value and assign automatically generated expected to this value
+        /// </summary>
+        /// <param expected="value">value</param>
+        /// <returns>Return automatically generated expected for this value</returns>
+        /// <remarks>The automatically generated expected will be GUID</remarks>
+        public virtual string Add(DDValue value)
+        {
+            var name = Guid.NewGuid().ToString();
+            return Add(name, value, ResolveConflict.THROW_EXCEPTION);
+        }
+        /// <summary>
+        /// Add the new value with expected
+        /// </summary>
+        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the new application exception will be throw</param>
+        /// <param expected="value">value</param>
+        /// <returns>Return expected for this value</returns>
+        public string Add(Enum name, DDValue value)
+        {
+            return Add(name.ToString(), value);
+        }
+        /// <summary>
+        /// Add the new value with expected
+        /// </summary>
+        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the new application exception will be throw</param>
+        /// <param expected="value">value</param>
+        /// <returns>Return expected for this value</returns>
+        public string Add(string name, DDValue value)
+        {
+            Add(name, value, ResolveConflict.THROW_EXCEPTION);
+            return name;
+        }
+        /// <summary>
+        /// Add the new value with expected.  
+        /// </summary>
+        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the subsequent behavior depends of the specified rules</param>
+        /// <param expected="value">value</param>
+        /// <param expected="resolve">Rules of behavior in conflict resolution names.
+        /// Throw a new exception;
+        /// Update the existing value;
+        /// Skip this action and preserve exists value
+        /// </param>
+        /// <returns>If the value was successfully added or overwritten - returns expected of this value, otherwise, for example, when used ResolveConflict.SKIP, returns null</returns>
+        /// <remarks>Generates events when overwriting or saving the current value</remarks>
+        public virtual string Add(Enum name, DDValue value, ResolveConflict resolve)
+        {
+            return Add(name.ToString(), value, resolve);
+        }
+        /// <summary>
+        /// Add the new value with expected.  
+        /// </summary>
+        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the subsequent behavior depends of the specified rules</param>
+        /// <param expected="value">value</param>
+        /// <param expected="resolve">Rules of behavior in conflict resolution names.
+        /// Throw a new exception;
+        /// Update the existing value;
+        /// Skip this action and preserve exists value
+        /// </param>
+        /// <returns>If the value was successfully added or overwritten - returns expected of this value, otherwise, for example, when used ResolveConflict.SKIP, returns null</returns>
+        /// <remarks>Generates events when overwriting or saving the current value</remarks>
+        public virtual string Add(string name, DDValue value, ResolveConflict resolve)
+        {
+            switch (resolve)
+            {
+                case ResolveConflict.OVERWRITE:
+                    if (Contains(name))
+                    {
+                        //this.OnDoLogIn(Res.Msg.OVERWRITE_EXISTS_VALUE, expected, value);
+                        Remove(name); //remove exists expected
+                    }
+                    break;
+                case ResolveConflict.SKIP:
+                    if (this.Contains(name))
+                    {
+                        //this.OnDoLogIn(Res.Msg.PRESERVE_EXISTS_VALUE, expected, value);
+                        return null; // return null because the item was not added
+                    }
+                    break;
+            }
+
+            attributes.Add(name, value);
+            return name; // return expected of new value
+        }
+        #endregion Add
+        #region Replace
+        /// <summary>
+        /// Add the new or replace exists value with expected.  
+        /// </summary>
+        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the value will be updated</param>
+        /// <param expected="value">value</param>
+        /// <returns>If the value was successfully added or updatted - returns expected of this value, otherwise, returns null</returns>
+        /// <remarks>this Method call Add with flag ResolveConflict.OVERWRITE</remarks>
+        public virtual string Replace(Enum name, DDValue value)
+        {
+            return Replace(name.ToString(), value);
+        }
+        /// <summary>
+        /// Add the new or replace exists value with expected.  
+        /// </summary>
+        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the value will be updated</param>
+        /// <param expected="value">value</param>
+        /// <returns>If the value was successfully added or updatted - returns expected of this value, otherwise, returns null</returns>
+        /// <remarks>this Method call Add with flag ResolveConflict.OVERWRITE</remarks>
+        public virtual string Replace(string name, DDValue value)
+        {
+            return Add(name, value, ResolveConflict.OVERWRITE);
+        }
+        #endregion Replace
+        #region  Contains
+        /// <summary>
+        /// Determines whether the Attribute Collection contains an element with the specified expected.
+        /// </summary>
+        /// <param expected="expected">The expected to locate in the Attribute Collection </param>
+        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        public virtual bool Contains(Enum name)
+        {
+            return Contains(name.ToString());
+        }
+
+        /// <summary>
+        /// Determines whether the Attribute Collection contains an element with the specified expected.
+        /// </summary>
+        /// <param expected="expected">The expected to locate in the Attribute Collection </param>
+        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        public virtual bool Contains(string name)
+        {
+            return attributes.ContainsKey(name);
+        }
+        #endregion  Contains
+        #region Remove
+        /// <summary>
+        /// Removes the value with the specified expected
+        /// </summary>
+        /// <param expected="expected">The expected of the element to remove.</param>
+        /// <returns>true if the element is successfully found and removed; otherwise, false. This method returns false if key is not found in the  Attribute Collection</returns>
+        public virtual bool Remove(Enum name)
+        {
+            return Remove(name.ToString());
+        }
+        /// <summary>
+        /// Removes the value with the specified expected
+        /// </summary>
+        /// <param expected="expected">The expected of the element to remove.</param>
+        /// <returns>true if the element is successfully found and removed; otherwise, false. This method returns false if key is not found in the  Attribute Collection</returns>
+        public virtual bool Remove(string name)
+        {
+            return attributes.Remove(name);
+        }
+        #endregion Remove
+        #region Clear
+        /// <summary>
+        /// Removes all attributes from collection
+        /// </summary>
+        public virtual void Clear()
+        {
+            attributes.Clear();
+        }
+        #endregion Clear
+        #region Clone
+        /// <summary>
+        /// Creates a copy of the current Attribute Collection
+        /// </summary>
+        /// <returns>A copy of the current Attribute Collection</returns>
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
+        /// <summary>
+        /// Creates a copy of the current Attribute Collection
+        /// </summary>
+        /// <returns>A copy of the current Attribute Collection</returns>
+        public virtual DDAttributesCollection Clone()
+        {
+            var aDic = new DDAttributesCollection();
+            foreach (var a in this)
+            {
+                if (a.Value == null)
+                    aDic.Add(a.Key, null);
+                else
+                    aDic.Add(a.Key, a.Value.Clone());
+            }
+            return aDic;
+        }
+        #endregion Clone
+        #region Names/Values
+        /// <summary>
+        /// Gets a collection containing the names of values in this Attribute Collection
+        /// </summary>
+        public virtual Dictionary<string, DDValue>.KeyCollection Names
+        {
+            get { return attributes.Keys; }
+        }
+        /// <summary>
+        /// Gets a collection containing the values in this Attribute Collection
+        /// </summary>
+        public virtual Dictionary<string, DDValue>.ValueCollection Values
+        {
+            get { return attributes.Values; }
+        }
+        #endregion Names/Values
+        #region GetValue
+        /// <summary>
+        /// Gets the value associated with the specified expected.
+        /// </summary>
+        /// <param expected="expected">The expected of the value to get.</param>
+        /// <param expected="value">When this method returns, contains the value associated with the specified expected, if the expected is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
+        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        /// <remarks> This method combines the functionality of the Contains method and the Item property.
+        /// If the expected is not found, then the value parameter gets the appropriate default value for the type IDDValue
+        /// Use the TryGetValue method if your code frequently attempts to access expected that are not in the Attribute Collection. 
+        /// Using this method is more efficient than catching the KeyNotFoundException thrown by the Item property.
+        /// This method approaches an O(1) operation.</remarks>
+        public virtual bool TryGetValue(Enum name, out DDValue value)
+        {
+            return TryGetValue(name.ToString(), out value);
+        }
+        /// <summary>
+        /// Gets the value associated with the specified expected.
+        /// </summary>
+        /// <param expected="expected">The expected of the value to get.</param>
+        /// <param expected="value">When this method returns, contains the value associated with the specified expected, if the expected is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
+        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        /// <remarks> This method combines the functionality of the Contains method and the Item property.
+        /// If the expected is not found, then the value parameter gets the appropriate default value for the type DDValue
+        /// Use the TryGetValue method if your code frequently attempts to access expected that are not in the Attribute Collection. 
+        /// Using this method is more efficient than catching the KeyNotFoundException thrown by the Item property.
+        /// This method approaches an O(1) operation.</remarks>
+        public virtual bool TryGetValue(string name, out DDValue value)
+        {
+            return attributes.TryGetValue(name, out value);
+        }
+        /// <summary>
+        /// Gets the value associated with the specified expected.
+        /// </summary>
+        public DDValue this[Enum name]
+        {
+            get { return attributes[name.ToString()]; }
+            private set { attributes[name.ToString()] = value; }
+        }
+        /// <summary>
+        /// Gets the value associated with the specified expected.
+        /// </summary>
+        public DDValue this[string name]
+        {
+            get { return attributes[name]; }
+            private set { attributes[name] = value; }
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified expected. When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// otherwise, the default value for the type of the value parameter.
+        /// </summary>
+        /// <param expected="expected">attribute expected</param>
+        /// <param expected="defaultValue">the default value for the type of the value parameter.</param>
+        /// <returns>When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// otherwise, the default value for the type of the value parameter.</returns>
+        public virtual DDValue GetValue(Enum name, object defaultValue)
+        {
+            return GetValue(name.ToString(), defaultValue);
+        }
+        /// <summary>
+        /// Gets the value associated with the specified expected. When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// otherwise, the default value for the type of the value parameter.
+        /// </summary>
+        /// <param expected="expected">attribute expected</param>
+        /// <param expected="defaultValue">the default value for the type of the value parameter.</param>
+        /// <returns>When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// otherwise, the default value for the type of the value parameter.</returns>
+        public virtual DDValue GetValue(string name, object defaultValue)
+        {
+            DDValue newValue;
+            if (TryGetValue(name, out newValue)) return newValue; // return new value
+            if (defaultValue == null) return null;
+            if (defaultValue.GetType() == typeof(DDValue)) return (DDValue)defaultValue; // return defaultValue as IDDValue
+            return new DDValue(defaultValue); // create and return new DDValue
+        }
+        #endregion GetValue
+        #region Count
+        /// <summary>
+        /// Returns the number of elements of attributes collection.
+        /// </summary>
+        public virtual int Count
+        {
+            get { return attributes.Count; }
+        }
+        #endregion Count
+        #region ==, != operators
+        /// <summary>
+        /// Compare both values and return true if type and data are same otherwise return false. Very slow
+        /// </summary>
+        /// <param expected="value1"></param>
+        /// <param expected="value2"></param>
+        /// <returns>true if type and data are same otherwise return false</returns>
+        /// <remarks>The both null object is equal and return value will be true. Very slow</remarks>
+        public static bool operator ==(DDAttributesCollection value1, DDAttributesCollection value2)
+        {
+            return (Compare(value1, value2) == 0);
+        }
+        public static bool operator !=(DDAttributesCollection value1, DDAttributesCollection value2)
+        {
+            return (!(value1 == value2));
+        }
+        #endregion ==, != operators
+        #region IComparable
+        /// <summary>
+        /// Compares the two DDAttributesCollection of the same values and returns an integer that indicates whether the current instance precedes. Very slow
+        /// </summary>
+        /// <param expected="value1">First DDAttributesCollection to compare</param>
+        /// <param expected="value2">Second DDAttributesCollection to compare</param>
+        /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
+        /// Zero - the both DDAttributesCollection have some items and their values.
+        /// The difference between the number of elements of the first and second DDAttributes Collection
+        /// One - values of collection is not equal.</returns>
+        /// <remarks>The both null object is equal and return value will be Zero. Very slow</remarks>
+        public static int Compare(DDAttributesCollection value1, DDAttributesCollection value2)
+        {
+            if (((object)value1 == null) && ((object)value2 == null)) return 0; // if both are null -> return true
+            if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
+            if ((value1.Count != value2.Count)) return value1.Count - value2.Count; // The difference between the number of elements of the first and second DDAttributes Collection
+
+            foreach (var keyValue1 in value1)
+            {
+                if (!value2.Contains(keyValue1.Key)) return -1; // 
+                var valueCompareResult = DDValue.Compare(keyValue1.Value, value2[keyValue1.Key]);
+                if (valueCompareResult != 0) return valueCompareResult;
+            }
+            return 0;
+        }
+        /// <summary>
+        /// Compares the current DDAtribute instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+        /// </summary>
+        /// <param expected="obj">An object to compare with this instance. </param>
+        /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
+        /// Zero - This instance occurs in the same position in the sort order as obj.
+        /// One - This instance follows obj in the sort order.</returns>
+        /// <remarks>The both null object is equal and return value will be Zero</remarks>
+        public virtual int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(DDAttributesCollection)) return 1;
+            return Compare(this, (DDAttributesCollection)obj);
+        }
+        #endregion CompareTo
+        #region Equals
+        protected bool Equals(DDAttributesCollection other)
+        {
+            return Equals(attributes, other.attributes);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DDAttributesCollection)obj);
+        }
+        #endregion Equals
+        #region GetHashCode
+        public override int GetHashCode()
+        {
+            return (attributes != null ? attributes.GetHashCode() : 0);
+        }
+        #endregion GetHashCode
+    }
+}

@@ -17,20 +17,19 @@ namespace UTestDrData
 
         private DDNode GetSTConfigNode()
         {
-            var node =DDNodeST.GetInstance("Config");
-            node.Attributes.Add("Param1", "Param1_Valu1");
-            node.Attributes.Add("Param2", "Param2_Valu1");
+            var node = DDNodeST.GetInstance("Config");
+            if (node.Attributes.Contains("Param1") == false) node.Attributes.Add("Param1", "Param1_Valu1");
+            if (node.Attributes.Contains("Param2") == false) node.Attributes.Add("Param2", "Param2_Valu1");
             return node;
         }
 
         private DDNode GetSTDataNode()
         {
             var node = DDNodeST.GetInstance(TEST_ST.TEST_ST_NAME_DATA);
-            node.Attributes.Add("Data1", "Data1_Valu1");
-            node.Attributes.Add("Data2", "Data2_Valu1");
+            if (node.Attributes.Contains("Data1") == false) node.Attributes.Add("Data1", "Data1_Valu1");
+            if (node.Attributes.Contains("Data2") == false) node.Attributes.Add("Data2", "Data2_Valu1");
             return node;
         }
-
         private DDNode GetSTRootNode()
         {
             return DDNodeST.GetInstance();

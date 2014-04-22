@@ -3134,6 +3134,51 @@ namespace UTestDrData
             ValidateXMLDeserialization(new DDValue(string.Empty));
         }
         [TestMethod]
+        public void TestDDValueXmlSerializationUint()
+        {
+            ValidateXMLDeserialization(new DDValue((uint)uint.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationShort()
+        {
+            ValidateXMLDeserialization(new DDValue((short)short.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationUShort()
+        {
+            ValidateXMLDeserialization(new DDValue((ushort)ushort.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationDouble()
+        {
+            ValidateXMLDeserialization(new DDValue((double)double.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationLong()
+        {
+            ValidateXMLDeserialization(new DDValue((long)long.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationULong()
+        {
+            ValidateXMLDeserialization(new DDValue((ulong)ulong.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationFloat()
+        {
+            ValidateXMLDeserialization(new DDValue((float)float.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationSingle()
+        {
+            ValidateXMLDeserialization(new DDValue((Single)Single.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationChar()
+        {
+            ValidateXMLDeserialization(new DDValue('c'));
+        }
+        [TestMethod]
         public void TestDDValueXmlSerializationFromFileEmptyString()
         {
             ValidateXMLDeserialization(new DDValue(string.Empty), UTestDrDataCommon.GetMemoryStreamFromFile());

@@ -36,7 +36,7 @@ using DrData.Res;
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>
-    /// hierarchy data warehouse
+    /// Hierarchy data warehouse
     /// </summary>
     [Serializable]
     public class DDNode : IEnumerable<KeyValuePair<string, DDNode>>, ICloneable, IEquatable<DDNode>, IComparable, ISerializable, IXmlSerializable

@@ -35,7 +35,7 @@ using System.Xml;
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>
-    /// data warehouse
+    /// Data warehouse
     /// </summary>
     [Serializable]
     public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable, IXmlSerializable
@@ -45,7 +45,7 @@ namespace DrOpen.DrCommon.DrData
         public const string SerializePropNameType = "Type";
         public const string SerializePropNameSize = "Size";
         public const string SerializeDateTimeFormat = "o"; //ISO 8601 format
-
+        public const string SerializeRoundTripFormat = "r"; //round-trip format for Single, Double, and BigInteger types.
         #endregion const
         #region DDValue
         /// <summary>
@@ -1070,6 +1070,13 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(byte[])) return HEX(data);
             if (Type == typeof(DateTime)) return GetValueAsDateTime().ToString(SerializeDateTimeFormat);
             if (Type == typeof(string[])) return string.Join("\0", (string[])GetValue());
+            // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
+            // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
+            // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
+            if (Type == typeof(Single)) return ((Single)GetValue()).ToString(SerializeRoundTripFormat);
+            if (Type == typeof(Double)) return ((Double)GetValue()).ToString(SerializeRoundTripFormat);
+            if (Type == typeof(float)) return ((float)GetValue()).ToString(SerializeRoundTripFormat);
+            
             return GetValue().ToString();
         }
         /// <summary>

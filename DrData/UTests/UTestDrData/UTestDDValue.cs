@@ -3164,9 +3164,19 @@ namespace UTestDrData
             ValidateXMLDeserialization(new DDValue((ulong)ulong.MaxValue));
         }
         [TestMethod]
+        public void TestDDValueXmlSerializationULongArray()
+        {
+            ValidateXMLDeserialization(new DDValue(new []{ulong.MaxValue, ulong.MinValue}));
+        }
+        [TestMethod]
         public void TestDDValueXmlSerializationFloat()
         {
             ValidateXMLDeserialization(new DDValue((float)float.MaxValue));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationFloatArray()
+        {
+            ValidateXMLDeserialization(new DDValue(new []{float.MaxValue, float.MaxValue, float.MinValue}));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationSingle()
@@ -3174,9 +3184,19 @@ namespace UTestDrData
             ValidateXMLDeserialization(new DDValue((Single)Single.MaxValue));
         }
         [TestMethod]
+        public void TestDDValueXmlSerializationSingleArray()
+        {
+            ValidateXMLDeserialization(new DDValue(new Single [] {Single.MaxValue, Single.MinValue, Single.MaxValue}));
+        }
+        [TestMethod]
         public void TestDDValueXmlSerializationChar()
         {
             ValidateXMLDeserialization(new DDValue('c'));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationCharArray()
+        {
+            ValidateXMLDeserialization(new DDValue("char".ToCharArray()));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationFromFileEmptyString()

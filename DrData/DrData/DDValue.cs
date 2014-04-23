@@ -1059,30 +1059,43 @@ namespace DrOpen.DrCommon.DrData
 
         #endregion
         #region ToString
+        /// <summary>
+        /// Convert object to string with some tricks. See remarks
+        /// </summary>
+        /// <param name="type">type of object</param>
+        /// <param name="value">value to convert</param>
+        /// <returns>value as string</returns>
+        /// <remarks>DateTime - ISO 8601 format; round-trip format for Single, Double, and BigInteger types.</remarks>
+        protected static string GetObjAsStringByType(Type type, object value)
+        {
+            if (type == typeof(DateTime)) return ((DateTime)value).ToString(SerializeDateTimeFormat);
+            // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
+            // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
+            // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
+            if (type == typeof(Single)) return ((Single)value).ToString(SerializeRoundTripFormat);
+            if (type == typeof(Double)) return ((Double)value).ToString(SerializeRoundTripFormat);
+            if (type == typeof(float)) return ((float)value).ToString(SerializeRoundTripFormat);
+            return value.ToString();
+        }
 
         /// <summary>
-        /// Return data as string. Sample: DateTime -> ISO 8601 format, bool: true -> "True"; int: 123 -> "123"; string: "test" -> "test"; byte: 255 -> "255"; byte[]: 128 15 -> "800F"
+        /// Return data as string.
         /// </summary>
         /// <returns></returns>
+        /// <remarks>Sample: DateTime -> ISO 8601 format, bool: true -> "True"; int: 123 -> "123"; string: "test" -> "test"; byte: 255 -> "255"; byte[]: 128 15 -> "800F"</remarks>
         override public string ToString()
         {
             if (data == null) return string.Empty;
             if (Type == typeof(byte[])) return HEX(data);
-            if (Type == typeof(DateTime)) return GetValueAsDateTime().ToString(SerializeDateTimeFormat);
             if (Type == typeof(string[])) return string.Join("\0", (string[])GetValue());
-            // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
-            // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
-            // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
-            if (Type == typeof(Single)) return ((Single)GetValue()).ToString(SerializeRoundTripFormat);
-            if (Type == typeof(Double)) return ((Double)GetValue()).ToString(SerializeRoundTripFormat);
-            if (Type == typeof(float)) return ((float)GetValue()).ToString(SerializeRoundTripFormat);
-            
-            return GetValue().ToString();
+
+            return GetObjAsStringByType(Type, GetValue());
         }
         /// <summary>
-        /// Return data as string array. Sample: DateTime -> ISO 8601 format, bool: true -> "True"; int: 123 -> "123"; string: "test" -> "test"; byte: 255 -> "255"; byte[]: 128 15 -> "800F"
+        /// Return data as string array.
         /// </summary>
         /// <returns></returns>
+        /// <remarks>Sample: DateTime -> ISO 8601 format, bool: true -> "True"; int: 123 -> "123"; string: "test" -> "test"; byte: 255 -> "255"; byte[]: 128 15 -> "800F"</remarks>
         public virtual string[] ToStringArray()
         {
             if (data == null) return new string[] { };
@@ -1091,13 +1104,11 @@ namespace DrOpen.DrCommon.DrData
             {
                 var array = (Array)GetValue();
                 var result = new string[array.Length];
+                var elementType = Type.GetElementType();
                 int i = 0;
                 foreach (var item in array)
                 {
-                    if (Type == typeof(DateTime[]))
-                        result[i] = ((DateTime)item).ToString(SerializeDateTimeFormat);
-                    else
-                        result[i] = item.ToString();
+                    result[i] = GetObjAsStringByType(elementType, item);
                     i++;
                 }
                 return result;

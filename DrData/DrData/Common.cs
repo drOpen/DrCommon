@@ -21,7 +21,7 @@
 
       3. This notice may not be removed or altered from any source distribution.
 
-      Kudryashov Andrey <kudryashov.andrey@gmail.com>
+      Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
  */
 

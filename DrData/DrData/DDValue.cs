@@ -56,7 +56,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Create value with data. If type of object isn't supported throw application exception
         /// </summary>
-        /// <param expected="value">data</param>
+        /// <param name="value">data</param>
         /// <remarks>Supports the following types: string, string[], char, bool, byte, byte[], DateTime, short, int, float, long, ushort, uint, ulong, double</remarks>
         public DDValue(object value)
         {
@@ -72,7 +72,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Converts an object into its XML representation.
         /// </summary>
-        /// <param expected="writer"></param>
+        /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
             if (Type == null) return; // if data is null
@@ -97,7 +97,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
-        /// <param expected="reader"></param>
+        /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();
@@ -179,7 +179,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return new string [] from object []
         /// </summary>
-        /// <param expected="array">object[]</param>
+        /// <param name="array">object[]</param>
         /// <returns>Retrun new string[]</returns>
         /// <remarks>This function call ToString() for each element for new array</remarks>
         protected string[] ConvertObjectArrayToStringArray(Array array)
@@ -197,7 +197,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return true if this type should be serialization per each array element
         /// </summary>
-        /// <param expected="type">Type to serialyze</param>
+        /// <param name="type">Type to serialyze</param>
         /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
         /// <remarks>For example: byte[] should be serialize as HEX single string therefore return value is false for this type, all other arrays should be serialized per elements</remarks>
         protected static bool IsThisTypeXMLSerialyzeAsArray(Type type)
@@ -211,8 +211,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// The special constructor is used to deserialize values.
         /// </summary>
-        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDValue(SerializationInfo info, StreamingContext context)
         {
             this.type = (Type)info.GetValue(SerializePropNameType, typeof(Type));
@@ -221,8 +221,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
         /// </summary>
-        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(SerializePropNameType, this.type, typeof(Type));
@@ -260,30 +260,37 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Set value by object type
         /// </summary>
-        /// <param expected="value">object</param>
+        /// <param name="value">object</param>
         public void SetValue(object value)
         {
-
-            var t = value.GetType();
-            try
+            if (value == null) // support null value
             {
-                data = GetByteArray(value);
+                this.data = null;
+                this.Type = null;
             }
-            catch
+            else
             {
-                t = null; // set null because cannot set value
-                throw;
-            }
-            finally
-            {
-                this.Type = t;
+                var t = value.GetType();
+                try
+                {
+                    data = GetByteArray(value);
+                }
+                catch
+                {
+                    t = null; // set null because cannot set value
+                    throw;
+                }
+                finally
+                {
+                    this.Type = t;
+                }
             }
         }
         /// <summary>
         /// Set value from HEX string with specified type
         /// </summary>
-        /// <param expected="t">type of data</param>
-        /// <param expected="hex">HEX</param>
+        /// <param name="t">type of data</param>
+        /// <param name="hex">HEX</param>
         public virtual void SetHEXValue(Type t, string hex)
         {
             Type = t;
@@ -294,7 +301,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Convert oject supported type to byte array (byte [])
         /// </summary>
-        /// <param expected="value">object to convert</param>
+        /// <param name="value">object to convert</param>
         /// <returns>byte []</returns>
         /// <remarks>Supports the following types: string, string[], char, bool, byte, byte[], DateTime, short, int, float, long, ushort, uint, ulong, double</remarks>
         public static byte[] GetByteArray(object value)
@@ -304,8 +311,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Convert object by specified type to byte array (byte [])
         /// </summary>
-        /// <param expected="value">object to convert</param>
-        /// <param expected="type">convert object as the specified data type</param>
+        /// <param name="value">object to convert</param>
+        /// <param name="type">convert object as the specified data type</param>
         /// <returns>byte []</returns>
         /// <remarks>Supports the following types: string, string[], char, bool, byte, byte[], DateTime, short, int, float, long, ushort, uint, ulong, double</remarks>
         public static byte[] GetByteArray(Type type, object value)
@@ -335,8 +342,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Convert string to byte[] by specified type
         /// </summary>
-        /// <param expected="type">convert by specified type</param>
-        /// <param expected="value">string to convert</param>
+        /// <param name="type">convert by specified type</param>
+        /// <param name="value">string to convert</param>
         /// <returns>Converted byte[] by specified type</returns>
         /// <remarks>Supports the following types: string, char, bool, byte, byte[], DateTime, short, int, float, long, ushort, uint, ulong, double</remarks>
         protected static byte[] GetByteArrayByTypeFromString(Type type, string value)
@@ -349,8 +356,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Convert string to specified type
         /// </summary>
-        /// <param expected="type">convert to specified type</param>
-        /// <param expected="value">string to convert</param>
+        /// <param name="type">convert to specified type</param>
+        /// <param name="value">string to convert</param>
         /// <returns>Converted object by specified type</returns>
         /// <remarks>Supports the following types: string, char, bool, byte, byte[], DateTime, short, int, float, long, ushort, uint, ulong, double</remarks>
         protected static object ConvertStringToSpecifiedTypeObject(Type type, string value)
@@ -378,7 +385,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Returns an array of data as a byte[]. 
         /// </summary>
-        /// <param expected="value"></param>
+        /// <param name="value"></param>
         /// <returns>byte []</returns>
         /// <remarks>Support primitives: char[], bool[], DateTime[], short[], int[], float[], long[], ushort[], uint[], ulong[], double[]</remarks>
         protected static byte[] JoinByteArray(Array value)
@@ -645,6 +652,7 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(double[])) return GetValueAsDoubleArray();
             if (Type == typeof(bool)) return GetValueAsBool();
             if (Type == typeof(bool[])) return GetValueAsBoolArray();
+            if (Type == null) return null;
             throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, (Type == null ? "null" : Type.Name)));
         }
         /// <summary>
@@ -831,7 +839,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Checks the type of object
         /// </summary>
-        /// <param expected="value">object whose type will be validate</param>
+        /// <param name="value">object whose type will be validate</param>
         /// <returns>true if type of object is supported, otherwise false</returns>
         /// <remarks>Supports the following types: string, string[], char, bool, byte, byte[], DateTime, short, int, float, long, ushort, uint, ulong, double</remarks>
         public static bool ValidateType(object value)
@@ -842,7 +850,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Checks the type
         /// </summary>
-        /// <param expected="type">type for validation</param>
+        /// <param name="type">type for validation</param>
         /// <returns>rue if type is supported, otherwise false</returns>
         /// <remarks>Supports the following types: string, string[], char, char[],  bool, bool[], byte, byte[], DateTime, DateTime[], short, short[], int, int[], float, float[], long, long[], ushort, ushort[], uint, uint[], ulong, ulong[], double, double[]</remarks>
         public static bool ValidateType(Type type)
@@ -879,7 +887,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return the sizePerElements of occupied space in the memory of the object
         /// </summary>
-        /// <param expected="obj">object for analyze</param>
+        /// <param name="obj">object for analyze</param>
         /// <returns>Size in value</returns>
         /// <remarks>if the object type is not supported throw application exception</remarks>
         public static int GetObjSize(object obj)
@@ -894,7 +902,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return the sizePerElements of occupied space in the memory of the primitive
         /// </summary>
-        /// <param expected="type">Type for analyze</param>
+        /// <param name="type">Type for analyze</param>
         /// <returns>Size for this type</returns>
         /// <remarks>if the type is not supported throw application exception</remarks>
         protected static int GetPrimitiveSize(Type type)
@@ -916,7 +924,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return the sizePerElements of occupied space in the memory of the array
         /// </summary>
-        /// <param expected="value">array to analyze</param>
+        /// <param name="value">array to analyze</param>
         /// <returns>Size in value</returns>
         /// <remarks>if the object type is not supported throw application exception</remarks> 
         public static int GetArraySize(Array value)
@@ -968,7 +976,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
         /// </summary>
-        /// <param expected="other">The object to compare with the current object. </param>
+        /// <param name="other">The object to compare with the current object. </param>
         /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
         /// <remarks>The type of comparison between the current instance and the obj parameter depends on whether the current instance is a reference type or a value type.</remarks>
         override public bool Equals(object other)
@@ -980,20 +988,21 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
         /// </summary>
-        /// <param expected="other">The object to compare with the current object. </param>
+        /// <param name="other">The object to compare with the current object. </param>
         /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
         /// <remarks>The type of comparison between the current instance and the obj parameter depends on whether the current instance is a reference type or a value type.</remarks>
         public virtual bool Equals(DDValue other)
         {
             return base.Equals(other);
+            //return(Compare(this, other) == 0);
         }
         #endregion IEquatable
         #region ==, != operators
         /// <summary>
         /// Compare both values and return true if type and data are same otherwise return false
         /// </summary>
-        /// <param expected="value1"></param>
-        /// <param expected="value2"></param>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>true if type and data are same otherwise return false</returns>
         /// <remarks>if both values are null - return true, if only one of them are null, return false. if the data types are different - return false</remarks>
         public static bool operator ==(DDValue value1, DDValue value2)
@@ -1009,8 +1018,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compares the two DDValue of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
-        /// <param expected="value1">First DDValue to compare</param>
-        /// <param expected="value2">Second DDValue to compare</param>
+        /// <param name="value1">First DDValue to compare</param>
+        /// <param name="value2">Second DDValue to compare</param>
         /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
         /// Zero - the both DDValue have some type and value.
         /// One - type or value is not equal.</returns>
@@ -1038,7 +1047,8 @@ namespace DrOpen.DrCommon.DrData
             {
                 for (int i = 0; i < value1.data.Length; i++)
                 {
-                    if (value1.data[i] != value2.data[i]) return 1;
+                    if (value1.data[i] != value2.data[i]) return 1; // it is faster (~10%) than:
+                                                                    // if (value1.data[i].Equals(value2.data[i]) == false) return 1;
                 }
             }
             return 0;
@@ -1046,7 +1056,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compares the current DDValue instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
-        /// <param expected="obj">An object to compare with this instance. </param>
+        /// <param name="obj">An object to compare with this instance. </param>
         /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
         /// Zero - This instance occurs in the same position in the sort order as obj.
         /// One - This instance follows obj in the sort order.</returns>
@@ -1120,7 +1130,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Convert byte[] to HEX string
         /// </summary>
-        /// <param expected="byteArray">byte array to convertion</param>
+        /// <param name="byteArray">byte array to convertion</param>
         /// <returns></returns>
         public static string HEX(byte[] byteArray)
         {
@@ -1138,7 +1148,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Convert byte[] to HEX string
         /// </summary>
-        /// <param expected="hex">byte array to convertion</param>
+        /// <param name="hex">byte array to convertion</param>
         /// <returns></returns>
         public static byte[] HEX(string hex)
         {

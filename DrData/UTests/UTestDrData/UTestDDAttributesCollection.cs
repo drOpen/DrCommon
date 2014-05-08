@@ -59,7 +59,7 @@ namespace UTestDrData
             Assert.IsTrue(attrs.Add(TEST_ENUM.TEST_ENUM_B, new DDValue("B"), ResolveConflict.OVERWRITE) == TEST_ENUM.TEST_ENUM_B.ToString(), "Incorrect attribute name.");
             Assert.IsTrue(attrs.Add(TEST_ENUM.TEST_ENUM_a, new DDValue("a"), ResolveConflict.OVERWRITE) == TEST_ENUM.TEST_ENUM_a.ToString(), "Incorrect attribute name.");
             Assert.IsTrue(attrs.Add(TEST_ENUM.TEST_ENUM_A, new DDValue("Skipped"), ResolveConflict.SKIP) == null, "Skipped attribute name should be null.");
-            Assert.IsTrue(attrs.Add(TEST_ENUM.TEST_ENUM_NULL, null) == TEST_ENUM.TEST_ENUM_NULL.ToString(), "Incorrect attribute name.");
+            Assert.IsTrue(attrs.Add(TEST_ENUM.TEST_ENUM_NULL, null) == TEST_ENUM.TEST_ENUM_NULL.ToString(), "Incorrect attribute value.");
 
             return attrs;
         }
@@ -272,6 +272,21 @@ namespace UTestDrData
             Assert.IsFalse(attrs.Contains(TEST_ENUM.TEST_ENUM_B.ToString().ToLower()), "Contains() should be return False for none Exist item.");
         }
         #endregion Contains()
+        #region ContainsValue()
+        [TestMethod]
+        public void TestContainsValue()
+        {
+            var attrs = GetStockAttributesCollection();
+            attrs.Add(new DDValue(null));
+
+            Assert.IsTrue(attrs.ContainsValue(new DDValue("A")), "ContainsValue() should be return True for Exist item.");
+            Assert.IsTrue(attrs.ContainsValue(new DDValue("B")), "ContainsValue() should be return True for Exist item.");
+            Assert.IsTrue(attrs.ContainsValue(new DDValue("a")), "ContainsValue() should be return True for Exist item.");
+            Assert.IsFalse(attrs.ContainsValue(new DDValue("skipped")), "ContainsValue() should be return False for none Exist item.");
+            Assert.IsTrue(attrs.ContainsValue(null), "ContainsValue() should be return True for Exist item.");
+            Assert.IsTrue(attrs.ContainsValue(new DDValue(null)), "ContainsValue() should be return True for Exist item.");
+        }
+        #endregion ContainsValue()
         #region Replace()
         [TestMethod]
         public void TestReplaceExistItem()

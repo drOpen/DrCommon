@@ -88,7 +88,7 @@ namespace DrData.Res {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The node expected &apos;{0}&apos; is incorrect. The node expected cannot contain &apos;/&apos; character. As not well as having a expected equal to one &apos;.&apos; or two &apos;..&apos; points..
+        ///   Looks up a localized string similar to The node name &apos;{0}&apos; is incorrect. The node name cannot contain &apos;/&apos; character. As not well as having a name equal to one &apos;.&apos; or two &apos;..&apos; points..
         /// </summary>
         internal static string INCORRECT_NODE_NAME {
             get {
@@ -124,7 +124,7 @@ namespace DrData.Res {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The current value with the expected &apos;{0}&apos; is overwritten with the new value &apos;{1}&apos;..
+        ///   Looks up a localized string similar to The current value with the name &apos;{0}&apos; is overwritten with the new value &apos;{1}&apos;..
         /// </summary>
         internal static string OVERWRITE_EXISTS_VALUE {
             get {

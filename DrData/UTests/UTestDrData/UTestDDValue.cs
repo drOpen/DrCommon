@@ -137,6 +137,24 @@ namespace UTestDrData
         {
             Assert.IsTrue(DDValue.Compare(new DDValue(new byte[] { 1, 2 }), new DDValue(new byte[] { 1 })) == 1, "Compare() must return 1 if DDValue objects have different size.");
         }
+
+        //[TestMethod]
+        public void TestCompareBigObjects()
+        {
+            byte[] myBytesA = new byte[10 * 10000];
+            byte[] myBytesB = new byte[10 * 10000];
+            var valA = new DDValue(myBytesA);
+            var valB = new DDValue(myBytesB);
+            var start = DateTime.Now;
+            for (int i = 0; i < 1000; i++)
+            {
+                DDValue.Compare(valA, valB);
+            }
+            var stop= DateTime.Now;
+            Assert.Inconclusive((stop.Ticks-start.Ticks).ToString());
+        }
+
+
         #endregion Compare()
         #region CompareTo()
         [TestMethod]

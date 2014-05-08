@@ -102,7 +102,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Creates a duplicate of the node, when overridden in a derived class.
         /// </summary>
-        /// <param expected="deep">true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
+        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
         /// <returns>The cloned node.</returns>
         public virtual DDNode Clone(bool deep)
         {
@@ -158,7 +158,7 @@ namespace DrOpen.DrCommon.DrData
         /// </summary>
         public virtual DDNode Parent { get; internal set; }
         /// <summary>
-        /// Gets the qualified expected of the node
+        /// Gets the qualified name of the node
         /// </summary>
         public virtual string Name { get; internal set; }
         /// <summary>
@@ -176,7 +176,7 @@ namespace DrOpen.DrCommon.DrData
         #region Children
         #region Add
         /// <summary>
-        /// Adds a child node with auto generated expected
+        /// Adds a child node with auto generated name
         /// </summary>
         /// <returns>new node</returns>
         public virtual DDNode Add()
@@ -184,18 +184,18 @@ namespace DrOpen.DrCommon.DrData
             return Add(new DDNode(this));
         }
         /// <summary>
-        /// Adds a child node with specified expected
+        /// Adds a child node with specified name
         /// </summary>
-        /// <param expected="expected">child node expected</param>
+        /// <param name="name">child node name</param>
         /// <returns>new node</returns>
         public virtual DDNode Add(string name)
         {
             return Add(new DDNode(name, this));
         }
         /// <summary>
-        /// Adds a child node with specified expected
+        /// Adds a child node with specified name
         /// </summary>
-        /// <param expected="expected">child node expected</param>
+        /// <param name="name">child node name</param>
         /// <returns>new node</returns>
         public virtual DDNode Add(Enum name)
         {
@@ -204,7 +204,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Adds the specified node as child
         /// </summary>
-        /// <param expected="node">child node</param>
+        /// <param name="node">child node</param>
         /// <returns>added child node</returns>
         public virtual DDNode Add(DDNode node)
         {
@@ -221,11 +221,11 @@ namespace DrOpen.DrCommon.DrData
         #endregion Add
         #region ValidateNodeName
         /// <summary>
-        /// Checks whether specified expected is used as a DDNode expected.
+        /// Checks whether specified name is used as a DDNode name.
         ///  </summary>
-        /// <param expected="expected">node expected</param>
-        /// <returns>return true if expected is well, otherwise, false.</returns>
-        /// <remarks>The node expected cannot contain '/' character. As not well as having a expected equal to one '.' or two '..' points.</remarks>
+        /// <param name="name">node name</param>
+        /// <returns>return true if name is well, otherwise, false.</returns>
+        /// <remarks>The node name cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.</remarks>
         public static bool IsNameCorect(string name)
         {
             if (name == null) return false;
@@ -239,14 +239,14 @@ namespace DrOpen.DrCommon.DrData
         #region Item
 
         /// <summary>
-        /// Get child node by expected
+        /// Get child node by name
         /// </summary>
         public virtual DDNode this[string name]
         {
             get { return childNodes[name]; }
         }
         /// <summary>
-        /// Get child node by expected
+        /// Get child node by name
         /// </summary>
         public virtual DDNode this[Enum name]
         {
@@ -254,29 +254,29 @@ namespace DrOpen.DrCommon.DrData
         }
         #endregion Item
         /// <summary>
-        /// Gets the child node associated with the specified expected.
+        /// Gets the child node associated with the specified name.
         /// </summary>
-        /// <param expected="path">child node expected or node path</param>
-        /// <param expected="node">When this method returns, contains the child node associated with the specified expected, if the expected is found; 
+        /// <param name="path">child node name or node path</param>
+        /// <param name="node">When this method returns, contains the child node associated with the specified name, if the name is found; 
         /// otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized. </param>
-        /// <returns>true if the node contains an child node with the specified expected; otherwise, false.</returns>
+        /// <returns>true if the node contains an child node with the specified name; otherwise, false.</returns>
         public virtual bool TryGetNode(Enum path, out DDNode node)
         {
             return TryGetNode(path.ToString(), out node);
         }
         /// <summary>
-        /// Gets the child node associated with the specified expected.
+        /// Gets the child node associated with the specified name.
         /// </summary>
-        /// <param expected="path">child node expected or node path</param>
-        /// <param expected="node">When this method returns, contains the child node associated with the specified expected, if the expected is found; 
+        /// <param name="path">child node name or node path</param>
+        /// <param name="node">When this method returns, contains the child node associated with the specified name, if the name is found; 
         /// otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized. </param>
-        /// <returns>true if the node contains an child node with the specified expected; otherwise, false.</returns>
+        /// <returns>true if the node contains an child node with the specified name; otherwise, false.</returns>
         public virtual bool TryGetNode(string path, out DDNode node)
         {
             node = null;
             try
             {
-                //return childNodes.TryGetValue(expected, out node);
+                //return childNodes.TryGetValue(name, out node);
                 node = GetNode(path);
                 return (node != null);
             }
@@ -286,9 +286,9 @@ namespace DrOpen.DrCommon.DrData
             }
         }
         /// <summary>
-        /// Determines whether this node contains the child node with specified expected.
+        /// Determines whether this node contains the child node with specified name.
         /// </summary>
-        /// <param expected="expected">child node expected</param>
+        /// <param name="name">child node name</param>
         /// <returns></returns>
         public virtual bool Contains(string name)
         {
@@ -306,7 +306,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Removes all children. The children node leave the parent
         /// </summary>
-        /// <param expected="deep">true to recursively clear the subtree under the specified node, this method recursively remove the children nodes and the subtree underneath it; false to clear only the children itself.</param>
+        /// <param name="deep">true to recursively clear the subtree under the specified node, this method recursively remove the children nodes and the subtree underneath it; false to clear only the children itself.</param>
         public virtual void Clear(bool deep)
         {
             var iter = childNodes.GetEnumerator();
@@ -319,9 +319,9 @@ namespace DrOpen.DrCommon.DrData
             }
         }
         /// <summary>
-        /// Remove child node by expected
+        /// Remove child node by name
         /// </summary>
-        /// <param expected="expected">node expected</param>
+        /// <param name="name">node name</param>
         /// <remarks>The child node leave the parent</remarks>
         public virtual DDNode Remove(string name)
         {
@@ -386,7 +386,7 @@ namespace DrOpen.DrCommon.DrData
         public virtual string GetPath()
         {
             if (IsRoot) return "/";
-            if (Parent.IsRoot) return "/" + Name; // ignored root expected
+            if (Parent.IsRoot) return "/" + Name; // ignored root name
             return Parent.GetPath() + "/" + Name;
         }
         #endregion Path
@@ -491,7 +491,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Determines whether the specified object is equal to the current object. (Inherited from Object.)
         /// </summary>
-        /// <param expected="other">The object to compare with the current object. </param>
+        /// <param name="other">The object to compare with the current object. </param>
         /// <returns></returns>
         public virtual bool Equals(DDNode other)
         {
@@ -503,8 +503,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compare both values and return true if type and data are same otherwise return false. Very slow
         /// </summary>
-        /// <param expected="value1"></param>
-        /// <param expected="value2"></param>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>true if type and data are same otherwise return false</returns>
         /// <remarks>The both null object is equal and return value will be true. Very slow</remarks>
         public static bool operator ==(DDNode value1, DDNode value2)
@@ -520,8 +520,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compares the two DDNode of the same values and returns an integer that indicates whether the current instance precedes. Very slow
         /// </summary>
-        /// <param expected="value1">First DDNode to compare</param>
-        /// <param expected="value2">Second DDNode to compare</param>
+        /// <param name="value1">First DDNode to compare</param>
+        /// <param name="value2">Second DDNode to compare</param>
         /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
         /// Zero - the both DDNode have some items and their values.
         /// The difference between the number of elements of the first and second DDNode objects
@@ -552,7 +552,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compares the current DDNode instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
-        /// <param expected="obj">An object to compare with this instance. </param>
+        /// <param name="obj">An object to compare with this instance. </param>
         /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
         /// Zero - the both DDNode have some items and their values.
         /// The difference between the number of elements of the first and second DDNode objects
@@ -575,7 +575,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Converts an object into its XML representation.
         /// </summary>
-        /// <param expected="writer"></param>
+        /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
             if (Name != null) writer.WriteAttributeString(SerializePropName, Name);
@@ -598,7 +598,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
-        /// <param expected="reader"></param>
+        /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();
@@ -646,8 +646,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// The special constructor is used to deserialize values.
         /// </summary>
-        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDNode(SerializationInfo info, StreamingContext context)
         {
             this.Name = (String)info.GetValue(SerializePropName, typeof(String));
@@ -661,8 +661,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
         /// </summary>
-        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(SerializePropName, Name, typeof(String));

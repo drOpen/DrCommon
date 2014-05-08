@@ -61,7 +61,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Converts an object into its XML representation.
         /// </summary>
-        /// <param expected="writer"></param>
+        /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
             if (attributes == null) return; // if attributes is null
@@ -80,7 +80,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
-        /// <param expected="reader"></param>
+        /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
             reader.MoveToContent();
@@ -130,8 +130,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// The special constructor is used to deserialize values.
         /// </summary>
-        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDAttributesCollection(SerializationInfo info, StreamingContext context)
         {
             this.attributes = (Dictionary<string, DDValue>)info.GetValue(SerializePropNameAttributes, typeof(Dictionary<string, DDValue>));
@@ -139,8 +139,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
         /// </summary>
-        /// <param expected="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param expected="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(SerializePropNameAttributes, attributes, typeof(Dictionary<string, DDValue>));
@@ -169,64 +169,64 @@ namespace DrOpen.DrCommon.DrData
         #endregion Enumerator
         #region Add
         /// <summary>
-        /// Add the new value and assign automatically generated expected to this value
+        /// Add the new value and assign automatically generated name to this value
         /// </summary>
-        /// <param expected="value">value</param>
-        /// <returns>Return automatically generated expected for this value</returns>
-        /// <remarks>The automatically generated expected will be GUID</remarks>
+        /// <param name="value">value</param>
+        /// <returns>Return automatically generated name for this value</returns>
+        /// <remarks>The automatically generated name will be GUID</remarks>
         public virtual string Add(DDValue value)
         {
             var name = Guid.NewGuid().ToString();
             return Add(name, value, ResolveConflict.THROW_EXCEPTION);
         }
         /// <summary>
-        /// Add the new value with expected
+        /// Add the new value by name
         /// </summary>
-        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the new application exception will be throw</param>
-        /// <param expected="value">value</param>
-        /// <returns>Return expected for this value</returns>
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the new application exception will be throw</param>
+        /// <param name="value">value</param>
+        /// <returns>Return name for this value</returns>
         public string Add(Enum name, DDValue value)
         {
             return Add(name.ToString(), value);
         }
         /// <summary>
-        /// Add the new value with expected
+        /// Add the new value by name
         /// </summary>
-        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the new application exception will be throw</param>
-        /// <param expected="value">value</param>
-        /// <returns>Return expected for this value</returns>
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the new application exception will be throw</param>
+        /// <param name="value">value</param>
+        /// <returns>Return name for this value</returns>
         public string Add(string name, DDValue value)
         {
             Add(name, value, ResolveConflict.THROW_EXCEPTION);
             return name;
         }
         /// <summary>
-        /// Add the new value with expected.  
+        /// Add the new value by name.  
         /// </summary>
-        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the subsequent behavior depends of the specified rules</param>
-        /// <param expected="value">value</param>
-        /// <param expected="resolve">Rules of behavior in conflict resolution names.
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the subsequent behavior depends of the specified rules</param>
+        /// <param name="value">value</param>
+        /// <param name="resolve">Rules of behavior in conflict resolution names.
         /// Throw a new exception;
         /// Update the existing value;
         /// Skip this action and preserve exists value
         /// </param>
-        /// <returns>If the value was successfully added or overwritten - returns expected of this value, otherwise, for example, when used ResolveConflict.SKIP, returns null</returns>
+        /// <returns>If the value was successfully added or overwritten - returns name of this value, otherwise, for example, when used ResolveConflict.SKIP, returns null</returns>
         /// <remarks>Generates events when overwriting or saving the current value</remarks>
         public virtual string Add(Enum name, DDValue value, ResolveConflict resolve)
         {
             return Add(name.ToString(), value, resolve);
         }
         /// <summary>
-        /// Add the new value with expected.  
+        /// Add the new value with name.  
         /// </summary>
-        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the subsequent behavior depends of the specified rules</param>
-        /// <param expected="value">value</param>
-        /// <param expected="resolve">Rules of behavior in conflict resolution names.
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the subsequent behavior depends of the specified rules</param>
+        /// <param name="value">value</param>
+        /// <param name="resolve">Rules of behavior in conflict resolution names.
         /// Throw a new exception;
         /// Update the existing value;
         /// Skip this action and preserve exists value
         /// </param>
-        /// <returns>If the value was successfully added or overwritten - returns expected of this value, otherwise, for example, when used ResolveConflict.SKIP, returns null</returns>
+        /// <returns>If the value was successfully added or overwritten - returns name of this value, otherwise, for example, when used ResolveConflict.SKIP, returns null</returns>
         /// <remarks>Generates events when overwriting or saving the current value</remarks>
         public virtual string Add(string name, DDValue value, ResolveConflict resolve)
         {
@@ -235,41 +235,41 @@ namespace DrOpen.DrCommon.DrData
                 case ResolveConflict.OVERWRITE:
                     if (Contains(name))
                     {
-                        //this.OnDoLogIn(Res.Msg.OVERWRITE_EXISTS_VALUE, expected, value);
-                        Remove(name); //remove exists expected
+                        //this.OnDoLogIn(Res.Msg.OVERWRITE_EXISTS_VALUE, name, value);
+                        Remove(name); //remove exists name
                     }
                     break;
                 case ResolveConflict.SKIP:
                     if (this.Contains(name))
                     {
-                        //this.OnDoLogIn(Res.Msg.PRESERVE_EXISTS_VALUE, expected, value);
+                        //this.OnDoLogIn(Res.Msg.PRESERVE_EXISTS_VALUE, name, value);
                         return null; // return null because the item was not added
                     }
                     break;
             }
 
             attributes.Add(name, value);
-            return name; // return expected of new value
+            return name; // return name of new value
         }
         #endregion Add
         #region Replace
         /// <summary>
-        /// Add the new or replace exists value with expected.  
+        /// Add the new or replace exists value by name.  
         /// </summary>
-        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the value will be updated</param>
-        /// <param expected="value">value</param>
-        /// <returns>If the value was successfully added or updatted - returns expected of this value, otherwise, returns null</returns>
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the value will be updated</param>
+        /// <param name="value">value</param>
+        /// <returns>If the value was successfully added or updatted - returns name of this value, otherwise, returns null</returns>
         /// <remarks>this Method call Add with flag ResolveConflict.OVERWRITE</remarks>
         public virtual string Replace(Enum name, DDValue value)
         {
             return Replace(name.ToString(), value);
         }
         /// <summary>
-        /// Add the new or replace exists value with expected.  
+        /// Add the new or replace exists value by name.
         /// </summary>
-        /// <param expected="expected">uniq expected for with value. If specified expected exists in this collection the value will be updated</param>
-        /// <param expected="value">value</param>
-        /// <returns>If the value was successfully added or updatted - returns expected of this value, otherwise, returns null</returns>
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the value will be updated</param>
+        /// <param name="value">value</param>
+        /// <returns>If the value was successfully added or updatted - returns name of this value, otherwise, returns null</returns>
         /// <remarks>this Method call Add with flag ResolveConflict.OVERWRITE</remarks>
         public virtual string Replace(string name, DDValue value)
         {
@@ -278,39 +278,57 @@ namespace DrOpen.DrCommon.DrData
         #endregion Replace
         #region  Contains
         /// <summary>
-        /// Determines whether the Attribute Collection contains an element with the specified expected.
+        /// Determines whether the Attribute Collection contains an element with the specified name.
         /// </summary>
-        /// <param expected="expected">The expected to locate in the Attribute Collection </param>
-        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        /// <param name="name">The name to locate in the Attribute Collection </param>
+        /// <returns>true if the Attribute Collection contains an element with the specified name; otherwise, false.</returns>
         public virtual bool Contains(Enum name)
         {
             return Contains(name.ToString());
         }
 
         /// <summary>
-        /// Determines whether the Attribute Collection contains an element with the specified expected.
+        /// Determines whether the Attribute Collection contains an element with the specified name.
         /// </summary>
-        /// <param expected="expected">The expected to locate in the Attribute Collection </param>
-        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        /// <param name="name">The name to locate in the Attribute Collection </param>
+        /// <returns>true if the Attribute Collection contains an element with the specified name; otherwise, false.</returns>
         public virtual bool Contains(string name)
         {
             return attributes.ContainsKey(name);
         }
         #endregion  Contains
+        #region  ContainsValue
+        /// <summary>
+        /// Determines whether the Attribute Collection contains the specified key. This is a very slow function
+        /// </summary>
+        /// <param name="value">The value to locate in the Attribute Collection. The value can be null for reference types.</param>
+        /// <returns>true if the Attribute Collection contains an element with the specified value; otherwise, false.</returns>
+        /// <remarks>This method determines equality using the default comparer Compare(DDValue value1, DDValue value2);. Default for DDValue, the type of values in the dictionary.
+        /// This method performs a linear search; therefore, the average execution time is proportional to Count. That is, this method is an O(n) operation, where n is Count.</remarks>
+        public virtual bool ContainsValue(DDValue value)
+        {
+            //return attributes.ContainsValue(value); // it doesn't work, bacuase Equls dosn't work for byte[]
+            foreach (var item in Values)
+            {
+                if (DDValue.Compare(value, item) == 0) return true;
+            }
+            return false;
+        }
+        #endregion  ContainsValue
         #region Remove
         /// <summary>
-        /// Removes the value with the specified expected
+        /// Removes the value with the specified name
         /// </summary>
-        /// <param expected="expected">The expected of the element to remove.</param>
+        /// <param name="name">The name of the element to remove.</param>
         /// <returns>true if the element is successfully found and removed; otherwise, false. This method returns false if key is not found in the  Attribute Collection</returns>
         public virtual bool Remove(Enum name)
         {
             return Remove(name.ToString());
         }
         /// <summary>
-        /// Removes the value with the specified expected
+        /// Removes the value with the specified name
         /// </summary>
-        /// <param expected="expected">The expected of the element to remove.</param>
+        /// <param name="name">The name of the element to remove.</param>
         /// <returns>true if the element is successfully found and removed; otherwise, false. This method returns false if key is not found in the  Attribute Collection</returns>
         public virtual bool Remove(string name)
         {
@@ -370,29 +388,32 @@ namespace DrOpen.DrCommon.DrData
         #endregion Names/Values
         #region GetValue
         /// <summary>
-        /// Gets the value associated with the specified expected.
+        /// Gets the value associated with the specified name.
         /// </summary>
-        /// <param expected="expected">The expected of the value to get.</param>
-        /// <param expected="value">When this method returns, contains the value associated with the specified expected, if the expected is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
-        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        /// <param name="name">The name of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified name, 
+        /// if the name is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
+        /// <returns>true if the Attribute Collection contains an element with the specified name; otherwise, false.</returns>
         /// <remarks> This method combines the functionality of the Contains method and the Item property.
-        /// If the expected is not found, then the value parameter gets the appropriate default value for the type IDDValue
-        /// Use the TryGetValue method if your code frequently attempts to access expected that are not in the Attribute Collection. 
+        /// If the name is not found, then the value parameter gets the appropriate default value for the type IDDValue
+        /// Use the TryGetValue method if your code frequently attempts to access name that are not in the Attribute Collection. 
         /// Using this method is more efficient than catching the KeyNotFoundException thrown by the Item property.
         /// This method approaches an O(1) operation.</remarks>
         public virtual bool TryGetValue(Enum name, out DDValue value)
         {
             return TryGetValue(name.ToString(), out value);
         }
+
         /// <summary>
-        /// Gets the value associated with the specified expected.
+        /// Gets the value associated with the specified name.
         /// </summary>
-        /// <param expected="expected">The expected of the value to get.</param>
-        /// <param expected="value">When this method returns, contains the value associated with the specified expected, if the expected is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
-        /// <returns>true if the Attribute Collection contains an element with the specified expected; otherwise, false.</returns>
+        /// <param name="name">The name of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified name, 
+        /// if the name is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
+        /// <returns>true if the Attribute Collection contains an element with the specified name; otherwise, false.</returns>
         /// <remarks> This method combines the functionality of the Contains method and the Item property.
-        /// If the expected is not found, then the value parameter gets the appropriate default value for the type DDValue
-        /// Use the TryGetValue method if your code frequently attempts to access expected that are not in the Attribute Collection. 
+        /// If the name is not found, then the value parameter gets the appropriate default value for the type DDValue
+        /// Use the TryGetValue method if your code frequently attempts to access name that are not in the Attribute Collection. 
         /// Using this method is more efficient than catching the KeyNotFoundException thrown by the Item property.
         /// This method approaches an O(1) operation.</remarks>
         public virtual bool TryGetValue(string name, out DDValue value)
@@ -400,7 +421,7 @@ namespace DrOpen.DrCommon.DrData
             return attributes.TryGetValue(name, out value);
         }
         /// <summary>
-        /// Gets the value associated with the specified expected.
+        /// Gets the value associated with the specified name.
         /// </summary>
         public DDValue this[Enum name]
         {
@@ -408,7 +429,7 @@ namespace DrOpen.DrCommon.DrData
             private set { attributes[name.ToString()] = value; }
         }
         /// <summary>
-        /// Gets the value associated with the specified expected.
+        /// Gets the value associated with the specified name.
         /// </summary>
         public DDValue this[string name]
         {
@@ -417,24 +438,26 @@ namespace DrOpen.DrCommon.DrData
         }
 
         /// <summary>
-        /// Gets the value associated with the specified expected. When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// Gets the value associated with the specified name. 
+        /// When this method returns, contains the value associated with the specified name, if the name is found; 
         /// otherwise, the default value for the type of the value parameter.
         /// </summary>
-        /// <param expected="expected">attribute expected</param>
-        /// <param expected="defaultValue">the default value for the type of the value parameter.</param>
-        /// <returns>When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// <param name="name">attribute name</param>
+        /// <param name="defaultValue">the default value for the type of the value parameter.</param>
+        /// <returns>When this method returns, contains the value associated with the specified name, if the name is found; 
         /// otherwise, the default value for the type of the value parameter.</returns>
         public virtual DDValue GetValue(Enum name, object defaultValue)
         {
             return GetValue(name.ToString(), defaultValue);
         }
         /// <summary>
-        /// Gets the value associated with the specified expected. When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// Gets the value associated with the specified name. When this method returns, 
+        /// contains the value associated with the specified name, if the name is found; 
         /// otherwise, the default value for the type of the value parameter.
         /// </summary>
-        /// <param expected="expected">attribute expected</param>
-        /// <param expected="defaultValue">the default value for the type of the value parameter.</param>
-        /// <returns>When this method returns, contains the value associated with the specified expected, if the expected is found; 
+        /// <param name="name">attribute name</param>
+        /// <param name="defaultValue">the default value for the type of the value parameter.</param>
+        /// <returns>When this method returns, contains the value associated with the specified name, if the nameis found; 
         /// otherwise, the default value for the type of the value parameter.</returns>
         public virtual DDValue GetValue(string name, object defaultValue)
         {
@@ -458,8 +481,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compare both values and return true if type and data are same otherwise return false. Very slow
         /// </summary>
-        /// <param expected="value1"></param>
-        /// <param expected="value2"></param>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
         /// <returns>true if type and data are same otherwise return false</returns>
         /// <remarks>The both null object is equal and return value will be true. Very slow</remarks>
         public static bool operator ==(DDAttributesCollection value1, DDAttributesCollection value2)
@@ -475,8 +498,8 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compares the two DDAttributesCollection of the same values and returns an integer that indicates whether the current instance precedes. Very slow
         /// </summary>
-        /// <param expected="value1">First DDAttributesCollection to compare</param>
-        /// <param expected="value2">Second DDAttributesCollection to compare</param>
+        /// <param name="value1">First DDAttributesCollection to compare</param>
+        /// <param name="value2">Second DDAttributesCollection to compare</param>
         /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
         /// Zero - the both DDAttributesCollection have some items and their values.
         /// The difference between the number of elements of the first and second DDAttributes Collection
@@ -499,7 +522,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Compares the current DDAtribute instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
         /// </summary>
-        /// <param expected="obj">An object to compare with this instance. </param>
+        /// <param name="obj">An object to compare with this instance. </param>
         /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
         /// Zero - This instance occurs in the same position in the sort order as obj.
         /// One - This instance follows obj in the sort order.</returns>

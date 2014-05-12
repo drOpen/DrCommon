@@ -147,4 +147,7 @@
   <data name="OBJ_TYPE_SHOULD_BE_ARRAY" xml:space="preserve">
     <value>Incorrect data type, the specified data should be array.</value>
   </data>
+  <data name="TYPE_IS_NOT_ENUM" xml:space="preserve">
+    <value>The specified type '{0}' is not Enum.</value>
+  </data>
 </root>

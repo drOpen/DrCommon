@@ -91,10 +91,10 @@ namespace DrOpen.DrCommon.DrData
 
         /// <summary>
         /// Creates a duplicate of this node.
+        /// Cloning an Node copies all attributes and their value
+        /// This method recursively clones the node and the subtree underneath it. Clone is equivalent to calling CloneNode(true).
         /// </summary>
         /// <returns></returns>
-        /// <remarks>Cloning an Node copies all attributes and their value
-        /// This method recursively clones the node and the subtree underneath it. Clone is equivalent to calling CloneNode(true).</remarks>
         public virtual object Clone()
         {
             return Clone(true);
@@ -222,10 +222,10 @@ namespace DrOpen.DrCommon.DrData
         #region ValidateNodeName
         /// <summary>
         /// Checks whether specified name is used as a DDNode name.
+        /// The node name cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.
         ///  </summary>
         /// <param name="name">node name</param>
         /// <returns>return true if name is well, otherwise, false.</returns>
-        /// <remarks>The node name cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.</remarks>
         public static bool IsNameCorect(string name)
         {
             if (name == null) return false;
@@ -295,10 +295,10 @@ namespace DrOpen.DrCommon.DrData
             return childNodes.ContainsKey(name);
         }
         /// <summary>
-        ///  Removes all children. The all children node leave the parent
+        /// Removes all children. The all children node leave the parent.
+        /// Removes all children nodes. Clear() is equivalent to calling Clear(false).
         /// </summary>
         /// <returns></returns>
-        /// <remarks> Removes all children nodes. Clear() is equivalent to calling Clear(false).</remarks>
         public virtual void Clear()
         {
             Clear(false);
@@ -319,10 +319,10 @@ namespace DrOpen.DrCommon.DrData
             }
         }
         /// <summary>
-        /// Remove child node by name
+        /// Remove child node by name.
+        /// The child node leave the parent.
         /// </summary>
         /// <param name="name">node name</param>
-        /// <remarks>The child node leave the parent</remarks>
         public virtual DDNode Remove(string name)
         {
             if (Contains(name)) return GetNode(name).LeaveParent();
@@ -473,8 +473,8 @@ namespace DrOpen.DrCommon.DrData
         #region Functions
         /// <summary>
         /// Leave the parent node.
+        /// This node will be leave from current parent and node became a independent parent
         /// </summary>
-        /// <remarks> This node will be leave from current parent and node became a independent parent</remarks>
         public virtual DDNode LeaveParent()
         {
             if (Parent != null)
@@ -501,12 +501,12 @@ namespace DrOpen.DrCommon.DrData
         #endregion Equals
         #region ==, != operators
         /// <summary>
-        /// Compare both values and return true if type and data are same otherwise return false. Very slow
+        /// Compare both values and return true if type and data are same otherwise return false.
+        /// The both null object is equal and return value will be true. Very slow
         /// </summary>
         /// <param name="value1"></param>
         /// <param name="value2"></param>
         /// <returns>true if type and data are same otherwise return false</returns>
-        /// <remarks>The both null object is equal and return value will be true. Very slow</remarks>
         public static bool operator ==(DDNode value1, DDNode value2)
         {
             return (Compare(value1, value2) == 0);
@@ -677,5 +677,21 @@ namespace DrOpen.DrCommon.DrData
              */
         }
         #endregion ISerializable
+        #region Names/Values
+        /// <summary>
+        /// Gets a collection containing the names of child
+        /// </summary>
+        public virtual Dictionary<string, DDNode>.KeyCollection Names
+        {
+            get { return this.childNodes.Keys; }
+        }
+        /// <summary>
+        /// Gets a collection containing the values of child
+        /// </summary>
+        public virtual Dictionary<string, DDNode>.ValueCollection Values
+        {
+            get { return this.childNodes.Values; }
+        }
+        #endregion Names/Values
     }
 }

@@ -149,5 +149,14 @@ namespace DrData.Res {
                 return ResourceManager.GetString("RISE_ABOVE_ROOT_NODE", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified type &apos;{0}&apos; is not Enum..
+        /// </summary>
+        internal static string TYPE_IS_NOT_ENUM {
+            get {
+                return ResourceManager.GetString("TYPE_IS_NOT_ENUM", resourceCulture);
+            }
+        }
     }
 }

@@ -1165,27 +1165,6 @@ namespace DrOpen.DrCommon.DrData
             return bytes;
         }
         #endregion HEX
-        #region Converter
-        public static DDValue GetNamesOfEnum(Type type) 
-        {
-            if (!type.IsEnum) throw new TypeLoadException(string.Format(Msg.TYPE_IS_NOT_ENUM , type.Name));
-            return new DDValue(Enum.GetNames(type));
-        }
 
-        public static DDValue GetValuesOfEnum(Type type)
-        {
-            if (!type.IsEnum) throw new TypeLoadException(string.Format(Msg.TYPE_IS_NOT_ENUM, type.Name));
-            var values = Enum.GetValues(type);
-            var result = new int[values.Length];
-            int i = 0;
-            foreach (var item in values)
-            {
-                result[i] = (int) item;
-                i++;
-            }
-            return new DDValue(result);
-        }
-
-        #endregion Converter
     }
 }

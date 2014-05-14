@@ -112,15 +112,19 @@ namespace UTestDrData
                 var nameReturn_A1 = attrs.Add(TEST_ENUM.TEST_ENUM_A, new DDValue("A"));
                 var nameReturn_A2 = attrs.Add(TEST_ENUM.TEST_ENUM_A, new DDValue("B"));
 
-                Assert.Inconclusive("Add new value with not uniq name!");
+                Assert.Fail("Add new value with not uniq name!");
             }
             catch (ArgumentException)
             {
                 Assert.IsTrue(attrs[TEST_ENUM.TEST_ENUM_A] == "A", "Cannot find first value by name.");
             }
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
             catch (Exception e)
             {
-                Assert.Inconclusive("Catch incorrect exception after attempt to add new value with not uniq name!" + e.Message);
+                Assert.Fail("Catch incorrect exception after attempt to add new value with not uniq name!" + e.Message);
             }
         }
 
@@ -134,15 +138,19 @@ namespace UTestDrData
                 var nameReturn_A1 = attrs.Add(TEST_ENUM.TEST_ENUM_A, new DDValue("A"), ResolveConflict.SKIP);
                 var nameReturn_A2 = attrs.Add(TEST_ENUM.TEST_ENUM_A, new DDValue("B"), ResolveConflict.THROW_EXCEPTION);
 
-                Assert.Inconclusive("Add new value with not uniq name!");
+                Assert.Fail("Add new value with not uniq name!");
             }
             catch (ArgumentException)
             {
                 Assert.IsTrue(attrs[TEST_ENUM.TEST_ENUM_A] == "A", "Cannot find first value by name.");
             }
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
             catch (Exception e)
             {
-                Assert.Inconclusive("Catch incorrect exception after attempt to add new value with not uniq name!" + e.Message);
+                Assert.Fail("Catch incorrect exception after attempt to add new value with not uniq name!" + e.Message);
             }
         }
 
@@ -159,11 +167,15 @@ namespace UTestDrData
             }
             catch (ArgumentException)
             {
-                Assert.Inconclusive("Incorrect ArgumentException, new value should be skipped!");
+                Assert.Fail("Incorrect ArgumentException, new value should be skipped!");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
-                Assert.Inconclusive("Incorrect Exception, new value should be skipped!");
+                Assert.Fail("Incorrect Exception, new value should be skipped!");
             }
         }
 
@@ -180,11 +192,15 @@ namespace UTestDrData
             }
             catch (ArgumentException)
             {
-                Assert.Inconclusive("Incorrect ArgumentException, new value should be skipped!");
+                Assert.Fail("Incorrect ArgumentException, new value should be skipped!");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
-                Assert.Inconclusive("Incorrect Exception, new value should be skipped!");
+                Assert.Fail("Incorrect Exception, new value should be skipped!");
             }
         }
         #endregion Add
@@ -200,11 +216,15 @@ namespace UTestDrData
             try
             {
                 var res = attrs[TEST_ENUM.TEST_ENUM_B.ToString().ToLower()];
-                Assert.Inconclusive("Where my exception, dude?");
+                Assert.Fail("Where my exception, dude?");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
-
+                // it's ok
             }
         }
 
@@ -254,7 +274,7 @@ namespace UTestDrData
             Assert.IsTrue(attrs.Count == 0, "After Clear() collection should be Empty.");
             foreach (var attr in attrs)
             {
-                Assert.Inconclusive("Attributes collection isn't empty.");
+                Assert.Fail("Attributes collection isn't empty.");
             }
 
         }
@@ -438,7 +458,7 @@ namespace UTestDrData
                         ValidateAttribute(attr, TEST_ENUM.TEST_ENUM_NULL, null);
                         break;
                     default:
-                        Assert.Inconclusive("Additional attribute item?");
+                        Assert.Fail("Additional attribute item?");
                         break;
                 }
 
@@ -469,7 +489,7 @@ namespace UTestDrData
                         ValidateAttribute((KeyValuePair<string, DDValue>)attr, TEST_ENUM.TEST_ENUM_NULL, null);
                         break;
                     default:
-                        Assert.Inconclusive("Additional attribute item?");
+                        Assert.Fail("Additional attribute item?");
                         break;
                 }
 
@@ -501,7 +521,7 @@ namespace UTestDrData
                         Assert.IsTrue(name == TEST_ENUM.TEST_ENUM_NULL.ToString(), "The name is incorrect.");
                         break;
                     default:
-                        Assert.Inconclusive("Additional attribute item?");
+                        Assert.Fail("Additional attribute item?");
                         break;
                 }
 
@@ -532,7 +552,7 @@ namespace UTestDrData
                         Assert.IsTrue(value == null, "The value is incorrect.");
                         break;
                     default:
-                        Assert.Inconclusive("Additional attribute item?");
+                        Assert.Fail("Additional attribute item?");
                         break;
                 }
 

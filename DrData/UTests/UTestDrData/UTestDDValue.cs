@@ -25,9 +25,6 @@
 
  */
 using System;
-using System.Diagnostics;
-using System.IO.Compression;
-using System.Reflection;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DrOpen.DrCommon.DrData;
@@ -58,7 +55,11 @@ namespace UTestDrData
             try
             {
                 DDValue.GetObjSize(new object());
-                Assert.Inconclusive("a.GetObjSize() - cannot catch exception after try GetObjSize() for unsupported Type;");
+                Assert.Fail("a.GetObjSize() - cannot catch exception after try GetObjSize() for unsupported Type;");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
@@ -73,7 +74,12 @@ namespace UTestDrData
             try
             {
                 var value = a.GetValue();
-                Assert.Inconclusive("a.GetValue() - cannot catch exception after try GetValue from null Data.Type;");
+                Assert.IsTrue(null == value, "GetValue from null should be return null.");                          // Uncomment it if null type is supported
+                //Assert.Fail("a.GetValue() - cannot catch exception after try GetValue from null Data.Type;");     // Uncomment it if null type is unsupported
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
@@ -151,7 +157,7 @@ namespace UTestDrData
                 DDValue.Compare(valA, valB);
             }
             var stop= DateTime.Now;
-            Assert.Inconclusive((stop.Ticks-start.Ticks).ToString());
+            Assert.Fail((stop.Ticks-start.Ticks).ToString());
         }
 
 
@@ -207,12 +213,14 @@ namespace UTestDrData
             try
             {
                 var dd = new DDValue(new sbyte());
-                Assert.Inconclusive("Allow set incorect data type - sbyte");
+                Assert.Fail("Allow set incorect data type - sbyte");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
-
-
             }
         }
         #endregion test Incorrect DataType
@@ -348,7 +356,11 @@ namespace UTestDrData
             try
             {
                 DDValue.HEX("123");
-                Assert.Inconclusive("The parity check for HEX string doesn't work.");
+                Assert.Fail("The parity check for HEX string doesn't work.");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {

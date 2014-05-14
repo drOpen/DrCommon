@@ -55,7 +55,11 @@ namespace UTestDrData
             try
             {
                 var name = DDNode.GetNextNodeNameByPath(ref path);
-                Assert.Inconclusive("Cannot catch null reference exception!");
+                Assert.Fail("Cannot catch null reference exception!");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (ArgumentNullException)
             {
@@ -160,7 +164,11 @@ namespace UTestDrData
             try
             {
                 var name = GetHierarhy().GetNode(path);
-                Assert.Inconclusive("Cannot catch null reference exception!");
+                Assert.Fail("Cannot catch null reference exception!");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (ArgumentNullException)
             {
@@ -238,15 +246,19 @@ namespace UTestDrData
             try
             {
                 var result = root.GetNode(path); //attempt to rise above root node
-                Assert.Inconclusive("Successfull rise above root node!!!");
+                Assert.Fail("Successfull rise above root node!!!");
             }
             catch (ArgumentException)
             {
                 // cool throw
             }
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
             catch (Exception e)
             {
-                Assert.Inconclusive("Catch incorrect exception after attempt to rise above root node. " + e.Message);
+                Assert.Fail("Catch incorrect exception after attempt to rise above root node. " + e.Message);
             }
 
         }
@@ -426,7 +438,7 @@ namespace UTestDrData
             ValidateChildNodeCount(root, 0);
             foreach (var child in root)
             {
-                Assert.Inconclusive("there should not  be child objects.");
+                Assert.Fail("there should not  be child objects.");
             }
             root.Add("a.b"); // add child2 
         }
@@ -653,9 +665,13 @@ namespace UTestDrData
             try
             {
                 root.Add(root);
-                Assert.Inconclusive("You can not add yourself as a child node.");
+                Assert.Fail("You can not add yourself as a child node.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* is it ok */}
         }
         [TestMethod]
@@ -674,9 +690,13 @@ namespace UTestDrData
             try
             {
                 var n3 = root.Add(n2);
-                Assert.Inconclusive(String.Format("Forbidden to add node '{0}' as child already having parent node.", n2.Name));
+                Assert.Fail(String.Format("Forbidden to add node '{0}' as child already having parent node.", n2.Name));
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -687,9 +707,13 @@ namespace UTestDrData
             try
             {
                 child = root.Add(".");
-                Assert.Inconclusive("Forbidden to add node with name '.'.");
+                Assert.Fail("Forbidden to add node with name '.'.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -700,9 +724,13 @@ namespace UTestDrData
             try
             {
                 child = root.Add("..");
-                Assert.Inconclusive("Forbidden to add node with name '..'.");
+                Assert.Fail("Forbidden to add node with name '..'.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -713,9 +741,13 @@ namespace UTestDrData
             try
             {
                 child = root.Add("ab/c");
-                Assert.Inconclusive("Forbidden to add node with name '/'.");
+                Assert.Fail("Forbidden to add node with name '/'.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -726,9 +758,13 @@ namespace UTestDrData
             try
             {
                 child = root.Add("/");
-                Assert.Inconclusive("Forbidden to add node with name contains symbol '/'.");
+                Assert.Fail("Forbidden to add node with name contains symbol '/'.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -739,9 +775,13 @@ namespace UTestDrData
             try
             {
                 child = root.Add("");
-                Assert.Inconclusive("Forbidden to add node with empty name.");
+                Assert.Fail("Forbidden to add node with empty name.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -753,9 +793,13 @@ namespace UTestDrData
             {
                 DDNode node = null;
                 child = root.Add(node);
-                Assert.Inconclusive("Forbidden to add node as null.");
+                Assert.Fail("Forbidden to add node as null.");
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -798,9 +842,13 @@ namespace UTestDrData
             try
             {
                 var n3 = root.Add(n1.Name);
-                Assert.Inconclusive(String.Format("The name '{0}' is not uniq.", n1.Name));
+                Assert.Fail(String.Format("The name '{0}' is not uniq.", n1.Name));
             }
-            catch
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch(Exception)
             {/* it's ok */}
         }
         [TestMethod]

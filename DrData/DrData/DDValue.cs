@@ -318,7 +318,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>byte []</returns>
         public static byte[] GetByteArray(Type type, object value)
         {
-            if (type == typeof(byte[])) return (byte[])value;
+            // if (type == typeof(byte[])) return (byte[])value; // it does not work
             if (type == typeof(byte)) return new[] { (byte)value };
 
             if (type == typeof(string)) return Encoding.UTF8.GetBytes(value.ToString());
@@ -365,7 +365,8 @@ namespace DrOpen.DrCommon.DrData
         {
 
             if (type == typeof(byte[])) return HEX(value);
-            if (type == typeof(byte)) return new[] { Convert.ToByte(value) };
+            if (type == typeof(byte)) return Convert.ToByte(value) ;
+            //if (type == typeof(byte)) return new[] { Convert.ToByte(value) };
 
             if (type == typeof(string)) return value.ToString();
             if (type == typeof(DateTime)) return Convert.ToDateTime(value);
@@ -692,7 +693,7 @@ namespace DrOpen.DrCommon.DrData
         protected static object GetValueObjByType(Type type, byte[] data)
         {
             if (type == typeof(string)) return Encoding.UTF8.GetString(data);
-            
+
             if (type == typeof(DateTime)) return DateTime.FromBinary(BitConverter.ToInt64(data, 0));
 
             if (type == typeof(byte)) return data[0];
@@ -1049,7 +1050,7 @@ namespace DrOpen.DrCommon.DrData
                 for (int i = 0; i < value1.data.Length; i++)
                 {
                     if (value1.data[i] != value2.data[i]) return 1; // it is faster (~10%) than:
-                                                                    // if (value1.data[i].Equals(value2.data[i]) == false) return 1;
+                    // if (value1.data[i].Equals(value2.data[i]) == false) return 1;
                 }
             }
             return 0;
@@ -1165,6 +1166,41 @@ namespace DrOpen.DrCommon.DrData
             return bytes;
         }
         #endregion HEX
-
+        #region Transformation
+        /// <summary>
+        /// Self transformation from string or string array type to specified type. Change themselves and their data type. Retruns itself after covertion.<para> </para>
+        /// If original type is not string or string array the <exception cref="FormatException">FormatException</exception> will be thrown.<para> </para>
+        /// If original type is null the <exception cref="NullReferenceException">NullReferenceException</exception> will be thrown.<para> </para>
+        /// </summary>
+        /// <param name="newType">convert to specified type</param>
+        /// <returns></returns>
+        public DDValue SelfTransformFromStringTo(Type newType)
+        {   if (this.Type==null) throw new NullReferenceException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
+            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new FormatException(string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
+            if (this.Type.IsArray != newType.IsArray) throw new FormatException(string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
+            if ((newType == typeof(string) || (newType == typeof(string[])))) return this; // nothing to do
+            if (data.Length > 0)
+            {
+                if (this.Type.IsArray)
+                {
+                    var items = GetValueAsStringArray();
+                    var objArray = new object[items.Length];
+                    int i = 0;
+                    foreach (var item in items)
+                    {
+                        objArray[i] = ConvertStringToSpecifiedTypeObject(newType.GetElementType(), item);
+                        i++;
+                    }
+                    this.data = GetByteArray(newType, objArray);
+                }
+                else
+                {
+                    this.data = GetByteArrayByTypeFromString(newType, GetValueAsString());
+                }
+            }
+            this.type = newType;
+            return this;
+        }
+        #endregion Transformation
     }
 }

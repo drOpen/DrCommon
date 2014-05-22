@@ -62,6 +62,17 @@ namespace DrDataSample
             var  t = d.Attributes.GetValue("ff", 56);
             var  r = d.Attributes.GetValue("fff", 56);
             d.Attributes.Add("Value");
+
+
+            var ddNode = new DDNode("test");
+            var ddNodeVars = ddNode.Add("Vars");
+            var ddNodeActions = ddNode.Add("Actions");
+            ddNodeVars.Attributes.Add("LogonName", "UserName");
+            ddNodeVars.Attributes.Add("ExpectedResult", "false");
+            ddNodeVars.Attributes.Add("ExpectedResult", "true", ResolveConflict.OVERWRITE);
+            ddNodeVars.Attributes.GetValue("ExpectedResult", false).GetValueAsBool();
+            ddNode.GetNode("/Vars").Attributes.GetValue("ExpectedResult", true).GetValueAsBool();
+
         }
     }
 }

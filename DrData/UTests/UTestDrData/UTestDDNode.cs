@@ -26,6 +26,7 @@
  */
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DrOpen.DrCommon.DrData;
@@ -37,7 +38,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace UTestDrData
 {
     [TestClass]
-    public class UTestDDNode: DDNode
+    public class UTestDDNode : DDNode
     {
         private enum TEST_ENUM
         {
@@ -648,9 +649,9 @@ namespace UTestDrData
             DDNode getChild2;
             DDNode getChild3;
 
-            Assert.IsTrue( root.TryGetNode(TEST_ENUM.TEST_ENUM_A, out getChild1));
-            Assert.IsTrue( root.TryGetNode(TEST_ENUM.TEST_ENUM_a, out getChild2));
-            Assert.IsFalse( root.TryGetNode(TEST_ENUM.TEST_ENUM_NULL, out getChild3));
+            Assert.IsTrue(root.TryGetNode(TEST_ENUM.TEST_ENUM_A, out getChild1));
+            Assert.IsTrue(root.TryGetNode(TEST_ENUM.TEST_ENUM_a, out getChild2));
+            Assert.IsFalse(root.TryGetNode(TEST_ENUM.TEST_ENUM_NULL, out getChild3));
 
             Assert.AreEqual(getChild1, child1);
             Assert.AreEqual(getChild2, child2);
@@ -671,7 +672,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* is it ok */}
         }
         [TestMethod]
@@ -696,7 +697,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -713,7 +714,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -730,7 +731,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -747,7 +748,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -764,7 +765,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -781,7 +782,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -799,7 +800,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -848,7 +849,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch(Exception)
+            catch (Exception)
             {/* it's ok */}
         }
         [TestMethod]
@@ -906,6 +907,57 @@ namespace UTestDrData
         }
 
         #endregion Add
+        #region transformation
+        [TestMethod]
+        public void TestTransforException()
+        {
+            var msg = "Message";
+            var msgInner = "InnerMessage";
+
+            var exc = new AccessViolationException(msg, new ExternalException(msgInner));
+            try
+            {
+                throw exc;
+            }
+            catch (Exception e)
+            {
+                var node = (DDNode)e;
+                CompareNodeWithException(node, e);
+            }
+        }
+        /// <summary>
+        /// Recursively compares the values ​​of the fields Exception and attributes of node
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="e"></param>
+        public void CompareNodeWithException(DDNode node, Exception e)
+        {
+            Assert.IsTrue(node.Type == "Exception", "Incorect node type. The expected type is 'Exception'.");
+            if (e.HelpLink == null)
+                Assert.IsTrue(node.Attributes.GetValue("HelpLink", null) == null, "Cannot match 'HelpLink'.");
+            else
+                Assert.IsTrue(node.Attributes.GetValue("HelpLink", string.Empty) == e.HelpLink, "Cannot match 'HelpLink'.");
+
+            if (e.Message == null)
+                Assert.IsTrue(node.Attributes.GetValue("Message", null) == null, "Cannot match 'Message'.");
+            else
+                Assert.IsTrue(node.Attributes.GetValue("Message", string.Empty) == e.Message, "Cannot match 'Message'.");
+
+            if (e.Source == null)
+                Assert.IsTrue(node.Attributes.GetValue("Source", null) == null, "Cannot match 'Source'.");
+            else
+                Assert.IsTrue(node.Attributes.GetValue("Source", string.Empty) == e.Source, "Cannot match 'Source'.");
+
+            if (e.StackTrace == null)
+                Assert.IsTrue(node.Attributes.GetValue("StackTrace", null) == null, "Cannot match 'StackTrace'.");
+            else
+                Assert.IsTrue(node.Attributes.GetValue("StackTrace", string.Empty) == e.StackTrace, "Cannot match 'StackTrace'.");
+
+            Assert.IsTrue(node.Attributes.GetValue("Type", string.Empty) == e.GetType().Name, "Cannot match 'Type'.");
+            if (e.InnerException != null) CompareNodeWithException(node.GetNode("InnerException"), e.InnerException);
+        }
+
+        #endregion transformation
         #region IEnumerable.GetEnumerator
         [TestMethod]
         public void TestGetEnumeratorByIEnumerable()
@@ -1172,7 +1224,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDNodeXmlSerializationHierarchy()
         {
-            var root = new DDNode("root");
+            var root = new DDNode("root", "NodeType");
             var child_level_1 = root.Add("Child_Level_1");
             var child_level_2 = child_level_1.Add("Child_Level_2");
             ValidateXMLDeserialization(root);

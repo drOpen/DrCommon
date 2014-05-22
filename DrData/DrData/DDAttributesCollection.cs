@@ -182,7 +182,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Add the new value by name
         /// </summary>
-        /// <param name="name">uniq name for with value. If specified name exists in this collection the new application exception will be throw</param>
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the new application exception will be thrown</param>
         /// <param name="value">value</param>
         /// <returns>Return name for this value</returns>
         public string Add(Enum name, DDValue value)
@@ -192,7 +192,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Add the new value by name
         /// </summary>
-        /// <param name="name">uniq name for with value. If specified name exists in this collection the new application exception will be throw</param>
+        /// <param name="name">uniq name for with value. If specified name exists in this collection the new application exception will be thrown</param>
         /// <param name="value">value</param>
         /// <returns>Return name for this value</returns>
         public string Add(string name, DDValue value)

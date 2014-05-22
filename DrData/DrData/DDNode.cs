@@ -32,6 +32,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using DrData.Res;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -43,6 +44,8 @@ namespace DrOpen.DrCommon.DrData
     {
         #region const
         public const string SerializePropName = "Name";
+        public const string SerializePropType = "Type";
+        
         public const string SerializePropIsRoot = "IsRoot";
 
         public const string SerializePropAttributes = "Attributes";
@@ -51,22 +54,28 @@ namespace DrOpen.DrCommon.DrData
         public const string SerializePropCount = "Count";
         #endregion const
         #region Constructor
-        public DDNode(string name)
+        public DDNode(string name, string type)
         {
             if (!IsNameCorect(name)) throw new ArgumentException(string.Format(Msg.INCORRECT_NODE_NAME, name));
             attributes = new DDAttributesCollection();
             Name = name;
             childNodes = new Dictionary<string, DDNode>();
+            Type = type;
             //if (Parent == null)
             //    Level = 1;
             //else
             //    Level = Parent.Level + 1;
         }
+        public DDNode(string name)
+            : this(name, string.Empty)
+        { }
 
         public DDNode(Enum name)
             : this(name.ToString())
         { }
-
+        public DDNode(Enum name, string type)
+            : this(name.ToString(), type)
+        { }
         public DDNode()
             : this(Guid.NewGuid().ToString())
         { }
@@ -85,7 +94,11 @@ namespace DrOpen.DrCommon.DrData
         {
             Parent = parent;
         }
-
+        private DDNode(string name, DDNode parent, string type)
+            : this(name, type)
+        {
+            Parent = parent;
+        }
         #endregion Constructor
         #region ICloneable Members
 
@@ -106,7 +119,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>The cloned node.</returns>
         public virtual DDNode Clone(bool deep)
         {
-            var newNode = new DDNode(this.Name);
+            var newNode = new DDNode(this.Name, this.Type);
             if (HasAttributes) newNode.attributes = (DDAttributesCollection)Attributes.Clone();
 
             if (deep)
@@ -150,6 +163,11 @@ namespace DrOpen.DrCommon.DrData
         #endregion IEnumerable
         #region Properties
         /// <summary>
+        /// Type of node
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
         /// Dictonary of children nodes
         /// </summary>
         private readonly Dictionary<string, DDNode> childNodes;
@@ -192,6 +210,17 @@ namespace DrOpen.DrCommon.DrData
         {
             return Add(new DDNode(name, this));
         }
+
+        /// <summary>
+        /// Adds a child node with specified name
+        /// </summary>
+        /// <param name="name">child node name</param>
+        /// <param name="type">node type</param>
+        /// <returns>new node</returns>
+        public virtual DDNode Add(string name, string type)
+        {
+            return Add(new DDNode(name, this, type));
+        }
         /// <summary>
         /// Adds a child node with specified name
         /// </summary>
@@ -200,6 +229,17 @@ namespace DrOpen.DrCommon.DrData
         public virtual DDNode Add(Enum name)
         {
             return Add(name.ToString());
+        }
+
+        /// <summary>
+        /// Adds a child node with specified name
+        /// </summary>
+        /// <param name="name">child node name</param>
+        /// <param name="type">node type</param>
+        /// <returns>new node</returns>
+        public virtual DDNode Add(Enum name, Enum type)
+        {
+            return Add(name.ToString(), type.ToString());
         }
         /// <summary>
         /// Adds the specified node as child
@@ -535,6 +575,7 @@ namespace DrOpen.DrCommon.DrData
             if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
 
             if ((value1.Name != value2.Name)) return 1; // if Name is not Equals->  return false
+            if (value1.IsExpectedNodeType(value2.Type)==false) return 1; // node type is not matched
             if ((value1.HasAttributes != value2.HasAttributes)) return 1; // if HasAttributes is not Equals->  return false
             if ((value1.HasChildNodes != value2.HasChildNodes)) return 1; // if HasChildNodes is not Equals->  return false
 
@@ -579,6 +620,7 @@ namespace DrOpen.DrCommon.DrData
         public virtual void WriteXml(XmlWriter writer)
         {
             if (Name != null) writer.WriteAttributeString(SerializePropName, Name);
+            if (String.IsNullOrEmpty(Type)==false) writer.WriteAttributeString(SerializePropType, Type); // write none empty type
             if (IsRoot) writer.WriteAttributeString(SerializePropIsRoot, IsRoot.ToString());
             if (HasChildNodes) writer.WriteAttributeString(SerializePropChildren, Count.ToString());
 
@@ -611,6 +653,8 @@ namespace DrOpen.DrCommon.DrData
             var nameNodeDDNode = typeof(DDNode).Name;
 
             this.Name = reader.GetAttribute(SerializePropName);
+            this.Type = reader.GetAttribute(SerializePropType);
+            if (this.Type == null) this.Type = string.Empty;
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
@@ -629,7 +673,7 @@ namespace DrOpen.DrCommon.DrData
                 {
                     if (reader.IsStartElement(nameNodeDDAttributes)) attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
 
-                    if (reader.IsStartElement(nameNodeDDNode)) Add((DDNode)serializerDDNode.Deserialize(reader));                     
+                    if (reader.IsStartElement(nameNodeDDNode)) Add((DDNode)serializerDDNode.Deserialize(reader));
 
                     if (reader.HasValue) // read value of element if there is
                     {
@@ -651,12 +695,9 @@ namespace DrOpen.DrCommon.DrData
         public DDNode(SerializationInfo info, StreamingContext context)
         {
             this.Name = (String)info.GetValue(SerializePropName, typeof(String));
+            this.Type = (String)info.GetValue(SerializePropType, typeof(String));
             this.attributes = (DDAttributesCollection)info.GetValue(SerializePropAttributes, typeof(DDAttributesCollection));
             this.childNodes = (Dictionary<string, DDNode>)info.GetValue(SerializePropChildren, typeof(Dictionary<string, DDNode>));
-            //throw new NotImplementedException();
-            /*
-            this.attributes = (DDNode)info.GetValue(SerializePropNameNode, typeof(DDNode));
-            */
         }
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
@@ -666,15 +707,9 @@ namespace DrOpen.DrCommon.DrData
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(SerializePropName, Name, typeof(String));
+            info.AddValue(SerializePropType, Type, typeof(String));
             info.AddValue(SerializePropAttributes, attributes, typeof(DDAttributesCollection));
             info.AddValue(SerializePropChildren, childNodes, typeof(Dictionary<string, DDNode>));
-            //throw new NotImplementedException();
-            /*
-                    SerializePropName 
-                    SerializePropAttributes 
-                    SerializePropNameChildren 
-                    
-             */
         }
         #endregion ISerializable
         #region Names/Values
@@ -693,5 +728,65 @@ namespace DrOpen.DrCommon.DrData
             get { return this.childNodes.Values; }
         }
         #endregion Names/Values
+        #region Transform
+        /// <summary>
+        /// transformation exception to node
+        /// </summary>
+        /// <param name="e">exception to transform</param>
+        /// <returns></returns>
+        static public implicit operator DDNode(Exception e)
+        {
+            var n = new DDNode();
+            SetNodeAttributeFromException(n, e);
+            return n;
+        }
+        /// <summary>
+        /// Set exception field to node attributes
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="e"></param>
+        static private void SetNodeAttributeFromException(DDNode n, Exception e)
+        {
+            n.Type = "Exception";
+            if (e.StackTrace != null) n.Attributes.Add("StackTrace", e.StackTrace);
+            if (e.Source != null) n.Attributes.Add("Source", e.Source);
+            if (e.HelpLink != null) n.Attributes.Add("HelpLink", e.HelpLink);
+            n.Attributes.Add("Type", e.GetType().Name);
+            if (e.Data != null)
+            {
+                var data = n.Add("Data");
+                foreach (var dKey in e.Data.Keys)
+                {
+                    data.attributes.Add(dKey.ToString(), e.Data[dKey].ToString());
+                }
+            }
+            n.Attributes.Add("Message", e.Message);
+            if (e.InnerException != null)
+            {
+                var nodeInner = n.Add("InnerException");
+                SetNodeAttributeFromException(nodeInner, e.InnerException);
+            }
+        }
+
+        #endregion Transform
+        #region NodeType
+        /// <summary>
+        /// Throw <exception cref="NodeTypeException">NodeTypeException</exception> if type of current node is not equals expected type
+        /// </summary>
+        /// <param name="expectedType"></param>
+        public void ThrowIsNotExpectedNodeType(string expectedType)
+        {
+            if (!IsExpectedNodeType(expectedType)) throw new NodeTypeException(this.Type, expectedType);
+        }
+        /// <summary>
+        /// Returns true if current node has type that equals expected type
+        /// </summary>
+        /// <param name="expectedType">expected type</param>
+        /// <returns></returns>
+        public bool IsExpectedNodeType(string expectedType)
+        {
+            return this.Type.Equals(expectedType);
+        }
+        #endregion NodeType
     }
 }

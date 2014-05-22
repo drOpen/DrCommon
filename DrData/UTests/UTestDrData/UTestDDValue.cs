@@ -156,8 +156,8 @@ namespace UTestDrData
             {
                 DDValue.Compare(valA, valB);
             }
-            var stop= DateTime.Now;
-            Assert.Fail((stop.Ticks-start.Ticks).ToString());
+            var stop = DateTime.Now;
+            Assert.Fail((stop.Ticks - start.Ticks).ToString());
         }
 
 
@@ -178,7 +178,6 @@ namespace UTestDrData
         {
             var v = new DDValue();
             Assert.IsTrue(v.ToString() == string.Empty, "ToString() must return String.Empty if DDValue has null data.");
-
         }
         #endregion ToString()
         #region test GetHashCode()
@@ -2735,10 +2734,108 @@ namespace UTestDrData
         public void TestBoolDataToStringArray()
         {
             var d = new DDValue(true);
-            Assert.IsTrue(CompareStringArray(new string[]{true.ToString()}, d.ToStringArray()), "ToStringArray() should be return bool as true string array");
+            Assert.IsTrue(CompareStringArray(new string[] { true.ToString() }, d.ToStringArray()), "ToStringArray() should be return bool as true string array");
 
         }
         #endregion ToStringArray
+        #region SelfTransformFromStringTo
+        [TestMethod]
+        public void TestSelfTransformFromStringTo_FromNotString()
+        {
+            var v = new DDValue(0);
+            try
+            {
+                v.SelfTransformFromStringTo(typeof(string));
+                Assert.Fail("Can transfrom from not string type.");
+            }
+            catch (AssertFailedException e)
+            { throw; }
+            catch (FormatException)
+            {/* it's ok*/}
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringTo_Null()
+        {
+            var v = new DDValue();
+            try
+            {
+                v.SelfTransformFromStringTo(typeof(string));
+                Assert.Fail("Can transfrom from null.");
+            }
+            catch (AssertFailedException e)
+            { throw; }
+            catch (NullReferenceException)
+            {/* it's ok*/}
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringTo_Array()
+        {
+            var v = new DDValue("0");
+            try
+            {
+                v.SelfTransformFromStringTo(typeof(int[]));
+                Assert.Fail("Can transfrom from string to string array.");
+            }
+            catch (AssertFailedException e)
+            { throw; }
+            catch (FormatException)
+            {/* it's ok*/}
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringArrayTo_Bool()
+        {
+            var v = new DDValue(new[] { "true", "false", "true" });
+            try
+            {
+                v.SelfTransformFromStringTo(typeof(bool));
+                Assert.Fail("Can transfrom from string to string array.");
+            }
+            catch (AssertFailedException e)
+            { throw; }
+            catch (FormatException)
+            {/* it's ok*/}
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringTo_Empty()
+        {
+            var v = new DDValue(String.Empty);
+            v.SelfTransformFromStringTo(typeof(bool)); // incorrect data = 0 ToDo
+            //ValidateBool(v, a);
+
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringTo_BoolTrue()
+        {
+            var v = new DDValue("true");
+            v.SelfTransformFromStringTo(typeof(bool));
+            ValidateBool(v, true);
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringTo_BoolFalse()
+        {
+            var v = new DDValue("false");
+            v.SelfTransformFromStringTo(typeof(bool));
+            ValidateBool(v, false);
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringArrayTo_BoolArray()
+        {
+            var v = new DDValue(new[] { "true", "false", "true" });
+
+            v.SelfTransformFromStringTo(typeof(bool[]));
+            ValidateBoolArray(new bool[] { true, false, true }, v);
+
+        }
+        [TestMethod]
+        public void TestSelfTransformFromStringArrayTo_ByteArray()
+        {
+            var v = new DDValue(new[] { "1", "2", "3" });
+
+            v.SelfTransformFromStringTo(typeof(byte[]));
+            ValidateByteArray(new byte[] { 0x1, 0x2, 0x3}, v);
+
+        }
+        #endregion SelfTransformFromStringTo
         #region ValidationType
         private void ValidateDateTime(DateTime dt, DDValue data)
         {
@@ -3091,13 +3188,13 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDValueISerializableByteArray()
         {
-            var dDValue = new DDValue(new byte[]{0x1, 0x2,0x3,0x4,0xff});
+            var dDValue = new DDValue(new byte[] { 0x1, 0x2, 0x3, 0x4, 0xff });
             ValidateDeserialization(dDValue, new BinaryFormatter());
         }
         [TestMethod]
         public void TestDDValueISerializableStringArray()
         {
-            var dDValue = new DDValue(new string[] {"Test", string.Empty, "Юникод" });
+            var dDValue = new DDValue(new string[] { "Test", string.Empty, "Юникод" });
             ValidateDeserialization(dDValue, new BinaryFormatter());
         }
         public static Stream SerializeItem(DDValue iSerializable, IFormatter formatter)
@@ -3196,7 +3293,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDValueXmlSerializationULongArray()
         {
-            ValidateXMLDeserialization(new DDValue(new []{ulong.MaxValue, ulong.MinValue}));
+            ValidateXMLDeserialization(new DDValue(new[] { ulong.MaxValue, ulong.MinValue }));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationFloat()
@@ -3206,7 +3303,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDValueXmlSerializationFloatArray()
         {
-            ValidateXMLDeserialization(new DDValue(new []{float.MaxValue, float.MaxValue, float.MinValue}));
+            ValidateXMLDeserialization(new DDValue(new[] { float.MaxValue, float.MaxValue, float.MinValue }));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationSingle()
@@ -3216,7 +3313,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDValueXmlSerializationSingleArray()
         {
-            ValidateXMLDeserialization(new DDValue(new Single [] {Single.MaxValue, Single.MinValue, Single.MaxValue}));
+            ValidateXMLDeserialization(new DDValue(new Single[] { Single.MaxValue, Single.MinValue, Single.MaxValue }));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationChar()

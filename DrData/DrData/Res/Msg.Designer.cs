@@ -79,6 +79,33 @@ namespace DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot transform from not string or string array type to &apos;{0}&apos;. The current type is &apos;{1}&apos;..
+        /// </summary>
+        internal static string CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE {
+            get {
+                return ResourceManager.GetString("CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot transform array type to not array type or vice versa. Current type is &apos;{0}&apos; the planned type after transformation &apos;{1}&apos;..
+        /// </summary>
+        internal static string CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY {
+            get {
+                return ResourceManager.GetString("CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot transform object with type &apos;null&apos;.
+        /// </summary>
+        internal static string CANNOT_TRANSFORM_NULL_TYPE {
+            get {
+                return ResourceManager.GetString("CANNOT_TRANSFORM_NULL_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; is incorrect HEX string..
         /// </summary>
         internal static string INCORRECT_HEX {
@@ -93,6 +120,15 @@ namespace DrData.Res {
         internal static string INCORRECT_NODE_NAME {
             get {
                 return ResourceManager.GetString("INCORRECT_NODE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Node type &apos;{0}&apos; does not match the expected type &apos;{1}&apos;..
+        /// </summary>
+        internal static string NODE_TYPE_IS_NOT_MATCHED {
+            get {
+                return ResourceManager.GetString("NODE_TYPE_IS_NOT_MATCHED", resourceCulture);
             }
         }
         

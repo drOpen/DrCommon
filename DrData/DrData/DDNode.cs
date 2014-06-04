@@ -54,13 +54,16 @@ namespace DrOpen.DrCommon.DrData
         public const string SerializePropCount = "Count";
         #endregion const
         #region Constructor
-        public DDNode(string name, string type)
+        public DDNode(string name, DDType type)
         {
             if (!IsNameCorect(name)) throw new ArgumentException(string.Format(Msg.INCORRECT_NODE_NAME, name));
             attributes = new DDAttributesCollection();
             Name = name;
             childNodes = new Dictionary<string, DDNode>();
-            Type = type;
+            if ((type == null)  || (type.Name==null))
+                Type = string.Empty;
+            else
+                Type = type;
             //if (Parent == null)
             //    Level = 1;
             //else
@@ -73,11 +76,14 @@ namespace DrOpen.DrCommon.DrData
         public DDNode(Enum name)
             : this(name.ToString())
         { }
-        public DDNode(Enum name, string type)
+        public DDNode(Enum name, DDType type)
             : this(name.ToString(), type)
         { }
         public DDNode()
             : this(Guid.NewGuid().ToString())
+        { }
+        public DDNode(DDType type)
+            : this(Guid.NewGuid().ToString(), type)
         { }
         private DDNode(DDNode parent)
             : this()
@@ -94,7 +100,7 @@ namespace DrOpen.DrCommon.DrData
         {
             Parent = parent;
         }
-        private DDNode(string name, DDNode parent, string type)
+        private DDNode(string name, DDNode parent, DDType type)
             : this(name, type)
         {
             Parent = parent;
@@ -165,7 +171,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Type of node
         /// </summary>
-        public string Type { get; set; }
+        public DDType Type { get; set; }
 
         /// <summary>
         /// Dictonary of children nodes
@@ -575,7 +581,7 @@ namespace DrOpen.DrCommon.DrData
             if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
 
             if ((value1.Name != value2.Name)) return 1; // if Name is not Equals->  return false
-            if (value1.IsExpectedNodeType(value2.Type)==false) return 1; // node type is not matched
+            if (value1.Type.CompareTo(value2.Type)!=0) return 1; // node type is not matched
             if ((value1.HasAttributes != value2.HasAttributes)) return 1; // if HasAttributes is not Equals->  return false
             if ((value1.HasChildNodes != value2.HasChildNodes)) return 1; // if HasChildNodes is not Equals->  return false
 
@@ -654,7 +660,7 @@ namespace DrOpen.DrCommon.DrData
 
             this.Name = reader.GetAttribute(SerializePropName);
             this.Type = reader.GetAttribute(SerializePropType);
-            if (this.Type == null) this.Type = string.Empty;
+            if (this.Type.Name == null) this.Type= string.Empty;
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
@@ -695,7 +701,7 @@ namespace DrOpen.DrCommon.DrData
         public DDNode(SerializationInfo info, StreamingContext context)
         {
             this.Name = (String)info.GetValue(SerializePropName, typeof(String));
-            this.Type = (String)info.GetValue(SerializePropType, typeof(String));
+            this.Type = (DDType)info.GetValue(SerializePropType, typeof(DDType));
             this.attributes = (DDAttributesCollection)info.GetValue(SerializePropAttributes, typeof(DDAttributesCollection));
             this.childNodes = (Dictionary<string, DDNode>)info.GetValue(SerializePropChildren, typeof(Dictionary<string, DDNode>));
         }
@@ -707,7 +713,7 @@ namespace DrOpen.DrCommon.DrData
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue(SerializePropName, Name, typeof(String));
-            info.AddValue(SerializePropType, Type, typeof(String));
+            info.AddValue(SerializePropType, Type, typeof(DDType));
             info.AddValue(SerializePropAttributes, attributes, typeof(DDAttributesCollection));
             info.AddValue(SerializePropChildren, childNodes, typeof(Dictionary<string, DDNode>));
         }
@@ -769,24 +775,22 @@ namespace DrOpen.DrCommon.DrData
         }
 
         #endregion Transform
-        #region NodeType
+
+        #region Size
         /// <summary>
-        /// Throw <exception cref="NodeTypeException">NodeTypeException</exception> if type of current node is not equals expected type
+        /// size in bytes of the stored data for all attributes in the current node and her children
         /// </summary>
-        /// <param name="expectedType"></param>
-        public void ThrowIsNotExpectedNodeType(string expectedType)
-        {
-            if (!IsExpectedNodeType(expectedType)) throw new NodeTypeException(this.Type, expectedType);
-        }
-        /// <summary>
-        /// Returns true if current node has type that equals expected type
-        /// </summary>
-        /// <param name="expectedType">expected type</param>
         /// <returns></returns>
-        public bool IsExpectedNodeType(string expectedType)
+        public long GetDataSize()
         {
-            return this.Type.Equals(expectedType);
+            long size = Attributes.GetDataSize();
+            foreach (var value in childNodes.Values)
+            {
+                size += value.GetDataSize();
+            }
+            return size;
         }
-        #endregion NodeType
+        #endregion Size
+
     }
 }

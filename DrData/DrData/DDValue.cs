@@ -246,7 +246,7 @@ namespace DrOpen.DrCommon.DrData
         }
 
         /// <summary>
-        /// sizePerElements in bytes of the stored data
+        /// size in bytes of the stored data
         /// </summary>
         public virtual long Size
         {

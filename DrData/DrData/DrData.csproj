@@ -45,11 +45,16 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="DDNodeST.cs" />
+    <Compile Include="DDType.cs" />
     <Compile Include="DDValue.cs" />
     <Compile Include="DDNode.cs" />
     <Compile Include="DDAttributesCollection.cs" />
-    <Compile Include="Exceptions\NodeTypeException.cs" />
-    <Compile Include="IDrData.cs" />
+    <Compile Include="Exceptions\NodeTypeException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IDrData.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Res\Msg.Designer.cs">
       <AutoGen>True</AutoGen>

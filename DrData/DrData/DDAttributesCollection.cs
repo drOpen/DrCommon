@@ -553,5 +553,20 @@ namespace DrOpen.DrCommon.DrData
             return (attributes != null ? attributes.GetHashCode() : 0);
         }
         #endregion GetHashCode
+        #region Size
+        /// <summary>
+        /// size in bytes of the stored data for all attributes
+        /// </summary>
+        /// <returns></returns>
+        public long GetDataSize()
+        {
+            long size = 0;
+            foreach (var value in Values)
+            {
+                size += value.Size;
+            }
+            return size;
+        }
+        #endregion Size
     }
 }

@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="OPTION_ALREADY_SPECIFIED_EARLY" xml:space="preserve">
+    <value>Option with name '{0}' has already been specified earlier. Option can not be specified more than once. If you want specify '{0}' as value you should be above use the special argument '{1}' forces an end of option-scanning regardless of the scanning mode. For switch back scanning mode use special argument '{2}'.</value>
+  </data>
+  <data name="OPTION_IS_NOT_SPECIFIED" xml:space="preserve">
+    <value>Contains the value '{0} of the option without declaring itself options. Should be specified option name starting with symbol '{1}' and then  value of this option.</value>
+  </data>
+  <data name="COMMAND_IS_DISABLED" xml:space="preserve">
+    <value>The specified command '{0}' is disabled. You can not specify disabled command.</value>
+  </data>
+  <data name="COMMAND_IS_NULL" xml:space="preserve">
+    <value>The specified command can not be null</value>
+  </data>
+  <data name="COMMAND_IS_NOT_SUPPORTED" xml:space="preserve">
+    <value>Command name '{0}' is specified but it is not listed in the supported commands.</value>
+  </data>
+  <data name="CANNOT_GET_COMMAND" xml:space="preserve">
+    <value>Cannot get specified command name.</value>
+  </data>
+  <data name="COMMAND_NAME_IS_EMPTY" xml:space="preserve">
+    <value>The specified command name can not be empty.</value>
+  </data>
+  <data name="COMMAND_NAME_IS_NOT_SPECIFIED" xml:space="preserve">
+    <value>The command name is not specified. Please specify the command name as the first argument. See Help about a list of allowed commands.</value>
+  </data>
+  <data name="OPTION_SYMBOL_IS_SPECEFIED" xml:space="preserve">
+    <value>The symbol '{0}' at the beginning of the argument is reserved for option name and if you want specify '{0}' as value you should be above use the special argument '{1}' forces an end of option-scanning regardless of the scanning mode. For switch back scanning mode use special argument '{2}'</value>
+  </data>
+  <data name="DUBLICATE_OPTION_NAME" xml:space="preserve">
+    <value>The option with name '{0}' is already specified in the command '{1}'.</value>
+  </data>
+  <data name="DUBLICATE_OPTION_ALIASES" xml:space="preserve">
+    <value>The option with alias '{0}' is already specified in the command '{1}'.</value>
+  </data>
+  <data name="OPTION_TYPE_IS_WRONG_BOTH_TYPES" xml:space="preserve">
+    <value>The option '{0}' has the wrong type '{1}'. Option cannot have both types '{2}' and '{3}' simultaneously.</value>
+  </data>
+  <data name="OPTION_TYPE_IS_WRONG" xml:space="preserve">
+    <value>The option '{0}' has the wrong type '{1}'.</value>
+  </data>
+  <data name="WITH_THIS_TYPE_CANNOT_BE_SPECIFIED_MORE_THAN_OTHER_TYPES" xml:space="preserve">
+    <value>With the value type '{0}' cannot be specified more than any other types.</value>
+  </data>
+  <data name="OPTION_TYPE_HAS_INCONGRUOUS_TYPES" xml:space="preserve">
+    <value>Option cannot have both incongruous types '{0}' and '{1}'.</value>
+  </data>
+  <data name="CANNOT_PARSE_VALUE_AS_TYPE_OF_OPTION" xml:space="preserve">
+    <value>Cannot parse '{0}' as type of option.</value>
+  </data>
+  <data name="CANNOT_PARSE_VALUE_AS_TYPE_OF_VALUE" xml:space="preserve">
+    <value>Cannot parse '{0}' as type of value.</value>
+  </data>
+  <data name="CANNOT_SPECIFY_ONE_TYPE_WITHOUT_SECOND_TYPE" xml:space="preserve">
+    <value>You can not specify the type '{0}' without type '{1}'.</value>
+  </data>
+  <data name="REFERENCE_TO_NON_EXISTEN_OPTION" xml:space="preserve">
+    <value>Command '{0}' contains an option '{1}' in the attribute '{2}' which has reference to non-existent or disabled option '{3}' in this command.</value>
+  </data>
+  <data name="ELEMENT_COUNT_IN_RESTRICTION_LIST_IS_NOT_EQUALS_OF_NUMERIC_LIST_COUNT" xml:space="preserve">
+    <value>The option '{0}' could be identified as the value not only from a list of restrictions, but also by their numeric value. In the setting of the number of elements in these lists are not equal. '{1}' is not equal '{2}'.</value>
+  </data>
+  <data name="CANNOT_BUILD_RESTRICTION_LIST_AND_NUMERIC_VALUE" xml:space="preserve">
+    <value>Cannot build restriction list and numeric value as single string because the number of elements in these lists are not equal.</value>
+  </data>
+  <data name="INCORRECT_TYPE_OF_RESTRICTION_LIST_AS_NUMERIC" xml:space="preserve">
+    <value>The type of attribute of restriction list should be array of integer. The current type '{0}' is incorrect.</value>
+  </data>
+  <data name="OPTION_ALREADY_SPECIFIED" xml:space="preserve">
+    <value>The option '{0}' in the command '{2}' is already specified as '{1}'.</value>
+  </data>
+  <data name="SPECIFIED_OPTION_IS_DISABLED" xml:space="preserve">
+    <value>The specified option '{0}' is disabled for command '{1}'. You can not select a disabled option.</value>
+  </data>
+  <data name="SPECIFIED_OPTION_IS_NOT_ALLOWED" xml:space="preserve">
+    <value>The specified option '{0}' is not allowed for command '{1}'.</value>
+  </data>
+  <data name="OPTION_IS_INCONGRUOUS_WTH_ANOTHER_OPTION" xml:space="preserve">
+    <value>Option '{1}' for the command '{0}' is incongruous with the option '{2}' which is specified.</value>
+  </data>
+  <data name="OPTION_DEPENDS_ANOTHER_NOT_SPECIFIED_OPTION" xml:space="preserve">
+    <value>Option '{1}' for the command '{0}' depends on the option '{2}' which is not specified.</value>
+  </data>
+  <data name="OPTION_SUPPORT_ONLY_FOLLOWING_VALUES" xml:space="preserve">
+    <value>This option supports only the following values: '{0}'.</value>
+  </data>
+  <data name="OPTION_SUPPORT_ONLY_FOLLOWING_VALUES_OR_NUMERIC" xml:space="preserve">
+    <value>This option supports only the following values or their numerical value: '{0}'.</value>
+  </data>
+  <data name="OPTION_HAS_INCORRECT_VALUE" xml:space="preserve">
+    <value>The option '{0}' in command '{2}' has incorrect value '{1}'.</value>
+  </data>
+  <data name="REQUIRED_OPTION_IS_NOT_SPECIFIED" xml:space="preserve">
+    <value>The required option '{0}' in command '{1}' isn't specified.</value>
+  </data>
+  <data name="OPTION_CANNOT_CONTAINS_MORE_THAN_ONE_VALUE" xml:space="preserve">
+    <value>Option '{0}' in command '{4}' has value '{1}' and consisting of '{2}' items. This option has type '{3}' and can not contain more than one value.</value>
+  </data>
+  <data name="OPTION_CANNOT_CONTAIN_VALUE" xml:space="preserve">
+    <value>Option '{0}' in command '{3}' has value '{1}'. This option has type '{2}' and can not contain value.</value>
+  </data>
+  <data name="OPTION_MUST_CONTAIN_VALUE" xml:space="preserve">
+    <value>Option '{0}' in command '{2}' has not value. This option has type '{1}' and must contain value.</value>
+  </data>
+  <data name="FLAG_TYPE_NOT_EQUALS_ANOTHER_ENUM_TYPE" xml:space="preserve">
+    <value>The verification flags '{0}' type has another type than enum '{1}'.</value>
+  </data>
+  <data name="TEXT_BUILDER_MARGIN_CANNOT_BE_LESS_THAN_ZERO" xml:space="preserve">
+    <value>Value of margin cannot be less than zero.</value>
+  </data>
+  <data name="TEXT_BUILDER_TEXT_WIDTH_CANNOT_BE_LESS_THAN_ZERO" xml:space="preserve">
+    <value>The width of the text can not be less than or equal to zero.</value>
+  </data>
+  <data name="TEXT_BUILDER_LEFT_MARGIN_GREATER_THAN_TEXT_WIDTH" xml:space="preserve">
+    <value>The left margin greater than the width of the text.</value>
+  </data>
+  <data name="ELEMENT_COUNT_IN_RESTRICTION_LIST_IS_NOT_EQUALS_OF_RESTRICTIOM_DESCRIPTION_LIST" xml:space="preserve">
+    <value>In the setting of the number of elements in list of restrictions '{1}' are not equal to number of elements in list of their descriptions {2}'.</value>
+  </data>
+  <data name="CANNOT_BUILD_RESTRICTION_LIST_AND_DESCRIPTION" xml:space="preserve">
+    <value>Cannot build restriction list and description as single string because the number of elements in these lists are not equal.</value>
+  </data>
+  <data name="CANNOT_BUILD_RESTRICTION_LIST_AND_NUMERIC_WITH_DESCRIPTION" xml:space="preserve">
+    <value>Cannot build restriction list with values and description as single string because the number of elements in these lists are not equal.</value>
+  </data>
+  <data name="SPECIFIED_TYPE_IS_NOT_ENUM_TYPE" xml:space="preserve">
+    <value>The specified type '{0}' is not the type of enum.</value>
+  </data>
+  <data name="HELP_OPTIONAL" xml:space="preserve">
+    <value>OPTIONAL</value>
+  </data>
+  <data name="HELP_REQUIRED" xml:space="preserve">
+    <value>REQUIRED</value>
+  </data>
+  <data name="HELP_SYNOPSIS" xml:space="preserve">
+    <value>SYNOPSIS</value>
+  </data>
+  <data name="HELP_COMMAND" xml:space="preserve">
+    <value>COMMAND</value>
+  </data>
+  <data name="HELP_DESCRIPTION" xml:space="preserve">
+    <value>DESCRIPTION</value>
+  </data>
+  <data name="HELP_EXAMPLE" xml:space="preserve">
+    <value>EXAMPLE</value>
+  </data>
+</root>

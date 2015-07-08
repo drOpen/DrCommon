@@ -133,7 +133,7 @@
     <value>The current value named '{0}' exists and will be preserved.</value>
   </data>
   <data name="INCORRECT_NODE_NAME" xml:space="preserve">
-    <value>The node name '{0}' is incorrect. The node name cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.</value>
+    <value>The node name '{0}' is incorrect. The node name cannot be empty and cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.</value>
   </data>
   <data name="NULL_PATH_ERR" xml:space="preserve">
     <value>The path cannot be null</value>

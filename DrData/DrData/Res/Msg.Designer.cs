@@ -115,7 +115,7 @@ namespace DrData.Res {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The node name &apos;{0}&apos; is incorrect. The node name cannot contain &apos;/&apos; character. As not well as having a name equal to one &apos;.&apos; or two &apos;..&apos; points..
+        ///   Looks up a localized string similar to The node name &apos;{0}&apos; is incorrect. The node name cannot be empty and cannot contain &apos;/&apos; character. As not well as having a name equal to one &apos;.&apos; or two &apos;..&apos; points..
         /// </summary>
         internal static string INCORRECT_NODE_NAME {
             get {

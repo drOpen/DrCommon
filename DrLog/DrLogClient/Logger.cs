@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using DrOpen.DrCommon.DrData;
+using DrLogClient.Res;
 
 namespace DrOpen.DrCommon.DrLog.DrLogClient
 {
@@ -42,7 +43,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
                 {
                     lock (lockLogger)
                     {
-                        if (stInstance == null) stInstance = new Logger();
+                        if (stInstance == null) stInstance = new Logger(); // double check 'stInstance' must have
                     }
                 }
                 return stInstance;
@@ -119,6 +120,22 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         #region write
 
         /// <summary>
+        /// Send MessageItem to transport for logging
+        /// </summary>
+        /// <param name="msg">message</param>
+        public virtual void Write(DDNode msg)
+        {
+            try
+            {
+               
+            }
+            catch (Exception e)
+            {
+               
+            }
+        }
+
+        /// <summary>
         /// Build MessageItem as DDNode and send to LogSrv across PipeTransport.<para> </para>
         /// Exposes the current time for this message. Defines the source name.<para> </para>
         /// Also replaces the format item in a specified body with the string representation of a corresponding object in a specified bodyArgs.
@@ -133,11 +150,35 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         {
             try
             {
-                body = (bodyArgs.Length != 0 ? string.Format(body, bodyArgs) : body);
+                body = ((bodyArgs != null) && (bodyArgs.Length != 0) ? string.Format(body, bodyArgs) : body);
             }
-            catch
-            {/* nothing to do */}
-            var msg = MessageItem(DateTime.Now, logLevel, GetSource(), exception, body, providers, recipients);
+            catch (Exception e)
+            {
+                var bodyF = body ?? "null";
+                WriteError(e, Msg.CANNOT_BUILD_MSG_BODY , bodyF, Args2String(bodyArgs)); 
+            }
+            Write(MessageItem(DateTime.Now, logLevel, GetSource(), exception, body, providers, recipients));
+        }
+
+        /// <summary>
+        /// Convert arguments string array to string like "'param1', 'empty', 'null'"
+        /// <remarks>Return "null" for null arguments and "empty" for 0 arguments</remarks> 
+        /// </summary>
+        /// <param name="args">arguments to convert</param>
+        /// <returns></returns>
+        public static string Args2String(params object[] args)
+        {
+            if (args==null) return "null";
+            if (args.Length ==0) return "empty";
+            string res = String.Empty;
+            foreach (var item in args)
+            {
+                if (res.Length != 0) res += ", ";
+                var itemF = (item == null) ? "null" : item.ToString();
+                if (itemF.Length == 0) itemF = "empty";
+                res += "'" + itemF + "'";
+            }
+            return res;
         }
 
         /// <summary>
@@ -153,7 +194,6 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         {
             Write(logLevel, exception, null, null, body, bodyArgs);
         }
-        #endregion write
 
         #region WriteError
         /// <summary>
@@ -239,7 +279,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
             Write(LogLevel.TRC, null, body, bodyArgs);
         }
         #endregion WriteTrace
-        #region WriteTrace2
+        #region WriteDebug
         /// <summary>
         /// Write debug message
         /// </summary>
@@ -259,6 +299,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         {
             Write(LogLevel.DBG, null, body, bodyArgs);
         }
-        #endregion WriteTrace2
+        #endregion WriteDebug
+        #endregion write
     }
 }

@@ -7,7 +7,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
     /// Log Level
     /// </summary>
     [Flags]
-    public enum LogLevel
+    public enum LogLevel: int
     {
 
         NONE = 0,

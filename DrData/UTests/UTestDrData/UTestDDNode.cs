@@ -1222,6 +1222,22 @@ namespace UTestDrData
         }
 
         [TestMethod]
+        public void TestDDNodeXmlSerializationEmpty()
+        {
+            var root = new DDNode();
+            ValidateXMLDeserialization(root);
+        }
+
+        [TestMethod]
+        public void TestDDNodeXmlSerializationWithoutAttributeCollection()
+        {
+            var stream = UTestDrDataCommon.GetMemoryStreamFromFile();
+            stream.Position = 0;
+            var deserialyzed = XMLDeserialyze(stream); // check looping
+
+        }
+
+        [TestMethod]
         public void TestDDNodeXmlSerializationHierarchy()
         {
             var root = new DDNode("root", "NodeType");

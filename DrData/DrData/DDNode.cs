@@ -664,7 +664,7 @@ namespace DrOpen.DrCommon.DrData
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
-            if (isEmptyElement) return; // Exit for element without child <DDNode />
+            if ((isEmptyElement) |  (reader.NodeType == XmlNodeType.EndElement)) return; // Exit if element without child '<DDNode/>' or is empty node '<DDNode></DDNode>'
 
             var initialDepth = reader.Depth;
 

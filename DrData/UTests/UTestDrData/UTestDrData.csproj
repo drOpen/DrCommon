@@ -86,6 +86,9 @@
     <Content Include="XML\TestDDNodeXmlSerializationFromFileSkipIncorrectedData.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XML\TestDDNodeXmlSerializationWithoutAttributeCollection.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArrayDeepWithValue.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

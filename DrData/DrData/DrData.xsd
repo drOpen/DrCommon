@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-    DrData.xsd - This XML Schema representation of data storage DrData in xml format, 1.0.1, April 20, 2014
-    Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
+    DrData.xsd - This XML Schema representation of data storage DrData in xml format, 1.0.1, April 20, 2015
+    Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
     Kudryashov Andrey <kudryashov.andrey at gmail.com>
   -->
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -12,7 +12,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:choice maxOccurs="unbounded">
-          <xs:element ref="DDAttributesCollection" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="DDAttributesCollection" minOccurs="1" maxOccurs="1"/>
           <xs:element ref="DDNode" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
       </xs:sequence>
@@ -33,6 +33,13 @@
       </xs:attribute>
       <xs:anyAttribute processContents="skip" />
     </xs:complexType>
+    <xs:unique name ="uniqNodeName">
+      <xs:annotation >
+        <xs:documentation >Checking the uniqueness of the name of the DDNode on the same level</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./DDNode"/>
+      <xs:field xpath="@Name"/>
+    </xs:unique>
   </xs:element>
 
   <xs:element name="DDAttributesCollection">
@@ -121,8 +128,9 @@
         <xs:enumeration value="System.DateTime[]"/>
         <xs:enumeration value="System.Byte"/>
         <xs:enumeration value="System.Byte[]"/>
+        <xs:enumeration value="System.Guid"/>
+        <xs:enumeration value="System.Guid[]"/>
       </xs:restriction>
     </xs:simpleType>
   </xs:attribute>
-
 </xs:schema>

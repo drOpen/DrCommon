@@ -2717,6 +2717,121 @@ namespace UTestDrData
             Assert.IsFalse(a.Equals(b), "Equal doesn't work.");
         }
         #endregion test byte[]
+
+        #region test guid
+        [TestMethod]
+        public void TestCreateWithGuidEmptyValue()
+        {
+            var test =  Guid.Empty ;
+            var a = new DDValue(test);
+            ValidateGuid(test, a);
+        }
+        
+        [TestMethod]
+        public void TestCreateWithNewGuid()
+        {
+            var test = Guid.NewGuid ();
+            var a = new DDValue(test);
+            ValidateGuid(test, a);
+        }
+        [TestMethod]
+        public void TestCreateSetImpicitGuidValue()
+        {
+            Guid test = Guid.NewGuid ();
+            var a = new DDValue();
+            a = test;
+            ValidateGuid(test, a);
+        }
+
+        [TestMethod]
+        public void TestChangeGuidValue()
+        {
+            Guid test = Guid.NewGuid ();
+            var a = new DDValue();
+            a = test;
+            ValidateGuid(test, a);
+            test = Guid.Empty ;
+            a = test;
+            ValidateGuid(test, a);
+        }
+        [TestMethod]
+        public void TestChangeTypeFromGuidToInt()
+        {
+            var test = Guid.Empty ;
+            var a = new DDValue();
+            a = test;
+            ValidateGuid(test, a);
+            var b = int.MinValue;
+            a = b;
+            ValidateInt(b, a);
+            CommonChangeObjectTypeValidation(a, test);
+        }
+        [TestMethod]
+        public void TestGuidToFromHex()
+        {
+            var test = Guid.NewGuid() ;
+            var a = new DDValue(test);
+            ValidateGuid(test, a);
+            var hexValue = a.GetValueAsHEX();
+            var b = new DDValue();
+            b.SetHEXValue(test.GetType(), hexValue);
+            ValidateGuid(test, b);
+            Assert.IsTrue(a == b, "The to/from HEX convertion doesn't work.");
+            Assert.IsFalse(a.Equals(b), "Equal doesn't work.");
+        }
+        #endregion test guid
+        #region test guid[]
+        
+        [TestMethod]
+        public void TestCreateWithEmptyGuidArray()
+        {
+            Guid[] test = { };
+            var a = new DDValue(test);
+            ValidateGuidArray(test, a);
+        }
+        public void TestCreateWithGuidArrayEmptyValue()
+        {
+            Guid[] test = { Guid.Empty  };
+            var a = new DDValue(test);
+            ValidateGuidArray(test, a);
+        }
+
+        [TestMethod]
+        public void TestCreateSetImpicitGuidArrayValue()
+        {
+            Guid[] test = { Guid.NewGuid() , Guid.NewGuid (), Guid.NewGuid () };
+            var a = new DDValue();
+            a = test;
+            ValidateGuidArray(test, a);
+        }
+
+        [TestMethod]
+        public void TestChangeTypeFromGuidArrayToInt()
+        {
+            Guid[] test = { Guid.NewGuid() , Guid.NewGuid (), Guid.NewGuid () };
+            var a = new DDValue();
+            a = test;
+            ValidateGuidArray(test, a);
+            var b = int.MinValue;
+            a = b;
+            ValidateInt(b, a);
+            CommonChangeObjectTypeValidation(a, test);
+        }
+        [TestMethod]
+        public void TestGuidArrayToFromHex()
+        {
+            Guid[] test = { Guid.NewGuid() , Guid.NewGuid (), Guid.NewGuid () };
+            var a = new DDValue(test);
+            ValidateGuidArray(test, a);
+            var hexValue = a.GetValueAsHEX();
+            var b = new DDValue();
+            b.SetHEXValue(test.GetType(), hexValue);
+            ValidateGuidArray(test, b);
+            Assert.IsTrue(a == b, "The to/from HEX convertion doesn't work.");
+            Assert.IsFalse(a.Equals(b), "Equal doesn't work.");
+        }
+        #endregion test guid[]
+
         #region ToStringArray
         [TestMethod]
         public void TestNullDataToStringArray()
@@ -2970,6 +3085,16 @@ namespace UTestDrData
             Assert.IsTrue(attr == b, "The implicit boolean conversion is not matched expected text.");
             Assert.IsTrue(attr.GetValueAsBool() == b, "The explicit boolean conversion is not matched expected text.");
         }
+        private void ValidateGuid(Guid g, DDValue attr)
+        {
+            CommonObjectValidation(g, attr);
+            Guid resImpicit = attr;
+            Assert.IsTrue(resImpicit == g, "The implicit Guid conversion is not matched expected bool.");
+            var resGetValue = (Guid)attr.GetValue();
+            Assert.IsTrue(resGetValue == g, "The implicit Guid conversion is not matched expected text.");
+            Assert.IsTrue((Guid)attr == g, "The implicit byte conversion is not matched expected text.");
+            Assert.IsTrue(attr.GetValueAsGuid() == g, "The explicit byte conversion is not matched expected text.");
+        }
         private void ValidateStringArray(string[] array, DDValue data)
         {
             CommonObjectValidation(array, data);
@@ -3002,6 +3127,18 @@ namespace UTestDrData
             Assert.IsTrue(resGetValue == data, string.Format("The implicit '{0}' conversion is not matched expected text.", array.GetType().Name));
             Assert.IsTrue(CompareArray<bool>(data.GetValueAsBoolArray(), array), "The explicit bool[] conversion is not matched expected bool[].");
             Assert.IsTrue(data.ToString() == array.ToString(), "The ToString() bool[] conversion is not matched expected text.");
+
+        }
+        private void ValidateGuidArray(Guid[] array, DDValue data)
+        {
+            CommonObjectValidation(array, data);
+            Guid[] resImpicit = data;
+            Assert.IsTrue(resImpicit == data, string.Format("The implicit '{0}' conversion is not matched expected '{0}'.", array.GetType().Name));
+            Assert.IsTrue(data == array, string.Format("The implicit '{0}' conversion is not matched expected '{0}'.", array.GetType().Name));
+            var resGetValue = (Guid[])data.GetValue();
+            Assert.IsTrue(resGetValue == data, string.Format("The implicit '{0}' conversion is not matched expected text.", array.GetType().Name));
+            Assert.IsTrue(CompareArray<Guid>(data.GetValueAsGuidArray(), array), "The explicit Guid[] conversion is not matched expected bool[].");
+            Assert.IsTrue(data.ToString() == array.ToString(), "The ToString() Guid[] conversion is not matched expected text.");
 
         }
         private void ValidateIntArray(int[] array, DDValue data)
@@ -3316,6 +3453,16 @@ namespace UTestDrData
             ValidateXMLDeserialization(new DDValue(new Single[] { Single.MaxValue, Single.MinValue, Single.MaxValue }));
         }
         [TestMethod]
+        public void TestDDValueXmlSerializationGuid()
+        {
+            ValidateXMLDeserialization(new DDValue(Guid.NewGuid ()));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationGuidArray()
+        {
+            ValidateXMLDeserialization(new DDValue(new Guid[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()}));
+        }
+        [TestMethod]
         public void TestDDValueXmlSerializationChar()
         {
             ValidateXMLDeserialization(new DDValue('c'));
@@ -3390,6 +3537,11 @@ namespace UTestDrData
         public void TestDDValueXmlSerializationEmptyBoolArray()
         {
             ValidateXMLDeserialization(new DDValue(new bool[] { }));
+        }
+        [TestMethod]
+        public void TestDDValueXmlSerializationEmptyGuidArray()
+        {
+            ValidateXMLDeserialization(new DDValue(new Guid[] { }));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationEmptyIntArray()

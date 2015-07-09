@@ -333,6 +333,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(ushort)) return BitConverter.GetBytes((ushort)value);
             if (type == typeof(uint)) return BitConverter.GetBytes((uint)value);
             if (type == typeof(ulong)) return BitConverter.GetBytes((ulong)value);
+            if (type == typeof(Guid)) return ((Guid)value).ToByteArray();
 
             if (type == typeof(string[])) return Encoding.UTF8.GetBytes(string.Join("\0", (string[])value));
             if (type.IsArray) return JoinByteArray((Array)value);
@@ -365,7 +366,7 @@ namespace DrOpen.DrCommon.DrData
         {
 
             if (type == typeof(byte[])) return HEX(value);
-            if (type == typeof(byte)) return Convert.ToByte(value) ;
+            if (type == typeof(byte)) return Convert.ToByte(value);
             //if (type == typeof(byte)) return new[] { Convert.ToByte(value) };
 
             if (type == typeof(string)) return value.ToString();
@@ -380,7 +381,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(ushort)) return Convert.ToUInt16(value);
             if (type == typeof(uint)) return Convert.ToUInt32(value);
             if (type == typeof(ulong)) return Convert.ToUInt64(value);
-
+            if (type == typeof(Guid)) return new Guid (value);
             throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, type.Name));
         }
 
@@ -476,6 +477,14 @@ namespace DrOpen.DrCommon.DrData
             return new DDValue(value);
         }
         public static implicit operator DDValue(bool[] value)
+        {
+            return new DDValue(value);
+        }
+        public static implicit operator DDValue(Guid value)
+        {
+            return new DDValue(value);
+        }
+        public static implicit operator DDValue(Guid[] value)
         {
             return new DDValue(value);
         }
@@ -585,6 +594,14 @@ namespace DrOpen.DrCommon.DrData
         {
             return value.GetValueAsBoolArray();
         }
+        public static implicit operator Guid(DDValue value)
+        {
+            return value.GetValueAsGuid();
+        }
+        public static implicit operator Guid[](DDValue value)
+        {
+            return value.GetValueAsGuidArray();
+        }
         public static implicit operator char(DDValue value)
         {
             return value.GetValueAsChar();
@@ -654,6 +671,8 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(double[])) return GetValueAsDoubleArray();
             if (Type == typeof(bool)) return GetValueAsBool();
             if (Type == typeof(bool[])) return GetValueAsBoolArray();
+            if (Type == typeof(Guid)) return GetValueAsGuid();
+            if (Type == typeof(Guid[])) return GetValueAsGuidArray();
             if (Type == null) return null;
             throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, (Type == null ? "null" : Type.Name)));
         }
@@ -709,6 +728,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(float)) return BitConverter.ToSingle(data, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(data, 0);
             if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
+            if (type == typeof(Guid)) return new Guid(data);
 
             throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, (type == null ? "null" : type.Name)));
         }
@@ -746,6 +766,15 @@ namespace DrOpen.DrCommon.DrData
         public virtual bool[] GetValueAsBoolArray()
         {
             return GetValueAsArray<bool>();
+        }
+
+        public virtual Guid GetValueAsGuid()
+        {
+            return GetValueAs<Guid>();
+        }
+        public virtual Guid[] GetValueAsGuidArray()
+        {
+            return GetValueAsArray<Guid>();
         }
 
         public virtual char GetValueAsChar()
@@ -882,7 +911,9 @@ namespace DrOpen.DrCommon.DrData
                     type == typeof(ulong) ||
                     type == typeof(ulong[]) ||
                     type == typeof(double) ||
-                    type == typeof(double[]));
+                    type == typeof(double[]) ||
+                    type == typeof(Guid) ||
+                    type == typeof(Guid[]));
         }
         #endregion ValidateType
         #region ObjectSize
@@ -897,6 +928,7 @@ namespace DrOpen.DrCommon.DrData
             var type = obj.GetType();
             if (type == typeof(string)) return Encoding.UTF8.GetBytes(obj.ToString()).Length;
             if (type == typeof(byte[])) return ((byte[])obj).Length;
+            if (type == typeof(Guid)) return ((Guid)obj).ToByteArray().Length;
             if (type.IsArray) return GetArraySize((Array)obj);
 
             return GetPrimitiveSize(type);
@@ -921,7 +953,9 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(double)) return sizeof(double);
             if (type == typeof(bool)) return sizeof(bool);
             if (type == typeof(DateTime)) return sizeof(Int64);
+            if (type == typeof(Guid)) return Guid.Empty.ToByteArray().Length;
             throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, type.Name));
+            
         }
         /// <summary>
         /// Return the sizePerElements of occupied space in the memory of the array.
@@ -1175,7 +1209,8 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="newType">convert to specified type</param>
         /// <returns></returns>
         public DDValue SelfTransformFromStringTo(Type newType)
-        {   if (this.Type==null) throw new NullReferenceException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
+        {
+            if (this.Type == null) throw new NullReferenceException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
             if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new FormatException(string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
             if (this.Type.IsArray != newType.IsArray) throw new FormatException(string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
             if ((newType == typeof(string) || (newType == typeof(string[])))) return this; // nothing to do

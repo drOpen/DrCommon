@@ -21,6 +21,11 @@
           <xs:documentation>Name of node. This attribute is required.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="Type" type="xs:string" use="optional" default="">
+        <xs:annotation>
+          <xs:documentation>Type of node. This attribute is optional.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="IsRoot" type="xs:boolean" use="optional" default="false">
         <xs:annotation>
           <xs:documentation>Attribute exhibition on the root node. This attribute is optional and by default value is 'false'. This attribute information and is not used when creating an object.</xs:documentation>

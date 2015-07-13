@@ -33,7 +33,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using DrOpen.DrCommon.DrData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DrOpen.DrCommon.DrData;
 
 namespace UTestDrData
 {
@@ -432,7 +431,7 @@ namespace UTestDrData
             }
         }
         #endregion Clone()
-        #region UTest ForEach
+        #region ForEach
         [TestMethod]
         public void TestForEach()
         {
@@ -580,7 +579,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCompareBothNull()
         {
-            Assert.IsTrue(DDAttributesCollection.Compare( null, null)==0, "The null objects should be equals.");
+            Assert.IsTrue(DDAttributesCollection.Compare(null, null) == 0, "The null objects should be equals.");
         }
         [TestMethod]
         public void TestCompareOneOfNull()
@@ -757,7 +756,7 @@ namespace UTestDrData
             var a = new DDAttributesCollection();
             a.Add(string.Empty, null);
             a.Add("A", null);
-            a.Add("B", new DDValue(new string[]{"", "Value_A", "Value_B"}));
+            a.Add("B", new DDValue(new string[] { "", "Value_A", "Value_B" }));
             ValidateXMLDeserialization(a, UTestDrDataCommon.GetMemoryStreamFromFile());
         }
 
@@ -814,40 +813,85 @@ namespace UTestDrData
 
         #endregion IXmlSerializable
 
+        #region Merge
+        [TestMethod]
+        public void TestMergeEmptyCollectionWithEmptyCollection()
+        {
+            var a1 = new DDAttributesCollection();
+            var a2 = new DDAttributesCollection();
+            a1.Merge(a2);
+            Assert.IsTrue(a1.Count == 0, "Incorrect attribute count.");
+        }
+        [TestMethod]
+        public void TestMergeEmptyCollectionWithStock()
+        {
+            var a1 = new DDAttributesCollection();
+            var a2 = GetStockAttributesCollection();
+            a1.Merge(a2);
+            Assert.IsTrue(a1 == a2, "The both attribute collection must be equals.");
+            a2.Remove(TEST_ENUM.TEST_ENUM_a);
+            a2.Remove(TEST_ENUM.TEST_ENUM_A);
+            Assert.IsFalse(a1.Count == a2.Count, "The both attribute collection are reference to same data.");
+        }
+        [TestMethod]
+        public void TestMergeStockCollectionWithEmptyCollection()
+        {
+            var a1 = GetStockAttributesCollection();
+            var a2 = new DDAttributesCollection();
+            a1.Merge(a2);
+            Assert.IsTrue(a1 == GetStockAttributesCollection(), "The both attribute collection must be equals.");
+            Assert.IsTrue(a2 == new DDAttributesCollection(), "The both attribute collection must be equals.");
+        }
 
-        private List<EventArgs> doLogInEventArgs;
-        //#region DoLogIn
-        //[TestMethod]
-        //public void TestDoLogIn()
-        //{
-        //    doLogInEventArgs = new List<EventArgs>();
-        //    var attrsOriginal = GetStockAttributesCollection();
-        //    attrsOriginal.DoLogIn +=(EventCatcher);
-        //    attrsOriginal.Add(TEST_ENUM.TEST_ENUM_A, "BB", ResolveConflict.OVERWRITE);
-        //    attrsOriginal.Add(TEST_ENUM.TEST_ENUM_B, "CC", ResolveConflict.SKIP);
-        //    attrsOriginal.Add("New Item", "New", ResolveConflict.SKIP);
-        //    attrsOriginal.DoLogIn -= (EventCatcher);
-        //    attrsOriginal.Add(TEST_ENUM.TEST_ENUM_A, "EE", ResolveConflict.OVERWRITE);
+        [TestMethod]
+        public void TestMergeStockCollectionConflictResolutionSkip()
+        {
+            var a1 = GetStockAttributesCollection();
+            var a2 = new DDAttributesCollection();
+            var newValue = new DrOpen.DrCommon.DrData.DDValue(1);
+            a2.Add(TEST_ENUM.TEST_ENUM_a, newValue);
+            a1.Merge(a2, DrOpen.DrCommon.DrData.ResolveConflict.SKIP);
+            Assert.IsTrue(a1 == GetStockAttributesCollection(), "The both attribute collection must be equals.");
+            Assert.IsFalse(a1.GetValue(TEST_ENUM.TEST_ENUM_a, null) == newValue, "The attribute must have previous value.");
+        }
+        [TestMethod]
+        public void TestMergeStockCollectionConflictResolutionOverwrite()
+        {
+            var a1 = GetStockAttributesCollection();
+            var a2 = new DDAttributesCollection();
+            var newValue = new DrOpen.DrCommon.DrData.DDValue(1);
+            a2.Add(TEST_ENUM.TEST_ENUM_a, newValue);
+            a1.Merge(a2, DrOpen.DrCommon.DrData.ResolveConflict.OVERWRITE);
+            Assert.IsFalse(a1 == GetStockAttributesCollection(), "The both attribute collection cannot be equals.");
+            Assert.IsTrue(a1.GetValue(TEST_ENUM.TEST_ENUM_a, null) == newValue, "The attribute must have new value.");
+        }
+        [TestMethod]
+        public void TestMergeStockCollectionConflictResolutionThrow()
+        {
+            var a1 = GetStockAttributesCollection();
+            var a2 = new DDAttributesCollection();
+            var newValue = new DrOpen.DrCommon.DrData.DDValue(1);
+            a2.Add(TEST_ENUM.TEST_ENUM_a, newValue);
 
-        //    Assert.IsTrue(doLogInEventArgs.Count==2, "There are not 2 events in the event list.");
-        //    var eventDoLog= (LogInEventArgs)doLogInEventArgs[0];
-        //    Assert.IsTrue(eventDoLog.Exception == null, "Exception in the event should be null.");
-        //    Assert.IsTrue(eventDoLog.Args[0].ToString() == TEST_ENUM.TEST_ENUM_A.ToString(), "The first argument should be expected.");
-        //    Assert.IsTrue(eventDoLog.Args[1].ToString() == "BB", "The second argument should be value.");
-
-        //    eventDoLog = (LogInEventArgs)doLogInEventArgs[1];
-        //    Assert.IsTrue(eventDoLog.Exception == null, "Exception in the event should be null.");
-        //    Assert.IsTrue(eventDoLog.Args[0].ToString() == TEST_ENUM.TEST_ENUM_B.ToString(), "The first argument should be expected.");
-        //    Assert.IsTrue(eventDoLog.Args[1].ToString() == "CC", "The second argument should be value.");
-
-        //}
-
-        //private void EventCatcher(object eventSender, EventArgs eventArgs)
-        //{
-        //    doLogInEventArgs.Add(eventArgs);
-        //}
-
-        //#endregion DoLogIn
+            try
+            {
+                a1.Merge(a2, DrOpen.DrCommon.DrData.ResolveConflict.THROW_EXCEPTION);
+                Assert.Fail("Cannot catch exception!");
+            }
+            catch (ArgumentException)
+            {
+                Assert.IsTrue(a1 == GetStockAttributesCollection(), "Collections must be equals.");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Assert.Fail("Catch incorrect exception!" + e.Message);
+            }
+        }
+        #endregion Merge
     }
 
 }

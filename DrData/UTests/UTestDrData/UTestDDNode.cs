@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
+
 namespace UTestDrData
 {
     [TestClass]
@@ -47,6 +48,26 @@ namespace UTestDrData
             TEST_ENUM_B,
             TEST_ENUM_NULL,
         }
+
+        static private DDNode GetStockHierarhy()
+        {
+            var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
+
+            var a = new DDNode("a");
+            a.Attributes.Add("value a->a", "string");
+            a.Attributes.Add("value a->b", true);
+            var a_b = a.Add("a.b");
+            var a_c = a.Add("a.c");
+            a_c.Attributes.Add("value a.c->a", "string");
+            a_c.Attributes.Add("value a.c->b", true);
+            a_c.Attributes.Add("value a.c->c", dtNow);
+            var a_b_d = a_b.Add("a.b.d");
+            var a_b_d_e = a_b_d.Add("a.b.d.e");
+            a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
+            a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
+            return a;
+        }
+
         #region GetNextNodeNameByPath
 
         [TestMethod]
@@ -139,24 +160,7 @@ namespace UTestDrData
         #endregion GetNextNodeNameByPath
         #region GetNode
 
-        private DDNode GetHierarhy()
-        {
-            var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
 
-            var a = new DDNode("a");
-            a.Attributes.Add("value a->a", "string");
-            a.Attributes.Add("value a->b", true);
-            var a_b = a.Add("a.b");
-            var a_c = a.Add("a.c");
-            a_c.Attributes.Add("value a.c->a", "string");
-            a_c.Attributes.Add("value a.c->b", true);
-            a_c.Attributes.Add("value a.c->c", dtNow);
-            var a_b_d = a_b.Add("a.b.d");
-            var a_b_d_e = a_b_d.Add("a.b.d.e");
-            a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
-            a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
-            return a;
-        }
 
         [TestMethod]
         public void TestGetNodeByPathNull()
@@ -164,7 +168,7 @@ namespace UTestDrData
             string path = null;
             try
             {
-                var name = GetHierarhy().GetNode(path);
+                var name = GetStockHierarhy().GetNode(path);
                 Assert.Fail("Cannot catch null reference exception!");
             }
             catch (AssertFailedException e)
@@ -186,7 +190,7 @@ namespace UTestDrData
         public void TestGetNodeFromRootBySlash()
         {
             var path = "/";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var result = root.GetNode(path); //get some node
             Assert.IsTrue(root.Path == result.Path, "Get node by path '{0}' is incorrect.", path);
         }
@@ -195,7 +199,7 @@ namespace UTestDrData
         public void TestGetNodeFromRootByDoubleSlash()
         {
             var path = "//";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var result = root.GetNode(path); //get some node
             Assert.IsTrue(root.Path == result.Path, "Get node by path '{0}' is incorrect.", path);
         }
@@ -204,7 +208,7 @@ namespace UTestDrData
         public void TestGetNodeFromRootBySlashPointSlash()
         {
             var path = "/./";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var result = root.GetNode(path); //get some node
             Assert.IsTrue(root.Path == result.Path, "Get node by path '{0}' is incorrect.", path);
         }
@@ -213,7 +217,7 @@ namespace UTestDrData
         public void TestGetNodeFromRootByPoint()
         {
             var path = ".";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var result = root.GetNode(path); //get some node
             Assert.IsTrue(root.Path == result.Path, "Get node by path '{0}' is incorrect.", path);
         }
@@ -224,7 +228,7 @@ namespace UTestDrData
         {
             var path = "/a.b";
             var expectedPath = path;
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var result = root.GetNode(path); //get some node
             Assert.IsTrue(expectedPath == result.Path, "Get node by path '{0}' is incorrect.", path);
         }
@@ -234,7 +238,7 @@ namespace UTestDrData
         {
             var path = "a.b";
             var expectedPath = "/" + path;
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var result = root.GetNode(path); //get some node
             Assert.IsTrue(expectedPath == result.Path, "Get node by path '{0}' is incorrect.", path);
         }
@@ -243,7 +247,7 @@ namespace UTestDrData
         public void TestGetNodeFromRootToUpper()
         {
             var path = "..";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             try
             {
                 var result = root.GetNode(path); //attempt to rise above root node
@@ -268,7 +272,7 @@ namespace UTestDrData
         public void TestGetUpperNode()
         {
             var path = "..";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.GetNode("/a.b");
             var getRoot = child.GetNode(path);
             Assert.IsTrue(getRoot.IsRoot, "The root node requirement.");
@@ -278,7 +282,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestGetNodeByEnum()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child1 = root.Add(TEST_ENUM.TEST_ENUM_A);
             var child2 = root.Add(TEST_ENUM.TEST_ENUM_a);
 
@@ -298,7 +302,7 @@ namespace UTestDrData
         public void TestGetPathForRoot()
         {
             var path = "/";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.GetNode("/a.b");
             var getRoot = child.GetNode(path);
             Assert.IsTrue(root.GetPath() == path, "The path for root node should be '/'.");
@@ -309,7 +313,7 @@ namespace UTestDrData
         public void TestGetPathForChildNode()
         {
             var path = "/a.b";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.GetNode(path);
 
             Assert.IsTrue(child.GetPath() == path, string.Format("The path for child node should be '{0}'.", path));
@@ -319,7 +323,7 @@ namespace UTestDrData
         public void TestGetPathForSubChildNode()
         {
             var path = "/a.b/a.b.d";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.GetNode("a.b");
             child = child.GetNode("a.b.d");
 
@@ -339,7 +343,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCloneNode()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var deep = false;
             var clone = (DDNode)root.Clone(deep);
             ValidateClone(root, clone, deep);
@@ -348,7 +352,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCloneNodesDeep()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var deep = true;
             var clone = (DDNode)root.Clone(deep);
             ValidateClone(root, clone, deep);
@@ -374,8 +378,8 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeComporatorForUnitTest()
         {
-            var root1 = GetHierarhy();
-            var root2 = GetHierarhy();
+            var root1 = GetStockHierarhy();
+            var root2 = GetStockHierarhy();
             CompareNodeProperties(root1, root2, true);
         }
 
@@ -406,7 +410,7 @@ namespace UTestDrData
         {
             var child_node_name = "a.b";
 
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.GetNode(child_node_name);
             var initial_root_child_count = root.Count;
             Assert.IsTrue(root.Count > 0, "Incorrect collection count.");
@@ -424,7 +428,7 @@ namespace UTestDrData
         public void TestNodeRemoveChildException()
         {
             var child_node_name = "mistake";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             Assert.IsNull(root.Remove(child_node_name), "Removed nonexistent object.");
         }
 
@@ -433,7 +437,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeClear()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             Assert.IsTrue(root.Count > 0, "Incorrect collection count.");
             root.Clear();
             ValidateChildNodeCount(root, 0);
@@ -447,7 +451,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeClearChild()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.GetNode("/a.b/a.b.d");
             Assert.IsTrue(child.Count > 0, "Incorrect collection count.");
             child.Clear();
@@ -458,7 +462,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeClearRootDeepCheckChildReference()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child1 = root.GetNode("/a.b/a.b.d");
             var child2 = root.GetNode("/a.b/a.b.d/a.b.d.e");
             root.Clear(true);
@@ -475,7 +479,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeClearRootNotDeepCheckChildReference()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child1 = root.GetNode("/a.b");
             var child2 = root.GetNode("/a.b/a.b.d");
             var child3 = root.GetNode("/a.b/a.b.d/a.b.d.e");
@@ -502,7 +506,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeLeaveParentRoot()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var new_root = root.LeaveParent();
             CompareNodeProperties(root, new_root, true);
             ValidateNodeIsRoot(new_root);
@@ -510,7 +514,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNodeLeaveParent()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child1 = root.GetNode("/a.b");
             var child2 = root.GetNode("/a.b/a.b.d");
             var child3 = root.GetNode("/a.b/a.b.d/a.b.d.e");
@@ -563,7 +567,7 @@ namespace UTestDrData
         {
             string path = null;
 
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode node = null;
             bool res = false;
             try
@@ -580,7 +584,7 @@ namespace UTestDrData
         public void TestTryGetNodeByPathEmpty()
         {
             string path = string.Empty;
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode node = null;
             bool res = false;
             try
@@ -600,7 +604,7 @@ namespace UTestDrData
         public void TestTryGetRootNodeByPath()
         {
             string path = "/";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode node = null;
             bool res = false;
             try
@@ -620,7 +624,7 @@ namespace UTestDrData
         public void TestTryGetNodeByIncorectPath()
         {
             string path = "+++/";
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode node = null;
             bool res = false;
             try
@@ -638,7 +642,7 @@ namespace UTestDrData
         public void TestTryGeNodeByPath()
         {
 
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child1 = root.Add(TEST_ENUM.TEST_ENUM_A);
             var child2 = root.Add(TEST_ENUM.TEST_ENUM_a);
 
@@ -662,7 +666,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeYourSelfAsChildNode()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             try
             {
                 root.Add(root);
@@ -678,7 +682,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithParent()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var rootInitialChildCount = root.Count;
             var n1 = root.Add();
             var n2 = n1.Add(n1.Name);
@@ -703,7 +707,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithIncorrectNameDot()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             try
             {
@@ -720,7 +724,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithIncorrectNameDoubleDot()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             try
             {
@@ -737,7 +741,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithIncorrectNameWithSlash()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             try
             {
@@ -754,7 +758,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithIncorrectNameSlash()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             try
             {
@@ -771,7 +775,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithIncorrectEmptyName()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             try
             {
@@ -788,7 +792,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithIncorrectNameNull()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             try
             {
@@ -806,7 +810,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithCorrectName()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             DDNode child;
             child = root.Add(".\\.");
             ValidateNodeIsNotRoot(child);
@@ -814,7 +818,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeWithAutogeneratedUniqName()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var rootInitialChildCount = root.Count;
             var n1 = root.Add();
             var n2 = root.Add();
@@ -830,7 +834,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeValidateUniqName()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var rootInitialChildCount = root.Count;
             var n1 = root.Add();
             var n2 = n1.Add(n1.Name);
@@ -855,7 +859,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestAddNodeAsEnum()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = root.Add(TEST_ENUM.TEST_ENUM_a);
             ValidateNodeIsNotRoot(child);
             ValidateNodeLevel(child, 2);
@@ -865,7 +869,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestNewNodeAsEnum()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             var child = new DDNode(TEST_ENUM.TEST_ENUM_a);
             ValidateNodeName(child, TEST_ENUM.TEST_ENUM_a.ToString());
             ValidateNodeIsRoot(child);
@@ -962,7 +966,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestGetEnumeratorByIEnumerable()
         {
-            IEnumerable root = GetHierarhy();
+            IEnumerable root = GetStockHierarhy();
             foreach (var node in root)
             {
                 ValidateNode(((KeyValuePair<string, DDNode>)node).Value, 2);
@@ -1148,15 +1152,15 @@ namespace UTestDrData
         [TestMethod]
         public void TestCompareToIncorrectTypeBool()
         {
-            var a = GetHierarhy();
+            var a = GetStockHierarhy();
             var b = true;
             Assert.IsFalse(a.CompareTo(b) == 0, "Objects of different types may not be the same");
         }
         [TestMethod]
         public void TestCompareTo()
         {
-            var a = GetHierarhy();
-            var b = GetHierarhy();
+            var a = GetStockHierarhy();
+            var b = GetStockHierarhy();
             Assert.IsTrue(a.CompareTo(b) == 0, "Compare the same objects should be return 0.");
         }
         #endregion CompareTo
@@ -1210,14 +1214,14 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDNodeXmlSerializationGetSchemaNull()
         {
-            var dn = GetHierarhy();
+            var dn = GetStockHierarhy();
             Assert.IsNull(dn.GetSchema(), "XML schema should be null.");
         }
 
         [TestMethod]
         public void TestDDNodeXmlSerializationNode()
         {
-            var root = GetHierarhy();
+            var root = GetStockHierarhy();
             ValidateXMLDeserialization(root);
         }
 
@@ -1248,7 +1252,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDNodeXmlSerializationFromFileSkipIncorrectedData()
         {
-            ValidateXMLDeserialization(GetHierarhy(), UTestDrDataCommon.GetMemoryStreamFromFile());
+            ValidateXMLDeserialization(GetStockHierarhy(), UTestDrDataCommon.GetMemoryStreamFromFile());
         }
 
         public static void ValidateXMLDeserialization(DDNode original)
@@ -1281,11 +1285,65 @@ namespace UTestDrData
 
         public static DDNode XMLDeserialyze(MemoryStream stream)
         {
+            stream.Position = 0;
             var serializer = new XmlSerializer(typeof(DDNode));
             return (DDNode)serializer.Deserialize(stream);
         }
 
 
         #endregion IXmlSerializable
+        #region Merge
+
+        [TestMethod]
+        public void TestMerge()
+        {
+            var dn = GetStockHierarhy();
+
+        }
+
+        [TestMethod]
+        public void TestMergeEmptyNodeWithEmptyNode()
+        {
+            var n1 = new DDNode ("empty");
+            var n2 = new DDNode ("empty");
+            n1.Merge(n2);
+            Assert.IsTrue(n1 == n2, "The both nodes must be equals.");
+        }
+        [TestMethod]
+        public void TestMergeEmptyNodeWithStock()
+        {
+            var n1 = new DDNode("Test");
+            var n2 = GetStockHierarhy ();
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n2), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+
+            n1.Merge(n2);
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+
+            Assert.IsTrue(n1== nExpected , "The actual node is not equal expected node. See xml files in the bin folder.");
+        }
+        [TestMethod]
+        public void TestMergeStockCollectionWithEmptyCollection()
+        {
+            
+            var n1 = GetStockHierarhy();
+            var n2 = new DDNode("Test");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n2), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+
+            n1.Merge(n2);
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+
+            Assert.IsTrue(n1 == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+        }
+
+
+        #endregion Merge
     }
 }

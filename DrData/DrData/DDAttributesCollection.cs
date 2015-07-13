@@ -568,5 +568,20 @@ namespace DrOpen.DrCommon.DrData
             return size;
         }
         #endregion Size
+        #region Merge
+
+        public void Merge(DDAttributesCollection coll)
+        {
+            Merge(coll, ResolveConflict.THROW_EXCEPTION);
+        }
+
+        public void Merge(DDAttributesCollection coll, ResolveConflict res)
+        {
+            foreach (var item in coll)
+            {
+                Add(item.Key, item.Value,  res);
+            }
+        }
+        #endregion Merge
     }
 }

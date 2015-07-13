@@ -32,7 +32,6 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UTestDrData
 {
@@ -74,6 +73,7 @@ namespace UTestDrData
             }
         }
 
+        #region GetMemoryStreamFromFile
         public static MemoryStream GetMemoryStreamFromFile()
         {
             return GetMemoryStreamFromFile(".\\XML\\" +  GetTestMethodName() + ".xml");
@@ -90,6 +90,7 @@ namespace UTestDrData
             }
             return ms;
         }
+        #endregion GetMemoryStreamFromFile
 
         public static MemoryStream GetMemoryStreamFromString(string s)
         {

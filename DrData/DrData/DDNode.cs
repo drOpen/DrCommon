@@ -45,7 +45,7 @@ namespace DrOpen.DrCommon.DrData
         #region const
         public const string SerializePropName = "Name";
         public const string SerializePropType = "Type";
-        
+
         public const string SerializePropIsRoot = "IsRoot";
 
         public const string SerializePropAttributes = "Attributes";
@@ -60,7 +60,7 @@ namespace DrOpen.DrCommon.DrData
             attributes = new DDAttributesCollection();
             Name = name;
             childNodes = new Dictionary<string, DDNode>();
-            if ((type == null)  || (type.Name==null))
+            if ((type == null) || (type.Name == null))
                 Type = string.Empty;
             else
                 Type = type;
@@ -581,7 +581,7 @@ namespace DrOpen.DrCommon.DrData
             if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
 
             if ((value1.Name != value2.Name)) return 1; // if Name is not Equals->  return false
-            if (value1.Type.CompareTo(value2.Type)!=0) return 1; // node type is not matched
+            if (value1.Type.CompareTo(value2.Type) != 0) return 1; // node type is not matched
             if ((value1.HasAttributes != value2.HasAttributes)) return 1; // if HasAttributes is not Equals->  return false
             if ((value1.HasChildNodes != value2.HasChildNodes)) return 1; // if HasChildNodes is not Equals->  return false
 
@@ -626,7 +626,7 @@ namespace DrOpen.DrCommon.DrData
         public virtual void WriteXml(XmlWriter writer)
         {
             if (Name != null) writer.WriteAttributeString(SerializePropName, Name);
-            if (String.IsNullOrEmpty(Type)==false) writer.WriteAttributeString(SerializePropType, Type); // write none empty type
+            if (String.IsNullOrEmpty(Type) == false) writer.WriteAttributeString(SerializePropType, Type); // write none empty type
             if (IsRoot) writer.WriteAttributeString(SerializePropIsRoot, IsRoot.ToString());
             if (HasChildNodes) writer.WriteAttributeString(SerializePropChildren, Count.ToString());
 
@@ -660,11 +660,11 @@ namespace DrOpen.DrCommon.DrData
 
             this.Name = reader.GetAttribute(SerializePropName);
             this.Type = reader.GetAttribute(SerializePropType);
-            if (this.Type.Name == null) this.Type= string.Empty;
+            if (this.Type.Name == null) this.Type = string.Empty;
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
-            if ((isEmptyElement) |  (reader.NodeType == XmlNodeType.EndElement)) return; // Exit if element without child '<DDNode/>' or is empty node '<DDNode></DDNode>'
+            if ((isEmptyElement) | (reader.NodeType == XmlNodeType.EndElement)) return; // Exit if element without child '<DDNode/>' or is empty node '<DDNode></DDNode>'
 
             var initialDepth = reader.Depth;
 
@@ -775,7 +775,6 @@ namespace DrOpen.DrCommon.DrData
         }
 
         #endregion Transform
-
         #region Size
         /// <summary>
         /// size in bytes of the stored data for all attributes in the current node and her children
@@ -791,6 +790,44 @@ namespace DrOpen.DrCommon.DrData
             return size;
         }
         #endregion Size
+        #region Merge
+        [Flags]
+        public enum DDNODE_MERGE_OPTION : int
+        {
+            ATTRIBUTES = 1,
+            CHILD_NODES = 2,
+            DEEP = 1024,
+            ALL = (ATTRIBUTES | CHILD_NODES | DEEP)
 
+        }
+
+        public void Merge(DDNode node)
+        {
+            Merge(node, DDNODE_MERGE_OPTION.ALL, ResolveConflict.THROW_EXCEPTION);
+        }
+
+        public void Merge(DDNode node, DDNODE_MERGE_OPTION option, ResolveConflict res)
+        {
+            if ((option & DDNODE_MERGE_OPTION.ATTRIBUTES) == DDNODE_MERGE_OPTION.ATTRIBUTES) Attributes.Merge(node.Attributes, res); // merge attributes
+            if ((option & DDNODE_MERGE_OPTION.CHILD_NODES) == DDNODE_MERGE_OPTION.CHILD_NODES)
+            {
+                var deep = ((option & DDNODE_MERGE_OPTION.DEEP) == DDNODE_MERGE_OPTION.DEEP);
+                foreach (var item in node)
+                {
+                    if (!Contains(item.Key)) // if child node doesn't exists
+                    {
+                        var cloneNode = item.Value.Clone(deep);
+                        Add(cloneNode);
+                    }
+                    else
+                    {
+                        if ((res & ResolveConflict.SKIP) == ResolveConflict.SKIP) continue ; // skip
+                        if ((res & ResolveConflict.THROW_EXCEPTION) == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format("Cannot merge node '{0}'. The destination node '{1}' already has a child node with the same name.", item.Value.Name, Path));
+                        GetNode(item.Value.Name).Merge(item.Value , option, res);
+                    }
+                }
+            }
+        }
+        #endregion Merge
     }
 }

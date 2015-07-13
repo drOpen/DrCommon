@@ -104,6 +104,12 @@
     <Content Include="XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringEmpty.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XML\TestMergeEmptyNodeWithStockExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithEmptyCollectionExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

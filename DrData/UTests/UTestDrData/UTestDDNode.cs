@@ -1162,6 +1162,26 @@ namespace UTestDrData
             var a = GetStockHierarhy();
             var b = GetStockHierarhy();
             Assert.IsTrue(a.CompareTo(b) == 0, "Compare the same objects should be return 0.");
+            Assert.IsTrue(b.CompareTo(a) == 0, "Compare the same objects should be return 0. Revert compare is failed.");
+        }
+        [TestMethod]
+        public void TestCompareToClonnedNodeAfterRemove()
+        {
+            var a = GetStockHierarhy();
+            var b = a.Clone(true);
+            b.Add("A.C");
+            Assert.IsFalse(a.CompareTo(b) == 0, "Compare the different objects should be return none 0.");
+            Assert.IsFalse(b.CompareTo(a) == 0, "Compare the different objects should be return none 0. Revert compare is failed.");
+        }
+        [TestMethod]
+        public void TestCompareToClonnedNodeAfterRemoveRevertCompare()
+        {
+            // look the TestCompareToClonnedNodeAfterRemove test
+            var a = GetStockHierarhy();
+            var b = a.Clone(true);
+            b.Add("A.C");
+            Assert.IsFalse(b.CompareTo(a) == 0, "Compare the different objects should be return none 0. Revert compare is failed.");
+            Assert.IsFalse(a.CompareTo(b) == 0, "Compare the different objects should be return none 0.");
         }
         #endregion CompareTo
         #region ISerializable
@@ -1304,45 +1324,100 @@ namespace UTestDrData
         [TestMethod]
         public void TestMergeEmptyNodeWithEmptyNode()
         {
-            var n1 = new DDNode ("empty");
-            var n2 = new DDNode ("empty");
-            n1.Merge(n2);
-            Assert.IsTrue(n1 == n2, "The both nodes must be equals.");
+            var nDestination = new DDNode ("empty");
+            var nSource = new DDNode ("empty");
+            nDestination.Merge(nSource);
+            Assert.IsTrue(nDestination == nSource, "The both nodes must be equals.");
         }
         [TestMethod]
         public void TestMergeEmptyNodeWithStock()
         {
-            var n1 = new DDNode("Test");
-            var n2 = GetStockHierarhy ();
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n2), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            var nDestination = new DDNode("Test");
+            var nSource = GetStockHierarhy ();
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
 
-            n1.Merge(n2);
+            nDestination.Merge(nSource);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
             var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
             UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
 
-            Assert.IsTrue(n1== nExpected , "The actual node is not equal expected node. See xml files in the bin folder.");
+            Assert.IsTrue(nDestination== nExpected , "The actual node is not equal expected node. See xml files in the bin folder.");
         }
         [TestMethod]
         public void TestMergeStockCollectionWithEmptyCollection()
         {
             
-            var n1 = GetStockHierarhy();
-            var n2 = new DDNode("Test");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n2), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            var nDestination = GetStockHierarhy();
+            var nSource = new DDNode("Test");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
 
-            n1.Merge(n2);
+            nDestination.Merge(nSource);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(n1), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
             var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
             UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
 
-            Assert.IsTrue(n1 == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+            Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+        }
+        [TestMethod]
+        public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild()
+        {
+
+            var nDestination = GetStockHierarhy();
+            var nSource = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+
+            nDestination.Merge(nSource, DDNODE_MERGE_OPTION.ATTRIBUTES , ResolveConflict.THROW_EXCEPTION);
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+
+            Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
         }
 
+        [TestMethod]
+        public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes()
+        {
+
+            var nDestination = GetStockHierarhy();
+            var nSource = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+
+            nDestination.Merge(nSource, DDNODE_MERGE_OPTION.CHILD_NODES, ResolveConflict.THROW_EXCEPTION);
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+
+            Assert.IsTrue(nDestination==nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+        }
+
+        [TestMethod]
+        public void TestMergeStockCollectionWithAnotherCollectionWithOutConflict()
+        {
+
+            var nDestination = GetStockHierarhy();
+            var nSource = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+
+            nDestination.Merge(nSource, DDNODE_MERGE_OPTION.ALL, ResolveConflict.THROW_EXCEPTION);
+
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
+            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+
+            Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+        }
 
         #endregion Merge
     }

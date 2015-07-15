@@ -107,6 +107,24 @@
     <Content Include="XML\TestMergeEmptyNodeWithStockExpected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributesExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributesSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChildExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChildSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\TestMergeStockCollectionWithEmptyCollectionExpected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

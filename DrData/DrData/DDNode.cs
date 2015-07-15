@@ -577,20 +577,29 @@ namespace DrOpen.DrCommon.DrData
         /// </remarks>
         public static int Compare(DDNode value1, DDNode value2)
         {
-            if (((object)value1 == null) && ((object)value2 == null)) return 0; // if both are null -> return true
-            if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
+             const int NODE_EQUAL = 0;
+             const int NODE_NULL = 2;
+             const int NODE_TYPE_MISMATCH = 3;
+             const int NODE_ATTRIBUTES_NOT_EQUAL = 1;
+             const int NODE_CHILD_NODES_NOT_EQUAL = -1;
+
+
+             if (((object)value1 == null) && ((object)value2 == null)) return NODE_EQUAL; // if both are null -> return true
+             if (((object)value1 == null) || ((object)value2 == null)) return NODE_NULL; // if only one of them are null ->  return false
 
             if ((value1.Name != value2.Name)) return 1; // if Name is not Equals->  return false
-            if (value1.Type.CompareTo(value2.Type) != 0) return 1; // node type is not matched
-            if ((value1.HasAttributes != value2.HasAttributes)) return 1; // if HasAttributes is not Equals->  return false
+            if (value1.Type.CompareTo(value2.Type) != 0) return NODE_TYPE_MISMATCH; // node type is not matched
+            if ((value1.HasAttributes != value2.HasAttributes)) return NODE_ATTRIBUTES_NOT_EQUAL; // if HasAttributes is not Equals->  return false
             if ((value1.HasChildNodes != value2.HasChildNodes)) return 1; // if HasChildNodes is not Equals->  return false
+            // [-] fix revert comparison
+            if ((value1.Count != value2.Count)) return NODE_CHILD_NODES_NOT_EQUAL; // if Count of ChildNodes is not Equals->  return false
 
             int compareResult = DDAttributesCollection.Compare(value1.Attributes, value2.Attributes);
             if (compareResult != 0) return compareResult;
 
             foreach (var keyValue1 in value1)
             {
-                if (!value2.Contains(keyValue1.Key)) return -1; // 
+                if (!value2.Contains(keyValue1.Key)) return NODE_CHILD_NODES_NOT_EQUAL; // 
                 var valueCompareResult = DDNode.Compare(keyValue1.Value, value2[keyValue1.Key]);
                 if (valueCompareResult != 0) return valueCompareResult;
             }
@@ -796,8 +805,8 @@ namespace DrOpen.DrCommon.DrData
         {
             ATTRIBUTES = 1,
             CHILD_NODES = 2,
-            DEEP = 1024,
-            ALL = (ATTRIBUTES | CHILD_NODES | DEEP)
+            HIERARCHY_ONLY = CHILD_NODES,
+            ALL = (ATTRIBUTES | CHILD_NODES)
 
         }
 
@@ -808,21 +817,30 @@ namespace DrOpen.DrCommon.DrData
 
         public void Merge(DDNode node, DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
-            if ((option & DDNODE_MERGE_OPTION.ATTRIBUTES) == DDNODE_MERGE_OPTION.ATTRIBUTES) Attributes.Merge(node.Attributes, res); // merge attributes
+            var bMergeAttributes = ((option & DDNODE_MERGE_OPTION.ATTRIBUTES) == DDNODE_MERGE_OPTION.ATTRIBUTES);
+            if (bMergeAttributes) Attributes.Merge(node.Attributes, res); // merge attributes
             if ((option & DDNODE_MERGE_OPTION.CHILD_NODES) == DDNODE_MERGE_OPTION.CHILD_NODES)
             {
-                var deep = ((option & DDNODE_MERGE_OPTION.DEEP) == DDNODE_MERGE_OPTION.DEEP);
                 foreach (var item in node)
                 {
                     if (!Contains(item.Key)) // if child node doesn't exists
                     {
-                        var cloneNode = item.Value.Clone(deep);
-                        Add(cloneNode);
+                        DDNode newNode;
+                        if (bMergeAttributes) // if need to copy attributes -> copy all: hierarchy and attributes
+                        {
+                            newNode= item.Value.Clone(true);
+                            Add(newNode);
+                        }
+                        else // if need to copy only hierarchy 
+                        {
+                            newNode=Add(item.Value.Name);
+                            newNode.Merge(item.Value, option, res);
+                        }
                     }
                     else
                     {
                         if ((res & ResolveConflict.SKIP) == ResolveConflict.SKIP) continue ; // skip
-                        if ((res & ResolveConflict.THROW_EXCEPTION) == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format("Cannot merge node '{0}'. The destination node '{1}' already has a child node with the same name.", item.Value.Name, Path));
+                        if ((res & ResolveConflict.THROW_EXCEPTION) == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format(Msg.CANNOT_MERGE_NODE_WITH_EXIST_NAME, item.Value.Name, Path));
                         GetNode(item.Value.Name).Merge(item.Value , option, res);
                     }
                 }

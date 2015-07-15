@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<DDNode Name="Source" IsRoot="True" Children="2">
+  <DDAttributesCollection Count="2">
+    <Attribute Name="attr1">
+      <DDValue Type="System.String" Size="6">string</DDValue>
+    </Attribute>
+    <Attribute Name="attr2">
+      <DDValue Type="System.Boolean" Size="1">True</DDValue>
+    </Attribute>
+  </DDAttributesCollection>
+  <DDNode Name="A.B" Children="1">
+    <DDAttributesCollection />
+    <DDNode Name="a.b.d" Children="1">
+      <DDAttributesCollection />
+      <DDNode Name="a.b.d.e">
+        <DDAttributesCollection Count="2">
+          <Attribute Name="value a.b.d.e-&gt;a">
+            <DDValue Type="System.Int32" Size="4">1</DDValue>
+          </Attribute>
+          <Attribute Name="value a.b.d.e-&gt;b" />
+        </DDAttributesCollection>
+      </DDNode>
+    </DDNode>
+  </DDNode>
+  <DDNode Name="A.C">
+    <DDAttributesCollection Count="3">
+      <Attribute Name="value a.c-&gt;a">
+        <DDValue Type="System.String" Size="6">string</DDValue>
+      </Attribute>
+      <Attribute Name="value a.c-&gt;b">
+        <DDValue Type="System.Boolean" Size="1">True</DDValue>
+      </Attribute>
+      <Attribute Name="value a.c-&gt;c">
+        <DDValue Type="System.DateTime" Size="8">2013-06-14T15:15:30.0000000+03:00</DDValue>
+      </Attribute>
+    </DDAttributesCollection>
+  </DDNode>
+</DDNode>

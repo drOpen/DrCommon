@@ -27,6 +27,9 @@
 
 namespace DrOpen.DrCommon.DrData
 {
+    /// <summary>
+    /// The parameters determine the resolution of conflicts
+    /// </summary>
     public enum ResolveConflict : int
     {
         /// <summary>

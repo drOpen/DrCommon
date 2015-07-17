@@ -88,6 +88,15 @@ namespace DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot merge node &apos;{0}&apos;. The destination node &apos;{1}&apos; already has a child node with the same name..
+        /// </summary>
+        internal static string CANNOT_MERGE_NODE_WITH_EXIST_NAME {
+            get {
+                return ResourceManager.GetString("CANNOT_MERGE_NODE_WITH_EXIST_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot transform array type to not array type or vice versa. Current type is &apos;{0}&apos; the planned type after transformation &apos;{1}&apos;..
         /// </summary>
         internal static string CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY {

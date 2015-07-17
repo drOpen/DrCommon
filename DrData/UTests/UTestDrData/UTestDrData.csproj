@@ -125,6 +125,18 @@
     <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictSource.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflictExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflictSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflictExpected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflictSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\TestMergeStockCollectionWithEmptyCollectionExpected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

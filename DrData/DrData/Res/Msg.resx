@@ -162,4 +162,7 @@
   <data name="NODE_TYPE_IS_NOT_MATCHED" xml:space="preserve">
     <value>Node type '{0}' does not match the expected type '{1}'.</value>
   </data>
+  <data name="CANNOT_MERGE_NODE_WITH_EXIST_NAME" xml:space="preserve">
+    <value>Cannot merge node '{0}'. The destination node '{1}' already has a child node with the same name.</value>
+  </data>
 </root>

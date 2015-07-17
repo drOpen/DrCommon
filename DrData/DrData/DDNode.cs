@@ -800,21 +800,43 @@ namespace DrOpen.DrCommon.DrData
         }
         #endregion Size
         #region Merge
+        /// <summary>
+        /// Options of merge nodes
+        /// </summary>
         [Flags]
         public enum DDNODE_MERGE_OPTION : int
         {
+            /// <summary>
+            /// Merge attributes collection
+            /// </summary>
             ATTRIBUTES = 1,
+            /// <summary>
+            /// Merge child nodes. It's equals <paramref name="HIERARCHY_ONLY"/>
+            /// </summary>
             CHILD_NODES = 2,
-            HIERARCHY_ONLY = CHILD_NODES,
+            /// <summary>
+            /// Merge hierarchy only.
+            /// </summary>
+            HIERARCHY_ONLY = (CHILD_NODES ^ ATTRIBUTES),
+            /// <summary>
+            /// Merge hierarchy and attributes
+            /// </summary>
             ALL = (ATTRIBUTES | CHILD_NODES)
-
         }
-
+        /// <summary>
+        /// Merge data with source node. The hierarchy and attributes will be merged. In case of conflict, an appropriate exception is thrown
+        /// </summary>
+        /// <param name="node">Source node. Node will be taken to transfer the data to destination node</param>
         public void Merge(DDNode node)
         {
             Merge(node, DDNODE_MERGE_OPTION.ALL, ResolveConflict.THROW_EXCEPTION);
         }
-
+        /// <summary>
+        /// Merge data with source node
+        /// </summary>
+        /// <param name="node">Source node. Node will be taken to transfer the data to destination node</param>
+        /// <param name="option">Options of merge nodes</param>
+        /// <param name="res">The option determine the resolution of conflicts of merge nodes</param>
         public void Merge(DDNode node, DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
             var bMergeAttributes = ((option & DDNODE_MERGE_OPTION.ATTRIBUTES) == DDNODE_MERGE_OPTION.ATTRIBUTES);
@@ -839,8 +861,8 @@ namespace DrOpen.DrCommon.DrData
                     }
                     else
                     {
-                        if ((res & ResolveConflict.SKIP) == ResolveConflict.SKIP) continue ; // skip
-                        if ((res & ResolveConflict.THROW_EXCEPTION) == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format(Msg.CANNOT_MERGE_NODE_WITH_EXIST_NAME, item.Value.Name, Path));
+                        if (res == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format(Msg.CANNOT_MERGE_NODE_WITH_EXIST_NAME, item.Value.Name, Path));
+                        //if (res == ResolveConflict.SKIP) continue ; // skip only attributes. this line must be commented
                         GetNode(item.Value.Name).Merge(item.Value , option, res);
                     }
                 }

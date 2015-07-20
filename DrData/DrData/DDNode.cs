@@ -413,10 +413,12 @@ namespace DrOpen.DrCommon.DrData
             get { return ((attributes != null) && (attributes.Count != 0)); }
         }
 
-        public virtual string HierarchicalID
-        {
-            get { throw new NotImplementedException(); }
-        }
+        // it's not good idea
+        //public virtual string HierarchicalID
+        //{
+        //    get { throw new NotImplementedException(); }
+        //}
+
         #region Path
         /// <summary>
         /// returns the absolute path to the current node

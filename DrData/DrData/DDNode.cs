@@ -564,42 +564,63 @@ namespace DrOpen.DrCommon.DrData
         #endregion ==, != operators
         #region IComparable
         /// <summary>
-        /// Compares the two DDNode of the same values and returns an integer that indicates whether the current instance precedes. Very slow
+        /// The result of the comparison of two notes
+        /// </summary>
+        public enum NODE_COMPARISION_RESULT : int
+        {
+            /// <summary>
+            /// The both nodes are equal. (Including if both nodes are null)
+            /// </summary>
+             NODE_EQUAL = 0,
+            /// <summary>
+             /// Attributes nodes or attributes of her children are not equal
+            /// </summary>
+             NODE_ATTRIBUTES_NOT_EQUAL = 1,
+            /// <summary>
+             /// Only one of the nodes is equal to zero
+            /// </summary>
+             NODE_NULL = 2,
+            /// <summary>
+             /// Type of node or the type of her children are not equal
+            /// </summary>
+             NODE_TYPE_MISMATCH = 3,
+            /// <summary>
+            /// Child nodes are not equal
+            /// </summary>
+             NODE_CHILD_NODES_NOT_EQUAL = 4,
+        }
+
+        /// <summary>
+        /// Compares the two DDNode of the same values and returns an integer that indicates whether the current instance precedes. Very slow. 
+        /// Return value that indicates the relative order of the objects being compared. The return value can be one of the <typeparamref name="NODE_COMPARISION_RESULT"/>
         /// </summary>
         /// <param name="value1">First DDNode to compare</param>
         /// <param name="value2">Second DDNode to compare</param>
-        /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
-        /// Zero - the both DDNode have some items and their values.
-        /// The difference between the number of elements of the first and second DDNode objects
-        /// One - values of collection is not equal.</returns>
+        /// <returns>A value that indicates the relative order of the objects being compared. The return value can be one of the <typeparamref name="NODE_COMPARISION_RESULT"/></returns>>
+        /// Zero - the both DDNode have some items and their values otherwise nodes are not equals
         /// <remarks>Very slow. The following properties are not involved in the comparison:
         /// - IsRoot; - Path; - Level
         /// </remarks>
         public static int Compare(DDNode value1, DDNode value2)
         {
-             const int NODE_EQUAL = 0;
-             const int NODE_NULL = 2;
-             const int NODE_TYPE_MISMATCH = 3;
-             const int NODE_ATTRIBUTES_NOT_EQUAL = 1;
-             const int NODE_CHILD_NODES_NOT_EQUAL = -1;
 
 
-             if (((object)value1 == null) && ((object)value2 == null)) return NODE_EQUAL; // if both are null -> return true
-             if (((object)value1 == null) || ((object)value2 == null)) return NODE_NULL; // if only one of them are null ->  return false
+            if (((object)value1 == null) && ((object)value2 == null)) return (int)NODE_COMPARISION_RESULT.NODE_EQUAL; // if both are null -> return true
+            if (((object)value1 == null) || ((object)value2 == null)) return (int)NODE_COMPARISION_RESULT.NODE_NULL; // if only one of them are null ->  return false
 
             if ((value1.Name != value2.Name)) return 1; // if Name is not Equals->  return false
-            if (value1.Type.CompareTo(value2.Type) != 0) return NODE_TYPE_MISMATCH; // node type is not matched
-            if ((value1.HasAttributes != value2.HasAttributes)) return NODE_ATTRIBUTES_NOT_EQUAL; // if HasAttributes is not Equals->  return false
+            if (value1.Type.CompareTo(value2.Type) != 0) return (int)NODE_COMPARISION_RESULT.NODE_TYPE_MISMATCH; // node type is not matched
+            if ((value1.HasAttributes != value2.HasAttributes)) return (int)NODE_COMPARISION_RESULT.NODE_ATTRIBUTES_NOT_EQUAL; // if HasAttributes is not Equals->  return false
             if ((value1.HasChildNodes != value2.HasChildNodes)) return 1; // if HasChildNodes is not Equals->  return false
             // [-] fix revert comparison
-            if ((value1.Count != value2.Count)) return NODE_CHILD_NODES_NOT_EQUAL; // if Count of ChildNodes is not Equals->  return false
+            if ((value1.Count != value2.Count)) return (int)NODE_COMPARISION_RESULT.NODE_CHILD_NODES_NOT_EQUAL; // if Count of ChildNodes is not Equals->  return false
 
             int compareResult = DDAttributesCollection.Compare(value1.Attributes, value2.Attributes);
             if (compareResult != 0) return compareResult;
 
             foreach (var keyValue1 in value1)
             {
-                if (!value2.Contains(keyValue1.Key)) return NODE_CHILD_NODES_NOT_EQUAL; // 
+                if (!value2.Contains(keyValue1.Key)) return (int)NODE_COMPARISION_RESULT.NODE_CHILD_NODES_NOT_EQUAL; // 
                 var valueCompareResult = DDNode.Compare(keyValue1.Value, value2[keyValue1.Key]);
                 if (valueCompareResult != 0) return valueCompareResult;
             }

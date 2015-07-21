@@ -128,7 +128,7 @@ namespace DrOpen.DrCommon.DrData
         #endregion IXmlSerializable
         #region ISerializable
         /// <summary>
-        /// The special constructor is used to deserialize values.
+        /// The special constructor is used to deserialize attributes collection.
         /// </summary>
         /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>

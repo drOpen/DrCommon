@@ -1,4 +1,31 @@
-﻿using System;
+﻿/*
+  DDType.cs -- stored type of the 'DrData' general purpose Data abstraction layer 1.0.1, October 5, 2013
+ 
+  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+ 
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+      1. The origin of this software must not be misrepresented; you must not
+      claim that you wrote the original software. If you use this software
+      in a product, an acknowledgment in the product documentation would be
+      appreciated but is not required.
+
+      2. Altered source versions must be plainly marked as such, and must not be
+      misrepresented as being the original software.
+
+      3. This notice may not be removed or altered from any source distribution.
+
+      Kudryashov Andrey <kudryashov.andrey at gmail.com>
+
+ */
+
+using System;
 using System.Runtime.Serialization;
 using DrData.Res;
 using DrOpen.DrCommon.DrData;
@@ -27,7 +54,7 @@ namespace DrOpen.DrCommon.DrData
         {
             this.Name = name;
         }
-                /// <summary>
+        /// <summary>
         /// The special constructor is used to deserialize values.
         /// </summary>
         /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
@@ -50,7 +77,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// the type of the object as a string
         /// </summary>
-        public string Name { get;  set; }
+        public string Name { get; set; }
 
 
 
@@ -61,7 +88,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="expectedType"></param>
         public void ThrowIsNotExpectedNodeType(DDType expectedType)
         {
-            if (CompareTo(expectedType)!=0) throw new NodeTypeException(this.Name, expectedType);
+            if (CompareTo(expectedType) != 0) throw new NodeTypeException(this.Name, expectedType);
         }
 
         #endregion NodeType
@@ -95,7 +122,26 @@ namespace DrOpen.DrCommon.DrData
         {
             return Name.CompareTo(other.Name);
         }
-
+        /// <summary>
+        /// Compares the two DDType of the same type and returns an integer that indicates whether the current instance precedes, follows, 
+        /// or occurs in the same position in the sort order as the other object.
+        /// The both null object is equal and return value will be Zero.
+        /// </summary>
+        /// <param name="value1">First DDType to compare</param>
+        /// <param name="value2">Second DDType to compare</param>
+        /// <returns>A value that indicates the relative order of the objects being compared. The return value has two meanings: 
+        /// Zero - the both DDValue have some type and value.
+        /// One - type or value is not equal.</returns>
+        public static int Compare(DDType value1, DDType value2)
+        {
+            if (((object)value1 == null) && ((object)value2 == null)) return 0; // if both are null -> return true
+            if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
+            if ((value1.Name == null) || (value2.Name == null))
+            {
+                if (!((value1.Name == null) && (value2.Name == null))) return 1;
+            }
+            return value1.CompareTo(value2);
+        }
         /// <summary>
         /// Retruns base.Equals
         /// </summary>
@@ -105,5 +151,22 @@ namespace DrOpen.DrCommon.DrData
         {
             return base.Equals(other);
         }
+        #region ==, != operators
+        /// <summary>
+        /// Compare both values and return true if type and data are same otherwise return false.
+        /// If both values are null - return true, if only one of them are null, return false. if the data types are different - return false
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <returns>true if type and data are same otherwise return false</returns>
+        public static bool operator ==(DDType value1, DDType value2)
+        {
+            return (Compare(value1, value2) == 0);
+        }
+        public static bool operator !=(DDType value1, DDType value2)
+        {
+            return (!(value1 == value2));
+        }
+        #endregion ==, != operators
     }
 }

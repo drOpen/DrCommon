@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="UTestDDNodeST.cs" />
     <Compile Include="UTestDDAttributesCollection.cs" />
+    <Compile Include="UTestDDType.cs" />
     <Compile Include="UTestDDValue.cs" />
     <Compile Include="UTestDDNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -563,7 +564,21 @@ namespace DrOpen.DrCommon.DrData
             long size = 0;
             foreach (var value in Values)
             {
-                size += value.Size;
+                if (value != null) size += value.Size;
+            }
+            return size;
+        }
+        /// <summary>
+        /// size in bytes of the stored data and names for all attributes
+        /// </summary>
+        /// <returns></returns>
+        public long GetSize()
+        {
+            long size = 0;
+            foreach (var item in this)
+            {
+                if (item.Value !=null) size += item.Value.Size ;
+                if (item.Key != null) size += Encoding.UTF8.GetBytes(item.Key).LongLength; 
             }
             return size;
         }

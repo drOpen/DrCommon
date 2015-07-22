@@ -33,6 +33,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using DrData.Res;
 using DrOpen.DrCommon.DrData.Exceptions;
+using System.Text;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -817,7 +818,20 @@ namespace DrOpen.DrCommon.DrData
             long size = Attributes.GetDataSize();
             foreach (var value in childNodes.Values)
             {
-                size += value.GetDataSize();
+                if (value != null) size += value.GetDataSize();
+            }
+            return size;
+        }
+        /// <summary>
+        /// size in bytes of the node name, stored data and names for all attributes in the current node and her children
+        /// </summary>
+        /// <returns></returns>
+        public long GetSize()
+        {
+            long size = Attributes.GetSize() + Encoding.UTF8.GetBytes(Name ?? String.Empty).LongLength + Encoding.UTF8.GetBytes(Type ?? String.Empty).LongLength; ;
+            foreach (var value in childNodes.Values)
+            {
+                if (value != null)  size += value.GetSize();
             }
             return size;
         }

@@ -911,6 +911,25 @@ namespace UTestDrData
         }
 
         #endregion Add
+        #region Size
+        [TestMethod]
+        public void TestGetDataSize()
+        {
+            var root = GetStockHierarhy();
+            var actual = root.GetDataSize();
+            const long expected = 26;
+            Assert.IsTrue(actual == expected, "The data size is incorrect.");
+        }
+        [TestMethod]
+        public void TestGetSize()
+        {
+            var root = GetStockHierarhy();
+            var actual = root.GetSize();
+            const long expected = 133;
+            Assert.IsTrue(actual == expected, "The  size is incorrect.");
+        }
+
+        #endregion Size
         #region transformation
         [TestMethod]
         public void TestTransforException()

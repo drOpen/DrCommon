@@ -64,6 +64,13 @@
       </xs:attribute>
       <xs:anyAttribute processContents="skip" />
     </xs:complexType>
+    <xs:unique name ="uniqAttributeName">
+      <xs:annotation >
+        <xs:documentation >Checking the uniqueness of the name of the Attribute on the same level</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath="./Attribute"/>
+      <xs:field xpath="@Name"/>
+    </xs:unique>
   </xs:element>
 
   <xs:element name="Attribute">

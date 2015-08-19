@@ -49,6 +49,9 @@ namespace DrOpen.DrCommon.DrData
     {
 
         private const string SerializePropName = "Type";
+        #region Constructor
+        public DDType(Enum name): this(name.ToString())
+        { }
 
         public DDType(string name)
         {
@@ -63,6 +66,7 @@ namespace DrOpen.DrCommon.DrData
         {
             this.Name = (String)info.GetValue(SerializePropName, typeof(String));
         }
+        #endregion Constructor
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
         /// </summary>
@@ -93,7 +97,7 @@ namespace DrOpen.DrCommon.DrData
 
         #endregion NodeType
 
-        #region
+        #region implicit operator
         public static implicit operator DDType(string value)
         {
             return new DDType(value);

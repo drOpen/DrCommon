@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="DDEventArgs.cs" />
     <Compile Include="DDNodeST.cs" />
     <Compile Include="DDType.cs" />
     <Compile Include="DDValue.cs" />

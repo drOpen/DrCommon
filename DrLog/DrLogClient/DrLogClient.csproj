@@ -52,6 +52,10 @@
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
       <Name>DrData</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DrLogSrv\DrLogSrv.csproj">
+      <Project>{edc9c078-4e68-41f0-afdb-ef5750f7c452}</Project>
+      <Name>DrLogSrv</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Msg.resx">

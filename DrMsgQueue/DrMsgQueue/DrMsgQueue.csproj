@@ -54,7 +54,11 @@
       <Name>DrData</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Msg.resx">
       <Generator>ResXFileCodeGenerator</Generator>

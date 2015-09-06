@@ -32,9 +32,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
     /// Log Level
     /// </summary>
     [Flags]
-    public enum LogLevel: int
+    public enum LogLevel : int
     {
-
+        /// <summary>
+        /// Exclude all messages
+        /// </summary>
         NONE = 0,
         /// <summary>
         /// Error
@@ -59,52 +61,82 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// <summary>
         /// Only inforamtion mesages: <see cref="LogLevel.ERR"/>, <see cref="LogLevel.WAR"/> and <see cref="LogLevel.INF"/>
         /// </summary>
-        INFO = (ERR | WAR| INF),
+        INFO = (ERR | WAR | INF),
         /// <summary>
         /// Extands <see cref="INFO"/> adds <see cref="LogLevel.TRC"/>
         /// </summary>
-        TRACE = INFO| TRC,
+        TRACE = INFO | TRC,
         /// <summary>
         /// Extands <see cref="TRACE"/> adds <see cref="LogLevel.DBG"/>. All messages including debug level
         /// </summary>
         ALL = TRACE | DBG
     }
     #endregion Level
+    ///// <summary>
+    ///// basic attributes for messages
+    ///// </summary>
+    //public enum MessageAttributes
+    //{
+    //    /// <summary>
+    //    /// creation time of the message 
+    //    /// </summary>
+    //    DateTime,
+    //    /// <summary>
+    //    /// body of message
+    //    /// </summary>
+    //    Body,
+    //    /// <summary>
+    //    /// Log level of message
+    //    /// </summary>
+    //    LogLevel,
+    //    /// <summary>
+    //    /// Who created the message 
+    //    /// </summary>
+    //    Source,
+    //    /// <summary>
+    //    /// The list of providers who will be read this message. by default all providers
+    //    /// </summary>
+    //    Providers,
+    //    /// <summary>
+    //    /// The list of recipients who will be receive this message. by default all recipients
+    //    /// </summary>
+    //    Recipients
+    //}
     /// <summary>
-    /// basic attributes for messages
-    /// </summary>
-    public enum MessageAttributes
+    /// Constants for DrLog
+    /// </summary> 
+    public class DrLogConst
     {
+        /// <summary>
+        /// DDNode type for messages
+        /// </summary>
+        public const string MessageType = "DrLogMessage";
+
+        #region basic attributes for messages
         /// <summary>
         /// creation time of the message 
         /// </summary>
-        DateTime,
+        public const string AttDateTime = "DateTime";
         /// <summary>
         /// body of message
         /// </summary>
-        Body,
+        public const string AttBody = "Body";
         /// <summary>
         /// Log level of message
         /// </summary>
-        LogLevel,
+        public const string AttLogLevel = "LogLevel";
         /// <summary>
         /// Who created the message 
         /// </summary>
-        Source,
+        public const string AttSource = "LogLevel";
         /// <summary>
         /// The list of providers who will be read this message. by default all providers
         /// </summary>
-        Providers,
+        public const string AttProviders = "Providers";
         /// <summary>
         /// The list of recipients who will be receive this message. by default all recipients
         /// </summary>
-        Recipients
-    }
-    /// <summary>
-    /// DDNode type for messages
-    /// </summary>
-    public class DrLogClientConst
-    {
-        public const string MessageType = "DrLogMessage";
+        public const string AttRecipients = "Providers";
+        #endregion basic attributes for messages
     }
 }

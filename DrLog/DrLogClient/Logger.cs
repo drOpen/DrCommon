@@ -39,6 +39,10 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
 
         #region Singleton
         /// <summary>
+        /// log server
+        /// </summary>
+        private DrLogSrv.Server logSrv;
+        /// <summary>
         /// Stored Logger instance
         /// </summary>
         private static volatile Logger stInstance;
@@ -54,6 +58,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         {
             this.LogFullSourceName = false;
             this.LogThreadName = true;
+            this.logSrv = new DrLogSrv.Server();
             // Source FullName for current class
             currentSourceFullName = new StackTrace().GetFrame(0).GetMethod().ReflectedType.FullName;
         }
@@ -130,30 +135,41 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         }
         #endregion Buildsource
 
+        /// <summary>
+        /// return message as DDNode with basic attributes
+        /// </summary>
+        /// <param name="createdDateTime">message creation date time</param>
+        /// <param name="logLevel">log level</param>
+        /// <param name="source">source</param>
+        /// <param name="exception">exception with inner exception. This attribute support null for message without exception</param>
+        /// <param name="body">body of message</param>
+        /// <param name="providers">array of supported providers. All connected providers will be get this message if array is empty</param>
+        /// <param name="recipients">array of supported recipients. All connected recipients will be get this message if array is empty</param>
+        /// <returns></returns>
         public static DDNode MessageItem(DateTime createdDateTime, LogLevel logLevel, string source, Exception exception, string body, string[] providers, string[] recipients)
         {
-            var node = new DDNode(new DDType(Const.MessageType)) {Type = Const.MessageType};
+            var node = new DDNode(new DDType(DrLogConst.MessageType)) { Type = DrLogConst.MessageType };
 
             if (exception != null) node.Add(exception); // add exception
-            node.Attributes.Add(MessageAttributes.LogLevel, logLevel.ToString());
-            if (!string.IsNullOrEmpty(body)) node.Attributes.Add(MessageAttributes.Body, body);
-            if (!string.IsNullOrEmpty(source)) node.Attributes.Add(MessageAttributes.Source, source);
-            if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(MessageAttributes.Providers, providers);
-            if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(MessageAttributes.Recipients, recipients);
+            node.Attributes.Add(DrLogConst.AttLogLevel, logLevel.ToString());
+            if (!string.IsNullOrEmpty(body)) node.Attributes.Add(DrLogConst.AttBody, body);
+            if (!string.IsNullOrEmpty(source)) node.Attributes.Add(DrLogConst.AttSource, source);
+            if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(DrLogConst.AttProviders, providers);
+            if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(DrLogConst.AttRecipients, recipients);
             return node;
         }
 
         #region write
 
         /// <summary>
-        /// Send MessageItem to transport for logging
+        /// Send MessageItem to transport for logging. Temporary transport doesn't support
         /// </summary>
         /// <param name="msg">message</param>
         public virtual void Write(DDNode msg)
         {
             try
             {
-               
+               //this.logSrv
             }
             catch (Exception e)
             {

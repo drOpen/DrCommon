@@ -461,7 +461,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return node by path
         /// </summary>
-        /// <param name="path">Path to node. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
+        /// <param name="path">Path to node. Supported relative and absolute paths. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
         /// <returns></returns>
         public virtual DDNode GetNode(Enum path)
         {
@@ -470,7 +470,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return node by path
         /// </summary>
-        /// <param name="path">Path to node. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
+        /// <param name="path">Path to node. Supported relative and absolute paths. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
         /// <returns></returns>
         public virtual DDNode GetNode(string path)
         {

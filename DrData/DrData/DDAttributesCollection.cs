@@ -300,7 +300,7 @@ namespace DrOpen.DrCommon.DrData
         #endregion  Contains
         #region  ContainsValue
         /// <summary>
-        /// Determines whether the Attribute Collection contains the specified key. This is a very slow function
+        /// Determines whether the Attribute Collection contains the specified value. Warning! This is a very slow function!
         /// </summary>
         /// <param name="value">The value to locate in the Attribute Collection. The value can be null for reference types.</param>
         /// <returns>true if the Attribute Collection contains an element with the specified value; otherwise, false.</returns>

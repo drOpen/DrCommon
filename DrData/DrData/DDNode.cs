@@ -461,7 +461,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return node by path
         /// </summary>
-        /// <param name="path">Path to node. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
+        /// <param name="path">Path to node. Supported relative and absolute paths. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
         /// <returns></returns>
         public virtual DDNode GetNode(Enum path)
         {
@@ -470,7 +470,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Return node by path
         /// </summary>
-        /// <param name="path">Path to node. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
+        /// <param name="path">Path to node. Supported relative and absolute paths. For access to root  node specify '/'. Use '.' (dot) for access to yourself and '..' (double dot) for up to parent node. </param>
         /// <returns></returns>
         public virtual DDNode GetNode(string path)
         {
@@ -574,23 +574,23 @@ namespace DrOpen.DrCommon.DrData
             /// <summary>
             /// The both nodes are equal. (Including if both nodes are null)
             /// </summary>
-             NODE_EQUAL = 0,
+            NODE_EQUAL = 0,
             /// <summary>
-             /// Attributes nodes or attributes of her children are not equal
+            /// Attributes nodes or attributes of her children are not equal
             /// </summary>
-             NODE_ATTRIBUTES_NOT_EQUAL = 1,
+            NODE_ATTRIBUTES_NOT_EQUAL = 1,
             /// <summary>
-             /// Only one of the nodes is equal to zero
+            /// Only one of the nodes is equal to zero
             /// </summary>
-             NODE_NULL = 2,
+            NODE_NULL = 2,
             /// <summary>
-             /// Type of node or the type of her children are not equal
+            /// Type of node or the type of her children are not equal
             /// </summary>
-             NODE_TYPE_MISMATCH = 3,
+            NODE_TYPE_MISMATCH = 3,
             /// <summary>
             /// Child nodes are not equal
             /// </summary>
-             NODE_CHILD_NODES_NOT_EQUAL = 4,
+            NODE_CHILD_NODES_NOT_EQUAL = 4,
         }
 
         /// <summary>
@@ -831,7 +831,7 @@ namespace DrOpen.DrCommon.DrData
             long size = Attributes.GetSize() + Encoding.UTF8.GetBytes(Name ?? String.Empty).LongLength + Encoding.UTF8.GetBytes(Type ?? String.Empty).LongLength; ;
             foreach (var value in childNodes.Values)
             {
-                if (value != null)  size += value.GetSize();
+                if (value != null) size += value.GetSize();
             }
             return size;
         }
@@ -887,12 +887,12 @@ namespace DrOpen.DrCommon.DrData
                         DDNode newNode;
                         if (bMergeAttributes) // if need to copy attributes -> copy all: hierarchy and attributes
                         {
-                            newNode= item.Value.Clone(true);
+                            newNode = item.Value.Clone(true);
                             Add(newNode);
                         }
                         else // if need to copy only hierarchy 
                         {
-                            newNode=Add(item.Value.Name);
+                            newNode = Add(item.Value.Name);
                             newNode.Merge(item.Value, option, res);
                         }
                     }
@@ -900,11 +900,52 @@ namespace DrOpen.DrCommon.DrData
                     {
                         if (res == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format(Msg.CANNOT_MERGE_NODE_WITH_EXIST_NAME, item.Value.Name, Path));
                         //if (res == ResolveConflict.SKIP) continue ; // skip only attributes. this line must be commented
-                        GetNode(item.Value.Name).Merge(item.Value , option, res);
+                        GetNode(item.Value.Name).Merge(item.Value, option, res);
                     }
                 }
             }
         }
         #endregion Merge
+
+        #region Extension
+
+        /// <summary>
+        /// Returns attribute value by attribute name for specified path to the node . If the attribute does not exist returns the default value.
+        /// </summary>
+        /// <param name="node">Current node</param>
+        /// <param name="path">The path to the node at which it is necessary to take the value of an attribute</param>
+        /// <param name="name">Attribute name</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <returns>Returns attribute value by attribute name for specified path to the node . If the attribute does not exist returns the default value.</returns>
+        public static DDValue GetAttributeValue(DDNode node, string path, string name, object defaultValue)
+        {
+            try
+            {
+                return GetAttributeValue(node.GetNode(path), name, defaultValue);
+            }
+            catch
+            {
+                return new DDValue(defaultValue);
+            }
+        }
+        /// <summary>
+        /// Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.
+        /// </summary>
+        /// <param name="node">Current node</param>
+        /// <param name="name">Attribute name</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <returns>Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.</returns>
+        public static DDValue GetAttributeValue(DDNode node, string name, object defaultValue)
+        {
+            try
+            {
+                return node.attributes.GetValue(name, defaultValue);
+            }
+            catch
+            {
+                return new DDValue(defaultValue);
+            }
+        }
+        #endregion Extension
     }
 }

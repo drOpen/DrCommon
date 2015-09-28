@@ -123,6 +123,12 @@
   <data name="ARRAY_MUST_SINGLE_DIMENSIONAL" xml:space="preserve">
     <value>Only single dimensional arrays are supported for the requested action.</value>
   </data>
+  <data name="CANNOT_INSERT_AFTER_KEY_NOT_FOUND" xml:space="preserve">
+    <value>Cannot insert new item after specified item because dictionary does not have element with key '{0}'.</value>
+  </data>
+  <data name="CANNOT_INSERT_BEFORE_KEY_NOT_FOUND" xml:space="preserve">
+    <value>Cannot insert new item before specified item because dictionary does not have element with key '{0}'.</value>
+  </data>
   <data name="CANNOT_REBUILD_LINKS_FOR_ITEM" xml:space="preserve">
     <value>Cannot rebuild links for item '{0}'.</value>
   </data>

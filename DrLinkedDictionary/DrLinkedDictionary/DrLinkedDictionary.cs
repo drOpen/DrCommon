@@ -85,7 +85,11 @@ namespace DrLinkedDictionary
              public TKey StartFromKey
              {
                  get { return this.startFromKey; }
-                 set { this.IsFirstItemRelative = true; this.startFromKey = value; }
+                 set 
+                 { 
+                     this.IsFirstItemRelative = false; 
+                     this.startFromKey = value; 
+                 }
              }
              /// <summary>
              /// Return true if enumeration will be started for each item of the dictionary from the first or the last item depends from specified direction.
@@ -180,7 +184,7 @@ namespace DrLinkedDictionary
                 }
                 else
                 {
-                    throw new ApplicationException(string.Format("Cannot insert new item before specified item because dictionary does not have element with key '{0}'.", beforeKey.ToString()));
+                    throw new ApplicationException(string.Format(Res.Msg.CANNOT_INSERT_BEFORE_KEY_NOT_FOUND, beforeKey.ToString()));
                 }
             }
         }
@@ -209,7 +213,7 @@ namespace DrLinkedDictionary
                 }
                 else
                 {
-                    throw new ApplicationException(string.Format("Cannot insert new item after specified item because dictionary does not have element with key '{0}'.", afterKey.ToString()));
+                    throw new ApplicationException(string.Format(Res.Msg.CANNOT_INSERT_AFTER_KEY_NOT_FOUND, afterKey.ToString()));
                 }
             }
         }
@@ -377,9 +381,9 @@ namespace DrLinkedDictionary
             {
                 this.dic = linkedDictionary;
                 if (linkedDictionary.EnumerationRules.IsFirstItemRelative)
-                    this.startFrom = linkedDictionary.dic[linkedDictionary.EnumerationRules.StartFromKey];
-                else
                     this.startFrom = linkedDictionary.EnumerationRules.Direction==DrEnumerationRules.EDirection.FORWARD ? linkedDictionary.first: linkedDictionary.last;
+                else
+                    this.startFrom = linkedDictionary.dic[linkedDictionary.EnumerationRules.StartFromKey];
                 //this.startFrom = (linkedDictionary.enumRules.StartFrom != null ? linkedDictionary.dic[linkedDictionary.enumRules.StartFrom] : linkedDictionary.first);
                 nextLinkedValue = this.startFrom;
                 currentLinkedValue = default(DrLinkedValue);

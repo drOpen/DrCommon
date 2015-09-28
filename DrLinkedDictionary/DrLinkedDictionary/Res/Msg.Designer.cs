@@ -79,6 +79,24 @@ namespace DrLinkedDictionary.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot insert new item after specified item because dictionary does not have element with key &apos;{0}&apos;..
+        /// </summary>
+        internal static string CANNOT_INSERT_AFTER_KEY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("CANNOT_INSERT_AFTER_KEY_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot insert new item before specified item because dictionary does not have element with key &apos;{0}&apos;..
+        /// </summary>
+        internal static string CANNOT_INSERT_BEFORE_KEY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("CANNOT_INSERT_BEFORE_KEY_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot rebuild links for item &apos;{0}&apos;..
         /// </summary>
         internal static string CANNOT_REBUILD_LINKS_FOR_ITEM {

@@ -30,7 +30,7 @@ using System.Diagnostics;
 namespace DrLinkedDictionary
 {
    
-    public class DrLinkedDictonary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary//, ICollection<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IReadOnlyDictionary<TKey, TValue>, IReadOnlyCollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable //where V : LinkedValue<V>
+    public class DrLinkedDictonary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary
     {
         [DebuggerDisplay("Previous = {Previous} Next = {Next} Key = {Key} Value = {Value}")]
         public class DrLinkedValue

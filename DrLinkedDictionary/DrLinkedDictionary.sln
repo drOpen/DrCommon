@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrLinkedDictionary", "DrLinkedDictionary\DrLinkedDictionary.csproj", "{EAF5F2EB-407E-4CFB-A153-284C18EE2B9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UTests", "UTests", "{6687166A-8F3D-4AA4-80E3-A5C0C44DF535}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrLinkedDictionary", "UTests\UTestDrLinkedDictionary\UTestDrLinkedDictionary.csproj", "{8F0FD868-DE84-421D-83ED-B7EB4243560D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAF5F2EB-407E-4CFB-A153-284C18EE2B9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAF5F2EB-407E-4CFB-A153-284C18EE2B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAF5F2EB-407E-4CFB-A153-284C18EE2B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAF5F2EB-407E-4CFB-A153-284C18EE2B9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F0FD868-DE84-421D-83ED-B7EB4243560D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F0FD868-DE84-421D-83ED-B7EB4243560D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F0FD868-DE84-421D-83ED-B7EB4243560D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F0FD868-DE84-421D-83ED-B7EB4243560D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8F0FD868-DE84-421D-83ED-B7EB4243560D} = {6687166A-8F3D-4AA4-80E3-A5C0C44DF535}
+	EndGlobalSection
+EndGlobal

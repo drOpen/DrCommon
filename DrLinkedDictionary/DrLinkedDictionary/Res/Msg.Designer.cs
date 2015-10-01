@@ -124,11 +124,38 @@ namespace DrLinkedDictionary.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dictonary cannot be null..
+        /// </summary>
+        internal static string DICTIONRY_NOT_NULL {
+            get {
+                return ResourceManager.GetString("DICTIONRY_NOT_NULL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type &apos;{0}&apos; is incorrect..
+        /// </summary>
+        internal static string INCORRECT_TYPE {
+            get {
+                return ResourceManager.GetString("INCORRECT_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Index is incorrect..
         /// </summary>
         internal static string INDEX_IS_INCORRECT {
             get {
                 return ResourceManager.GetString("INDEX_IS_INCORRECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key must not be null..
+        /// </summary>
+        internal static string KEY_NOT_BE_NULL {
+            get {
+                return ResourceManager.GetString("KEY_NOT_BE_NULL", resourceCulture);
             }
         }
         

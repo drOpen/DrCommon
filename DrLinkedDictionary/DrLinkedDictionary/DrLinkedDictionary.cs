@@ -129,8 +129,6 @@ namespace DrLinkedDictionary
         private DrLinkedValue first;
         private DrLinkedValue last;
 
-        //public TKey StartFrom { get; set; }
-        //public bool ReverseDirection { get; set; }
         public DrEnumerationRules EnumerationRules {get; private set;}
 
         #region Insert
@@ -259,7 +257,7 @@ namespace DrLinkedDictionary
             {
                 foreach (var item in dic)
                 {
-                    if (item.Value.Value.GetHashCode() >= 0 && item.Value.Value == null) return true;
+                    if (item.Value.GetHashCode() >= 0 && item.Value.Value == null) return true;
                 }
             }
             else
@@ -267,7 +265,7 @@ namespace DrLinkedDictionary
                 var eComparer = EqualityComparer<TValue>.Default;
                 foreach (var item in dic)
                 {
-                    if (item.Value.Value.GetHashCode() >= 0 && eComparer.Equals(item.Value.Value, value)) return true;
+                    if (item.Value.GetHashCode() >= 0 && eComparer.Equals(item.Value.Value, value)) return true;
                 }
 
             }
@@ -384,7 +382,6 @@ namespace DrLinkedDictionary
                     this.startFrom = linkedDictionary.EnumerationRules.Direction==DrEnumerationRules.EDirection.FORWARD ? linkedDictionary.first: linkedDictionary.last;
                 else
                     this.startFrom = linkedDictionary.dic[linkedDictionary.EnumerationRules.StartFromKey];
-                //this.startFrom = (linkedDictionary.enumRules.StartFrom != null ? linkedDictionary.dic[linkedDictionary.enumRules.StartFrom] : linkedDictionary.first);
                 nextLinkedValue = this.startFrom;
                 currentLinkedValue = default(DrLinkedValue);
             }
@@ -417,7 +414,7 @@ namespace DrLinkedDictionary
                 get { return currentLinkedValue; }
             }
 
-            void System.Collections.IEnumerator.Reset()
+            void System.Collections.IEnumerator.Reset() // ToDo maybe also reinitialize enumerator field?
             {
                 dic.EnumerationRules.Reset();
             }
@@ -458,7 +455,7 @@ namespace DrLinkedDictionary
             DrLinkedDictonary<TKey, TValue> dictionary;
             public ValueCollection(DrLinkedDictonary<TKey, TValue> dictionary)
             {
-                if (dictionary == null) throw new ArgumentNullException("Dictonary cannot be null.");
+                if (dictionary == null) throw new ArgumentNullException(Res.Msg.DICTIONRY_NOT_NULL);
                 this.dictionary = dictionary;
             }
 
@@ -548,7 +545,7 @@ namespace DrLinkedDictionary
                     : base(linkedDictionary)
                 { }
                 #endregion Enumerator
-                void System.Collections.IEnumerator.Reset()
+                void System.Collections.IEnumerator.Reset() // ToDo maybe also reinitialize enumerator field? 
                 {
                     dic.EnumerationRules.Reset();
                 }
@@ -573,7 +570,7 @@ namespace DrLinkedDictionary
             DrLinkedDictonary<TKey, TValue> dictionary;
             public KeyCollection(DrLinkedDictonary<TKey, TValue> dictionary)
             {
-                if (dictionary == null) throw new ArgumentNullException("Dictonary cannot be null.");
+                if (dictionary == null) throw new ArgumentNullException(Res.Msg.DICTIONRY_NOT_NULL);
                 this.dictionary = dictionary;
             }
 
@@ -663,7 +660,7 @@ namespace DrLinkedDictionary
                     : base(linkedDictionary)
                 { }
                 #endregion Enumerator
-                void System.Collections.IEnumerator.Reset()
+                void System.Collections.IEnumerator.Reset() // ToDo maybe also reinitialize enumerator field?
                 {
                     dic.EnumerationRules.Reset();
                 }
@@ -681,35 +678,59 @@ namespace DrLinkedDictionary
         }
         #endregion KeyCollection
 
+        private static bool IsCompatibleKey(object key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(Res.Msg.KEY_NOT_BE_NULL);
+            }
+            return (key is TKey);
+        }
+
         public void Add(object key, object value)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TKey tempKey = (TKey)key;
+
+                try
+                {
+                    Add(tempKey, (TValue)value);
+                }
+                catch(InvalidCastException e)
+                {
+                    throw new ArgumentException(Res.Msg.INCORRECT_TYPE, typeof(TValue).ToString(), e);
+                }
+            }
+            catch(InvalidCastException e)
+            {
+                throw new ArgumentException(Res.Msg.INCORRECT_TYPE, typeof(TKey).ToString(), e);
+            }
         }
 
         public bool Contains(object key)
         {
-            throw new NotImplementedException();
+            if(IsCompatibleKey(key))
+                return ContainsKey((TKey)key);
+            return false;
         }
 
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Enumerator(this);
         }
 
         public bool IsFixedSize
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public void Remove(object key)
         {
-            throw new NotImplementedException();
+            if (IsCompatibleKey(key))
+                Remove((TKey)key);
         }
 
-        //public KeyCollection Keys
-        //{
-        //    get { return new KeyCollection(this); }
-        //}
         public ICollection<TKey> Keys
         {
             get { return new KeyCollection(this); }
@@ -740,27 +761,50 @@ namespace DrLinkedDictionary
         {
             get
             {
-                throw new NotImplementedException();
+                if (IsCompatibleKey(key))
+                    return dic[(TKey)key].Value;
+                throw new KeyNotFoundException();
             }
             set
             {
-                throw new NotImplementedException();
+                try
+                {
+                    dic[(TKey)key].Value = (TValue)value;
+                }
+                catch(InvalidCastException e)
+                {
+                    throw new ArgumentException(Res.Msg.INCORRECT_TYPE, typeof(TValue).ToString(), e);
+                }
             }
         }
 
         public void CopyTo(Array array, int index)
         {
-            throw new NotImplementedException();
+            var items = (KeyValuePair<TKey, TValue>[])array;
+            if (items != null)
+            {
+                CopyTo(items, index);
+            }
+            else
+            {
+                var objects = (object[])array;
+                int i = index;
+                foreach (var item in this)
+                {
+                    objects[i] = item;
+                    i++;
+                }
+            }
         }
 
         public bool IsSynchronized
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public object SyncRoot
         {
-            get { throw new NotImplementedException(); }
+            get { throw new NotImplementedException(); } // ToDo maybe let is rest like this?
         }
     }
 }

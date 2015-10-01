@@ -138,8 +138,17 @@
   <data name="CANNOT_REBUILD_LINKS_VALUE_IS_NULL" xml:space="preserve">
     <value>Cannot rebuild links because value is null.</value>
   </data>
+  <data name="DICTIONRY_NOT_NULL" xml:space="preserve">
+    <value>Dictonary cannot be null.</value>
+  </data>
+  <data name="INCORRECT_TYPE" xml:space="preserve">
+    <value>The type '{0}' is incorrect.</value>
+  </data>
   <data name="INDEX_IS_INCORRECT" xml:space="preserve">
     <value>Index is incorrect.</value>
+  </data>
+  <data name="KEY_NOT_BE_NULL" xml:space="preserve">
+    <value>Key must not be null.</value>
   </data>
   <data name="MUTATING_COLLECTION_IS_NOT_SUPPORTED" xml:space="preserve">
     <value>Mutating this collection is not supported because this collection is read-only.</value>

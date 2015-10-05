@@ -21,6 +21,16 @@ namespace UTestDrLinkedDictionary
             return d;
         }
 
+        public static List<string> GetStockList(int iElements)
+        {
+            var d = new List<string>();
+            for (int i = 1; i <= iElements; i++)
+            {
+                d.Add(i.ToString());
+            }
+            return d;
+        }
+
         [TestMethod]
         public void ContainsTest()
         {
@@ -40,6 +50,63 @@ namespace UTestDrLinkedDictionary
                 Debug.WriteLine("FAIL: ModifyDictionaryTest - got exception");
                 throw;
             }
+        }
+
+
+        [TestMethod]
+        public void ForEachModifyDirection()
+        {
+            var elements = 10;
+            var dic = GetStockDictonary(elements);
+            var list = GetStockList(elements);
+
+            int i = 1;
+
+            foreach (var item in dic)
+            {
+                Assert.AreEqual(item.Value, list[i-1], false, "The forward direction doesn't work correctly.");
+                i++;
+            }
+
+            i = 10;
+            dic.EnumerationRules.Direction = DrLinkedDictonary<int, string>.DrEnumerationRules.EDirection.BACKWARD;
+            
+            foreach (var item in dic)
+            {
+                Assert.AreEqual(item.Value, list[i-1], false, "The backward direction doesn't work correctly.");
+                i--;
+            }
+
+        }
+
+
+        [TestMethod]
+        public void EnumeratorModifyDirection()
+        {
+            var elements = 10;
+            var dic = GetStockDictonary(elements);
+            var list = GetStockList(elements);
+
+            int i = 1;
+
+            var enumerator = dic.GetEnumerator();
+
+            while(enumerator.MoveNext())
+            {
+                Assert.AreEqual(enumerator.Current.Value, list[i - 1], false, "The forward direction doesn't work correctly.");
+                i++;
+            } 
+
+            i = 10;
+            dic.EnumerationRules.Direction = DrLinkedDictonary<int, string>.DrEnumerationRules.EDirection.BACKWARD;
+            enumerator = dic.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                Assert.AreEqual(enumerator.Current.Value, list[i - 1], false, "The backward direction doesn't work correctly.");
+                i--;
+            } 
+
+
         }
 
         [TestMethod]

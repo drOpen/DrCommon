@@ -29,7 +29,16 @@ using System.Diagnostics;
 
 namespace DrLinkedDictionary
 {
-   
+
+    /// <summary>
+    /// Direction of the enumeration items of the dictionary
+    /// </summary>
+    public enum EDirection
+    {
+        FORWARD,
+        BACKWARD
+    }
+
     public class DrLinkedDictonary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary
     {
         [DebuggerDisplay("Previous = {Previous} Next = {Next} Key = {Key} Value = {Value}")]
@@ -67,14 +76,7 @@ namespace DrLinkedDictionary
         /// </summary>
          public sealed class DrEnumerationRules
          {
-             /// <summary>
-             /// Direction of the enumeration items of the dictionary
-             /// </summary>
-             public enum EDirection
-             {
-                 FORWARD,
-                 BACKWARD
-             }
+
              /// <summary>
              /// The key of item with which to begin enumeration
              /// </summary>
@@ -379,7 +381,7 @@ namespace DrLinkedDictionary
             {
                 this.dic = linkedDictionary;
                 if (linkedDictionary.EnumerationRules.IsFirstItemRelative)
-                    this.startFrom = linkedDictionary.EnumerationRules.Direction==DrEnumerationRules.EDirection.FORWARD ? linkedDictionary.first: linkedDictionary.last;
+                    this.startFrom = linkedDictionary.EnumerationRules.Direction==EDirection.FORWARD ? linkedDictionary.first: linkedDictionary.last;
                 else
                     this.startFrom = linkedDictionary.dic[linkedDictionary.EnumerationRules.StartFromKey];
                 nextLinkedValue = this.startFrom;
@@ -391,7 +393,7 @@ namespace DrLinkedDictionary
             {
                 if (nextLinkedValue == null) return false;
                 currentLinkedValue = nextLinkedValue;
-                if (this.dic.EnumerationRules.Direction==DrEnumerationRules.EDirection.FORWARD)
+                if (this.dic.EnumerationRules.Direction==EDirection.FORWARD)
                     nextLinkedValue = nextLinkedValue.Next;
                 else
                     nextLinkedValue = nextLinkedValue.Previous;

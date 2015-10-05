@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DrLinkedDictionary;
+
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -11,25 +12,54 @@ namespace UTestDrLinkedDictionary
     public class UTestDrLinkedDictionary
     {
 
+        #region TestData
         public static DrLinkedDictonary<int, string> GetStockDictonary(int iElements)
         {
+            return GetStockDictonary(1, iElements);
+        }
+
+        public static DrLinkedDictonary<int, string> GetStockDictonary(int start, int iElements)
+        {
             var d = new DrLinkedDictonary<int, string>();
-            for (int i = 1; i <= iElements; i++)
+            for (int i = start; i <= iElements; i++)
             {
                 d.Add(i, i.ToString());
             }
             return d;
         }
 
+
         public static List<string> GetStockList(int iElements)
         {
+            return GetStockList(1, iElements);
+        }
+
+        public static List<string> GetStockList(int start, int iElements)
+        {
             var d = new List<string>();
-            for (int i = 1; i <= iElements; i++)
+            for (int i = start; i <= iElements; i++)
             {
                 d.Add(i.ToString());
             }
             return d;
         }
+
+        public void CompareKeyLinkedDictionary(DrLinkedDictonary<int, string> dic, List<string> list)
+        {
+            
+            var i = (dic.EnumerationRules.Direction==EDirection.FORWARD ? 0 : list.Count-1);
+
+            foreach (var item in dic)
+            {
+                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", EDirection.FORWARD, item.Key, list[i]));
+                if (dic.EnumerationRules.Direction == EDirection.FORWARD)
+                    i++;
+                else
+                    i--;
+            }
+        }
+
+        #endregion #region TestData
 
         [TestMethod]
         public void ContainsTest()
@@ -54,34 +84,41 @@ namespace UTestDrLinkedDictionary
 
 
         [TestMethod]
-        public void ForEachModifyDirection()
+        public void TestForEachForStaticStockDictionary()
         {
             var elements = 10;
             var dic = GetStockDictonary(elements);
             var list = GetStockList(elements);
 
-            int i = 1;
+            CompareKeyLinkedDictionary(dic, list);
+            dic.EnumerationRules.Direction = EDirection.BACKWARD;
+            CompareKeyLinkedDictionary(dic, list);
+        }
+        [TestMethod]
+        public void TestStartFromKeyStaticStockDictionary()
+        {
+            var elements = 10;
+            var dic = GetStockDictonary(elements);
+            var listFirst = new List <string> {"1","2","3","4","5"};
+            var listLast = new List<string> { "5", "6", "7", "8", "9", "10" };
+            var list = GetStockList(elements);
 
-            foreach (var item in dic)
-            {
-                Assert.AreEqual(item.Value, list[i-1], false, "The forward direction doesn't work correctly.");
-                i++;
-            }
+            dic.EnumerationRules.StartFromKey = 5;
+            CompareKeyLinkedDictionary(dic, listLast);
+            dic.EnumerationRules.Direction = EDirection.BACKWARD;
+            CompareKeyLinkedDictionary(dic, listFirst);
 
-            i = 10;
-            dic.EnumerationRules.Direction = DrLinkedDictonary<int, string>.DrEnumerationRules.EDirection.BACKWARD;
-            
-            foreach (var item in dic)
-            {
-                Assert.AreEqual(item.Value, list[i-1], false, "The backward direction doesn't work correctly.");
-                i--;
-            }
+            dic.EnumerationRules.Reset();
+
+            CompareKeyLinkedDictionary(dic, list);
+            dic.EnumerationRules.Direction = EDirection.BACKWARD;
+            CompareKeyLinkedDictionary(dic, list);
+
 
         }
 
-
         [TestMethod]
-        public void EnumeratorModifyDirection()
+        public void TestEnumeratorWithModifyDirection()
         {
             var elements = 10;
             var dic = GetStockDictonary(elements);
@@ -98,15 +135,13 @@ namespace UTestDrLinkedDictionary
             } 
 
             i = 10;
-            dic.EnumerationRules.Direction = DrLinkedDictonary<int, string>.DrEnumerationRules.EDirection.BACKWARD;
+            dic.EnumerationRules.Direction = EDirection.BACKWARD;
             enumerator = dic.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 Assert.AreEqual(enumerator.Current.Value, list[i - 1], false, "The backward direction doesn't work correctly.");
                 i--;
             } 
-
-
         }
 
         [TestMethod]
@@ -165,7 +200,7 @@ namespace UTestDrLinkedDictionary
                     Debug.Write(item.ToString() + " ");
 
 
-                d.EnumerationRules.Direction = DrLinkedDictonary<int, string>.DrEnumerationRules.EDirection.BACKWARD;
+                d.EnumerationRules.Direction = EDirection.BACKWARD;
                 Debug.Write("\n\nBackward default: ");
                 foreach (var item in d)
                     Debug.Write(item.ToString() + " ");

@@ -939,7 +939,7 @@ namespace DrOpen.DrCommon.DrData
         {
             try
             {
-                return node.attributes.GetValue(name, defaultValue);
+                return node.Attributes.GetValue(name, defaultValue);
             }
             catch
             {

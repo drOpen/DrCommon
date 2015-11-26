@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DrMsgQueue.Res {
+namespace DrOpen.DrCommon.DrMsgQueue.Res
+{
     using System;
     
     

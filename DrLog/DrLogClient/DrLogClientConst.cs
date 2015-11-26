@@ -128,7 +128,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// <summary>
         /// Who created the message 
         /// </summary>
-        public const string AttSource = "LogSource";
+        public const string AttSource = "Source";
         /// <summary>
         /// The list of providers who will be read this message. by default all providers
         /// </summary>

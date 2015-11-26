@@ -935,11 +935,11 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="name">Attribute name</param>
         /// <param name="defaultValue">Default value</param>
         /// <returns>Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.</returns>
-        public static DDValue GetAttributeValue( DDNode node, string name, object defaultValue)
+        public static DDValue GetAttributeValue(DDNode node, string name, object defaultValue)
         {
             try
             {
-                return node.attributes.GetValue(name, defaultValue);
+                return node.Attributes.GetValue(name, defaultValue);
             }
             catch
             {

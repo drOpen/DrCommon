@@ -917,7 +917,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="name">Attribute name</param>
         /// <param name="defaultValue">Default value</param>
         /// <returns>Returns attribute value by attribute name for specified path to the node . If the attribute does not exist returns the default value.</returns>
-        public static DDValue GetAttributeValue(this DDNode node, string path, string name, object defaultValue)
+        public static DDValue GetAttributeValue(DDNode node, string path, string name, object defaultValue)
         {
             try
             {
@@ -935,7 +935,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="name">Attribute name</param>
         /// <param name="defaultValue">Default value</param>
         /// <returns>Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.</returns>
-        public static DDValue GetAttributeValue(this DDNode node, string name, object defaultValue)
+        public static DDValue GetAttributeValue( DDNode node, string name, object defaultValue)
         {
             try
             {

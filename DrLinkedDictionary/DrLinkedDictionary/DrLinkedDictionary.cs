@@ -1,5 +1,5 @@
 ﻿/*
-  DrLinkedDictionary.cs -- linked dictionary 1.0.0, September 26, 2015
+  DrLinkedDictionary.cs -- linked dictionary 1.1.0, December 19, 2015
  
   Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
                           Kirillov Vasiliy
@@ -70,68 +70,117 @@ namespace DrLinkedDictionary
             }
 
         }
-
+        #region GetDrEnumerationRules
+        /// <summary>
+        /// Returns stock DrEnumerationRules
+        /// </summary>
+        /// <returns></returns>
+        public DrEnumerationRules GetDrEnumerationRules()
+        {
+            return new DrEnumerationRules();
+        }
+        public DrEnumerationRules GetDrEnumerationRules(EDirection direction)
+        {
+            return new DrEnumerationRules(direction);
+        }
+        public DrEnumerationRules GetDrEnumerationRules(TKey startFromKey)
+        {
+            return new DrEnumerationRules(startFromKey);
+        }
+        public DrEnumerationRules GetDrEnumerationRules(TKey startFromKey, EDirection direction)
+        {
+            return new DrEnumerationRules(startFromKey, direction);
+        }
+        #endregion GetDrEnumerationRules
         /// <summary>
         /// Rules of the enumeration items of the dictionary
         /// </summary>
-         public sealed class DrEnumerationRules
-         {
+        public sealed class DrEnumerationRules: ICloneable
+        {
 
-             /// <summary>
-             /// The key of item with which to begin enumeration
-             /// </summary>
-             private TKey startFromKey;
-             /// <summary>
-             /// The key of item with which to begin enumeration
-             /// </summary>
-             public TKey StartFromKey
-             {
-                 get { return this.startFromKey; }
-                 set 
-                 { 
-                     this.IsFirstItemRelative = false; 
-                     this.startFromKey = value; 
-                 }
-             }
-             /// <summary>
-             /// Return true if enumeration will be started for each item of the dictionary from the first or the last item depends from specified direction.
-             /// Otherwise, returns false if enumeration will be started for each item of the dictionary from specified key of item <paramref name="StartFromKey"/> and direction.
-             /// </summary>
-             public bool IsFirstItemRelative { get; private set; }
-             /// <summary>
-             /// Direction of the enumeration items of the dictionary
-             /// </summary>
-             public EDirection Direction { get; set; }
+            #region DrEnumerationRules
+            public DrEnumerationRules()
+            {
+                this.Reset();
+            }
+            public DrEnumerationRules(EDirection direction)
+            {
+                this.Reset();
+                this.Direction = direction;
+            }
+            public DrEnumerationRules(TKey startFromKey)
+            {
+                this.Reset();
+                this.StartFromKey = startFromKey;
+            }
+            public DrEnumerationRules(TKey startFromKey, EDirection direction)
+            {
+                this.Reset();
+                this.StartFromKey = startFromKey;
+                this.Direction = direction;
+            }
+            #endregion DrEnumerationRules
+            /// <summary>
+            /// The key of item with which to begin enumeration
+            /// </summary>
+            private TKey startFromKey;
+            /// <summary>
+            /// The key of item with which to begin enumeration
+            /// </summary>
+            public TKey StartFromKey
+            {
+                get { return this.startFromKey; }
+                set
+                {
+                    this.IsFirstItemRelative = false;
+                    this.startFromKey = value;
+                }
+            }
+            /// <summary>
+            /// Return true if enumeration will be started for each item of the dictionary from the first or the last item depends from specified direction.
+            /// Otherwise, returns false if enumeration will be started for each item of the dictionary from specified key of item <paramref name="StartFromKey"/> and direction.
+            /// </summary>
+            public bool IsFirstItemRelative { get; private set; }
+            /// <summary>
+            /// Direction of the enumeration items of the dictionary
+            /// </summary>
+            public EDirection Direction { get; set; }
 
-             public DrEnumerationRules()
-             {
-                 this.Reset();
-             }
-             /// <summary>
-             /// Reset rules to default. Set <paramref name="StartFromKey"/> to default <paramref name="TKey"/>, 
-             /// set <paramref name="IsFirstItemRelative"/> to true and <paramref name="Direction"/> will be set to FORWARD 
-             /// </summary>
-             public void Reset()
-             {
-                 this.Direction = EDirection.FORWARD;
-                 this.startFromKey = default(TKey);
-                 this.IsFirstItemRelative = true;
-             }
-         }
+            /// <summary>
+            /// Reset rules to default. Set <paramref name="StartFromKey"/> to default <paramref name="TKey"/>, 
+            /// set <paramref name="IsFirstItemRelative"/> to true and <paramref name="Direction"/> will be set to FORWARD 
+            /// </summary>
+            public void Reset()
+            {
+                this.Direction = EDirection.FORWARD;
+                this.startFromKey = default(TKey);
+                this.IsFirstItemRelative = true;
+            }
+
+            public object Clone()
+            {
+                if (this.IsFirstItemRelative)
+                    return new DrEnumerationRules(this.Direction);
+                else
+                    return new DrEnumerationRules(this.StartFromKey, this.Direction);
+            }
+
+            object ICloneable.Clone()
+            {
+                return Clone();
+            }
+        }
 
         public DrLinkedDictonary()
         {
             dic = new Dictionary<TKey, DrLinkedValue>();
             first = null;
             last = null;
-            EnumerationRules = new DrEnumerationRules();
         }
 
         private Dictionary<TKey, DrLinkedValue> dic;
         private DrLinkedValue first;
         private DrLinkedValue last;
-
-        public DrEnumerationRules EnumerationRules {get; private set;}
 
         #region Insert
         public void Add(TKey key, TValue value)
@@ -233,7 +282,7 @@ namespace DrLinkedDictionary
         {
             try
             {
-                if ((value.IsFirst) && (value.IsLast)) return;     // dictionary has only one item
+                if ((value.IsFirst) && (value.IsLast)) return;                   // dictionary has only one item
                 if (value.IsFirst) { value.Next.Previous = null; return; }       // the first element will be removed
                 if (value.IsLast) { value.Previous.Next = null; return; }        // the last element will be removed
                 value.Previous.Next = value.Next;
@@ -355,45 +404,98 @@ namespace DrLinkedDictionary
             return false;
         }
 
+        #region GetEnumerator
+        /// <summary>
+        /// Returns an enumerator as IEnumerator&lt;KeyValuePair&lt;TKey, TValue&gt;&gt; that iterates through a collection.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return new Enumerator(this);
         }
-
+        /// <summary>
+        /// Returns an enumerator as IEnumerator that iterates through a collection.
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+        /// <summary>
+        /// Returns an enumerator as Enumerator that iterates through a collection by specified rules
+        /// </summary>
+        /// <param name="eRules">Rules of the enumeration items of the collection</param>
+        /// <returns></returns>
+        public Enumerator GetEnumerator(DrEnumerationRules eRules)
+        {
+            return new Enumerator(this, eRules);
+        }
+
+        #endregion GetEnumerator
 
         #endregion implement IDictionary<TKey, TValue>
 
         #region Enumerator
 
-        public class LinkedEnumerator
+        public class LinkedEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
         {
             protected DrLinkedDictonary<TKey, TValue> dic;
+            protected DrEnumerationRules eRules;
             protected DrLinkedValue nextLinkedValue;
             protected DrLinkedValue currentLinkedValue;
             protected DrLinkedValue startFrom;
 
             #region LinkedEnumerator
-            public LinkedEnumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary)
+
+            public LinkedEnumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary, DrEnumerationRules eRules)
             {
                 this.dic = linkedDictionary;
-                if (linkedDictionary.EnumerationRules.IsFirstItemRelative)
-                    this.startFrom = linkedDictionary.EnumerationRules.Direction==EDirection.FORWARD ? linkedDictionary.first: linkedDictionary.last;
+                this.eRules = (DrEnumerationRules) eRules.Clone();
+                if (this.eRules.IsFirstItemRelative)
+                    this.startFrom = this.eRules.Direction == EDirection.FORWARD ? linkedDictionary.first : linkedDictionary.last;
                 else
-                    this.startFrom = linkedDictionary.dic[linkedDictionary.EnumerationRules.StartFromKey];
+                    this.startFrom = linkedDictionary.dic[this.eRules.StartFromKey];
                 nextLinkedValue = this.startFrom;
                 currentLinkedValue = default(DrLinkedValue);
             }
+
+            public LinkedEnumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary)
+                : this(linkedDictionary, new DrEnumerationRules())
+            { }
             #endregion LinkedEnumerator
 
+            #region GetEnumerator
+
+            public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+            {
+                return (IEnumerator<KeyValuePair<TKey, TValue>>)this;
+            }
+
+            public void Reset()
+            { }
+            public int Count
+            {
+                get { return 0; }
+            }
+            KeyValuePair<TKey, TValue> Current
+            {
+                get { return new KeyValuePair<TKey, TValue>(); }
+            }
+
+            KeyValuePair<TKey, TValue> IEnumerator<KeyValuePair<TKey, TValue>>.Current
+            {
+                get { return new KeyValuePair<TKey, TValue>(); }
+            }
+            object System.Collections.IEnumerator.Current
+            {
+                get { return new object(); }
+            }
+            #endregion GetEnumerator
             public bool MoveNext()
             {
                 if (nextLinkedValue == null) return false;
                 currentLinkedValue = nextLinkedValue;
-                if (this.dic.EnumerationRules.Direction==EDirection.FORWARD)
+                if (this.eRules.Direction == EDirection.FORWARD)
                     nextLinkedValue = nextLinkedValue.Next;
                 else
                     nextLinkedValue = nextLinkedValue.Previous;
@@ -409,16 +511,16 @@ namespace DrLinkedDictionary
             public Enumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary)
                 : base(linkedDictionary)
             { }
+            public Enumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary, DrEnumerationRules eRules)
+                : base(linkedDictionary, eRules)
+            { }
             #endregion Enumerator
 
-            object System.Collections.IEnumerator.Current
-            {
-                get { return currentLinkedValue; }
-            }
+
 
             void System.Collections.IEnumerator.Reset() // ToDo maybe also reinitialize enumerator field?
             {
-                dic.EnumerationRules.Reset();
+                this.eRules.Reset();
             }
 
             public DictionaryEntry Entry
@@ -439,7 +541,12 @@ namespace DrLinkedDictionary
                 get { return currentLinkedValue.Value; }
             }
 
-            KeyValuePair<TKey, TValue> Current
+            object System.Collections.IEnumerator.Current
+            {
+                get { return currentLinkedValue; }
+            }
+
+            public KeyValuePair<TKey, TValue> Current
             {
                 get { return currentLinkedValue; }
             }
@@ -530,26 +637,46 @@ namespace DrLinkedDictionary
             {
                 get { return ((ICollection)dictionary).SyncRoot; }
             }
+            #region GetEnumerator
+            /// <summary>
+            /// Returns an enumerator as IEnumerator&lt;TValue&gt; that iterates through a collection.
+            /// </summary>
+            /// <returns></returns>
             public IEnumerator<TValue> GetEnumerator()
             {
                 return new Enumerator(dictionary);
             }
-
+            /// <summary>
+            /// Returns an enumerator as IEnumerator that iterates through a collection.
+            /// </summary>
+            /// <returns></returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
-
+            /// <summary>
+            /// Returns an enumerator as LinkedEnumerator that iterates through a collection by specified rules
+            /// </summary>
+            /// <param name="eRules">Rules of the enumeration items of the collection</param>
+            /// <returns></returns>
+            public LinkedEnumerator GetEnumerator(DrEnumerationRules eRules)
+            {
+                return new Enumerator(dictionary, eRules);
+            }
+            #endregion GetEnumerator
             public class Enumerator : LinkedEnumerator, IEnumerator<TValue>, IEnumerator
             {
                 #region Enumerator
+                public Enumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary, DrEnumerationRules eRules)
+                    : base(linkedDictionary, eRules)
+                { }
                 public Enumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary)
                     : base(linkedDictionary)
                 { }
                 #endregion Enumerator
                 void System.Collections.IEnumerator.Reset() // ToDo maybe also reinitialize enumerator field? 
                 {
-                    dic.EnumerationRules.Reset();
+                    this.eRules.Reset();
                 }
 
                 public TValue Current
@@ -645,26 +772,46 @@ namespace DrLinkedDictionary
             {
                 get { return ((ICollection)dictionary).SyncRoot; }
             }
+            #region GetEnumerator
+            /// <summary>
+            /// Returns an enumerator as IEnumerator&lt;TKey&gt; that iterates through a collection.
+            /// </summary>
+            /// <returns></returns>
             public IEnumerator<TKey> GetEnumerator()
             {
                 return new Enumerator(dictionary);
             }
-
+            /// <summary>
+            /// Returns an enumerator as IEnumerator that iterates through a collection.
+            /// </summary>
+            /// <returns></returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
-
+            /// <summary>
+            /// Returns an enumerator as LinkedEnumerator that iterates through a collection by specified rules
+            /// </summary>
+            /// <param name="eRules">Rules of the enumeration items of the collection</param>
+            /// <returns></returns>
+            public LinkedEnumerator GetEnumerator(DrEnumerationRules eRules)
+            {
+                return new Enumerator(dictionary, eRules);
+            }
+            #endregion GetEnumerator
             public class Enumerator : LinkedEnumerator, IEnumerator<TKey>, IEnumerator
             {
                 #region Enumerator
+                public Enumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary, DrEnumerationRules eRules)
+                    : base(linkedDictionary, eRules)
+                { }
                 public Enumerator(DrLinkedDictonary<TKey, TValue> linkedDictionary)
                     : base(linkedDictionary)
                 { }
                 #endregion Enumerator
                 void System.Collections.IEnumerator.Reset() // ToDo maybe also reinitialize enumerator field?
                 {
-                    dic.EnumerationRules.Reset();
+                    this.eRules.Reset();
                 }
 
                 public TKey Current
@@ -699,12 +846,12 @@ namespace DrLinkedDictionary
                 {
                     Add(tempKey, (TValue)value);
                 }
-                catch(InvalidCastException e)
+                catch (InvalidCastException e)
                 {
                     throw new ArgumentException(Res.Msg.INCORRECT_TYPE, typeof(TValue).ToString(), e);
                 }
             }
-            catch(InvalidCastException e)
+            catch (InvalidCastException e)
             {
                 throw new ArgumentException(Res.Msg.INCORRECT_TYPE, typeof(TKey).ToString(), e);
             }
@@ -712,7 +859,7 @@ namespace DrLinkedDictionary
 
         public bool Contains(object key)
         {
-            if(IsCompatibleKey(key))
+            if (IsCompatibleKey(key))
                 return ContainsKey((TKey)key);
             return false;
         }
@@ -773,7 +920,7 @@ namespace DrLinkedDictionary
                 {
                     dic[(TKey)key].Value = (TValue)value;
                 }
-                catch(InvalidCastException e)
+                catch (InvalidCastException e)
                 {
                     throw new ArgumentException(Res.Msg.INCORRECT_TYPE, typeof(TValue).ToString(), e);
                 }

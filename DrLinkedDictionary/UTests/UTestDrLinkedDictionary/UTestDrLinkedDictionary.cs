@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace UTestDrLinkedDictionary
 {
-    // ToDo - need to overwrite the following tests -)
     [TestClass]
     public class UTestDrLinkedDictionary
     {
@@ -46,13 +45,16 @@ namespace UTestDrLinkedDictionary
 
         public void CompareKeyLinkedDictionary(DrLinkedDictonary<int, string> dic, List<string> list)
         {
-            
-            var i = (dic.EnumerationRules.Direction==EDirection.FORWARD ? 0 : list.Count-1);
+            this.CompareKeyLinkedDictionary(dic, list, new DrLinkedDictonary<int, string>.DrEnumerationRules());
+        }
 
-            foreach (var item in dic)
+        public void CompareKeyLinkedDictionary(DrLinkedDictonary<int, string> dic, List<string> list, DrLinkedDictonary<int, string>.DrEnumerationRules eRules)
+        {
+            var i = (eRules.Direction == EDirection.FORWARD ? 0 : list.Count - 1);
+            foreach (var item in dic.GetEnumerator(eRules))
             {
-                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", EDirection.FORWARD, item.Key, list[i]));
-                if (dic.EnumerationRules.Direction == EDirection.FORWARD)
+                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", eRules.Direction.ToString(), item.Key, list[i]));
+                if (eRules.Direction == EDirection.FORWARD)
                     i++;
                 else
                     i--;
@@ -61,27 +63,70 @@ namespace UTestDrLinkedDictionary
 
         #endregion #region TestData
 
+        #region Test Enumeration
         [TestMethod]
-        public void ContainsTest()
+        public void TestRulesCloneChangeDirection()
         {
-            var d = GetStockDictonary(10);
-            try
+
+            var elements = 10;
+            var dic = GetStockDictonary(elements);
+            var list = GetStockList(elements);
+
+
+            var i = 0;
+            var eRules = dic.GetDrEnumerationRules(EDirection.FORWARD);
+
+            foreach (var item in (dic.GetEnumerator(eRules)))
             {
-                Debug.WriteLine("ContainsKey exists", (d.ContainsKey(5) == true) ? "PASS" : "FAIL");
-                Debug.WriteLine("ContainsKey not exists", (d.ContainsKey(0) == false) ? "PASS" : "FAIL");
-                Debug.WriteLine("ContainsValue not exists", (d.ContainsValue("0") == false) ? "PASS" : "FAIL");
-                Debug.WriteLine("ContainsValue exists", (d.ContainsValue("6") == true) ? "PASS" : "FAIL");
-                Debug.WriteLine("ContainsItem not exists", (d.Contains(new KeyValuePair<int, string>(5, "6")) == false) ? "PASS" : "FAIL");
-                Debug.WriteLine("ContainsItem exists", (d.Contains(new KeyValuePair<int, string>(5, "5")) == true) ? "PASS" : "FAIL");
-                Debug.WriteLine("ContainsItem exists", (d.Contains("ssd") == false) ? "PASS" : "FAIL");
+                Debug.Print(string.Format("Key: '{0}', Value: '{1}'.",  item.Key , item.Value));
+                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", EDirection.FORWARD.ToString(), item.Key, list[i]));
+                eRules.Direction = EDirection.BACKWARD; // current foreach is not changed
+                i++;
             }
-            catch
+
+            i = list.Count - 1;
+            foreach (var item in (dic.GetEnumerator(eRules)))
             {
-                Debug.WriteLine("FAIL: ModifyDictionaryTest - got exception");
-                throw;
+                Debug.Print(string.Format("Key: '{0}', Value: '{1}'.", item.Key, item.Value));
+                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", EDirection.BACKWARD.ToString(), item.Key, list[i]));
+                eRules.Direction = EDirection.FORWARD; // current foreach is not changed
+                i--;
             }
         }
 
+        [TestMethod]
+        public void TestRulesCloneChangeStartFrom()
+        {
+
+            var elements = 10;
+            var dic = GetStockDictonary(elements);
+            var list = GetStockList(elements);
+
+            var startFrom = 5;
+            var i = 4;
+            var eRules = dic.GetDrEnumerationRules(startFrom);
+            
+            foreach (var item in (dic.GetEnumerator(eRules)))
+            {
+                Debug.Print(string.Format("Key: '{0}', Value: '{1}'.", item.Key, item.Value));
+                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", EDirection.FORWARD.ToString(), item.Key, list[i]));
+                eRules.StartFromKey = startFrom; // current foreach is not changed
+                i++;
+            }
+
+            eRules.Direction = EDirection.BACKWARD;
+            i = startFrom-1;
+
+            foreach (var item in (dic.GetEnumerator(eRules)))
+            {
+                Debug.Print(string.Format("Key: '{0}', Value: '{1}'.", item.Key, item.Value));
+                Assert.AreEqual(item.Key.ToString(), list[i], false, string.Format("The '{0}' direction doesn't work correctly item '{1}' is not equals '{2}'.", EDirection.BACKWARD.ToString(), item.Key, list[i]));
+                eRules.Direction = EDirection.FORWARD; // current foreach is not changed
+                eRules.StartFromKey = startFrom; // current foreach is not changed
+                i--;
+            }
+        }
+        #endregion Test Enumeration
 
         [TestMethod]
         public void TestForEachForStaticStockDictionary()
@@ -91,7 +136,10 @@ namespace UTestDrLinkedDictionary
             var list = GetStockList(elements);
 
             CompareKeyLinkedDictionary(dic, list);
-            dic.EnumerationRules.Direction = EDirection.BACKWARD;
+            var eRules = dic.GetDrEnumerationRules();
+            eRules.Direction = EDirection.BACKWARD;
+            CompareKeyLinkedDictionary(dic, list);
+            eRules.Direction = EDirection.FORWARD;
             CompareKeyLinkedDictionary(dic, list);
         }
         [TestMethod]
@@ -99,22 +147,21 @@ namespace UTestDrLinkedDictionary
         {
             var elements = 10;
             var dic = GetStockDictonary(elements);
-            var listFirst = new List <string> {"1","2","3","4","5"};
+            var listFirst = new List<string> { "1", "2", "3", "4", "5" };
             var listLast = new List<string> { "5", "6", "7", "8", "9", "10" };
             var list = GetStockList(elements);
 
-            dic.EnumerationRules.StartFromKey = 5;
-            CompareKeyLinkedDictionary(dic, listLast);
-            dic.EnumerationRules.Direction = EDirection.BACKWARD;
-            CompareKeyLinkedDictionary(dic, listFirst);
+            var eRules = dic.GetDrEnumerationRules(5);
 
-            dic.EnumerationRules.Reset();
+            CompareKeyLinkedDictionary(dic, listLast, eRules);
+            eRules.Direction = EDirection.BACKWARD;
+            CompareKeyLinkedDictionary(dic, listFirst, eRules);
 
-            CompareKeyLinkedDictionary(dic, list);
-            dic.EnumerationRules.Direction = EDirection.BACKWARD;
-            CompareKeyLinkedDictionary(dic, list);
+            eRules.Reset();
 
-
+            CompareKeyLinkedDictionary(dic, list, eRules);
+            eRules.Direction = EDirection.BACKWARD;
+            CompareKeyLinkedDictionary(dic, list, eRules);
         }
 
         [TestMethod]
@@ -126,22 +173,24 @@ namespace UTestDrLinkedDictionary
 
             int i = 1;
 
-            var enumerator = dic.GetEnumerator();
+            var eRules = dic.GetDrEnumerationRules();
+            var enumerator = dic.GetEnumerator(eRules);
 
-            while(enumerator.MoveNext())
+            while (enumerator.MoveNext())
             {
-                Assert.AreEqual(enumerator.Current.Value, list[i - 1], false, "The forward direction doesn't work correctly.");
+
+                Assert.AreEqual(enumerator.Current.Value, list[i - 1],  "The forward direction doesn't work correctly.");
                 i++;
-            } 
+            }
 
             i = 10;
-            dic.EnumerationRules.Direction = EDirection.BACKWARD;
-            enumerator = dic.GetEnumerator();
+            eRules.Direction = EDirection.BACKWARD;
+            enumerator = dic.GetEnumerator(eRules);
             while (enumerator.MoveNext())
             {
                 Assert.AreEqual(enumerator.Current.Value, list[i - 1], false, "The backward direction doesn't work correctly.");
                 i--;
-            } 
+            }
         }
 
         [TestMethod]
@@ -189,40 +238,5 @@ namespace UTestDrLinkedDictionary
             }
         }
 
-        [TestMethod]
-        public void EnumerationRulesTest()
-        {
-            var d = GetStockDictonary(5);
-            try
-            {
-                Debug.Write("LinkedDictionary (also - forward default): ");
-                foreach (var item in d)
-                    Debug.Write(item.ToString() + " ");
-
-
-                d.EnumerationRules.Direction = EDirection.BACKWARD;
-                Debug.Write("\n\nBackward default: ");
-                foreach (var item in d)
-                    Debug.Write(item.ToString() + " ");
-
-                d.EnumerationRules.StartFromKey = 3;
-                Debug.Write("\nBackward from 3: ");
-                foreach (var item in d)
-                    Debug.Write(item.ToString() + " ");
-
-                d.EnumerationRules.Reset();
-                d.InsertAsFirst(0, "0");
-                Debug.Write("\nForward default (0 as first): ");
-                foreach (var item in d)
-                    Debug.Write(item.ToString() + " ");
-                Debug.WriteLine("\nPASS: EnumerationRulesTest");
-            }
-            catch
-            {
-                Debug.WriteLine("FAIL: EnumerationRulesTest - got exception");
-                throw;
-            }
-
-        }
     }
 }

@@ -35,11 +35,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// <summary>
         /// Log level of message
         /// </summary>
-        public const string AttLogLevel = "LogLevel";
+        public const string AttLevel = "Level";
         /// <summary>
         /// Who created the message 
         /// </summary>
-        public const string AttSource = "LogLevel";
+        public const string AttSource = "Source";
         /// <summary>
         /// The list of providers who will be read this message. by default all providers
         /// </summary>
@@ -47,7 +47,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// <summary>
         /// The list of recipients who will be receive this message. by default all recipients
         /// </summary>
-        public const string AttRecipients = "Providers";
+        public const string AttRecipients = "Recipients";
         #endregion basic attributes for messages
 
 

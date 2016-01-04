@@ -151,7 +151,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
             var node = new DDNode(new DDType(DrLogConst.MessageType)) { Type = DrLogConst.MessageType };
 
             if (exception != null) node.Add(exception); // add exception
-            node.Attributes.Add(DrLogConst.AttLogLevel, logLevel.ToString());
+            node.Attributes.Add(DrLogConst.AttLevel, logLevel.ToString());
             if (!string.IsNullOrEmpty(body)) node.Attributes.Add(DrLogConst.AttBody, body);
             if (!string.IsNullOrEmpty(source)) node.Attributes.Add(DrLogConst.AttSource, source);
             if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(DrLogConst.AttProviders, providers);

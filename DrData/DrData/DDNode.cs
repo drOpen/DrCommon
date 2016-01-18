@@ -767,7 +767,40 @@ namespace DrOpen.DrCommon.DrData
             get { return this.childNodes.Values; }
         }
         #endregion Names/Values
-        #region Transform
+        #region Exception
+        /// <summary>
+        /// Type of node which describes Exception
+        /// </summary>
+        public const string TpException = "Exception";
+        /// <summary>
+        /// Node name which contains Data for current Exception
+        /// </summary>
+        public const string NdData = "Data";
+        /// <summary>
+        /// Node name which contains InnerException for current Exception
+        /// </summary>
+        public const string NdInnerException = "InnerException";
+        /// <summary>
+        /// Attribute name with stack trace for node which describes Exception
+        /// </summary>
+        public const string AttStackTrace = "StackTrace";
+        /// <summary>
+        /// Attribute name with Source for node which describes Exception
+        /// </summary>
+        public const string AttSource = "Source";
+        /// <summary>
+        /// Attribute name with HelpLink for node which describes Exception
+        /// </summary>
+        public const string AttHelpLink = "HelpLink";
+        /// <summary>
+        /// Attribute name with Type of Exception
+        /// </summary>
+        public const string AttType = "Type";
+        /// <summary>
+        /// Attribute name with Message of Exception
+        /// </summary>
+        public const string AttMessage = "Message";
+
         /// <summary>
         /// transformation exception to node
         /// </summary>
@@ -786,28 +819,28 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="e"></param>
         static private void SetNodeAttributeFromException(DDNode n, Exception e)
         {
-            n.Type = "Exception";
-            if (e.StackTrace != null) n.Attributes.Add("StackTrace", e.StackTrace);
-            if (e.Source != null) n.Attributes.Add("Source", e.Source);
-            if (e.HelpLink != null) n.Attributes.Add("HelpLink", e.HelpLink);
-            n.Attributes.Add("Type", e.GetType().Name);
+            n.Type = TpException;
+            if (e.StackTrace != null) n.Attributes.Add(AttStackTrace, e.StackTrace);
+            if (e.Source != null) n.Attributes.Add(AttSource, e.Source);
+            if (e.HelpLink != null) n.Attributes.Add(AttHelpLink, e.HelpLink);
+            n.Attributes.Add(AttType, e.GetType().Name);
             if (e.Data != null)
             {
-                var data = n.Add("Data");
+                var data = n.Add(NdData);
                 foreach (var dKey in e.Data.Keys)
                 {
                     data.attributes.Add(dKey.ToString(), e.Data[dKey].ToString());
                 }
             }
-            n.Attributes.Add("Message", e.Message);
+            n.Attributes.Add(AttMessage, e.Message);
             if (e.InnerException != null)
             {
-                var nodeInner = n.Add("InnerException");
+                var nodeInner = n.Add(NdInnerException);
                 SetNodeAttributeFromException(nodeInner, e.InnerException);
             }
         }
 
-        #endregion Transform
+        #endregion Exception
         #region Size
         /// <summary>
         /// size in bytes of the stored data for all attributes in the current node and her children

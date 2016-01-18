@@ -58,5 +58,33 @@ namespace UTestsDrLogClient
             Assert.AreEqual(expected, res, String.Format("Incorrect result '{0}'. Expected '{1}'.", res, expected));
         }
         #endregion Args2String
+
+        #region tmp
+        [TestMethod]
+        public void TestBuildException()
+        {
+            try
+            {
+                throw new ArgumentNullException("Inner Exception ParamName", "Message Inner Exception");
+                
+            }
+            catch (Exception e)
+            {
+
+                try
+                {
+                    throw new ApplicationException("Message Body", e);    
+                }
+                catch (Exception ie)
+                {
+                    DrOpen.DrCommon.DrLog.DrLogSrv.DrLogMsgExt.BuildExceptionAsString(DrOpen.DrCommon.DrLog.DrLogSrv.LogExceptionLevel.ALL, ie);
+                }
+            }
+
+        }
+        
+
+        #endregion tmp
+
     }
 }

@@ -32,17 +32,19 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Providers\LogProvider.cs" />
+    <Compile Include="DrLogMsgExt.cs" />
+    <Compile Include="DrLogSrvConst.cs" />
+    <Compile Include="Providers\LogFile.cs" />
+    <Compile Include="Providers\Provider.cs" />
     <Compile Include="Providers\LogConsole.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\ILogProvider.cs" />
+    <Compile Include="Providers\IProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DrData\DrData\DrData.csproj">

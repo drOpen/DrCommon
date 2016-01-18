@@ -148,14 +148,14 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// <returns></returns>
         public static DDNode MessageItem(DateTime createdDateTime, LogLevel logLevel, string source, Exception exception, string body, string[] providers, string[] recipients)
         {
-            var node = new DDNode(new DDType(DrLogConst.MessageType)) { Type = DrLogConst.MessageType };
+            var node = new DDNode(new DDType(DrLogMsgConst.MessageType)) { Type = DrLogMsgConst.MessageType };
 
             if (exception != null) node.Add(exception); // add exception
-            node.Attributes.Add(DrLogConst.AttLevel, logLevel.ToString());
-            if (!string.IsNullOrEmpty(body)) node.Attributes.Add(DrLogConst.AttBody, body);
-            if (!string.IsNullOrEmpty(source)) node.Attributes.Add(DrLogConst.AttSource, source);
-            if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(DrLogConst.AttProviders, providers);
-            if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(DrLogConst.AttRecipients, recipients);
+            node.Attributes.Add(DrLogMsgConst.AttLevel, logLevel.ToString());
+            if (!string.IsNullOrEmpty(body)) node.Attributes.Add(DrLogMsgConst.AttBody, body);
+            if (!string.IsNullOrEmpty(source)) node.Attributes.Add(DrLogMsgConst.AttSource, source);
+            if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(DrLogMsgConst.AttProviders, providers);
+            if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(DrLogMsgConst.AttRecipients, recipients);
             return node;
         }
 
@@ -201,28 +201,6 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
             }
             Write(MessageItem(DateTime.Now, logLevel, GetSource(), exception, body, providers, recipients));
         }
-
-        /// <summary>
-        /// Convert arguments string array to string like "'param1', 'empty', 'null'"
-        /// <remarks>Return "null" for null arguments and "empty" for 0 arguments</remarks> 
-        /// </summary>
-        /// <param name="args">arguments to convert</param>
-        /// <returns></returns>
-        public static string Args2String(params object[] args)
-        {
-            if (args==null) return "null";
-            if (args.Length ==0) return "empty";
-            string res = String.Empty;
-            foreach (var item in args)
-            {
-                if (res.Length != 0) res += ", ";
-                var itemF = (item == null) ? "null" : item.ToString();
-                if (itemF.Length == 0) itemF = "empty";
-                res += "'" + itemF + "'";
-            }
-            return res;
-        }
-
         /// <summary>
         /// Build MessageItem as DDNode and send to LogSrv across PipeTransport.<para> </para>
         /// Exposes the current time for this message. Defines the source name.<para> </para>
@@ -343,5 +321,27 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         }
         #endregion WriteDebug
         #endregion write
+        #region Static
+        /// <summary>
+        /// Convert arguments string array to string like "'param1', 'empty', 'null'"
+        /// <remarks>Return "null" for null arguments and "empty" for 0 arguments</remarks> 
+        /// </summary>
+        /// <param name="args">arguments to convert</param>
+        /// <returns></returns>
+        public static string Args2String(params object[] args)
+        {
+            if (args == null) return "null";
+            if (args.Length == 0) return "empty";
+            string res = String.Empty;
+            foreach (var item in args)
+            {
+                if (res.Length != 0) res += ", ";
+                var itemF = (item == null) ? "null" : item.ToString();
+                if (itemF.Length == 0) itemF = "empty";
+                res += "'" + itemF + "'";
+            }
+            return res;
+        }
+        #endregion Static
     }
 }

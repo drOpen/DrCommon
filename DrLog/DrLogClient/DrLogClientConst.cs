@@ -27,6 +27,7 @@ using System;
 
 namespace DrOpen.DrCommon.DrLog.DrLogClient
 {
+
     #region Level
     /// <summary>
     /// Log Level
@@ -72,46 +73,16 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         ALL = TRACE | DBG
     }
     #endregion Level
-    ///// <summary>
-    ///// basic attributes for messages
-    ///// </summary>
-    //public enum MessageAttributes
-    //{
-    //    /// <summary>
-    //    /// creation time of the message 
-    //    /// </summary>
-    //    DateTime,
-    //    /// <summary>
-    //    /// body of message
-    //    /// </summary>
-    //    Body,
-    //    /// <summary>
-    //    /// Log level of message
-    //    /// </summary>
-    //    LogLevel,
-    //    /// <summary>
-    //    /// Who created the message 
-    //    /// </summary>
-    //    Source,
-    //    /// <summary>
-    //    /// The list of providers who will be read this message. by default all providers
-    //    /// </summary>
-    //    Providers,
-    //    /// <summary>
-    //    /// The list of recipients who will be receive this message. by default all recipients
-    //    /// </summary>
-    //    Recipients
-    //}
+   
     /// <summary>
-    /// Constants for DrLog
+    /// Constants for DrLogMsg
     /// </summary> 
-    public class DrLogConst
+    public static class DrLogMsgConst
     {
         /// <summary>
         /// DDNode type for messages
         /// </summary>
         public const string MessageType = "DrLogMessage";
-
         #region basic attributes for messages
         /// <summary>
         /// creation time of the message 
@@ -125,6 +96,10 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// Log level of message
         /// </summary>
         public const string AttLevel = "Level";
+        /// <summary>
+        /// Log exception of message
+        /// </summary>
+        public const string AttException = "Exception";
         /// <summary>
         /// Who created the message 
         /// </summary>

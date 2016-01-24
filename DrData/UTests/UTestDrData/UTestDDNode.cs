@@ -30,6 +30,7 @@ using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -83,7 +84,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch (ArgumentNullException)
+            catch (DDNodeNullPathExceptions)
             {
 
             }
@@ -175,7 +176,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch (ArgumentNullException)
+            catch (DDNodeNullPathExceptions)
             {
 
             }

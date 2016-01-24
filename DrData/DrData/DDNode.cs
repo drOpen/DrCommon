@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using DrData.Res;
+using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData.Exceptions;
 using System.Text;
 
@@ -57,7 +57,7 @@ namespace DrOpen.DrCommon.DrData
         #region Constructor
         public DDNode(string name, DDType type)
         {
-            if (!IsNameCorect(name)) throw new ArgumentException(string.Format(Msg.INCORRECT_NODE_NAME, name));
+            if (!IsNameCorect(name)) throw new DDNodeIncorrectNameExceptions (name);
             attributes = new DDAttributesCollection();
             Name = name;
             childNodes = new Dictionary<string, DDNode>();
@@ -474,7 +474,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public virtual DDNode GetNode(string path)
         {
-            if (path == null) throw new ArgumentNullException(Msg.NULL_PATH_ERR);
+            if (path == null) throw new DDNodeNullPathExceptions();
             if (path.Length == 0) return this; // done
             var nextNodeName = GetNextNodeNameByPath(ref path);
             switch (nextNodeName)
@@ -499,7 +499,7 @@ namespace DrOpen.DrCommon.DrData
         protected static string GetNextNodeNameByPath(ref string path)
         {
             string name = string.Empty;
-            if (path == null) throw new ArgumentNullException(Msg.NULL_PATH_ERR);
+            if (path == null) throw new DDNodeNullPathExceptions();
             var iRes = path.IndexOf('/');
             if (iRes == -1) //not found
             {

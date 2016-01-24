@@ -26,7 +26,7 @@
  */
 using System;
 using System.Text;
-using DrData.Res;
+using DrOpen.DrCommon.DrData.Res;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml.Schema;

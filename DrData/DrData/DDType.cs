@@ -27,7 +27,7 @@
 
 using System;
 using System.Runtime.Serialization;
-using DrData.Res;
+using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrData
@@ -56,6 +56,10 @@ namespace DrOpen.DrCommon.DrData
         public DDType(string name)
         {
             this.Name = name;
+        }
+        public DDType(Type type)
+        {
+            this.Name = type.Name;
         }
         /// <summary>
         /// The special constructor is used to deserialize values.

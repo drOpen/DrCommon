@@ -132,12 +132,6 @@
   <data name="PRESERVE_EXISTS_VALUE" xml:space="preserve">
     <value>The current value named '{0}' exists and will be preserved.</value>
   </data>
-  <data name="INCORRECT_NODE_NAME" xml:space="preserve">
-    <value>The node name '{0}' is incorrect. The node name cannot be empty and cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.</value>
-  </data>
-  <data name="NULL_PATH_ERR" xml:space="preserve">
-    <value>The path cannot be null</value>
-  </data>
   <data name="RISE_ABOVE_ROOT_NODE" xml:space="preserve">
     <value>Attempt to rise above the root node. The specified path '{0}'  is incorrect.</value>
   </data>

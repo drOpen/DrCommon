@@ -37,7 +37,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DrLogClientConst.cs" />
+    <Compile Include="LevelMsg.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Res\Msg.Designer.cs">
@@ -45,6 +45,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Msg.resx</DependentUpon>
     </Compile>
+    <Compile Include="SchemaMsg.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DrData\DrData\DrData.csproj">

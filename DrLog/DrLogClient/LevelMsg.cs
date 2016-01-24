@@ -1,7 +1,7 @@
 ﻿/*
-  ILogProvider.cs -- interface define contract for log provider  1.0, August 8, 2015
+  LevelMsg.cs -- message level for log for DrLog 1.0.0, January 24, 2016
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -23,50 +23,56 @@
 
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
  */
-
-using DrOpen.DrCommon.DrData;
 using System;
 
-namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
+namespace DrOpen.DrCommon.DrLog.DrLogClient
 {
+
+    #region Level
     /// <summary>
-    /// interface define contract for log provider
+    /// Log Level
     /// </summary>
-    public interface IProvider : IDisposable
+    [Flags]
+    public enum LogLevel : int
     {
         /// <summary>
-        /// write messages to provider
+        /// Exclude all messages
         /// </summary>
-        /// <param name="msg"></param>
-        void Write(DDNode msg);
+        NONE = 0,
         /// <summary>
-        /// return name of current provider
+        /// Error
         /// </summary>
-        string Name { get; }
+        ERR = 1,
         /// <summary>
-        /// return Type of provider by configuration node
+        /// Warning
         /// </summary>
-        DDType Type { get; }
+        WAR = 2,
         /// <summary>
-        /// return configuration of current provider
+        /// Information
         /// </summary>
-        DDNode Config { get; set; }
+        INF = 4,
         /// <summary>
-        /// return default configuration of current provider
+        /// Trace
         /// </summary>
-        DDNode DefaultConfig { get; }
+        TRC = 8,
         /// <summary>
-        /// returns the log level filter for current provider
+        /// Debug
         /// </summary>
-        DrLogSrv.LogLevel Level { get;}
+        DBG = 16,
         /// <summary>
-        /// returns the log exception level filter for current provider
+        /// Only inforamtion mesages: <see cref="LogLevel.ERR"/>, <see cref="LogLevel.WAR"/> and <see cref="LogLevel.INF"/>
         /// </summary>
-        DrLogSrv.LogExceptionLevel ExceptionLevel { get; }
+        INFO = (ERR | WAR | INF),
         /// <summary>
-        /// Update settings from config
+        /// Extands <see cref="INFO"/> adds <see cref="LogLevel.TRC"/>
         /// </summary>
-        void RebuildConfiguration();
-
+        TRACE = INFO | TRC,
+        /// <summary>
+        /// Extands <see cref="TRACE"/> adds <see cref="LogLevel.DBG"/>. All messages including debug level
+        /// </summary>
+        ALL = TRACE | DBG
     }
+    #endregion Level
+   
+
 }

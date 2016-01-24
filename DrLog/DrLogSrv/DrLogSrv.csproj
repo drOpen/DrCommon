@@ -38,10 +38,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DrLogMsgExt.cs" />
-    <Compile Include="DrLogSrvConst.cs" />
+    <Compile Include="LevelMsg.cs" />
     <Compile Include="Providers\LogFile.cs" />
     <Compile Include="Providers\Provider.cs" />
     <Compile Include="Providers\LogConsole.cs" />
+    <Compile Include="Providers\SchemaProvider.cs" />
+    <Compile Include="SchemaMsg.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\IProvider.cs" />

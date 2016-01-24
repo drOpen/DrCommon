@@ -1,7 +1,7 @@
 ﻿/*
-  ILogProvider.cs -- interface define contract for log provider  1.0, August 8, 2015
+  SchemaMsg.cs -- schema of message for log for DrLog 1.0.0, January 24, 2016
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -23,50 +23,49 @@
 
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
  */
-
-using DrOpen.DrCommon.DrData;
 using System;
 
-namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
+namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
     /// <summary>
-    /// interface define contract for log provider
-    /// </summary>
-    public interface IProvider : IDisposable
+    /// Constants for SchemaMsg
+    /// </summary> 
+    public static class SchemaMsg
     {
         /// <summary>
-        /// write messages to provider
+        /// DDNode type for messages
         /// </summary>
-        /// <param name="msg"></param>
-        void Write(DDNode msg);
-        /// <summary>
-        /// return name of current provider
-        /// </summary>
-        string Name { get; }
-        /// <summary>
-        /// return Type of provider by configuration node
-        /// </summary>
-        DDType Type { get; }
-        /// <summary>
-        /// return configuration of current provider
-        /// </summary>
-        DDNode Config { get; set; }
-        /// <summary>
-        /// return default configuration of current provider
-        /// </summary>
-        DDNode DefaultConfig { get; }
-        /// <summary>
-        /// returns the log level filter for current provider
-        /// </summary>
-        DrLogSrv.LogLevel Level { get;}
-        /// <summary>
-        /// returns the log exception level filter for current provider
-        /// </summary>
-        DrLogSrv.LogExceptionLevel ExceptionLevel { get; }
-        /// <summary>
-        /// Update settings from config
-        /// </summary>
-        void RebuildConfiguration();
+        public const string MessageType = "DrLogMessage";
 
+        #region basic attributes for messages
+        /// <summary>
+        /// creation time of the message 
+        /// </summary>
+        public const string AttDateTime = "DateTime";
+        /// <summary>
+        /// body of message
+        /// </summary>
+        public const string AttBody = "Body";
+        /// <summary>
+        /// Log level of message
+        /// </summary>
+        public const string AttLevel = "Level";
+        /// <summary>
+        /// Log exception of message
+        /// </summary>
+        public const string AttException = "Exception";
+        /// <summary>
+        /// Who created the message 
+        /// </summary>
+        public const string AttSource = "Source";
+        /// <summary>
+        /// The list of providers who will be read this message. by default all providers
+        /// </summary>
+        public const string AttProviders = "Providers";
+        /// <summary>
+        /// The list of recipients who will be receive this message. by default all recipients
+        /// </summary>
+        public const string AttRecipients = "Recipients";
+        #endregion basic attributes for messages
     }
 }

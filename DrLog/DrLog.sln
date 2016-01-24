@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestsDrLogClient", "UTests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrMsgQueue", "..\DrMsgQueue\DrMsgQueue\DrMsgQueue.csproj", "{7BF3889E-EC69-4D31-B090-A04B469F05E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrLogSrv", "UTests\UTestDrLogSrv\UTestDrLogSrv.csproj", "{4BB33ADA-8C48-449B-968C-ED7BDCC56A78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,11 +41,16 @@ Global
 		{7BF3889E-EC69-4D31-B090-A04B469F05E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BF3889E-EC69-4D31-B090-A04B469F05E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BF3889E-EC69-4D31-B090-A04B469F05E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BB33ADA-8C48-449B-968C-ED7BDCC56A78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BB33ADA-8C48-449B-968C-ED7BDCC56A78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BB33ADA-8C48-449B-968C-ED7BDCC56A78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BB33ADA-8C48-449B-968C-ED7BDCC56A78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8A6C7478-A090-40C0-A6EE-22F6D3248E3D} = {BC49C824-0E0B-452C-829F-4BF8ECAD2D4B}
+		{4BB33ADA-8C48-449B-968C-ED7BDCC56A78} = {BC49C824-0E0B-452C-829F-4BF8ECAD2D4B}
 	EndGlobalSection
 EndGlobal

@@ -70,8 +70,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         { get; set; }
         virtual public void RebuildConfiguration()
         {
-            this.Level = (DrLogSrv.LogLevel)Enum.Parse(typeof(DrLogSrv.LogLevel), Config.Attributes.GetValue(DrLogProviderConst.AttLevel, DefaultLevel), true);
-            this.ExceptionLevel = (DrLogSrv.LogExceptionLevel)Enum.Parse(typeof(DrLogSrv.LogExceptionLevel), Config.Attributes.GetValue(DrLogProviderConst.AttExceptionLevel, DrLogSrv.LogExceptionLevel.ALL), true);
+            this.Level = (DrLogSrv.LogLevel)Enum.Parse(typeof(DrLogSrv.LogLevel), Config.Attributes.GetValue(SchemaProvider.AttLevel, DefaultLevel), true);
+            this.ExceptionLevel = (DrLogSrv.LogExceptionLevel)Enum.Parse(typeof(DrLogSrv.LogExceptionLevel), Config.Attributes.GetValue(SchemaProvider.AttExceptionLevel, DrLogSrv.LogExceptionLevel.ALL), true);
         }
         /// <summary>
         /// default log level
@@ -89,8 +89,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         public static DDNode GetCommonConfig(DDType type)
         {
             var n = new DDNode(type);
-            n.Attributes.Add(DrLogProviderConst.AttLevel, DefaultLevel.ToString());
-            n.Attributes.Add(DrLogProviderConst.AttExceptionLevel, DefaultExceptionLevel.ToString());
+            n.Attributes.Add(SchemaProvider.AttLevel, DefaultLevel.ToString());
+            n.Attributes.Add(SchemaProvider.AttExceptionLevel, DefaultExceptionLevel.ToString());
             return n;
         }
     }

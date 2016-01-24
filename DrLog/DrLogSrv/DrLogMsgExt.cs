@@ -42,7 +42,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public bool ContainsRecipients(this DDNode msg)
         {
-            return msg.Attributes.Contains(DrLogMsgConst.AttRecipients);
+            return msg.Attributes.Contains(SchemaMsg.AttRecipients);
         }
         /// <summary>
         /// Returns recipients of message. If attribute doesn't exist returns String.Empty
@@ -51,7 +51,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public string[] GetRecipients(this DDNode msg)
         {
-            return msg.Attributes.GetValue(DrLogMsgConst.AttRecipients, String.Empty);
+            return msg.Attributes.GetValue(SchemaMsg.AttRecipients, String.Empty);
         }
         /// <summary>
         ///  Determines whether the Providers is specified
@@ -60,7 +60,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public bool ContainsProviders(this DDNode msg)
         {
-            return msg.Attributes.Contains(DrLogMsgConst.AttProviders);
+            return msg.Attributes.Contains(SchemaMsg.AttProviders);
         }
         /// <summary>
         /// Returns providers of message. If attribute doesn't exist returns String.Empty
@@ -69,7 +69,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public string[] GetProviders(this DDNode msg)
         {
-            return msg.Attributes.GetValue(DrLogMsgConst.AttProviders, String.Empty);
+            return msg.Attributes.GetValue(SchemaMsg.AttProviders, String.Empty);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public string GetBody(this DDNode msg)
         {
-            return msg.Attributes.GetValue(DrLogMsgConst.AttBody, String.Empty);
+            return msg.Attributes.GetValue(SchemaMsg.AttBody, String.Empty);
         }
         /// <summary>
         /// Returns source of message. If attribute doesn't exist returns String.Empty
@@ -88,7 +88,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public string GetSource(this DDNode msg)
         {
-            return msg.Attributes.GetValue(DrLogMsgConst.AttSource, String.Empty);
+            return msg.Attributes.GetValue(SchemaMsg.AttSource, String.Empty);
         }
         /// <summary>
         /// Log level. If attribute doesn't exist returns DrLogSrv.LogLevel.NONE
@@ -97,8 +97,19 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public DrLogSrv.LogLevel GetLogLevel(this DDNode msg)
         {
-            return (DrLogSrv.LogLevel)Enum.Parse(typeof(DrLogSrv.LogLevel), msg.Attributes.GetValue(DrLogMsgConst.AttLevel, DrLogSrv.LogLevel.NONE), true);
+            return (DrLogSrv.LogLevel)Enum.Parse(typeof(DrLogSrv.LogLevel), msg.Attributes.GetValue(SchemaMsg.AttLevel, DrLogSrv.LogLevel.NONE), true);
         }
+
+
+        static public bool ContainsException(this DDNode msg)
+        {
+            foreach (var n in msg)
+            {
+                if (n.Value.Type.Name == DDNode.TpException) return true;
+            }
+            return false;
+        }
+        
 
         static public string GetLogException(this DDNode msg, DrLogSrv.LogExceptionLevel eLevel)
         {
@@ -172,7 +183,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         static public DateTime GetDateTime(this DDNode msg)
         {
-            return msg.Attributes.GetValue(DrLogMsgConst.AttDateTime, DateTime.MinValue);
+            return msg.Attributes.GetValue(SchemaMsg.AttDateTime, DateTime.MinValue);
         }
 
 

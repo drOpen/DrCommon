@@ -1,7 +1,7 @@
 ﻿/*
-  DrLogClientConst.cs -- constants for DrLog 1.0.0, August 30, 2015
+  LevelMsg.cs -- message level for log 1.1.0, January 24, 2016
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -25,8 +25,53 @@
  */
 using System;
 
-namespace DrOpen.DrCommon.DrLog.DrLogClient
+namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
+    #region Exception
+    /// <summary>
+    /// Log Exception
+    /// </summary>
+    [Flags]
+    public enum LogExceptionLevel : int
+    {
+        /// <summary>
+        /// Exceptions will not be logged
+        /// </summary>
+        NONE=0,
+        /// <summary>
+        /// Log Stack Trace of Exception
+        /// </summary>
+        STACK_TRACE=1,
+        /// <summary>
+        /// Log Source of Exception
+        /// </summary>
+        SOURCE=2,
+        /// <summary>
+        /// Log Help Link of Exception
+        /// </summary>
+        HELP_LINK=4,
+        /// <summary>
+        /// Log Exception Type
+        /// </summary>
+        TYPE=8,
+        /// <summary>
+        /// Log Data of Exception
+        /// </summary>
+        DATA=16,
+        /// <summary>
+        /// Log Exception Message
+        /// </summary>
+        MESSAGE=32,
+        /// <summary>
+        /// Inner Exceptions will be logged
+        /// </summary>
+        INNERT_EXCEPTION=512,
+        /// <summary>
+        /// All exceptions fields include inner exceptions will be logged
+        /// </summary>
+        ALL = STACK_TRACE | SOURCE | HELP_LINK | TYPE | DATA | MESSAGE | INNERT_EXCEPTION
+    }
+    #endregion Exception
 
     #region Level
     /// <summary>
@@ -73,45 +118,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         ALL = TRACE | DBG
     }
     #endregion Level
-   
-    /// <summary>
-    /// Constants for DrLogMsg
-    /// </summary> 
-    public static class DrLogMsgConst
-    {
-        /// <summary>
-        /// DDNode type for messages
-        /// </summary>
-        public const string MessageType = "DrLogMessage";
-        #region basic attributes for messages
-        /// <summary>
-        /// creation time of the message 
-        /// </summary>
-        public const string AttDateTime = "DateTime";
-        /// <summary>
-        /// body of message
-        /// </summary>
-        public const string AttBody = "Body";
-        /// <summary>
-        /// Log level of message
-        /// </summary>
-        public const string AttLevel = "Level";
-        /// <summary>
-        /// Log exception of message
-        /// </summary>
-        public const string AttException = "Exception";
-        /// <summary>
-        /// Who created the message 
-        /// </summary>
-        public const string AttSource = "Source";
-        /// <summary>
-        /// The list of providers who will be read this message. by default all providers
-        /// </summary>
-        public const string AttProviders = "Providers";
-        /// <summary>
-        /// The list of recipients who will be receive this message. by default all recipients
-        /// </summary>
-        public const string AttRecipients = "Recipients";
-        #endregion basic attributes for messages
-    }
+
+
+
+
 }

@@ -148,14 +148,15 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// <returns></returns>
         public static DDNode MessageItem(DateTime createdDateTime, LogLevel logLevel, string source, Exception exception, string body, string[] providers, string[] recipients)
         {
-            var node = new DDNode(new DDType(DrLogMsgConst.MessageType)) { Type = DrLogMsgConst.MessageType };
+            var node = new DDNode(new DDType(SchemaMsg.MessageType)) { Type = SchemaMsg.MessageType };
 
             if (exception != null) node.Add(exception); // add exception
-            node.Attributes.Add(DrLogMsgConst.AttLevel, logLevel.ToString());
-            if (!string.IsNullOrEmpty(body)) node.Attributes.Add(DrLogMsgConst.AttBody, body);
-            if (!string.IsNullOrEmpty(source)) node.Attributes.Add(DrLogMsgConst.AttSource, source);
-            if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(DrLogMsgConst.AttProviders, providers);
-            if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(DrLogMsgConst.AttRecipients, recipients);
+            node.Attributes.Add(SchemaMsg.AttDateTime, createdDateTime);
+            node.Attributes.Add(SchemaMsg.AttLevel, logLevel.ToString());
+            if (!string.IsNullOrEmpty(body)) node.Attributes.Add(SchemaMsg.AttBody, body);
+            if (!string.IsNullOrEmpty(source)) node.Attributes.Add(SchemaMsg.AttSource, source);
+            if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(SchemaMsg.AttProviders, providers);
+            if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(SchemaMsg.AttRecipients, recipients);
             return node;
         }
 

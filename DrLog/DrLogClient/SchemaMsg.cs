@@ -1,7 +1,7 @@
 ﻿/*
-  ILogProvider.cs -- interface define contract for log provider  1.0, August 8, 2015
+  SchemaMsg.cs -- schema of message for log for DrLog 1.0.0, January 24, 2016
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -23,50 +23,48 @@
 
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
  */
-
-using DrOpen.DrCommon.DrData;
 using System;
 
-namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
+namespace DrOpen.DrCommon.DrLog.DrLogClient
 {
     /// <summary>
-    /// interface define contract for log provider
-    /// </summary>
-    public interface IProvider : IDisposable
+    /// Constants for schema of message for log
+    /// </summary> 
+    public static class SchemaMsg
     {
         /// <summary>
-        /// write messages to provider
+        /// DDNode type for messages
         /// </summary>
-        /// <param name="msg"></param>
-        void Write(DDNode msg);
+        public const string MessageType = "DrLogMessage";
+        #region basic attributes for messages
         /// <summary>
-        /// return name of current provider
+        /// creation time of the message 
         /// </summary>
-        string Name { get; }
+        public const string AttDateTime = "DateTime";
         /// <summary>
-        /// return Type of provider by configuration node
+        /// body of message
         /// </summary>
-        DDType Type { get; }
+        public const string AttBody = "Body";
         /// <summary>
-        /// return configuration of current provider
+        /// Log level of message
         /// </summary>
-        DDNode Config { get; set; }
+        public const string AttLevel = "Level";
         /// <summary>
-        /// return default configuration of current provider
+        /// Log exception of message
         /// </summary>
-        DDNode DefaultConfig { get; }
+        public const string AttException = "Exception";
         /// <summary>
-        /// returns the log level filter for current provider
+        /// Who created the message 
         /// </summary>
-        DrLogSrv.LogLevel Level { get;}
+        public const string AttSource = "Source";
         /// <summary>
-        /// returns the log exception level filter for current provider
+        /// The list of providers who will be read this message. by default all providers
         /// </summary>
-        DrLogSrv.LogExceptionLevel ExceptionLevel { get; }
+        public const string AttProviders = "Providers";
         /// <summary>
-        /// Update settings from config
+        /// The list of recipients who will be receive this message. by default all recipients
         /// </summary>
-        void RebuildConfiguration();
-
+        public const string AttRecipients = "Recipients";
+        #endregion basic attributes for messages
     }
 }

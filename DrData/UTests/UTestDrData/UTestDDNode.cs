@@ -705,90 +705,50 @@ namespace UTestDrData
             catch (Exception)
             {/* it's ok */}
         }
-        [TestMethod]
-        public void TestAddNodeWithIncorrectNameDot()
+
+
+        private void TestAddNodeWithIncorrectName(DDNode node, string name)
         {
-            var root = GetStockHierarhy();
             DDNode child;
             try
             {
-                child = root.Add(".");
-                Assert.Fail("Forbidden to add node with name '.'.");
+                child = node.Add(name);
+                Assert.Fail(String.Format("Forbidden to add node with name '{0}'.", name));
             }
             catch (AssertFailedException e)
             {
                 throw;
             }
-            catch (Exception)
-            {/* it's ok */}
+            catch (DDNodeIncorrectNameExceptions e)
+            {
+                Assert.AreEqual(e.Name, name);
+            }
+        }
+
+        [TestMethod]
+        public void TestAddNodeWithIncorrectNameDot()
+        {
+            TestAddNodeWithIncorrectName(GetStockHierarhy(), ".");
         }
         [TestMethod]
         public void TestAddNodeWithIncorrectNameDoubleDot()
         {
-            var root = GetStockHierarhy();
-            DDNode child;
-            try
-            {
-                child = root.Add("..");
-                Assert.Fail("Forbidden to add node with name '..'.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {/* it's ok */}
+            TestAddNodeWithIncorrectName(GetStockHierarhy(), "..");
         }
         [TestMethod]
         public void TestAddNodeWithIncorrectNameWithSlash()
         {
-            var root = GetStockHierarhy();
-            DDNode child;
-            try
-            {
-                child = root.Add("ab/c");
-                Assert.Fail("Forbidden to add node with name '/'.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {/* it's ok */}
+            TestAddNodeWithIncorrectName(GetStockHierarhy(), "ab/c");
         }
         [TestMethod]
         public void TestAddNodeWithIncorrectNameSlash()
         {
-            var root = GetStockHierarhy();
-            DDNode child;
-            try
-            {
-                child = root.Add("/");
-                Assert.Fail("Forbidden to add node with name contains symbol '/'.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {/* it's ok */}
+            TestAddNodeWithIncorrectName(GetStockHierarhy(), "/");
         }
         [TestMethod]
         public void TestAddNodeWithIncorrectEmptyName()
         {
-            var root = GetStockHierarhy();
-            DDNode child;
-            try
-            {
-                child = root.Add("");
-                Assert.Fail("Forbidden to add node with empty name.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {/* it's ok */}
+            TestAddNodeWithIncorrectName(GetStockHierarhy(), "");
         }
         [TestMethod]
         public void TestAddNodeWithIncorrectNameNull()

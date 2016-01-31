@@ -33,6 +33,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using DrOpen.DrCommon.DrData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace UTestDrData
 {
@@ -113,17 +114,9 @@ namespace UTestDrData
 
                 Assert.Fail("Add new value with not uniq name!");
             }
-            catch (ArgumentException)
+            catch (DDAttributeExistsException e)
             {
-                Assert.IsTrue(attrs[TEST_ENUM.TEST_ENUM_A] == "A", "Cannot find first value by name.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Catch incorrect exception after attempt to add new value with not uniq name!" + e.Message);
+                Assert.AreEqual(e.Name, TEST_ENUM.TEST_ENUM_A.ToString());
             }
         }
 
@@ -139,17 +132,9 @@ namespace UTestDrData
 
                 Assert.Fail("Add new value with not uniq name!");
             }
-            catch (ArgumentException)
+            catch (DDAttributeExistsException e)
             {
-                Assert.IsTrue(attrs[TEST_ENUM.TEST_ENUM_A] == "A", "Cannot find first value by name.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Catch incorrect exception after attempt to add new value with not uniq name!" + e.Message);
+                Assert.AreEqual(e.Name, TEST_ENUM.TEST_ENUM_A.ToString());
             }
         }
 
@@ -878,17 +863,9 @@ namespace UTestDrData
                 a1.Merge(a2, DrOpen.DrCommon.DrData.ResolveConflict.THROW_EXCEPTION);
                 Assert.Fail("Cannot catch exception!");
             }
-            catch (ArgumentException)
+            catch (DDAttributeExistsException e)
             {
-                Assert.IsTrue(a1 == GetStockAttributesCollection(), "Collections must be equals.");
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Catch incorrect exception!" + e.Message);
+                Assert.AreEqual(e.Name, TEST_ENUM.TEST_ENUM_a.ToString());
             }
         }
         #endregion Merge

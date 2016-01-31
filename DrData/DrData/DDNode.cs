@@ -255,14 +255,13 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>added child node</returns>
         public virtual DDNode Add(DDNode node)
         {
-            if (Equals(node)) throw new ApplicationException(String.Format(Msg.CANNOT_ADD_YOURSELF_AS_CHILD, node.Name));
+            if (null == node) throw new DDNodeAddNullExceptions();
+            if (Equals(node)) throw new DDNodeAddSelf(node.Path);
             if (node.Parent == null)
                 node.Parent = this;
             else
-                if (!this.Equals(node.Parent))
-                    throw new ApplicationException(String.Format(Msg.CANNOT_ADD_NODE_BELONG_TO_ANOTHER_PARENT_NODE, node.Name));
+                if (!this.Equals(node.Parent)) throw new DDNodeAddNodeWithParent(node.Path);
             childNodes.Add(node.Name, node);
-            //node.Level = Level + 1;
             return node;
         }
         #endregion Add
@@ -482,7 +481,7 @@ namespace DrOpen.DrCommon.DrData
                 case "/":
                     return this.GetRoot().GetNode(path);
                 case "..":
-                    if (this.Parent == null) throw new ArgumentException(string.Format(Msg.RISE_ABOVE_ROOT_NODE, ".."));
+                    if (this.Parent == null) throw new DDNodePathAboveRootExceptions("..");
                     return this.Parent.GetNode(path);
                 case ".":
                     return this.GetNode(path);
@@ -931,7 +930,7 @@ namespace DrOpen.DrCommon.DrData
                     }
                     else
                     {
-                        if (res == ResolveConflict.THROW_EXCEPTION) throw new ApplicationException(string.Format(Msg.CANNOT_MERGE_NODE_WITH_EXIST_NAME, item.Value.Name, Path));
+                        if (res == ResolveConflict.THROW_EXCEPTION) throw new DDNodeMergeNameExceptions (item.Value.Name, Path);
                         //if (res == ResolveConflict.SKIP) continue ; // skip only attributes. this line must be commented
                         GetNode(item.Value.Name).Merge(item.Value, option, res);
                     }

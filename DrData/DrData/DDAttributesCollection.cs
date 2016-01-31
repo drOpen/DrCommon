@@ -1,4 +1,5 @@
-﻿/*
+﻿using DrOpen.DrCommon.DrData.Exceptions;
+/*
   DDAttributesCollection.cs -- collection of data for data of the 'DrData' general purpose Data abstraction layer 1.0.1, January 3, 2014
  
   Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
@@ -248,8 +249,14 @@ namespace DrOpen.DrCommon.DrData
                     }
                     break;
             }
-
-            attributes.Add(name, value);
+            try
+            {
+                attributes.Add(name, value);
+            }
+            catch (ArgumentException e)
+            {
+                throw new DDAttributeExistsException(name, e);
+            }
             return name; // return name of new value
         }
         #endregion Add
@@ -584,12 +591,19 @@ namespace DrOpen.DrCommon.DrData
         }
         #endregion Size
         #region Merge
-
+        /// <summary>
+        /// Merge attributes with source attribute collection. In case of conflict, an appropriate exception is thrown
+        /// </summary>
+        /// <param name="coll">Source attribute collection.</param>
         public void Merge(DDAttributesCollection coll)
         {
             Merge(coll, ResolveConflict.THROW_EXCEPTION);
         }
-
+        /// <summary>
+        /// Merge attributes with source attribute collection.
+        /// </summary>
+        /// <param name="coll">Source attribute collection.</param>
+        /// <param name="res">The parameters determine the resolution of attributes name conflicts</param>
         public void Merge(DDAttributesCollection coll, ResolveConflict res)
         {
             foreach (var item in coll)

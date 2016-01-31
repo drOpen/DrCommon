@@ -59,11 +59,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Res\Exc.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Exc.resx</DependentUpon>
-    </Compile>
     <Compile Include="Res\Msg.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -71,11 +66,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Res\Exc.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Exc.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>DrOpen.DrCommon.DrData.Res</CustomToolNamespace>
-    </EmbeddedResource>
     <EmbeddedResource Include="Res\Msg.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Msg.Designer.cs</LastGenOutput>

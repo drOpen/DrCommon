@@ -136,7 +136,7 @@ namespace DrOpen.DrCommon.DrMsgQueue
         /// <returns></returns>
         public static DDType GetConditionsType()
         {
-            return new DDType("DDMsgFlushConditions");
+            return new DDType(typeof(DDMsgFlushConditions));
         }
         /// <summary>
         /// return default conditions node

@@ -31,6 +31,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Xml;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -338,7 +339,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(string[])) return Encoding.UTF8.GetBytes(string.Join("\0", (string[])value));
             if (type.IsArray) return JoinByteArray((Array)value);
 
-            throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, type.Name));
+            throw new DDTypeIncorrectExceptions(type.Name);
         }
 
         /// <summary>

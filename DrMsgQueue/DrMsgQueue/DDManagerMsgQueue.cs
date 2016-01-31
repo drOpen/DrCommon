@@ -293,7 +293,7 @@ namespace DrOpen.DrCommon.DrMsgQueue
             OnDoProccessMsg(msg);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             lock (lockActiveMsgQueue)
             {

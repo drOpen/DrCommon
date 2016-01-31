@@ -1,5 +1,5 @@
 ﻿/*
-  ILogProvider.cs -- interface define contract for log provider  1.0, August 8, 2015
+  ILogProvider.cs -- interface for DrLog provider 1.0, August 8, 2015
  
   Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
  

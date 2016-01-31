@@ -50,12 +50,14 @@ namespace UTestDrData
             TEST_ENUM_NULL,
         }
 
+        public const string attStock1Name = "value a->a";
+
         static private DDNode GetStockHierarhy()
         {
             var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
 
             var a = new DDNode("a");
-            a.Attributes.Add("value a->a", "string");
+            a.Attributes.Add(attStock1Name, "string");
             a.Attributes.Add("value a->b", true);
             var a_b = a.Add("a.b");
             var a_c = a.Add("a.c");
@@ -254,9 +256,9 @@ namespace UTestDrData
                 var result = root.GetNode(path); //attempt to rise above root node
                 Assert.Fail("Successfull rise above root node!!!");
             }
-            catch (ArgumentException)
+            catch (DDNodePathAboveRootExceptions e)
             {
-                // cool throw
+                Assert.AreEqual(e.Path, "..");
             }
             catch (AssertFailedException e)
             {
@@ -677,8 +679,10 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch (Exception)
-            {/* is it ok */}
+            catch (DDNodeAddSelf e)
+            {
+                Assert.AreEqual(e.Path, root.Path); // raise assert if path is incorrect
+            }
         }
         [TestMethod]
         public void TestAddNodeWithParent()
@@ -702,10 +706,36 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch (Exception)
-            {/* it's ok */}
+            catch (DDNodeAddNodeWithParent e)
+            {
+                Assert.AreEqual(e.Path, n2.Path); // raise assert if path is incorrect
+            }
         }
 
+        private DDNode GetNullNode()
+        {
+            DDNode nullNode = new DDNode();
+            nullNode = null;
+            return nullNode;
+        }
+
+        [TestMethod]
+        public void TestAddNodeNull()
+        {
+            var root = GetStockHierarhy();
+            
+            try
+            {
+                var n3 = root.Add(GetNullNode());
+                Assert.Fail("Forbidden to add null node");
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
+            catch (DDNodeAddNullExceptions e)
+            {/* it's ok */}
+        }
 
         private void TestAddNodeWithIncorrectName(DDNode node, string name)
         {
@@ -724,6 +754,8 @@ namespace UTestDrData
                 Assert.AreEqual(e.Name, name);
             }
         }
+
+
 
         [TestMethod]
         public void TestAddNodeWithIncorrectNameDot()
@@ -1346,7 +1378,21 @@ namespace UTestDrData
         {
             TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION.ATTRIBUTES, ResolveConflict.THROW_EXCEPTION);
         }
+        [TestMethod]
+        public void TestMergeConflict()
+        {
+            var n1 = GetStockHierarhy();
+            try
+            {
+                GetStockHierarhy().Merge(n1, DDNODE_MERGE_OPTION.ALL, ResolveConflict.THROW_EXCEPTION);
+                Assert.Fail("The DDAttributeExistsException exception isn't raised.");
+            }
+            catch (DDAttributeExistsException e)
+            {
+                Assert.AreEqual(attStock1Name, e.Name); // attribute name
+            }
 
+        }
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes()
         {

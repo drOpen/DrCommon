@@ -61,6 +61,24 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The attribute &apos;{0}&apos; doesn&apos;t exist..
+        /// </summary>
+        internal static string ATTR_DOESNT_EXIST {
+            get {
+                return ResourceManager.GetString("ATTR_DOESNT_EXIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The attribute &apos;{0}&apos; already exists..
+        /// </summary>
+        internal static string ATTRIBUTE_EXISTS {
+            get {
+                return ResourceManager.GetString("ATTRIBUTE_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can not add this node &apos;{0}&apos; as it belongs to another parent node..
         /// </summary>
         internal static string CANNOT_ADD_NODE_BELONG_TO_ANOTHER_PARENT_NODE {
@@ -97,6 +115,15 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Node cannot be null..
+        /// </summary>
+        internal static string CANNOT_NULL_NODE {
+            get {
+                return ResourceManager.GetString("CANNOT_NULL_NODE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot transform array type to not array type or vice versa. Current type is &apos;{0}&apos; the planned type after transformation &apos;{1}&apos;..
         /// </summary>
         internal static string CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY {
@@ -120,6 +147,24 @@ namespace DrOpen.DrCommon.DrData.Res {
         internal static string INCORRECT_HEX {
             get {
                 return ResourceManager.GetString("INCORRECT_HEX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The node name &apos;{0}&apos; is incorrect. The node name cannot be empty and cannot contain &apos;/&apos; character. As not well as having a name equal to one &apos;.&apos; or two &apos;..&apos; points..
+        /// </summary>
+        internal static string INCORRECT_NODE_NAME {
+            get {
+                return ResourceManager.GetString("INCORRECT_NODE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The path &apos;{0}&apos; is incorrect..
+        /// </summary>
+        internal static string INCORRECT_PATH {
+            get {
+                return ResourceManager.GetString("INCORRECT_PATH", resourceCulture);
             }
         }
         
@@ -156,6 +201,15 @@ namespace DrOpen.DrCommon.DrData.Res {
         internal static string OVERWRITE_EXISTS_VALUE {
             get {
                 return ResourceManager.GetString("OVERWRITE_EXISTS_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The path cannot be null..
+        /// </summary>
+        internal static string PATH_IS_NULL {
+            get {
+                return ResourceManager.GetString("PATH_IS_NULL", resourceCulture);
             }
         }
         

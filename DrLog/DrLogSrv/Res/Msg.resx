@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FLAG_TYPE_NOT_EQUALS_ANOTHER_ENUM_TYPE" xml:space="preserve">
-    <value>The verification flags '{0}' type has another type than enum '{1}'.</value>
+  <data name="PROVIDER_CONF_CANNOT_NULL" xml:space="preserve">
+    <value>The provider configuration cannot be null.</value>
   </data>
-  <data name="SPECIFIED_TYPE_IS_NOT_ENUM_TYPE" xml:space="preserve">
-    <value>The specified type '{0}' is not the type of enum.</value>
+  <data name="PROVIDER_UNSUPPORTED_TYPE" xml:space="preserve">
+    <value>The type '{0}' of provider configuration is not supported. The expected type is '{1}'.</value>
   </data>
 </root>

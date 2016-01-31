@@ -159,4 +159,22 @@
   <data name="CANNOT_MERGE_NODE_WITH_EXIST_NAME" xml:space="preserve">
     <value>Cannot merge node '{0}'. The destination node '{1}' already has a child node with the same name.</value>
   </data>
+  <data name="ATTRIBUTE_EXISTS" xml:space="preserve">
+    <value>The attribute '{0}' already exists.</value>
+  </data>
+  <data name="ATTR_DOESNT_EXIST" xml:space="preserve">
+    <value>The attribute '{0}' doesn't exist.</value>
+  </data>
+  <data name="CANNOT_NULL_NODE" xml:space="preserve">
+    <value>Node cannot be null.</value>
+  </data>
+  <data name="INCORRECT_NODE_NAME" xml:space="preserve">
+    <value>The node name '{0}' is incorrect. The node name cannot be empty and cannot contain '/' character. As not well as having a name equal to one '.' or two '..' points.</value>
+  </data>
+  <data name="INCORRECT_PATH" xml:space="preserve">
+    <value>The path '{0}' is incorrect.</value>
+  </data>
+  <data name="PATH_IS_NULL" xml:space="preserve">
+    <value>The path cannot be null.</value>
+  </data>
 </root>

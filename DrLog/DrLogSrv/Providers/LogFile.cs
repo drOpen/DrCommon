@@ -1,24 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿/*
+  LogFile.cs -- log file provider for DrLog 1.1.0, January 24, 2016
+ 
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
+ 
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+      1. The origin of this software must not be misrepresented; you must not
+      claim that you wrote the original software. If you use this software
+      in a product, an acknowledgment in the product documentation would be
+      appreciated but is not required.
+
+      2. Altered source versions must be plainly marked as such, and must not be
+      misrepresented as being the original software.
+
+      3. This notice may not be removed or altered from any source distribution.
+
+      Kudryashov Andrey <kudryashov.andrey at gmail.com>
+ */
+
+using System;
 using System.Text;
 using DrOpen.DrCommon.DrData;
 using System.IO;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
 {
+    /// <summary>
+    /// log file provider for DrLog
+    /// </summary>
     public class LogFile : Provider
     {
 
         #region LogFile
         public LogFile(DDNode config)
             : base(config)
-        { this.RebuildConfiguration(); }
+        {
+            this.RebuildConfiguration();
+        }
         public LogFile(DDNode config, bool mergeWithDefault)
             : base(config, mergeWithDefault)
-        { this.RebuildConfiguration(); }
+        {
+            this.RebuildConfiguration();
+        }
         #endregion LogFile
 
+        /// <summary>
+        /// stream to file
+        /// </summary>
         StreamWriter strWrt;
 
         public string DateTimeFormat
@@ -26,27 +60,59 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             get;
             private set;
         }
-
+        /// <summary>
+        /// columns separator
+        /// </summary>
         public string Separator
         {
             get;
             private set;
         }
-
+        /// <summary>
+        /// File name
+        /// </summary>
         public string FileName
         {
             get;
             private set;
         }
+
+        /// <summary>
+        /// Add additional column separator for message with level Trace compared with Info
+        /// </summary>
+        public bool ExtandedSeparatorForTrace
+        {
+            get;
+            private set;
+        }
+        /// <summary>
+        /// Add additional column separator for message with level Debug compared with Trace
+        /// </summary>
+        public bool ExtandedSeparatorForDebug
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Update settings from config
+        /// </summary>
         public override void RebuildConfiguration()
         {
             this.Separator = Config.Attributes.GetValue(LogFile.AttColumnSeparator, LogFile.DefaultValueColumnSeparator);
             this.DateTimeFormat = Config.Attributes.GetValue(LogFile.AttDateTimeFormat, LogFile.DefaultValueDateTimeFormat);
-            this.FileName= Config.Attributes.GetValue(LogFile.AttFileName, LogFile.DefaultValueFileName);
+            this.ExtandedSeparatorForTrace = Config.Attributes.GetValue(LogFile.AttExtandedSeparatorForTrace, LogFile.DefaultValueExtandedSeparatorForTrace );
+            this.ExtandedSeparatorForTrace = Config.Attributes.GetValue(LogFile.AttExtandedSeparatorForDebug, LogFile.DefaultValueExtandedSeparatorForDebug);
+
+            this.FileName = Config.Attributes.GetValue(LogFile.AttFileName, LogFile.DefaultValueFileName);
+
             InitStream(this.FileName);
             base.RebuildConfiguration();
         }
-
+        /// <summary>
+        /// Wtrite log message
+        /// </summary>
+        /// <param name="msg">msg</param>
         public override void Write(DDNode msg)
         {
             var logLevel = msg.GetLogLevel();
@@ -62,19 +128,20 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             sBuilder.Append(msg.GetSource());
             sBuilder.Append(this.Separator);
 
-            if (logLevel == LogLevel.TRC) sBuilder.Append(this.Separator);
-            if (logLevel == LogLevel.DBG) sBuilder.Append(this.Separator + this.Separator);
+            if ((this.ExtandedSeparatorForTrace) && (logLevel == LogLevel.TRC)) sBuilder.Append(this.Separator);
+            if ((this.ExtandedSeparatorForDebug) && (logLevel == LogLevel.DBG))
+            {
+                sBuilder.Append(this.Separator);
+                if (this.ExtandedSeparatorForTrace) sBuilder.Append(this.Separator);
+            }
 
             sBuilder.Append(msg.GetBody());
             sBuilder.Append(this.Separator);
-
-            
 
             if ((this.ExceptionLevel != LogExceptionLevel.NONE) && (msg.ContainsException()))
             {
                 sBuilder.Append(msg.GetLogException(this.ExceptionLevel));
             }
-
 
             strWrt.WriteLine(sBuilder.ToString());
             strWrt.Flush();
@@ -97,7 +164,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         private void InitStream(string fileName)
         {
             if (strWrt != null) CloseStream();
-            strWrt = new StreamWriter (new FileStream(fileName, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read));
+            strWrt = new StreamWriter(new FileStream(fileName, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read));
         }
 
         private void CloseStream()
@@ -119,6 +186,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             var n = GetCommonConfig(typeof(LogFile).AssemblyQualifiedName);
             n.Attributes.Add(AttDateTimeFormat, DefaultValueDateTimeFormat);
             n.Attributes.Add(AttColumnSeparator, DefaultValueColumnSeparator);
+            n.Attributes.Add(AttExtandedSeparatorForTrace , DefaultValueExtandedSeparatorForTrace);
+            n.Attributes.Add(AttExtandedSeparatorForDebug, DefaultValueExtandedSeparatorForDebug);
             n.Attributes.Add(AttFileName, DefaultValueFileName);
             //n.Attributes.Add(AttReopenFileHandle, false);
             //n.Attributes.Add();
@@ -126,9 +195,27 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         }
 
         #region default value
+        /// <summary>
+        /// Default format for date time
+        /// </summary>
         public const string DefaultValueDateTimeFormat = "";
+        /// <summary>
+        /// Default colums separator
+        /// </summary>
         public const string DefaultValueColumnSeparator = "\t";
+        /// <summary>
+        /// Add additional column separator for message with level Trace compared with Info
+        /// </summary>
+        public const bool DefaultValueExtandedSeparatorForTrace = true;
+        /// <summary>
+        /// Add additional column separator for message with level Debug compared with Trace
+        /// </summary>
+        public const bool DefaultValueExtandedSeparatorForDebug = true;
+        /// <summary>
+        /// default log file name
+        /// </summary>
         public const string DefaultValueFileName = "Log.log";
+
         #endregion default value
 
         #region basic attributes for config
@@ -141,13 +228,17 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// </summary>
         public const string AttColumnSeparator = "ColumnSeparator";
         /// <summary>
+        /// Add additional column separator for message with level Trace compared with Info
+        /// </summary>
+        public const string AttExtandedSeparatorForTrace = "ExtandedSeparatorForTrace";
+        /// <summary>
+        /// Add additional column separator for message with level Debug compared with Trace
+        /// </summary>
+        public const string AttExtandedSeparatorForDebug = "ExtandedSeparatorForDebug";
+        /// <summary>
         /// File name
         /// </summary>
         public const string AttFileName = "FileName";
-        /// <summary>
-        /// reopen the handle at each message
-        /// </summary>
-        //public const string AttReopenFileHandle = "ReopenFileHandle";
 
         #endregion basic attributes for config
 

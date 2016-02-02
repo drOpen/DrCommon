@@ -31,6 +31,7 @@ using DrOpen.DrCommon.DrData;
 using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace UTestDrData
 {
@@ -2863,9 +2864,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(string));
                 Assert.Fail("Can transfrom from not string type.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException)
+            catch (DDTypeConvertExceptions)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2877,9 +2876,8 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(string));
                 Assert.Fail("Can transfrom from null.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (NullReferenceException)
+
+            catch (DDTypeNullExceptions)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2891,9 +2889,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(int[]));
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException)
+            catch (DDTypeConvertExceptions)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2905,9 +2901,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(bool));
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException)
+            catch (DDTypeConvertExceptions)
             {/* it's ok*/}
         }
         [TestMethod]

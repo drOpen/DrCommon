@@ -148,10 +148,10 @@
     <value>Cannot transform from not string or string array type to '{0}'. The current type is '{1}'.</value>
   </data>
   <data name="CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY" xml:space="preserve">
-    <value>Cannot transform array type to not array type or vice versa. Current type is '{0}' the planned type after transformation '{1}'.</value>
+    <value>Cannot transform array type to not array type or vice versa. Current type is '{0}'  and the requested type is '{1}'.</value>
   </data>
   <data name="CANNOT_TRANSFORM_NULL_TYPE" xml:space="preserve">
-    <value>Cannot transform object with type 'null'</value>
+    <value>Cannot transform object whose type is 'null'.</value>
   </data>
   <data name="NODE_TYPE_IS_NOT_MATCHED" xml:space="preserve">
     <value>Node type '{0}' does not match the expected type '{1}'.</value>

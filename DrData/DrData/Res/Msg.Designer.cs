@@ -124,7 +124,7 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot transform array type to not array type or vice versa. Current type is &apos;{0}&apos; the planned type after transformation &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Cannot transform array type to not array type or vice versa. Current type is &apos;{0}&apos;  and the requested type is &apos;{1}&apos;..
         /// </summary>
         internal static string CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY {
             get {
@@ -133,7 +133,7 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot transform object with type &apos;null&apos;.
+        ///   Looks up a localized string similar to Cannot transform object whose type is &apos;null&apos;..
         /// </summary>
         internal static string CANNOT_TRANSFORM_NULL_TYPE {
             get {

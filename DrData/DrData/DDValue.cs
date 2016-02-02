@@ -383,7 +383,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(uint)) return Convert.ToUInt32(value);
             if (type == typeof(ulong)) return Convert.ToUInt64(value);
             if (type == typeof(Guid)) return new Guid (value);
-            throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, type.Name));
+            throw new DDTypeIncorrectExceptions(type);
         }
 
         /// <summary>
@@ -675,7 +675,7 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(Guid)) return GetValueAsGuid();
             if (Type == typeof(Guid[])) return GetValueAsGuidArray();
             if (Type == null) return null;
-            throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, (Type == null ? "null" : Type.Name)));
+            throw new DDTypeIncorrectExceptions(Type);
         }
         /// <summary>
         /// Get value as array by specified type
@@ -731,7 +731,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
             if (type == typeof(Guid)) return new Guid(data);
 
-            throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, (type == null ? "null" : type.Name)));
+            throw new DDTypeIncorrectExceptions(type);
         }
 
         public virtual byte[] GetValueAsByteArray()
@@ -955,7 +955,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(bool)) return sizeof(bool);
             if (type == typeof(DateTime)) return sizeof(Int64);
             if (type == typeof(Guid)) return Guid.Empty.ToByteArray().Length;
-            throw new ApplicationException(string.Format(Msg.OBJ_TYPE_IS_INCORRECT, type.Name));
+            throw new DDTypeIncorrectExceptions(type);
             
         }
         /// <summary>
@@ -1204,16 +1204,16 @@ namespace DrOpen.DrCommon.DrData
         #region Transformation
         /// <summary>
         /// Self transformation from string or string array type to specified type. Change themselves and their data type. Retruns itself after covertion.<para> </para>
-        /// If original type is not string or string array the <exception cref="FormatException">FormatException</exception> will be thrown.<para> </para>
-        /// If original type is null the <exception cref="NullReferenceException">NullReferenceException</exception> will be thrown.<para> </para>
+        /// If original type is not string or string array the <exception cref="DDTypeConvertExceptions">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
+        /// If original type is null the <exception cref="DDTypeNullExceptions">DDTypeNullExceptions</exception> will be thrown.<para> </para>
         /// </summary>
         /// <param name="newType">convert to specified type</param>
         /// <returns></returns>
         public DDValue SelfTransformFromStringTo(Type newType)
         {
-            if (this.Type == null) throw new NullReferenceException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
-            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new FormatException(string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
-            if (this.Type.IsArray != newType.IsArray) throw new FormatException(string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
+            if (this.Type == null) throw new DDTypeNullExceptions(Msg.CANNOT_TRANSFORM_NULL_TYPE);
+            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertExceptions(this.type.Name , newType.Name, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
+            if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertExceptions(this.type.Name, newType.Name, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
             if ((newType == typeof(string) || (newType == typeof(string[])))) return this; // nothing to do
             if (data.Length > 0)
             {

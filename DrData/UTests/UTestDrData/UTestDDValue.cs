@@ -352,19 +352,16 @@ namespace UTestDrData
         [TestMethod]
         public void TestHEXParityCheck()
         {
-
+            const string hexValue = "123";
             try
             {
-                DDValue.HEX("123");
+                DDValue.HEX(hexValue);
                 Assert.Fail("The parity check for HEX string doesn't work.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
 
+            catch (DDValueExceptions e)
+            {
+                Assert.AreEqual(e.Value, hexValue,"Exception value is incorrect.");
             }
         }
 

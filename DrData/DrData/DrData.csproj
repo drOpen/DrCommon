@@ -55,6 +55,7 @@
     <Compile Include="Exceptions\Type.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Exceptions\Value.cs" />
     <Compile Include="IDrData.cs">
       <SubType>Code</SubType>
     </Compile>

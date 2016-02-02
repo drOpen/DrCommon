@@ -1190,7 +1190,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public static byte[] HEX(string hex)
         {
-            if (hex.Length % 2 > 0) throw new ApplicationException(string.Format(Msg.INCORRECT_HEX, hex));
+            if (hex.Length % 2 > 0) throw new DDValueExceptions(hex,string.Format(Msg.INCORRECT_HEX, hex));
             int iSize = hex.Length / 2;
             var bytes = new byte[iSize];
             for (int i = 0; i < iSize; i++)

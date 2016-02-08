@@ -177,4 +177,7 @@
   <data name="PATH_IS_NULL" xml:space="preserve">
     <value>The path cannot be null.</value>
   </data>
+  <data name="EXPECTED_NODE_TYPE_IS_INCORRECT" xml:space="preserve">
+    <value>The node type '{0}' is incorrect. Expected node type is '{1}.'</value>
+  </data>
 </root>

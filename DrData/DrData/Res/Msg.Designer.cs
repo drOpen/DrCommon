@@ -142,6 +142,15 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The node type &apos;{0}&apos; is incorrect. Expected node type is &apos;{1}.&apos;.
+        /// </summary>
+        internal static string EXPECTED_NODE_TYPE_IS_INCORRECT {
+            get {
+                return ResourceManager.GetString("EXPECTED_NODE_TYPE_IS_INCORRECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; is incorrect HEX string..
         /// </summary>
         internal static string INCORRECT_HEX {

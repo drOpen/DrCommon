@@ -1,7 +1,7 @@
 ﻿/*
-  DDMsgFlushConditions.cs -- conditions for the message queue 1.0.0, August 30, 2015
+  DDMsgFlushConditions.cs -- conditions for the message queue 1.0.1, February 7, 2016
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -25,6 +25,7 @@
 
  */
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
 using System;
 
 namespace DrOpen.DrCommon.DrMsgQueue
@@ -46,7 +47,7 @@ namespace DrOpen.DrCommon.DrMsgQueue
         /// <param name="conditions">conditions</param>
         public DDMsgFlushConditions(DDNode conditions)
         {
-            if (conditions.Type != GetConditionsType()) throw new ApplicationException(String.Format(Res.Msg.EXPECTED_NODE_TYPE_IS_INCORRECT, conditions.Type, GetConditionsType()));
+            if (conditions.Type != GetConditionsType()) throw new DDTypeExpectedExceptions(conditions.Type, GetConditionsType());
             this.conditions = conditions;
             MaxMsgSize = conditions.Attributes.GetValue(FLUSH_CONDITION.MAX_MSG_SIZE, DEFAULT_MAX_MSG_SIZE);
             MaxMsgCount = conditions.Attributes.GetValue(FLUSH_CONDITION.MAX_MSG_COUNT, DEFAULT_MAX_MSG_COUNT);

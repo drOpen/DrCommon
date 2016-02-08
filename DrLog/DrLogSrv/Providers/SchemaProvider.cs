@@ -34,6 +34,10 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
     public static class SchemaProvider
     {
         /// <summary>
+        /// Is this provider enabled?
+        /// </summary>
+        public const string AttEnabled = "Enabled";
+        /// <summary>
         /// Log level of provider
         /// </summary>
         public const string AttLevel = "Level";

@@ -30,22 +30,35 @@ using DrOpen.DrCommon.DrMsgQueue;
 using System.Text;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrCommon.DrLog.DrLogSrv.Providers;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
-    public class Server : DDManagerMsgQueue, IDisposable
+    public class Server: IDisposable
     {
 
-        //
         public Server()
-            : base()
         { }
+
 
         public Server(DDNode conf)
         {
-            var nConditions = GetNodeByPath(conf, SchemaSrv.AttPathToConditions);
-            var nProviders = GetNodeByPath(conf, SchemaSrv.AttPathToProviders);
+            if (conf.Type != GetConditionsType()) throw new DDTypeExpectedExceptions(conf.Type, GetConditionsType());
+
+            if (conf.Attributes.Contains(SchemaSrv.AttPathToConditions))
+                this.NodeConditions = GetNodeByPath(conf, SchemaSrv.AttPathToConditions);
+            else
+                this.NodeConditions = DDMsgFlushConditions.GetDefaultConditionsNode();
+            FlushCondition = new DDMsgFlushConditions(NodeConditions);
+            MsgQueue = new DDManagerMsgQueue(FlushCondition);
+
+            this.NodeProviders = GetNodeByPath(conf, SchemaSrv.AttPathToProviders);
         }
+
+        public DDManagerMsgQueue MsgQueue           { get; private set; }
+        public DDMsgFlushConditions FlushCondition  { get; private set; }
+        public DDNode NodeConditions                { get; private set; }
+        public DDNode NodeProviders                 { get; private set; }
 
         /// <summary>
         /// returns node by attribute schema name
@@ -55,14 +68,23 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         private DDNode GetNodeByPath(DDNode conf, string attrName)
         {
-            if (!conf.Attributes.Contains(attrName)) throw new DDNodeMissingAttributeExceptions(attrName);
+            if (!conf.Attributes.Contains(attrName)) throw new DDMissingAttributeExceptions(attrName);
             return conf.GetNode(conf.Attributes.GetValue(attrName, null));
         }
 
 
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
+            if (MsgQueue != null) MsgQueue.Dispose();
         }
+
+        /// return DDNode type for this conditions
+        /// </summary>
+        /// <returns></returns>
+        public static DDType GetConditionsType()
+        {
+            return new DDType(typeof(Server));
+        }
+
     }
 }

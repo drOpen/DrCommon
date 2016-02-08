@@ -80,7 +80,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// <summary>
         /// Add additional column separator for message with level Trace compared with Info
         /// </summary>
-        public bool ExtandedSeparatorForTrace
+        public bool ExtendedSeparatorForTrace
         {
             get;
             private set;
@@ -88,7 +88,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// <summary>
         /// Add additional column separator for message with level Debug compared with Trace
         /// </summary>
-        public bool ExtandedSeparatorForDebug
+        public bool ExtendedSeparatorForDebug
         {
             get;
             private set;
@@ -101,8 +101,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         {
             this.Separator = Config.Attributes.GetValue(LogFile.AttColumnSeparator, LogFile.DefaultValueColumnSeparator);
             this.DateTimeFormat = Config.Attributes.GetValue(LogFile.AttDateTimeFormat, LogFile.DefaultValueDateTimeFormat);
-            this.ExtandedSeparatorForTrace = Config.Attributes.GetValue(LogFile.AttExtandedSeparatorForTrace, LogFile.DefaultValueExtandedSeparatorForTrace );
-            this.ExtandedSeparatorForTrace = Config.Attributes.GetValue(LogFile.AttExtandedSeparatorForDebug, LogFile.DefaultValueExtandedSeparatorForDebug);
+            this.ExtendedSeparatorForTrace = Config.Attributes.GetValue(LogFile.AttExtandedSeparatorForTrace, LogFile.DefaultValueExtandedSeparatorForTrace );
+            this.ExtendedSeparatorForTrace = Config.Attributes.GetValue(LogFile.AttExtandedSeparatorForDebug, LogFile.DefaultValueExtandedSeparatorForDebug);
 
             this.FileName = Config.Attributes.GetValue(LogFile.AttFileName, LogFile.DefaultValueFileName);
 
@@ -128,11 +128,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             sBuilder.Append(msg.GetSource());
             sBuilder.Append(this.Separator);
 
-            if ((this.ExtandedSeparatorForTrace) && (logLevel == LogLevel.TRC)) sBuilder.Append(this.Separator);
-            if ((this.ExtandedSeparatorForDebug) && (logLevel == LogLevel.DBG))
+            if ((this.ExtendedSeparatorForTrace) && (logLevel == LogLevel.TRC)) sBuilder.Append(this.Separator);
+            if ((this.ExtendedSeparatorForDebug) && (logLevel == LogLevel.DBG))
             {
                 sBuilder.Append(this.Separator);
-                if (this.ExtandedSeparatorForTrace) sBuilder.Append(this.Separator);
+                if (this.ExtendedSeparatorForTrace) sBuilder.Append(this.Separator);
             }
 
             sBuilder.Append(msg.GetBody());

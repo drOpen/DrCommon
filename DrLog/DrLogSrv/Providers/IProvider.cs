@@ -48,7 +48,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// </summary>
         DDType Type { get; }
         /// <summary>
-        /// return configuration of current provider
+        /// get/set configuration of current provider
         /// </summary>
         DDNode Config { get; set; }
         /// <summary>
@@ -64,9 +64,12 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// </summary>
         DrLogSrv.LogExceptionLevel ExceptionLevel { get; }
         /// <summary>
-        /// Update settings from config
+        /// Update settings to current config
         /// </summary>
         void RebuildConfiguration();
-
+        /// <summary>
+        /// Update settings from config
+        /// </summary>
+        void RebuildConfiguration(DDNode config);
     }
 }

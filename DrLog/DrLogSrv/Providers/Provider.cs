@@ -97,7 +97,6 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         /// <summary>
         /// returns the log level filter for current provider
         /// </summary>
-        /// 
         virtual public DrLogSrv.LogLevel Level
         { get; set; }
         /// <summary>
@@ -106,13 +105,25 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         virtual public DrLogSrv.LogExceptionLevel ExceptionLevel
         { get; set; }
         /// <summary>
-        /// Update settings from config
+        /// Update settings to current config
         /// </summary>
         virtual public void RebuildConfiguration()
         {
             this.Level = (DrLogSrv.LogLevel)Enum.Parse(typeof(DrLogSrv.LogLevel), Config.Attributes.GetValue(SchemaProvider.AttLevel, DefaultLevel), true);
             this.ExceptionLevel = (DrLogSrv.LogExceptionLevel)Enum.Parse(typeof(DrLogSrv.LogExceptionLevel), Config.Attributes.GetValue(SchemaProvider.AttExceptionLevel, DrLogSrv.LogExceptionLevel.ALL), true);
         }
+        /// <summary>
+        /// Update settings from config
+        /// </summary>
+        virtual public void RebuildConfiguration(DDNode config)
+        {
+            this.Config = config;
+            this.RebuildConfiguration();
+        }
+        /// <summary>
+        /// by default provider is enabled
+        /// </summary>
+        public const bool DefaultEnabled = true;
         /// <summary>
         /// default log level
         /// </summary>
@@ -131,6 +142,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             var n = new DDNode(type);
             n.Attributes.Add(SchemaProvider.AttLevel, DefaultLevel.ToString());
             n.Attributes.Add(SchemaProvider.AttExceptionLevel, DefaultExceptionLevel.ToString());
+            n.Attributes.Add(SchemaProvider.AttEnabled, DefaultEnabled);
             return n;
         }
     }

@@ -30,6 +30,9 @@ using System.Text;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
+    /// <summary>
+    /// Extend DDNode for log message
+    /// </summary>
     public static class DrLogMsgExt
     {
 
@@ -100,7 +103,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
             return (DrLogSrv.LogLevel)Enum.Parse(typeof(DrLogSrv.LogLevel), msg.Attributes.GetValue(SchemaMsg.AttLevel, DrLogSrv.LogLevel.NONE), true);
         }
 
-
+        /// <summary>
+        /// Determines whether this node contains the exception.
+        /// </summary>
+        /// <param name="msg">message as node</param>
+        /// <returns>returns true if the node contains exception</returns>
         static public bool ContainsException(this DDNode msg)
         {
             foreach (var n in msg)
@@ -110,7 +117,12 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
             return false;
         }
         
-
+        /// <summary>
+        /// Builds exceptions as string from message node. If this message node does not contain the exception  will be return empty string.
+        /// </summary>
+        /// <param name="msg">message as node</param>
+        /// <param name="eLevel">log level exception</param>
+        /// <returns>returns exceptions as string. If this message node does not contain the exception  will be return empty string.</returns>
         static public string GetLogException(this DDNode msg, DrLogSrv.LogExceptionLevel eLevel)
         {
             var result = new StringBuilder();
@@ -124,8 +136,13 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
             return result.ToString();
         }
 
-
-        static public string BuildExceptionAsString(DrLogSrv.LogExceptionLevel eLevel, DDNode eNode)
+        /// <summary>
+        /// Builds exception as string from single exception node
+        /// </summary>
+        /// <param name="msg">exception message as node</param>
+        /// <param name="eLevel">log level exception</param>
+        /// <returns>returns exception exception as string from single exception node</returns>
+        public static string BuildExceptionAsString(DrLogSrv.LogExceptionLevel eLevel, DDNode eNode)
         {
             var result = new StringBuilder();
 
@@ -152,7 +169,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
 
             return result.ToString();
         }
-
+        /// <summary>
+        /// Builds exception Data as string from node which contains Data exception array
+        /// </summary>
+        /// <param name="nData">node which contains Data exception array</param>
+        /// <returns>returns exception Data as string from node which contains Data exception array</returns>
         private static string BuildExceptionDataAsString(DDNode nData)
         {
             var result = new StringBuilder();

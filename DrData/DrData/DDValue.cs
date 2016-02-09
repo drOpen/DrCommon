@@ -102,6 +102,9 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
+
+            var typeNameSelf = this.GetType().Name;
+
             reader.MoveToContent();
             type = null;
 
@@ -123,7 +126,7 @@ namespace DrOpen.DrCommon.DrData
                 if (value != null) this.data = GetByteArray(typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
             }
 
-            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // Need to close the opened element </DDValue>
+            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
         }
 
         /// <summary>

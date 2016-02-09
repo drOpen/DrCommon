@@ -687,40 +687,41 @@ namespace DrOpen.DrCommon.DrData
             var serializerDDAttributeCollection = new XmlSerializer(typeof(DDAttributesCollection));
             var serializerDDNode = new XmlSerializer(typeof(DDNode));
 
-            var nameNodeDDAttributes = typeof(DDAttributesCollection).Name;
-            var nameNodeDDNode = typeof(DDNode).Name;
+            var typeNameDDAttributes = typeof(DDAttributesCollection).Name;
+            var typeNameSelf = this.GetType().Name;
 
             this.Name = reader.GetAttribute(SerializePropName);
             this.Type = reader.GetAttribute(SerializePropType);
+
             if (this.Type.Name == null) this.Type = string.Empty;
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
-            if ((isEmptyElement) | (reader.NodeType == XmlNodeType.EndElement)) return; // Exit if element without child '<DDNode/>' or is empty node '<DDNode></DDNode>'
+            if ((isEmptyElement) | (reader.NodeType == XmlNodeType.EndElement)) return; // Exit if element without child '</DDNode>' or is empty node '<DDNode></DDNode>'
 
             var initialDepth = reader.Depth;
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
-                if (((reader.IsStartElement(nameNodeDDAttributes) == false) && (reader.IsStartElement(nameNodeDDNode) == false)) || (reader.Depth > initialDepth))
+                if (((reader.IsStartElement(typeNameDDAttributes) == false) && (reader.IsStartElement(typeNameSelf) == false)) || (reader.Depth > initialDepth))
                 {
                     reader.Skip(); // Skip none <DDAttributesCollection> or <DDNode> elements with childs and subchilds. 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else
                 {
-                    if (reader.IsStartElement(nameNodeDDAttributes)) attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
+                    if (reader.IsStartElement(typeNameDDAttributes)) attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
 
-                    if (reader.IsStartElement(nameNodeDDNode)) Add((DDNode)serializerDDNode.Deserialize(reader));
+                    if (reader.IsStartElement(typeNameSelf)) Add((DDNode)serializerDDNode.Deserialize(reader));
 
                     if (reader.HasValue) // read value of element if there is
                     {
                         reader.Read(); // read value of element
-                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name==typeNameSelf)) reader.ReadEndElement(); // need to close the opened element, only self type
                     }
                 }
             }
-            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // Need to close the opened element
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // Need to close the opened element, only self type
         }
 
         #endregion IXmlSerializable

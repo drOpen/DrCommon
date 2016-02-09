@@ -89,7 +89,8 @@ namespace DrOpen.DrCommon.DrData
 
             attributes = new Dictionary<string, DDValue>();
             var serializer = new XmlSerializer(typeof(DDValue));
-            var nameNodeDDNode = typeof(DDValue).Name;
+            var typeNameDDValue = typeof(DDValue).Name;
+            var typeNameSelf = this.GetType().Name;
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
@@ -111,7 +112,7 @@ namespace DrOpen.DrCommon.DrData
                     if (reader.HasValue) reader.Read(); // read and skip node value
                     if (name != null)
                     {
-                        if (reader.IsStartElement(nameNodeDDNode))
+                        if (reader.IsStartElement(typeNameDDValue))
                             attributes.Add(name, (DDValue)serializer.Deserialize(reader));
                         else
                             attributes.Add(name, null); // add null value
@@ -119,12 +120,12 @@ namespace DrOpen.DrCommon.DrData
                     if (reader.HasValue) // read value of element if there is
                     {
                         reader.Read(); // read value of element
-                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // need to close the opened element, only self type
                     }
                 }
                 reader.MoveToContent();
             }
-            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement();
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name==typeNameSelf)) reader.ReadEndElement(); // need to close the opened element, only self type
         }
 
         #endregion IXmlSerializable

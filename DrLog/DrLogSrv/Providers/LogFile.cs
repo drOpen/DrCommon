@@ -181,6 +181,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             }
         }
 
+        public static string GetType()
+        {
+            throw new DrData.Exceptions.DDTypeNullException();
+        }
+
         public static DDNode GetDefaultConfig()
         {
             var n = GetCommonConfig(typeof(LogFile).AssemblyQualifiedName);

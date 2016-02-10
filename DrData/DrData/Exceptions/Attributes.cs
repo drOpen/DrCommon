@@ -31,19 +31,19 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     /// <summary>
     /// DrData -- attributes exception
     /// </summary>
-    public class DDAttributeExceptions : Exception
+    public class DDAttributeException : Exception
     {
         /// <summary>
         /// DrData attributes exception
         /// </summary>
-        public DDAttributeExceptions(string name)
+        public DDAttributeException(string name)
             : base() { this.Name = name; }
         /// <summary>
         /// DrData attributes exception
         /// </summary>
         /// <param name="name">Type name</param>
         /// <param name="message">A message that describes the error.</param>
-        public DDAttributeExceptions(string name, string message)
+        public DDAttributeException(string name, string message)
             : base(message) { this.Name = name; }
         /// <summary>
         /// DrData attributes exception
@@ -51,7 +51,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="name">Type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDAttributeExceptions(string name, string message, Exception innerException)
+        public DDAttributeException(string name, string message, Exception innerException)
             : base(message, innerException) { this.Name = name; }
         /// <summary>
         /// Name of type
@@ -62,13 +62,13 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     /// <summary>
     /// DrData -- attributes exception -- attribute doesn't exist
     /// </summary>
-    public class DDMissingAttributeExceptions : DDAttributeExceptions
+    public class DDMissingAttributeException : DDAttributeException
     {
         /// <summary>
         /// attribute doesn't exist
         /// </summary>
         /// <param name="name">attribute name</param>
-        public DDMissingAttributeExceptions(string name)
+        public DDMissingAttributeException(string name)
             : base(name, string.Format(Res.Msg.ATTR_DOESNT_EXIST, name))
         { }
         /// <summary>
@@ -76,7 +76,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// </summary>
         /// <param name="name">attribute name</param>
         /// <param name="innerException">inner exception</param>
-        public DDMissingAttributeExceptions(string name, Exception innerException)
+        public DDMissingAttributeException(string name, Exception innerException)
             : base(name, string.Format(Res.Msg.ATTR_DOESNT_EXIST, name), innerException)
         { }
     }
@@ -84,7 +84,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     /// <summary>
     /// DrData -- attribute already exist exception
     /// </summary>
-    public class DDAttributeExistsException : DDAttributeExceptions
+    public class DDAttributeExistsException : DDAttributeException
     {
         /// <summary>
         /// Initializes a new instance of the DDAttributeExistsException class with the default error message.

@@ -47,7 +47,7 @@ namespace DrOpen.DrCommon.DrMsgQueue
         /// <param name="conditions">conditions</param>
         public DDMsgFlushConditions(DDNode conditions)
         {
-            if (conditions.Type != GetConditionsType()) throw new DDTypeExpectedExceptions(conditions.Type, GetConditionsType());
+            if (conditions.Type != GetConditionsType()) throw new DDTypeExpectedException(conditions.Type, GetConditionsType());
             this.conditions = conditions;
             MaxMsgSize = conditions.Attributes.GetValue(FLUSH_CONDITION.MAX_MSG_SIZE, DEFAULT_MAX_MSG_SIZE);
             MaxMsgCount = conditions.Attributes.GetValue(FLUSH_CONDITION.MAX_MSG_COUNT, DEFAULT_MAX_MSG_COUNT);

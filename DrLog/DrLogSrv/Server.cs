@@ -26,8 +26,8 @@
 
 
 using System;
-using DrOpen.DrCommon.DrMsgQueue;
 using System.Text;
+using DrOpen.DrCommon.DrMsgQueue;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrData.Exceptions;
 using DrOpen.DrCommon.DrLog.DrLogSrv.Providers;
@@ -43,7 +43,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
 
         public Server(DDNode conf)
         {
-            if (conf.Type != GetConditionsType()) throw new DDTypeExpectedExceptions(conf.Type, GetConditionsType());
+            if (conf.Type != GetType()) throw new DDTypeExpectedException(conf.Type, GetType());
 
             if (conf.Attributes.Contains(SchemaSrv.AttPathToConditions))
                 this.NodeConditions = GetNodeByPath(conf, SchemaSrv.AttPathToConditions);
@@ -68,7 +68,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// <returns></returns>
         private DDNode GetNodeByPath(DDNode conf, string attrName)
         {
-            if (!conf.Attributes.Contains(attrName)) throw new DDMissingAttributeExceptions(attrName);
+            if (!conf.Attributes.Contains(attrName)) throw new DDMissingAttributeException(attrName);
             return conf.GetNode(conf.Attributes.GetValue(attrName, null));
         }
 
@@ -78,10 +78,10 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
             if (MsgQueue != null) MsgQueue.Dispose();
         }
 
-        /// return DDNode type for this conditions
+        /// return DDNode type for this Server
         /// </summary>
         /// <returns></returns>
-        public static DDType GetConditionsType()
+        public static DDType GetType()
         {
             return new DDType(typeof(Server));
         }

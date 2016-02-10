@@ -342,7 +342,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(string[])) return Encoding.UTF8.GetBytes(string.Join("\0", (string[])value));
             if (type.IsArray) return JoinByteArray((Array)value);
 
-            throw new DDTypeIncorrectExceptions(type.Name);
+            throw new DDTypeIncorrectException(type.Name);
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(uint)) return Convert.ToUInt32(value);
             if (type == typeof(ulong)) return Convert.ToUInt64(value);
             if (type == typeof(Guid)) return new Guid (value);
-            throw new DDTypeIncorrectExceptions(type);
+            throw new DDTypeIncorrectException(type);
         }
 
         /// <summary>
@@ -678,7 +678,7 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(Guid)) return GetValueAsGuid();
             if (Type == typeof(Guid[])) return GetValueAsGuidArray();
             if (Type == null) return null;
-            throw new DDTypeIncorrectExceptions(Type);
+            throw new DDTypeIncorrectException(Type);
         }
         /// <summary>
         /// Get value as array by specified type
@@ -734,7 +734,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
             if (type == typeof(Guid)) return new Guid(data);
 
-            throw new DDTypeIncorrectExceptions(type);
+            throw new DDTypeIncorrectException(type);
         }
 
         public virtual byte[] GetValueAsByteArray()
@@ -958,7 +958,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(bool)) return sizeof(bool);
             if (type == typeof(DateTime)) return sizeof(Int64);
             if (type == typeof(Guid)) return Guid.Empty.ToByteArray().Length;
-            throw new DDTypeIncorrectExceptions(type);
+            throw new DDTypeIncorrectException(type);
             
         }
         /// <summary>
@@ -1193,7 +1193,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public static byte[] HEX(string hex)
         {
-            if (hex.Length % 2 > 0) throw new DDValueExceptions(hex,string.Format(Msg.INCORRECT_HEX, hex));
+            if (hex.Length % 2 > 0) throw new DDValueException(hex,string.Format(Msg.INCORRECT_HEX, hex));
             int iSize = hex.Length / 2;
             var bytes = new byte[iSize];
             for (int i = 0; i < iSize; i++)
@@ -1207,16 +1207,16 @@ namespace DrOpen.DrCommon.DrData
         #region Transformation
         /// <summary>
         /// Self transformation from string or string array type to specified type. Change themselves and their data type. Retruns itself after covertion.<para> </para>
-        /// If original type is not string or string array the <exception cref="DDTypeConvertExceptions">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
-        /// If original type is null the <exception cref="DDTypeNullExceptions">DDTypeNullExceptions</exception> will be thrown.<para> </para>
+        /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
+        /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
         /// </summary>
         /// <param name="newType">convert to specified type</param>
         /// <returns></returns>
         public DDValue SelfTransformFromStringTo(Type newType)
         {
-            if (this.Type == null) throw new DDTypeNullExceptions(Msg.CANNOT_TRANSFORM_NULL_TYPE);
-            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertExceptions(this.type.Name , newType.Name, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
-            if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertExceptions(this.type.Name, newType.Name, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
+            if (this.Type == null) throw new DDTypeNullException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
+            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.Name , newType.Name, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
+            if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertException(this.type.Name, newType.Name, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
             if ((newType == typeof(string) || (newType == typeof(string[])))) return this; // nothing to do
             if (data.Length > 0)
             {

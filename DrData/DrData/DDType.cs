@@ -33,14 +33,17 @@ using DrOpen.DrCommon.DrData;
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>
-    /// Incorrect type of node exception
+    /// Implements support DDType 
     /// </summary>
-    public class NodeTypeException : Exception
+    public interface IDDTypeSupport
     {
-        public NodeTypeException(string currentType, string expectedType)
-            : base(string.Format(Msg.NODE_TYPE_IS_NOT_MATCHED, currentType, expectedType))
-        { }
+        /// <summary>
+        /// Returns supported DDNode type
+        /// </summary>
+        /// <returns></returns>
+        DDType GetDDType();
     }
+
     /// <summary>
     /// the type of the object
     /// </summary>
@@ -90,15 +93,6 @@ namespace DrOpen.DrCommon.DrData
 
 
         #region NodeType
-        /// <summary>
-        /// Throw <exception cref="NodeTypeException">NodeTypeException</exception> if type of current node is not equals expected type
-        /// </summary>
-        /// <param name="expectedType"></param>
-        public void ThrowIsNotExpectedNodeType(DDType expectedType)
-        {
-            if (CompareTo(expectedType) != 0) throw new NodeTypeException(this.Name, expectedType);
-        }
-
         #endregion NodeType
 
         #region implicit operator

@@ -34,7 +34,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
     /// <summary>
     /// abstract provider for DrLog
     /// </summary>
-    public abstract class Provider : IProvider
+    public abstract class Provider : IProvider, IDDTypeSupport
     {
 
         #region Provider
@@ -92,7 +92,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
 
         virtual public DDType Type
         {
-            get { return this.GetType().Name; }
+            get { return this.GetDDType().Name; }
         }
         /// <summary>
         /// returns the log level filter for current provider
@@ -144,6 +144,11 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
             n.Attributes.Add(SchemaProvider.AttExceptionLevel, DefaultExceptionLevel.ToString());
             n.Attributes.Add(SchemaProvider.AttEnabled, DefaultEnabled);
             return n;
+        }
+
+        public virtual DDType GetDDType()
+        {
+            return new DDType(this.GetType().AssemblyQualifiedName);
         }
     }
 }

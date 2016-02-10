@@ -31,21 +31,21 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     /// <summary>
     /// DrData -- type exception
     /// </summary>
-    public class DDTypeExceptions : Exception
+    public class DDTypeException : Exception
     {
         public const string NullTypeName = "null";
         /// <summary>
         /// DrData type exception
         /// <param name="name">Type name</param>
         /// </summary>
-        public DDTypeExceptions(string name)
+        public DDTypeException(string name)
             : base() { this.TypeName = name; }
         /// <summary>
         /// DrData type exception
         /// </summary>
         /// <param name="name">Type name</param>
         /// <param name="message">A message that describes the error.</param>
-        public DDTypeExceptions(string name, string message)
+        public DDTypeException(string name, string message)
             : base(message) { this.TypeName = name; }
         /// <summary>
         /// DrData type exception
@@ -53,7 +53,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="name">Type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeExceptions(string name, string message, Exception innerException)
+        public DDTypeException(string name, string message, Exception innerException)
             : base(message, innerException) { this.TypeName = name; }
         /// <summary>
         /// Name of type
@@ -62,38 +62,38 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     }
 
 
-    public class DDTypeNullExceptions : DDTypeExceptions
+    public class DDTypeNullException : DDTypeException
     {
         /// <summary>
-        /// Initializes a new instance of the DDTypeNullExceptions class without error message. The type name is "null".
+        /// Initializes a new instance of the DDTypeNullException class without error message. The type name is "null".
         /// </summary>
-        public DDTypeNullExceptions()
+        public DDTypeNullException()
             : base(NullTypeName) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeNullExceptions class with the specified error message. The type name is "null".
+        /// Initializes a new instance of the DDTypeNullException class with the specified error message. The type name is "null".
         /// </summary>
         /// <param name="message">A message that describes the error.</param>
-        public DDTypeNullExceptions(string message)
+        public DDTypeNullException(string message)
             : base(NullTypeName, message) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeNullExceptions class with the specified error message. The type name is "null".
+        /// Initializes a new instance of the DDTypeNullException class with the specified error message. The type name is "null".
         /// </summary>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeNullExceptions(string message, Exception innerException)
+        public DDTypeNullException(string message, Exception innerException)
             : base(NullTypeName, message, innerException) { }
     }
     /// <summary>
     /// 
     /// </summary>
-    public class DDTypeConvertExceptions : DDTypeExceptions
+    public class DDTypeConvertException : DDTypeException
     {
         /// <summary>
         /// Initializes a new instance of the DDTypeConvertExceptions class without error message.
         /// <param name="currentType">current type name</param>
         /// <param name="requestedTypeName">requested type name</param>
         /// </summary>
-        public DDTypeConvertExceptions(string currentType, string requestedTypeName)
+        public DDTypeConvertException(string currentType, string requestedTypeName)
             : base(currentType) { this.RequestedTypeName = requestedTypeName; }
         /// <summary>
         /// Initializes a new instance of the DDTypeConvertExceptions class with the specified error message.
@@ -101,7 +101,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="requestedTypeName">requested type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// </summary>
-        public DDTypeConvertExceptions(string currentType, string requestedTypeName, string message)
+        public DDTypeConvertException(string currentType, string requestedTypeName, string message)
             : base(currentType, message) { this.RequestedTypeName = requestedTypeName; }
         /// <summary>
         /// Initializes a new instance of the DDTypeConvertExceptions class with the specified error message.
@@ -110,7 +110,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="requestedTypeName">requested type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeConvertExceptions(string currentType, string requestedTypeName, string message, Exception innerException)
+        public DDTypeConvertException(string currentType, string requestedTypeName, string message, Exception innerException)
             : base(currentType, message, innerException) { this.RequestedTypeName = requestedTypeName; }
         /// <summary>
         /// requested type name
@@ -123,139 +123,139 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     /// <summary>
     /// DrData -- type exception
     /// </summary>
-    public class DDTypeIncorrectExceptions : DDTypeExceptions
+    public class DDTypeIncorrectException : DDTypeException
     {
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the default error message.
         /// <param name="name">Type name</param>
         /// </summary>
-        public DDTypeIncorrectExceptions(string name)
+        public DDTypeIncorrectException(string name)
             : base(name, string.Format(Res.Msg.OBJ_TYPE_IS_INCORRECT, name)) { }
 
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the default error message.
         /// <param name="type">Type</param>
-        public DDTypeIncorrectExceptions(Type type)
+        public DDTypeIncorrectException(Type type)
             : this((type == null ? NullTypeName : type.Name)) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the specified error message.
         /// </summary>
         /// <param name="name">Type name</param>
         /// <param name="message">A message that describes the error.</param>
-        public DDTypeIncorrectExceptions(string name, string message)
+        public DDTypeIncorrectException(string name, string message)
             : base(name, message) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the specified error message.
         /// </summary>
         /// <param name="type">Type</param>
         /// <param name="message">A message that describes the error.</param>
-        public DDTypeIncorrectExceptions(Type type, string message)
+        public DDTypeIncorrectException(Type type, string message)
             : this((type == null ? NullTypeName : type.Name), message) { }
 
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the default error message.
         /// </summary>
         /// <param name="name">Type name</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeIncorrectExceptions(string name, Exception innerException)
+        public DDTypeIncorrectException(string name, Exception innerException)
             : base(name, string.Format(Res.Msg.OBJ_TYPE_IS_INCORRECT, name), innerException) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the default error message.
         /// </summary>
         /// <param name="type">Type</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeIncorrectExceptions(Type type, Exception innerException)
+        public DDTypeIncorrectException(Type type, Exception innerException)
             : this((type == null ? NullTypeName : type.Name), innerException) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the specified error message.
         /// </summary>
         /// <param name="name">Type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeIncorrectExceptions(string name, string message, Exception innerException)
+        public DDTypeIncorrectException(string name, string message, Exception innerException)
             : base(name, message, innerException) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeIncorrectExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeIncorrectException class with the specified error message.
         /// </summary>
         /// <param name="type">Type</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeIncorrectExceptions(Type type, string message, Exception innerException)
+        public DDTypeIncorrectException(Type type, string message, Exception innerException)
             : this((type == null ? NullTypeName : type.Name), message, innerException) { }
     }
 
     /// <summary>
     /// DrData -- type exception
     /// </summary>
-    public class DDTypeExpectedExceptions : DDTypeConvertExceptions
+    public class DDTypeExpectedException : DDTypeConvertException
     {
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the default error message.
         /// <param name="currentTypeName">current type name</param>
         /// <param name="requestedTypeName">requested type name</param>
         /// </summary>
-        public DDTypeExpectedExceptions(string currentTypeName, string requestedTypeName)
+        public DDTypeExpectedException(string currentTypeName, string requestedTypeName)
             : base(currentTypeName, requestedTypeName , string.Format(Res.Msg.EXPECTED_NODE_TYPE_IS_INCORRECT, currentTypeName, requestedTypeName)) { }
 
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the default error message.
         /// <param name="currentType">Current type</param>
         /// <param name="requestedTypeName">requested type</param>
         /// </summary>
-        public DDTypeExpectedExceptions(Type currentType, Type requestedType)
+        public DDTypeExpectedException(Type currentType, Type requestedType)
             : this((currentType == null ? NullTypeName : currentType.Name), (requestedType == null ? NullTypeName : requestedType.Name)) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the specified error message.
         /// </summary>
         /// <param name="currentType">current type name</param>
         /// <param name="requestedTypeName">requested type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// </summary>
-        public DDTypeExpectedExceptions(string currentTypeName, string requestedTypeName, string message)
+        public DDTypeExpectedException(string currentTypeName, string requestedTypeName, string message)
             : base(currentTypeName, requestedTypeName, message) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the specified error message.
         /// </summary>
         /// <param name="currentType">Current type</param>
         /// <param name="requestedTypeName">requested type</param>
         /// <param name="message">A message that describes the error.</param>
         /// </summary>
-        public DDTypeExpectedExceptions(Type currentType, Type requestedType, string message)
+        public DDTypeExpectedException(Type currentType, Type requestedType, string message)
             : this((currentType == null ? NullTypeName : currentType.Name), (requestedType == null ? NullTypeName : requestedType.Name), message) { }
 
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the default error message.
         /// </summary>
         /// <param name="currentTypeName">current type name</param>
         /// <param name="requestedTypeName">requested type name</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeExpectedExceptions(string currentTypeName, string requestedTypeName,  Exception innerException)
+        public DDTypeExpectedException(string currentTypeName, string requestedTypeName,  Exception innerException)
             : base(currentTypeName, requestedTypeName, string.Format(Res.Msg.EXPECTED_NODE_TYPE_IS_INCORRECT, currentTypeName, requestedTypeName), innerException) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the default error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the default error message.
         /// </summary>
         /// <param name="currentType">Current type</param>
         /// <param name="requestedTypeName">requested type</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeExpectedExceptions(Type currentType, Type requestedType, Exception innerException)
+        public DDTypeExpectedException(Type currentType, Type requestedType, Exception innerException)
             : this((currentType == null ? NullTypeName : currentType.Name), (requestedType == null ? NullTypeName : requestedType.Name), innerException) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the specified error message.
         /// </summary>
         /// <param name="currentTypeName">current type name</param>
         /// <param name="requestedTypeName">requested type name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeExpectedExceptions(string currentTypeName, string requestedTypeName, string message, Exception innerException)
+        public DDTypeExpectedException(string currentTypeName, string requestedTypeName, string message, Exception innerException)
             : base(currentTypeName, requestedTypeName, message, innerException) { }
         /// <summary>
-        /// Initializes a new instance of the DDTypeExpectedExceptions class with the specified error message.
+        /// Initializes a new instance of the DDTypeExpectedException class with the specified error message.
         /// </summary>
         /// <param name="currentType">Current type</param>
         /// <param name="requestedTypeName">requested type</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDTypeExpectedExceptions(Type currentType, Type requestedType, string message, Exception innerException)
+        public DDTypeExpectedException(Type currentType, Type requestedType, string message, Exception innerException)
             : this((currentType == null ? NullTypeName : currentType.Name), (requestedType == null ? NullTypeName : requestedType.Name), message, innerException) { }
     }
 

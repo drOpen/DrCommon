@@ -57,7 +57,7 @@ namespace DrOpen.DrCommon.DrData
         #region Constructor
         public DDNode(string name, DDType type)
         {
-            if (!IsNameCorect(name)) throw new DDNodeIncorrectNameExceptions (name);
+            if (!IsNameCorect(name)) throw new DDNodeIncorrectNameException (name);
             attributes = new DDAttributesCollection();
             Name = name;
             childNodes = new Dictionary<string, DDNode>();
@@ -255,7 +255,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>added child node</returns>
         public virtual DDNode Add(DDNode node)
         {
-            if (null == node) throw new DDNodeAddNullExceptions();
+            if (null == node) throw new DDNodeAddNullException();
             if (Equals(node)) throw new DDNodeAddSelf(node.Path);
             if (node.Parent == null)
                 node.Parent = this;
@@ -473,7 +473,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public virtual DDNode GetNode(string path)
         {
-            if (path == null) throw new DDNodeNullPathExceptions();
+            if (path == null) throw new DDNodeNullPathException();
             if (path.Length == 0) return this; // done
             var nextNodeName = GetNextNodeNameByPath(ref path);
             switch (nextNodeName)
@@ -481,7 +481,7 @@ namespace DrOpen.DrCommon.DrData
                 case "/":
                     return this.GetRoot().GetNode(path);
                 case "..":
-                    if (this.Parent == null) throw new DDNodePathAboveRootExceptions("..");
+                    if (this.Parent == null) throw new DDNodePathAboveRootException("..");
                     return this.Parent.GetNode(path);
                 case ".":
                     return this.GetNode(path);
@@ -498,7 +498,7 @@ namespace DrOpen.DrCommon.DrData
         protected static string GetNextNodeNameByPath(ref string path)
         {
             string name = string.Empty;
-            if (path == null) throw new DDNodeNullPathExceptions();
+            if (path == null) throw new DDNodeNullPathException();
             var iRes = path.IndexOf('/');
             if (iRes == -1) //not found
             {
@@ -931,7 +931,7 @@ namespace DrOpen.DrCommon.DrData
                     }
                     else
                     {
-                        if (res == ResolveConflict.THROW_EXCEPTION) throw new DDNodeMergeNameExceptions (item.Value.Name, Path);
+                        if (res == ResolveConflict.THROW_EXCEPTION) throw new DDNodeMergeNameException (item.Value.Name, Path);
                         //if (res == ResolveConflict.SKIP) continue ; // skip only attributes. this line must be commented
                         GetNode(item.Value.Name).Merge(item.Value, option, res);
                     }

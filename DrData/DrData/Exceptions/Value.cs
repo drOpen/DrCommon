@@ -31,21 +31,21 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     /// <summary>
     /// DrData value exception
     /// </summary>
-    public class DDValueExceptions : Exception
+    public class DDValueException : Exception
     {
         public const string NullValue = "null";
         /// <summary>
         /// DrData value exception
         /// <param name="value">value</param>
         /// </summary>
-        public DDValueExceptions(string value)
+        public DDValueException(string value)
             : base() { this.Value = value; }
         /// <summary>
         ///DrData value exception
         /// </summary>
         /// <param name="value">value</param>
         /// <param name="message">A message that describes the error.</param>
-        public DDValueExceptions(string value, string message)
+        public DDValueException(string value, string message)
             : base(message) { this.Value = value; }
         /// <summary>
         /// DrData value exception
@@ -53,7 +53,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="value">value</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDValueExceptions(string value, string message, Exception innerException)
+        public DDValueException(string value, string message, Exception innerException)
             : base(message, innerException) { this.Value = value; }
         /// <summary>
         /// Value

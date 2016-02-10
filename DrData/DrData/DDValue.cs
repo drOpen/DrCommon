@@ -126,7 +126,7 @@ namespace DrOpen.DrCommon.DrData
                 if (value != null) this.data = GetByteArray(typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
             }
 
-            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace DrOpen.DrCommon.DrData
         }
 
         /// <summary>
-        /// Return new string [] from object [].
+        /// Returns new string [] from object [].
         /// This function call ToString() for each element for new array
         /// </summary>
         /// <param name="array">object[]</param>

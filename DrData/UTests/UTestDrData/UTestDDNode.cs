@@ -71,6 +71,38 @@ namespace UTestDrData
             return a;
         }
 
+        static private DDNode GetStockHierarhyWithArrayValue()
+        {
+            var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
+
+            var a = new DDNode("a");
+            a.Attributes.Add("value a->a", new [] { true, false} );
+
+            var a_a = a.Add("a.a");
+            a_a.Attributes.Add("value a.a->a", new[] { true, false });
+            a_a.Attributes.Add("value a.a->b", new[] { true, false });
+
+            var a_a_a = a_a.Add("a.a.a");
+            a_a_a.Attributes.Add("Value", new[] { true, false });
+
+            var a_a_a_a = a_a_a.Add("a.a.a.a");
+            a_a_a_a.Attributes.Add("Value", new[] { true, false });
+
+            var a_a_a_b = a_a_a.Add("a.a.a.b");
+            a_a_a_b.Attributes.Add("Value", new[] { true, false });
+
+            var a_a_a_c = a_a_a.Add("a.a.a.c");
+            a_a_a_c.Attributes.Add("Value", new[] { true, false });
+            
+
+            var a_b = a.Add("a.b");
+            a_b.Attributes.Add("value a.b->a", new[] { true, false });
+            a_b.Attributes.Add("value a.b->b", new[] { true, false });
+
+            return a;
+        }
+
+
         #region GetNextNodeNameByPath
 
         [TestMethod]
@@ -1285,6 +1317,12 @@ namespace UTestDrData
         public void TestDDNodeXmlSerializationFromFileSkipIncorrectedData()
         {
             ValidateXMLDeserialization(GetStockHierarhy(), UTestDrDataCommon.GetMemoryStreamFromFile());
+        }
+
+        [TestMethod]
+        public void TestDeserialyzeArrayValue()
+        {
+            ValidateXMLDeserialization(GetStockHierarhyWithArrayValue());
         }
 
         public static void ValidateXMLDeserialization(DDNode original)

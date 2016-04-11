@@ -88,7 +88,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// the type of the object as a string
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
 
 
@@ -145,13 +145,33 @@ namespace DrOpen.DrCommon.DrData
             return value1.CompareTo(value2);
         }
         /// <summary>
-        /// Retruns base.Equals
+        /// Determines whether the specified DDType is equal to the current DDType.
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(DDType other)
+        /// <returns>true if the specified DDType is equal to the current DDType otherwise, false.</returns>
+        public virtual bool Equals(DDType other)
         {
             return base.Equals(other);
+        }
+
+        /// <summary>
+        /// Determines whether the specified System.Object is equal to the current DDType.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>true if the specified System.Object is equal to the current DDType otherwise, false.</returns>
+        public override bool Equals(object other)
+        {
+            if (other.GetType() != typeof(DDType)) return false;
+            return this.Equals(other);
+        }
+        /// <summary>
+        /// Returns the hash code for this DDType which get from Name property
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            if (this.Name == null) return 0;
+            return this.Name.GetHashCode();
         }
         #region ==, != operators
         /// <summary>

@@ -23,7 +23,7 @@ namespace DrDataSample
 
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 
                 

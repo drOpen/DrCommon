@@ -1033,6 +1033,8 @@ namespace DrOpen.DrCommon.DrData
         public virtual bool Equals(DDValue other)
         {
             return base.Equals(other);
+            // ***********************
+            // ToDo
             //return(Compare(this, other) == 0);
         }
         #endregion IEquatable

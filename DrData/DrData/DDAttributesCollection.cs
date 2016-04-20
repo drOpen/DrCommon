@@ -473,7 +473,7 @@ namespace DrOpen.DrCommon.DrData
             DDValue newValue;
             if (TryGetValue(name, out newValue)) return newValue; // return new value
             if (defaultValue == null) return null;
-            if (defaultValue.GetType() == typeof(DDValue)) return (DDValue)defaultValue; // return defaultValue as IDDValue
+            if (defaultValue.GetType() == typeof(DDValue)) return (DDValue)defaultValue; // return default Value as IDDValue
             return new DDValue(defaultValue); // create and return new DDValue
         }
         #endregion GetValue

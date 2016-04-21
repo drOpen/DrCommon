@@ -58,6 +58,10 @@ namespace UTestDrData
                 DDValue.GetObjSize(new object());
                 Assert.Fail("a.GetObjSize() - cannot catch exception after try GetObjSize() for unsupported Type;");
             }
+            catch (AssertFailedException e)
+            {
+                throw;
+            }
             catch (Exception)
             {
             }
@@ -73,6 +77,10 @@ namespace UTestDrData
                 var value = a.GetValue();
                 Assert.IsTrue(null == value, "GetValue from null should be return null.");                          // Uncomment it if null type is supported
                 //Assert.Fail("a.GetValue() - cannot catch exception after try GetValue from null Data.Type;");     // Uncomment it if null type is unsupported
+            }
+            catch (AssertFailedException e)
+            {
+                throw;
             }
             catch (Exception)
             {
@@ -207,7 +215,7 @@ namespace UTestDrData
                 var dd = new DDValue(new sbyte());
                 Assert.Fail("Allow set incorect data type - sbyte");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -351,7 +359,7 @@ namespace UTestDrData
                 Assert.Fail("The parity check for HEX string doesn't work.");
             }
 
-            catch (DDValueException e)
+            catch (DDValueExceptions e)
             {
                 Assert.AreEqual(e.Value, hexValue,"Exception value is incorrect.");
             }
@@ -2887,7 +2895,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(string));
                 Assert.Fail("Can transfrom from not string type.");
             }
-            catch (DDTypeConvertException)
+            catch (DDTypeConvertExceptions)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2900,7 +2908,7 @@ namespace UTestDrData
                 Assert.Fail("Can transfrom from null.");
             }
 
-            catch (DDTypeNullException)
+            catch (DDTypeNullExceptions)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2912,7 +2920,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(int[]));
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (DDTypeConvertException)
+            catch (DDTypeConvertExceptions)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2924,7 +2932,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(bool));
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (DDTypeConvertException)
+            catch (DDTypeConvertExceptions)
             {/* it's ok*/}
         }
         [TestMethod]

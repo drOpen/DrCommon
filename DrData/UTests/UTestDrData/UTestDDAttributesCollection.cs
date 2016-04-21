@@ -153,7 +153,7 @@ namespace UTestDrData
             {
                 Assert.Fail("Incorrect ArgumentException, new value should be skipped!");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -178,7 +178,7 @@ namespace UTestDrData
             {
                 Assert.Fail("Incorrect ArgumentException, new value should be skipped!");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -202,7 +202,7 @@ namespace UTestDrData
                 var res = attrs[TEST_ENUM.TEST_ENUM_B.ToString().ToLower()];
                 Assert.Fail("Where my exception, dude?");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }

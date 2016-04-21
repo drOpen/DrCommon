@@ -537,35 +537,16 @@ namespace DrOpen.DrCommon.DrData
         #endregion Functions
         #region Equals
         /// <summary>
-        /// Determines whether the specified DDNode is equal to the current DDNode. (Inherited from Object.)
+        /// Determines whether the specified object is equal to the current object. (Inherited from Object.)
         /// </summary>
-        /// <param name="other">The DDNode to compare with the current DDNode. </param>
-        /// <returns>true if the specified DDNode is equal to the current DDNode otherwise, false.</returns>
+        /// <param name="other">The object to compare with the current object. </param>
+        /// <returns></returns>
         public virtual bool Equals(DDNode other)
         {
-            return base.Equals(other);
-        }
-        /// <summary>
-        /// Determines whether the specified object is equal to the current DDNode. (Inherited from Object.)
-        /// </summary>
-        /// <param name="other">The object to compare with the current DDNode. </param>
-        /// <returns>true if the specified object is equal to the current DDNode otherwise, false.</returns>
-        public override bool Equals(object other)
-        {
-            if (other.GetType() != typeof(DDNode)) return false;
+            // ToDo need to add Unit Tests for all objects
             return base.Equals(other);
         }
         #endregion Equals
-        #region GetHashCode
-        /// <summary>
-        /// Serves as a hash function for a particular type.
-        /// </summary>
-        /// <returns>A hash code for the current DDNode.</returns>
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-        #endregion GetHashCode
         #region ==, != operators
         /// <summary>
         /// Compare both values and return true if type and data are same otherwise return false.

@@ -114,11 +114,11 @@ namespace UTestDrData
                 var name = DDNode.GetNextNodeNameByPath(ref path);
                 Assert.Fail("Cannot catch null reference exception!");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
-            catch (DDNodeNullPathException)
+            catch (DDNodeNullPathExceptions)
             {
 
             }
@@ -206,11 +206,11 @@ namespace UTestDrData
                 var name = GetStockHierarhy().GetNode(path);
                 Assert.Fail("Cannot catch null reference exception!");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
-            catch (DDNodeNullPathException)
+            catch (DDNodeNullPathExceptions)
             {
 
             }
@@ -288,11 +288,11 @@ namespace UTestDrData
                 var result = root.GetNode(path); //attempt to rise above root node
                 Assert.Fail("Successfull rise above root node!!!");
             }
-            catch (DDNodePathAboveRootException e)
+            catch (DDNodePathAboveRootExceptions e)
             {
                 Assert.AreEqual(e.Path, "..");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -707,7 +707,7 @@ namespace UTestDrData
                 root.Add(root);
                 Assert.Fail("You can not add yourself as a child node.");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -734,7 +734,7 @@ namespace UTestDrData
                 var n3 = root.Add(n2);
                 Assert.Fail(String.Format("Forbidden to add node '{0}' as child already having parent node.", n2.Name));
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -761,11 +761,11 @@ namespace UTestDrData
                 var n3 = root.Add(GetNullNode());
                 Assert.Fail("Forbidden to add null node");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
-            catch (DDNodeAddNullException)
+            catch (DDNodeAddNullExceptions e)
             {/* it's ok */}
         }
 
@@ -777,11 +777,11 @@ namespace UTestDrData
                 child = node.Add(name);
                 Assert.Fail(String.Format("Forbidden to add node with name '{0}'.", name));
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
-            catch (DDNodeIncorrectNameException e)
+            catch (DDNodeIncorrectNameExceptions e)
             {
                 Assert.AreEqual(e.Name, name);
             }
@@ -825,7 +825,7 @@ namespace UTestDrData
                 child = root.Add(node);
                 Assert.Fail("Forbidden to add node as null.");
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }
@@ -874,7 +874,7 @@ namespace UTestDrData
                 var n3 = root.Add(n1.Name);
                 Assert.Fail(String.Format("The name '{0}' is not uniq.", n1.Name));
             }
-            catch (AssertFailedException)
+            catch (AssertFailedException e)
             {
                 throw;
             }

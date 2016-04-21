@@ -715,8 +715,6 @@ namespace DrOpen.DrCommon.DrData
 
         protected static object GetValueObjByType(Type type, byte[] data)
         {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) && (data == null)) return null; // check Nullable type
-
             if (type == typeof(string)) return Encoding.UTF8.GetString(data);
 
             if (type == typeof(DateTime)) return DateTime.FromBinary(BitConverter.ToInt64(data, 0));
@@ -734,7 +732,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(float)) return BitConverter.ToSingle(data, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(data, 0);
             if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
-            if ((type == typeof(Guid)) || (type == typeof(Guid?))) return new Guid(data);
+            if (type == typeof(Guid)) return new Guid(data);
 
             throw new DDTypeIncorrectException(type);
         }

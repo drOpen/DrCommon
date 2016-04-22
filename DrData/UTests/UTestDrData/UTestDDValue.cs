@@ -563,15 +563,6 @@ namespace UTestDrData
             ValidateStringArray(test, a);
         }
         [TestMethod]
-        public void TestCreateWithStringArrayMultipleValueAndNull()
-        {
-            string[] test = new string[] { "", null, "Тест Unicode", "", "A\t\n\rA", null };
-            var a = new DDValue(test);
-            ValidateStringArray(test, a);
-        }
-
-
-        [TestMethod]
         public void TestCreateWithStringArrayMultipleValue()
         {
             string[] test = new string[] { "", "Тест Unicode", "", "A\t\n\rA", "" };

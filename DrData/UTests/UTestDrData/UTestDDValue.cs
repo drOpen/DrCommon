@@ -1,4 +1,4 @@
-﻿/*
+/*
   UTestDDValue.cs -- Unit Tests of DDValue for 'DrData' general purpose Data abstraction layer 1.0.1, October 6, 2013
  
   Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
@@ -58,10 +58,6 @@ namespace UTestDrData
                 DDValue.GetObjSize(new object());
                 Assert.Fail("a.GetObjSize() - cannot catch exception after try GetObjSize() for unsupported Type;");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
             catch (Exception)
             {
             }
@@ -77,10 +73,6 @@ namespace UTestDrData
                 var value = a.GetValue();
                 Assert.IsTrue(null == value, "GetValue from null should be return null.");                          // Uncomment it if null type is supported
                 //Assert.Fail("a.GetValue() - cannot catch exception after try GetValue from null Data.Type;");     // Uncomment it if null type is unsupported
-            }
-            catch (AssertFailedException e)
-            {
-                throw;
             }
             catch (Exception)
             {
@@ -215,7 +207,7 @@ namespace UTestDrData
                 var dd = new DDValue(new sbyte());
                 Assert.Fail("Allow set incorect data type - sbyte");
             }
-            catch (AssertFailedException e)
+            catch (AssertFailedException)
             {
                 throw;
             }
@@ -359,7 +351,7 @@ namespace UTestDrData
                 Assert.Fail("The parity check for HEX string doesn't work.");
             }
 
-            catch (DDValueExceptions e)
+            catch (DDValueException e)
             {
                 Assert.AreEqual(e.Value, hexValue,"Exception value is incorrect.");
             }
@@ -2717,6 +2709,31 @@ namespace UTestDrData
         #endregion test byte[]
 
         #region test guid
+
+        [TestMethod]
+        public void TestCreateWithGuidNulablleNull()
+        {
+            Guid? test = null;
+            var value = new DDValue(test);
+            ValidateGuid(test, value);
+        }
+
+        [TestMethod]
+        public void TestCreateWithGuidNulablleGuidValue()
+        {
+            Guid? test = Guid.NewGuid();
+            var value = new DDValue(test);
+            ValidateGuid(test, value);
+        }
+
+        [TestMethod]
+        public void TestCreateWithGuidNulablleGuidEmpty()
+        {
+            Guid? test = Guid.Empty;
+            var value = new DDValue(test);
+            ValidateGuid(test, value);
+        }
+
         [TestMethod]
         public void TestCreateWithGuidEmptyValue()
         {
@@ -2861,7 +2878,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(string));
                 Assert.Fail("Can transfrom from not string type.");
             }
-            catch (DDTypeConvertExceptions)
+            catch (DDTypeConvertException)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2874,7 +2891,7 @@ namespace UTestDrData
                 Assert.Fail("Can transfrom from null.");
             }
 
-            catch (DDTypeNullExceptions)
+            catch (DDTypeNullException)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2886,7 +2903,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(int[]));
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (DDTypeConvertExceptions)
+            catch (DDTypeConvertException)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -2898,7 +2915,7 @@ namespace UTestDrData
                 v.SelfTransformFromStringTo(typeof(bool));
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (DDTypeConvertExceptions)
+            catch (DDTypeConvertException)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -3076,15 +3093,31 @@ namespace UTestDrData
             Assert.IsTrue(attr == b, "The implicit boolean conversion is not matched expected text.");
             Assert.IsTrue(attr.GetValueAsBool() == b, "The explicit boolean conversion is not matched expected text.");
         }
-        private void ValidateGuid(Guid g, DDValue attr)
+
+        private void ValidateNull(DDValue value)
         {
-            CommonObjectValidation(g, attr);
-            Guid resImpicit = attr;
-            Assert.IsTrue(resImpicit == g, "The implicit Guid conversion is not matched expected bool.");
-            var resGetValue = (Guid)attr.GetValue();
-            Assert.IsTrue(resGetValue == g, "The implicit Guid conversion is not matched expected text.");
-            Assert.IsTrue((Guid)attr == g, "The implicit byte conversion is not matched expected text.");
-            Assert.IsTrue(attr.GetValueAsGuid() == g, "The explicit byte conversion is not matched expected text.");
+            Assert.IsNotNull(value, "The value can not be null.");
+            Assert.IsNull(value.GetValue(), "The value is not null.");
+            Assert.IsTrue(value.Type == null, "The type is not null");
+            Assert.IsTrue(value.Size == 0, "The size is not '0'");
+        }
+
+        private void ValidateGuid(Guid? g, DDValue value)
+        {
+            if (g == null)
+                ValidateNull(value);
+            else
+            {
+                CommonObjectValidation(g, value);
+                Guid resImpicit = value;
+                Assert.IsTrue(resImpicit == g, "The implicit Guid conversion is not matched expected bool.");
+                var resGetValue = (Guid)value.GetValue();
+                Assert.IsTrue(resGetValue == g, "The implicit Guid conversion is not matched expected text.");
+                Assert.IsTrue((Guid)value == g, "The implicit byte conversion is not matched expected text.");
+                Assert.IsTrue(value.GetValueAsGuid() == g, "The explicit byte conversion is not matched expected text.");
+                Assert.IsTrue(value.GetValueAs<Guid>() == g, "The explicit byte conversion is not matched expected text.");
+                Assert.IsTrue(value.GetValueAs<Guid?>() == g, "The explicit byte conversion is not matched expected text.");
+            }
         }
         private void ValidateStringArray(string[] array, DDValue data)
         {

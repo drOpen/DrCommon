@@ -1,4 +1,4 @@
-﻿/*
+/*
   UTestDDAttributesCollection.cs -- Unit Tests of DDAttributesCollection for 'DrData' general purpose Data abstraction layer 1.0.1, January 5, 2014
  
   Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
@@ -153,7 +153,7 @@ namespace UTestDrData
             {
                 Assert.Fail("Incorrect ArgumentException, new value should be skipped!");
             }
-            catch (AssertFailedException e)
+            catch (AssertFailedException)
             {
                 throw;
             }
@@ -178,7 +178,7 @@ namespace UTestDrData
             {
                 Assert.Fail("Incorrect ArgumentException, new value should be skipped!");
             }
-            catch (AssertFailedException e)
+            catch (AssertFailedException)
             {
                 throw;
             }
@@ -202,7 +202,7 @@ namespace UTestDrData
                 var res = attrs[TEST_ENUM.TEST_ENUM_B.ToString().ToLower()];
                 Assert.Fail("Where my exception, dude?");
             }
-            catch (AssertFailedException e)
+            catch (AssertFailedException)
             {
                 throw;
             }

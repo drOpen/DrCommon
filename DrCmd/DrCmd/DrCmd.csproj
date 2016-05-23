@@ -44,8 +44,6 @@
     <Compile Include="DrCmdOption.cs" />
     <Compile Include="DrCmdParser.cs" />
     <Compile Include="DrDDCmdParser.cs" />
-    <Compile Include="Ext\DrExtEnum.cs" />
-    <Compile Include="Ext\DrExtString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Res\Msg.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -59,6 +57,10 @@
     <ProjectReference Include="..\..\DrData\DrData\DrData.csproj">
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
       <Name>DrData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DrExt\DrExt\DrExt.csproj">
+      <Project>{328e84f0-642d-4281-aac7-7ffd2ec804a4}</Project>
+      <Name>DrExt</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

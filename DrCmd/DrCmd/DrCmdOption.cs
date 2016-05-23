@@ -29,8 +29,9 @@ using System;
 using System.Collections.Generic;
 using DrCmd.Res;
 using DrOpen.DrCommon.DrCmd;
-using DrOpen.DrCommon.DrCmd.Ext;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrCommon.DrExt;
 
 namespace DrOpen.DrCommon.DrCmd
 {
@@ -46,7 +47,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// <param name="option">node with settings of option</param>
         internal DrCmdOption(DrCmdCommand command, DDNode option)
         {
-            option.Type.ThrowIsNotExpectedNodeType(DrCmdConst.TypeOption);
+            option.Type.ValidateExpectedNodeType(DrCmdConst.TypeOption);
             Option = option;
             Command = command;
             name = GetOptionName();

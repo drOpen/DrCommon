@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Text;
 using DrCmd.Res;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrCmd
 {
@@ -44,7 +45,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// <param name="settings">settings for command and their options</param>
         public DrCmdParser(DDNode settings)
         {
-            settings.Type.ThrowIsNotExpectedNodeType(DrCmdConst.TypeSettings);
+            settings.Type.ValidateExpectedNodeType(DrCmdConst.TypeSettings);
             Settings = settings;
             VerifySettings();   // verify parser, commands and options settings
             SaveHelp();         // build and save help to application and commands

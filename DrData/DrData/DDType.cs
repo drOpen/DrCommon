@@ -29,6 +29,7 @@ using System;
 using System.Runtime.Serialization;
 using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -88,7 +89,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// the type of the object as a string
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
 
 
@@ -145,13 +146,33 @@ namespace DrOpen.DrCommon.DrData
             return value1.CompareTo(value2);
         }
         /// <summary>
-        /// Retruns base.Equals
+        /// Determines whether the specified DDType is equal to the current DDType.
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
-        public bool Equals(DDType other)
-        {
+        /// <returns>true if the specified DDType is equal to the current DDType otherwise, false.</returns>
+        public virtual bool Equals(DDType other)
+        { 
             return base.Equals(other);
+        }
+
+        /// <summary>
+        /// Determines whether the specified System.Object is equal to the current DDType.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>true if the specified System.Object is equal to the current DDType otherwise, false.</returns>
+        public override bool Equals(object other)
+        {
+            if (other.GetType() != typeof(DDType)) return false;
+            return this.Equals(other);
+        }
+        /// <summary>
+        /// Returns the hash code for this DDType which get from Name property
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            if (this.Name == null) return 0;
+            return this.Name.GetHashCode();
         }
         #region ==, != operators
         /// <summary>
@@ -170,5 +191,41 @@ namespace DrOpen.DrCommon.DrData
             return (!(value1 == value2));
         }
         #endregion ==, != operators
+        #region validation
+        /// <summary>
+        /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
+        /// </summary>
+        /// <param name="currentType">current node type</param>
+        /// <param name="expectedType">expected node type</param>
+        public static void ValidateExpectedNodeType(DDType currentType, DDType expectedType)
+        {
+            ValidateExpectedNodeType(currentType, expectedType.ToString());
+        }
+        /// <summary>
+        /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
+        /// </summary>
+        /// <param name="currentType">current node type</param>
+        /// <param name="expectedType">expected node type</param>
+        public static void ValidateExpectedNodeType(DDType currentType, string expectedType)
+        {
+            if (currentType.Name != expectedType) throw new DDTypeExpectedException(currentType.Name, expectedType);
+        }
+        /// <summary>
+        /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
+        /// </summary>
+        /// <param name="expectedType">expected node type</param>
+        public void ValidateExpectedNodeType(string expectedType)
+        {
+            ValidateExpectedNodeType(this, expectedType);
+        }
+        /// <summary>
+        /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
+        /// </summary>
+        /// <param name="expectedType">expected node type</param>
+        public void ValidateExpectedNodeType(DDType expectedType)
+        {
+            ValidateExpectedNodeType(expectedType.Name);
+        }
+        #endregion validation
     }
 }

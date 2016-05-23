@@ -790,7 +790,7 @@ namespace UTestDrCmd
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, TestValue.val1.GetFlags(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -810,7 +810,7 @@ namespace UTestDrCmd
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, TestValue.val1.GetFlags(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
 
             try
             {
@@ -832,7 +832,7 @@ namespace UTestDrCmd
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, TestValue.val1.GetFlags(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -852,7 +852,7 @@ namespace UTestDrCmd
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, TestValue.val1.GetFlags(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
@@ -873,7 +873,7 @@ namespace UTestDrCmd
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, TestValue.val1.GetFlags(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
@@ -914,7 +914,7 @@ namespace UTestDrCmd
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.AllowNumeric.ToString(), DrCmdValueType.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, TestValue.val1.GetFlags(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListDescription, new []{ "A", "B" }, ResolveConflict.OVERWRITE);
             try
             {

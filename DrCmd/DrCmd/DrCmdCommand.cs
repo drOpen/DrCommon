@@ -29,8 +29,9 @@ using System.Collections.Generic;
 using System.Text;
 using DrCmd.Res;
 using DrOpen.DrCommon.DrCmd;
-using DrOpen.DrCommon.DrCmd.Ext;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrCommon.DrExt;
 
 namespace DrOpen.DrCommon.DrCmd
 {
@@ -46,7 +47,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// <param name="command">node with settings of command</param>
         internal DrCmdCommand(DrCmdParser settings, DDNode command)
         {
-            command.Type.ThrowIsNotExpectedNodeType(DrCmdConst.TypeCommand);
+            command.Type.ValidateExpectedNodeType(DrCmdConst.TypeCommand);
             Settings = settings;
             Command = command;
             name = GetCommandName();

@@ -1,4 +1,4 @@
-/*
+﻿/*
   UTestDDValue.cs -- Unit Tests of DDValue for 'DrData' general purpose Data abstraction layer 1.0.1, October 6, 2013
  
   Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
@@ -553,6 +553,22 @@ namespace UTestDrData
             string[] test = new string[] { "Тест Unicode" };
             var a = new DDValue(test);
             ValidateStringArray(test, a);
+        }
+
+        [TestMethod]
+        public void TestCreateWithStringArraWithNullValue()
+        {
+            var test = new string[] { "1",null, "2" };
+            var a = new DDValue(test);
+            try
+            {
+                ValidateStringArray(test, a); // catch well know issue https://github.com/drOpen/DrCommon/issues/1
+            }
+            catch
+            {
+                throw new AssertInconclusiveException(); // Warning!
+            }
+            
         }
         [TestMethod]
         public void TestCreateWithStringArrayMultipleValue()

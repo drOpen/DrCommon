@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UTests", "UTests", "{473DD4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrCmd", "UTests\UTestDrCmd\UTestDrCmd.csproj", "{6A725783-4C9B-477C-90F3-4EE98A1194CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrExt", "..\DrExtension\DrExtension\DrExt.csproj", "{8D109E22-FD0C-45E9-B0E1-A8460584392B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrExt", "..\DrExt\DrExt\DrExt.csproj", "{328E84F0-642D-4281-AAC7-7FFD2EC804A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{6A725783-4C9B-477C-90F3-4EE98A1194CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A725783-4C9B-477C-90F3-4EE98A1194CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A725783-4C9B-477C-90F3-4EE98A1194CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D109E22-FD0C-45E9-B0E1-A8460584392B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D109E22-FD0C-45E9-B0E1-A8460584392B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D109E22-FD0C-45E9-B0E1-A8460584392B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D109E22-FD0C-45E9-B0E1-A8460584392B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{328E84F0-642D-4281-AAC7-7FFD2EC804A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{328E84F0-642D-4281-AAC7-7FFD2EC804A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{328E84F0-642D-4281-AAC7-7FFD2EC804A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{328E84F0-642D-4281-AAC7-7FFD2EC804A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

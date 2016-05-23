@@ -64,8 +64,8 @@
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
       <Name>DrData</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DrExtension\DrExtension\DrExt.csproj">
-      <Project>{8d109e22-fd0c-45e9-b0e1-a8460584392b}</Project>
+    <ProjectReference Include="..\..\..\DrExt\DrExt\DrExt.csproj">
+      <Project>{328e84f0-642d-4281-aac7-7ffd2ec804a4}</Project>
       <Name>DrExt</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DrCmd\DrCmd.csproj">

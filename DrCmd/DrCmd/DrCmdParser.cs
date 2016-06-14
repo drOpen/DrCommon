@@ -63,7 +63,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         public DDNode ActiveCommnand
         {
-            get { return activeCommand.Command; }
+            get { return (activeCommand == null ? null : activeCommand.Command); }
         }
         /// <summary>
         /// Reads the specified settings arguments determines the specified command and substitutes the value of its options for it. 
@@ -126,7 +126,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// <returns></returns>
         internal int GetSettingsHelpMaxLineLength()
         {
-            return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, Console.BufferWidth-1);
+            return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, Console.BufferWidth - 1);
         }
         /// <summary>
         /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> value as number of space characters used as a tab for help. By default, this value is equal 3.
@@ -134,9 +134,9 @@ namespace DrOpen.DrCommon.DrCmd
         /// <returns></returns>
         internal int GetSettingsHelpTabSize()
         {
-            return Settings.Attributes.GetValue(DrCmdSettings.HelpTabSize,3);
+            return Settings.Attributes.GetValue(DrCmdSettings.HelpTabSize, 3);
         }
-       
+
         /// <summary>
         /// Returns parameter <see cref="DrCmdSettings.RemoveStartEndQuotas"/>value, If it is true, the quotation marks at the beginning and at the end arguments will be removed
         /// </summary>
@@ -327,6 +327,16 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
+        /// If there is active command - returns help. Otherwise, returns an empty string.
+        /// </summary>
+        /// <returns></returns>
+        public string GetHelpForActiveCommand()
+        {
+            return (activeCommand == null ? string.Empty : activeCommand.GetHelp());
+        }
+
+
+        /// <summary>
         /// Returns help for application: application description and list of commands with descriptions
         /// </summary>
         /// <returns></returns>
@@ -346,7 +356,7 @@ namespace DrOpen.DrCommon.DrCmd
             text += "\r\n" + Msg.HELP_SYNOPSIS + "\r\n\r\n";
             text += GetHelpSynopsis();
             text += "\r\n" + Msg.HELP_DESCRIPTION + "\r\n\r\n";
-            text += GetHelpCommandsDescriptions();
+            text += GetHelpCommandsDescriptions() ;
             if (withSynopsis)
             {
                 foreach (var command in Commands)
@@ -366,8 +376,8 @@ namespace DrOpen.DrCommon.DrCmd
         {
             var text = string.Empty;
             var tab = GetHelpTab();
-            var maxCommandNameLength = this.GetMaximumCommandNameLength()+1;
-            var leftMargin = tab.Length + maxCommandNameLength ;
+            var maxCommandNameLength = this.GetMaximumCommandNameLength() + 1;
+            var leftMargin = tab.Length + maxCommandNameLength;
             var frmt = new TextBuilder.DrCmdTextBuilderFormat(leftMargin, GetSettingsHelpMaxLineLength(), true, true);
             var builder = new TextBuilder.DrCmdTextBuilder(frmt);
             foreach (var command in Commands)
@@ -375,11 +385,11 @@ namespace DrOpen.DrCommon.DrCmd
                 if (command.IsEnabled())
                 {
                     text += tab + command.Name + (new string(' ', maxCommandNameLength - command.Name.Length)) +
-                            builder.BuildText(command.GetCommandDescription()) ;
-                    
+                            builder.BuildText(command.GetCommandDescription());
+
                 }
             }
-            return text ;
+            return text;
         }
         /// <summary>
         /// Returns help line contains application synopsis like 'Application.exe - {COMMAND1 | COMMAND2}'
@@ -391,7 +401,7 @@ namespace DrOpen.DrCommon.DrCmd
             var text = tab + GetSettingsApplicationName() + " ";
             var frmt = new TextBuilder.DrCmdTextBuilderFormat(text.Length, GetSettingsHelpMaxLineLength(), true, true);
             var builder = new TextBuilder.DrCmdTextBuilder(frmt);
-            text+=builder.BuildText("{" + GetCommandsNamesForHelp() + "}");
+            text += builder.BuildText("{" + GetCommandsNamesForHelp() + "}");
             return text;
         }
         /// <summary>
@@ -455,6 +465,5 @@ namespace DrOpen.DrCommon.DrCmd
             return new string(' ', GetSettingsHelpTabSize() * i);
         }
         #endregion Help
-
     }
 }

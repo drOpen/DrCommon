@@ -349,7 +349,7 @@ namespace DrOpen.DrCommon.DrCmd
             text.Append("\r\n\r\n");
 
             text.Append(GetHelpCommandSynopsis());
-            //text.Append("\r\n");
+            text.Append("\r\n");
             text.Append(GetHelpOptionDescription(DrCmdOptionType.Required));
             text.Append(GetHelpOptionDescription(DrCmdOptionType.Optional));
             text.Append(GetHelpExamples());

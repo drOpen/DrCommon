@@ -36,7 +36,7 @@ namespace DrOpen.DrCommon.DrCmd
         {
 
             var ddNode = new DDNode(DrCmdConst.TypeSettings, DrCmdConst.TypeSettings);
-            ddNode.Attributes.Add("ApplicationDescription", "It's test application.");
+            ddNode.Attributes.Add(DrCmdSettings.ApplicationDescription, "It's test application.");
             ddNode.Add(GetCommandHelp());
             ddNode.Add(GetCommandRUN());
             
@@ -138,7 +138,7 @@ namespace DrOpen.DrCommon.DrCmd
             //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] {"log"});
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify path and name for log file.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString(), DrCmdOptionType.Optional.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Optional.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "log file");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;

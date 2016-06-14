@@ -152,6 +152,23 @@ namespace UTestDrCmd
             Assert.IsTrue(expected.Attributes.Count == result.Attributes.Count, "The result options count '{0}' is not equals expected '{1}' options count.", result.Attributes.Count, expected.Attributes.Count);
         }
         #endregion #region Common
+        #region TestEmptyCommandLine
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestEmptyCommandLine")]
+        public void TestEmptyCommandLine()
+        {
+            var root = GetInitialParametrs("");
+            var cmdParser = new DrCmdParser(root);
+            try
+            {
+                cmdParser.Parse();
+            }
+            catch (ArgumentException e)
+            {
+                /* it's ok*/
+                Assert.IsNull(cmdParser.ActiveCommnand, "The empty command line must have 'null' active command.");
+            }
+        }
+        #endregion TestEmptyCommandLine
         #region CheckDisableCommand
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("CheckDisableCommand")]
         public void TestCheckDisableCommand_CommandIsDisabled()

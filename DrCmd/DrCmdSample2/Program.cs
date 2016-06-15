@@ -327,7 +327,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(LogLevel)));
             opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "lf");
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(LogLevel)));
-            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "console log level");
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "file log level");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }

@@ -111,10 +111,17 @@ namespace DrSignSample
             cmd.Attributes.Add(DrCmdCommandSettings.Description, "Sign a single file.");
             #region RequiredOptions
             cmd.Add(GetOptionUrl());
+            cmd.Add(GetOptionSourceFile());
+
             #endregion RequiredOptions
             #region OptionalOptions
+            cmd.Add(GetOptionDestinationFile());
+            cmd.Add(GetOptionOverwriteDestinationFile());
 
             cmd.Add(GetOptionTimeOut());
+            cmd.Add(GetOptionMaxThread());
+            cmd.Add(GetOptionBlockSize());
+
             cmd.Add(GetOptionConsoleLogLevel());
             cmd.Add(GetOptionFileLog());
             cmd.Add(GetOptionFileLogLevel());
@@ -160,11 +167,56 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "url" });
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "url" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "server for sign");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "https://srv1/page.asm");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionSourceFile()
+        {
+            var name = "sf";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "source" });
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "file for sign. The source file will be overwritten after the file will be signed.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "test.exe");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+
+            return opt;
+        }
+
+        public static DDNode GetOptionDestinationFile()
+        {
+            var name = "df";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a signed file as different file. This option is used to keep the source file is not signed.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "signed.exe");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionOverwriteDestinationFile()
+        {
+            var name = "odf";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "allow overwrite existing destination file. By default, the existing file will not be overwritten and will be skipped. This option is used in conjunction with option '-{10}' only.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Forbidden.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "df");
+
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
@@ -175,7 +227,7 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "url" });
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "url" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "server list for sign separated by spaces");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.List.ToString() }); // required and list
@@ -190,12 +242,43 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "timeout" });
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "timeout" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify the timeout value in seconds for a data connection associated with sign server. The default value is '{4}' infinitely.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 0);
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "timeout");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionMaxThread()
+        {
+            var name = "mt";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "The maximum number of threads. The default value is '{4}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 10);
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "max thread");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionBlockSize()
+        {
+            var name = "bs";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "timeout" });
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "Size of transmission block in kilobytes. By default, '{4}' kB.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 1024);
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "block size");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }

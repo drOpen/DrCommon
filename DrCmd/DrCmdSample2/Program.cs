@@ -30,6 +30,8 @@ namespace DrSignSample
             ddNode.Add(GetCommandHelp());
             ddNode.Add(GetCommandTest());
             ddNode.Add(GetCommandSignFile());
+            ddNode.Add(GetCommandSign());
+            ddNode.Add(GetCommandStat());
 
             var cmd = new DrCmdParser(ddNode);
 
@@ -103,6 +105,82 @@ namespace DrSignSample
             return cmd;
         }
 
+        public static DDNode GetCommandStat()
+        {
+            var cmd = new DDNode(CmdCommandNameStat, DrCmdConst.TypeCommand);
+            cmd.Attributes.Add(DrCmdCommandSettings.Name, CmdCommandNameTest);
+            cmd.Attributes.Add(DrCmdCommandSettings.Enabled, true);
+            cmd.Attributes.Add(DrCmdCommandSettings.Description, "Get logging information from servers.");
+            /*cmd.Attributes.Add(DrCmdCommandSettings.Example,
+                new[] { 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -a /a\r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe'. Select option '/a' for the best signing cert automatically. The source file 'MyProject.exe' will be overwritten after the file will be signed.", 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -tf MyProjectSigned.exe -odf -lf log.txt -fll ALL -a /a /t http://timespamp.com \r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe' and then save signed file as 'MyProjectSigned.exe'. Existing 'MyProjectSigned.exe' file will be overwritten. Logging to file 'log.txt' is enabled."
+                });
+            */
+            #region RequiredOptions
+            cmd.Add(GetOptionUrls());
+            #endregion RequiredOptions
+
+            #region OptionalOptions
+            cmd.Add(GetOptionStatOutDir());
+            cmd.Add(GetOptionOverwriteDestinationFile());
+
+            cmd.Add(GetOptionStatHash());
+            cmd.Add(GetOptionStatStartDate());
+            cmd.Add(GetOptionStatEndDate());
+
+            cmd.Add(GetOptionTimeOut());
+
+            cmd.Add(GetOptionConsoleLogLevel());
+            cmd.Add(GetOptionFileLog());
+            cmd.Add(GetOptionFileLogLevel());
+
+            cmd.Add(GetOptionHelp());
+
+            #endregion OptionalOptions
+            return cmd;
+        }
+
+        public static DDNode GetCommandSign()
+        {
+            var cmd = new DDNode(CmdCommandNameSign, DrCmdConst.TypeCommand);
+            cmd.Attributes.Add(DrCmdCommandSettings.Name, CmdCommandNameTest);
+            cmd.Attributes.Add(DrCmdCommandSettings.Enabled, true);
+            cmd.Attributes.Add(DrCmdCommandSettings.Description, "Enumerate directory and sign files.");
+            /*cmd.Attributes.Add(DrCmdCommandSettings.Example,
+                new[] { 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -a /a\r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe'. Select option '/a' for the best signing cert automatically. The source file 'MyProject.exe' will be overwritten after the file will be signed.", 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -tf MyProjectSigned.exe -odf -lf log.txt -fll ALL -a /a /t http://timespamp.com \r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe' and then save signed file as 'MyProjectSigned.exe'. Existing 'MyProjectSigned.exe' file will be overwritten. Logging to file 'log.txt' is enabled."
+                });
+            */
+            #region RequiredOptions
+            cmd.Add(GetOptionUrls());
+            cmd.Add(GetOptionSourceDir());
+            cmd.Add(GetOptionSignArguments());
+
+            #endregion RequiredOptions
+
+            #region OptionalOptions
+            cmd.Add(GetOptionDestinationDir());
+            cmd.Add(GetOptionOverwriteDestinationFile());
+            cmd.Add(GetOptionIncludeRegex());
+            cmd.Add(GetOptionExcludeRegex());
+            cmd.Add(GetOptionDepth());
+
+            cmd.Add(GetOptionTimeOut());
+            cmd.Add(GetOptionMaxThread());
+            cmd.Add(GetOptionBlockSize());
+
+            cmd.Add(GetOptionConsoleLogLevel());
+            cmd.Add(GetOptionFileLog());
+            cmd.Add(GetOptionFileLogLevel());
+
+            cmd.Add(GetOptionHelp());
+
+            #endregion OptionalOptions
+            return cmd;
+        }
+
         public static DDNode GetCommandSignFile()
         {
             var cmd = new DDNode(CmdCommandNameSignFile, DrCmdConst.TypeCommand);
@@ -119,7 +197,6 @@ namespace DrSignSample
             cmd.Add(GetOptionUrl());
             cmd.Add(GetOptionSourceFile());
             cmd.Add(GetOptionSignArguments());
-
 
             #endregion RequiredOptions
             #region OptionalOptions
@@ -139,7 +216,6 @@ namespace DrSignSample
             #endregion OptionalOptions
             return cmd;
         }
-
 
         public static DDNode GetCommandHelp()
         {
@@ -184,8 +260,6 @@ namespace DrSignSample
             return opt;
         }
 
-
-
         public static DDNode GetOptionSignArguments()
         {
             var name = "a";
@@ -204,7 +278,7 @@ namespace DrSignSample
 
         public static DDNode GetOptionSourceFile()
         {
-            var name = "sf";
+            var name = "s";
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
@@ -218,9 +292,96 @@ namespace DrSignSample
             return opt;
         }
 
+        public static DDNode GetOptionSourceDir()
+        {
+            var name = "s";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "source" });
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "enumerate directory and will sign all the files by the relevant conditions.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "c:\\bin");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+
+            return opt;
+        }
+        public static DDNode GetOptionStatOutDir()
+        {
+            var name = "d";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a logging informations files to specified directory. By default, working directory is destination directory.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "c:\\logs");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+        public static DDNode GetOptionStatHash()
+        {
+            var name = "hash";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a logging informational only for specified hash separated by spaces. This option is not compatible with options '{11}'");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.List.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.TermsOfIncongruous, new [] {"sd", "ed"});
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "90d0 d87a");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionStatStartDate()
+        {
+            var name = "sd";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a logging informational only start from specified date. This option is not compatible with option '{11}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.TermsOfIncongruous, "hash");
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "5.30.2016");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionStatEndDate()
+        {
+            var name = "ed";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a logging informational only end from specified date. This option is not compatible with option '{11}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.TermsOfIncongruous, "hash");
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "7.15.2016");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionDestinationDir()
+        {
+            var name = "d";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a signed file to different directory. This option is used to keep the source file is not signed.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "c:\\signedbin");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
         public static DDNode GetOptionDestinationFile()
         {
-            var name = "df";
+            var name = "d";
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
@@ -241,8 +402,38 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Description, "allow overwrite existing destination file. By default, the existing file will not be overwritten and will be skipped. This option is used in conjunction with option '-{10}' only.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Forbidden.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "df");
+            opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "d");
 
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionIncludeRegex()
+        {
+            var name = "i";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "conditions for signature file in the format regex. By default, '{4}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, @"(*\.exe)|(*\.dll)");
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, ".*");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionExcludeRegex()
+        {
+            var name = "e";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "conditions for skip files. By default, this option is empty.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, @"");
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, @".*Interop\.dll");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
@@ -258,6 +449,22 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.List.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "https://srv1/page.asm https://srv2/page.asm");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+        public static DDNode GetOptionDepth()
+        {
+            var name = "depth";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "depth source directory enumeration. The default value is '{4}' infinitely. Specify '1' for enumerating without subdirectories.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 0);
+            opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "s");
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "1");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }

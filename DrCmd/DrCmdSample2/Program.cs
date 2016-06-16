@@ -109,9 +109,17 @@ namespace DrSignSample
             cmd.Attributes.Add(DrCmdCommandSettings.Name, CmdCommandNameTest);
             cmd.Attributes.Add(DrCmdCommandSettings.Enabled, true);
             cmd.Attributes.Add(DrCmdCommandSettings.Description, "Sign a single file.");
+            cmd.Attributes.Add(DrCmdCommandSettings.Example,
+                new[] { 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -a /a\r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe'. Select option '/a' for the best signing cert automatically. The source file 'MyProject.exe' will be overwritten after the file will be signed.", 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -tf MyProjectSigned.exe -odf -lf log.txt -fll ALL -a /a /t http://timespamp.com \r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe' and then save signed file as 'MyProjectSigned.exe'. Existing 'MyProjectSigned.exe' file will be overwritten. Logging to file 'log.txt' is enabled."
+                });
+
             #region RequiredOptions
             cmd.Add(GetOptionUrl());
             cmd.Add(GetOptionSourceFile());
+            cmd.Add(GetOptionSignArguments());
+
 
             #endregion RequiredOptions
             #region OptionalOptions
@@ -173,6 +181,24 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "https://srv1/page.asm");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
+
+
+
+        public static DDNode GetOptionSignArguments()
+        {
+            var name = "a";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "source" });
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "arguments for signtool. based on a signing certificate. This option allow you to specify signing parameters and to select the signing certificate you wish to use.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.List.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "sign options");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+
             return opt;
         }
 

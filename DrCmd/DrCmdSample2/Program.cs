@@ -4,7 +4,10 @@ using DrOpen.DrCommon.DrExt;
 using DrOpen.DrCommon.DrLog.DrLogClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace DrSignSample
 {
@@ -21,6 +24,7 @@ namespace DrSignSample
         public const string CmdCommandNameSign = "SIGN";
         public const string CmdCommandNameSignFile = "SIGNFILE";
         public const string CmdCommandNameStat = "STAT";
+        public const string CmdCommandBenchmark = "BENCHMARK";
 
         static int Main(string[] args)
         {
@@ -32,8 +36,11 @@ namespace DrSignSample
             ddNode.Add(GetCommandSignFile());
             ddNode.Add(GetCommandSign());
             ddNode.Add(GetCommandStat());
+            ddNode.Add(GetCommandBenchmark());
+            SerializeConfig(ddNode);
 
             var cmd = new DrCmdParser(ddNode);
+            
 
             ddNode.Attributes.Add(DrCmdSettings.Arguments, args, ResolveConflict.OVERWRITE);
 
@@ -170,6 +177,48 @@ namespace DrSignSample
             cmd.Add(GetOptionTimeOut());
             cmd.Add(GetOptionMaxThread());
             cmd.Add(GetOptionBlockSize());
+
+            cmd.Add(GetOptionConsoleLogLevel());
+            cmd.Add(GetOptionFileLog());
+            cmd.Add(GetOptionFileLogLevel());
+
+            cmd.Add(GetOptionHelp());
+
+            #endregion OptionalOptions
+            return cmd;
+        }
+
+        public static DDNode GetCommandBenchmark()
+        {
+            var cmd = new DDNode(CmdCommandBenchmark, DrCmdConst.TypeCommand);
+            cmd.Attributes.Add(DrCmdCommandSettings.Name, CmdCommandNameTest);
+            cmd.Attributes.Add(DrCmdCommandSettings.Enabled, true);
+            cmd.Attributes.Add(DrCmdCommandSettings.Description, "Benchmark for enumerate directory and sign files.");
+            /*cmd.Attributes.Add(DrCmdCommandSettings.Example,
+                new[] { 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -a /a\r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe'. Select option '/a' for the best signing cert automatically. The source file 'MyProject.exe' will be overwritten after the file will be signed.", 
+                    "{0} {1} -u https://srv1/page.asm -sf MyProject.exe -tf MyProjectSigned.exe -odf -lf log.txt -fll ALL -a /a /t http://timespamp.com \r\nconnect to sign server 'srv1' and sign the single file 'MyProject.exe' and then save signed file as 'MyProjectSigned.exe'. Existing 'MyProjectSigned.exe' file will be overwritten. Logging to file 'log.txt' is enabled."
+                });
+            */
+            #region RequiredOptions
+            cmd.Add(GetOptionUrls());
+            cmd.Add(GetOptionSourceDir());
+            cmd.Add(GetOptionDestinationBenchmarkDir());
+            cmd.Add(GetOptionSignArguments());
+            
+
+            #endregion RequiredOptions
+
+            #region OptionalOptions
+            
+            cmd.Add(GetOptionIncludeRegex());
+            cmd.Add(GetOptionExcludeRegex());
+            cmd.Add(GetOptionDepth());
+
+            cmd.Add(GetOptionTimeOut());
+            cmd.Add(GetOptionMaxThread());
+            cmd.Add(GetOptionBlockSize());
+            cmd.Add(GetOptionMaxBlockSize());
 
             cmd.Add(GetOptionConsoleLogLevel());
             cmd.Add(GetOptionFileLog());
@@ -334,7 +383,6 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
-
         public static DDNode GetOptionStatStartDate()
         {
             var name = "sd";
@@ -349,7 +397,6 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
-
         public static DDNode GetOptionStatEndDate()
         {
             var name = "ed";
@@ -364,7 +411,19 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
-
+        public static DDNode GetOptionDestinationBenchmarkDir()
+        {
+            var name = "d";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "save a signed file to the specified directory. The existing files will be overwrited.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "c:\\signedbin");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
         public static DDNode GetOptionDestinationDir()
         {
             var name = "d";
@@ -491,7 +550,7 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "The maximum number of threads. The default value is '{4}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "the maximum number of threads. The default value is '{4}'.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 10);
@@ -507,7 +566,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "timeout" });
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "Size of transmission block in kilobytes. By default, '{4}' kB.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "size of transmission block in kilobytes. By default, '{4}' kB.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 1024);
@@ -515,7 +574,21 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
-
+        public static DDNode GetOptionMaxBlockSize()
+        {
+            var name = "maxbs";
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
+            opt.Attributes.Add(DrCmdOptionSettings.Name, name);
+            opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
+            //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "timeout" });
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "benchmark max size of transmission block in kilobytes. By default, '{4}' kB.");
+            opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 32768);
+            opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "block size");
+            opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
+            return opt;
+        }
         public static DDNode GetOptionConsoleLogLevel()
         {
             var name = "cll";
@@ -566,6 +639,16 @@ namespace DrSignSample
         }
 
         #endregion options
+
+        static void SerializeConfig(DDNode n)
+        {
+            var f = new XmlSerializer(n.GetType());
+
+            using (var s = new FileStream("config.xml", FileMode.Create, FileAccess.Write))
+            {
+                f.Serialize(s, n);
+            }
+        }
 
     }
 }

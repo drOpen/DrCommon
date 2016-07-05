@@ -385,7 +385,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(ushort)) return Convert.ToUInt16(value);
             if (type == typeof(uint)) return Convert.ToUInt32(value);
             if (type == typeof(ulong)) return Convert.ToUInt64(value);
-            if (type == typeof(Guid)) return new Guid (value);
+            if (type == typeof(Guid)) return new Guid(value);
             throw new DDTypeIncorrectException(type);
         }
 
@@ -649,6 +649,15 @@ namespace DrOpen.DrCommon.DrData
         public virtual object GetValue()
         {
 
+            
+           /* 
+            if (Type.IsArray )
+                return GetValueAsArray<Type>();
+            else
+                return GetValueAs<Type>();
+            */
+            
+
             if (Type == typeof(string)) return GetValueAsString();
             if (Type == typeof(string[])) return GetValueAsStringArray();
             if (Type == typeof(DateTime)) return GetValueAsDateTime();
@@ -715,10 +724,12 @@ namespace DrOpen.DrCommon.DrData
 
         protected static object GetValueObjByType(Type type, byte[] data)
         {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) && (data == null)) return null; // check Nullable type
-
-            //Nullable.GetUnderlyingType(type)
-
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                if (data == null) return null; // check Nullable type
+                type = Nullable.GetUnderlyingType(type); // Returns the underlying type argument of the specified nullable type. 
+            }
+            
             if (type == typeof(string)) return Encoding.UTF8.GetString(data);
 
             if (type == typeof(DateTime)) return DateTime.FromBinary(BitConverter.ToInt64(data, 0));
@@ -735,8 +746,8 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(char)) return BitConverter.ToChar(data, 0);
             if (type == typeof(float)) return BitConverter.ToSingle(data, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(data, 0);
-            if ((type == typeof(bool)) || (type == typeof(bool?))) return BitConverter.ToBoolean(data, 0);
-            if ((type == typeof(Guid)) || (type == typeof(Guid?))) return new Guid(data);
+            if (type == typeof(bool))  return BitConverter.ToBoolean(data, 0);
+            if (type == typeof(Guid)) return new Guid(data);
 
             throw new DDTypeIncorrectException(type);
         }
@@ -894,34 +905,26 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>rue if type is supported, otherwise false</returns>
         public static bool ValidateType(Type type)
         {
-            return (type == typeof(int) ||
-                    type == typeof(int[]) ||
+
+            if (type == null) return false;
+            if (type.IsArray) type = type.GetElementType(); // returns element type
+
+            return (
+                    type == typeof(int) ||
                     type == typeof(string) ||
-                    type == typeof(string[]) ||
                     type == typeof(DateTime) ||
-                    type == typeof(DateTime[]) ||
                     type == typeof(char) ||
-                    type == typeof(char[]) ||
                     type == typeof(bool) ||
-                    type == typeof(bool[]) ||
                     type == typeof(byte) ||
-                    type == typeof(byte[]) ||
                     type == typeof(short) ||
-                    type == typeof(short[]) ||
                     type == typeof(float) ||
-                    type == typeof(float[]) ||
                     type == typeof(long) ||
-                    type == typeof(long[]) ||
                     type == typeof(ushort) ||
-                    type == typeof(ushort[]) ||
                     type == typeof(uint) ||
-                    type == typeof(uint[]) ||
                     type == typeof(ulong) ||
-                    type == typeof(ulong[]) ||
                     type == typeof(double) ||
-                    type == typeof(double[]) ||
-                    type == typeof(Guid) ||
-                    type == typeof(Guid[]));
+                    type == typeof(Guid)
+                );
         }
         #endregion ValidateType
         #region ObjectSize
@@ -942,7 +945,7 @@ namespace DrOpen.DrCommon.DrData
             return GetPrimitiveSize(type);
         }
         /// <summary>
-        /// Return the sizePerElements of occupied space in the memory of the primitive.
+        /// Returns the sizePerElements of occupied space in the memory of the primitive.
         /// <exception cref="ApplicationException">If the object type is not supported throw application exception</exception>
         /// </summary>
         /// <param name="type">Type for analyze</param>
@@ -963,7 +966,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(DateTime)) return sizeof(Int64);
             if (type == typeof(Guid)) return Guid.Empty.ToByteArray().Length;
             throw new DDTypeIncorrectException(type);
-            
+
         }
         /// <summary>
         /// Return the sizePerElements of occupied space in the memory of the array.
@@ -1199,7 +1202,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public static byte[] HEX(string hex)
         {
-            if (hex.Length % 2 > 0) throw new DDValueException(hex,string.Format(Msg.INCORRECT_HEX, hex));
+            if (hex.Length % 2 > 0) throw new DDValueException(hex, string.Format(Msg.INCORRECT_HEX, hex));
             int iSize = hex.Length / 2;
             var bytes = new byte[iSize];
             for (int i = 0; i < iSize; i++)
@@ -1221,7 +1224,7 @@ namespace DrOpen.DrCommon.DrData
         public DDValue SelfTransformFromStringTo(Type newType)
         {
             if (this.Type == null) throw new DDTypeNullException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
-            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.Name , newType.Name, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
+            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.Name, newType.Name, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
             if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertException(this.type.Name, newType.Name, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
             if ((newType == typeof(string) || (newType == typeof(string[])))) return this; // nothing to do
             if (data.Length > 0)

@@ -150,5 +150,6 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
         {
             return new DDType(this.GetType().AssemblyQualifiedName);
         }
+
     }
 }

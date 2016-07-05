@@ -34,7 +34,7 @@ using DrOpen.DrCommon.DrLog.DrLogSrv.Providers;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
-    public class Server: IDisposable
+    public class Server: IDisposable, IDDTypeSupport
     {
 
         public Server()
@@ -43,7 +43,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
 
         public Server(DDNode conf)
         {
-            if (conf.Type != GetType()) throw new DDTypeExpectedException(conf.Type, GetType());
+            var ddType=GetDDType();
+            if (conf.Type != ddType) throw new DDTypeExpectedException(conf.Type, ddType);
 
             if (conf.Attributes.Contains(SchemaSrv.AttPathToConditions))
                 this.NodeConditions = GetNodeByPath(conf, SchemaSrv.AttPathToConditions);
@@ -81,9 +82,9 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv
         /// return DDNode type for this Server
         /// </summary>
         /// <returns></returns>
-        public static DDType GetType()
+        public DDType GetDDType()
         {
-            return new DDType(typeof(Server));
+            return new DDType(this.GetType().AssemblyQualifiedName);
         }
 
     }

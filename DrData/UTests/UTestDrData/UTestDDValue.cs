@@ -188,11 +188,20 @@ namespace UTestDrData
         }
         #endregion test GetHashCode()
         #region ValidateType
+
+        [TestMethod]
+        public void TestValidateTypeNulablleGUID()
+        {
+            Guid? test = Guid.Empty;
+            Assert.IsTrue(DDValue.ValidateType(test.GetType()), String.Format("The correct type '{0}' catched as unssuported.", test.GetType().ToString()));
+        }
+
         [TestMethod]
         public void TestValidateType()
         {
             Assert.IsFalse(DDValue.ValidateType(new object()), "ValidateType() -> the object type is incorrect.");
             Assert.IsFalse(DDValue.ValidateType(typeof(Object)), "ValidateType() -> the object type is incorrect.");
+            Assert.IsFalse(DDValue.ValidateType(new DDNode()), "ValidateType() -> the DDNode type is incorrect.");
             object i = new int();
             Assert.IsTrue(DDValue.ValidateType(i), "ValidateType() -> the int type is correct.");
             Assert.IsTrue(DDValue.ValidateType(typeof(bool)), "ValidateType() -> the bool type is correct.");
@@ -353,7 +362,7 @@ namespace UTestDrData
 
             catch (DDValueException e)
             {
-                Assert.AreEqual(e.Value, hexValue,"Exception value is incorrect.");
+                Assert.AreEqual(e.Value, hexValue, "Exception value is incorrect.");
             }
         }
 
@@ -558,7 +567,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateWithStringArraWithNullValue()
         {
-            var test = new string[] { "1",null, "2" };
+            var test = new string[] { "1", null, "2" };
             var a = new DDValue(test);
             try
             {
@@ -568,7 +577,7 @@ namespace UTestDrData
             {
                 throw new AssertInconclusiveException(); // Warning!
             }
-            
+
         }
         [TestMethod]
         public void TestCreateWithStringArrayMultipleValue()
@@ -690,6 +699,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeCharValue()
         {
+            
             char test = '1';
             var a = new DDValue();
             a = test;
@@ -2753,22 +2763,22 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateWithGuidEmptyValue()
         {
-            var test =  Guid.Empty ;
+            var test = Guid.Empty;
             var a = new DDValue(test);
             ValidateGuid(test, a);
         }
-        
+
         [TestMethod]
         public void TestCreateWithNewGuid()
         {
-            var test = Guid.NewGuid ();
+            var test = Guid.NewGuid();
             var a = new DDValue(test);
             ValidateGuid(test, a);
         }
         [TestMethod]
         public void TestCreateSetImpicitGuidValue()
         {
-            Guid test = Guid.NewGuid ();
+            Guid test = Guid.NewGuid();
             var a = new DDValue();
             a = test;
             ValidateGuid(test, a);
@@ -2777,18 +2787,18 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeGuidValue()
         {
-            Guid test = Guid.NewGuid ();
+            Guid test = Guid.NewGuid();
             var a = new DDValue();
             a = test;
             ValidateGuid(test, a);
-            test = Guid.Empty ;
+            test = Guid.Empty;
             a = test;
             ValidateGuid(test, a);
         }
         [TestMethod]
         public void TestChangeTypeFromGuidToInt()
         {
-            var test = Guid.Empty ;
+            var test = Guid.Empty;
             var a = new DDValue();
             a = test;
             ValidateGuid(test, a);
@@ -2800,7 +2810,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestGuidToFromHex()
         {
-            var test = Guid.NewGuid() ;
+            var test = Guid.NewGuid();
             var a = new DDValue(test);
             ValidateGuid(test, a);
             var hexValue = a.GetValueAsHEX();
@@ -2812,7 +2822,7 @@ namespace UTestDrData
         }
         #endregion test guid
         #region test guid[]
-        
+
         [TestMethod]
         public void TestCreateWithEmptyGuidArray()
         {
@@ -2822,7 +2832,7 @@ namespace UTestDrData
         }
         public void TestCreateWithGuidArrayEmptyValue()
         {
-            Guid[] test = { Guid.Empty  };
+            Guid[] test = { Guid.Empty };
             var a = new DDValue(test);
             ValidateGuidArray(test, a);
         }
@@ -2830,7 +2840,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateSetImpicitGuidArrayValue()
         {
-            Guid[] test = { Guid.NewGuid() , Guid.NewGuid (), Guid.NewGuid () };
+            Guid[] test = { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
             var a = new DDValue();
             a = test;
             ValidateGuidArray(test, a);
@@ -2839,7 +2849,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeTypeFromGuidArrayToInt()
         {
-            Guid[] test = { Guid.NewGuid() , Guid.NewGuid (), Guid.NewGuid () };
+            Guid[] test = { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
             var a = new DDValue();
             a = test;
             ValidateGuidArray(test, a);
@@ -2851,7 +2861,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestGuidArrayToFromHex()
         {
-            Guid[] test = { Guid.NewGuid() , Guid.NewGuid (), Guid.NewGuid () };
+            Guid[] test = { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
             var a = new DDValue(test);
             ValidateGuidArray(test, a);
             var hexValue = a.GetValueAsHEX();
@@ -2971,7 +2981,7 @@ namespace UTestDrData
             var v = new DDValue(new[] { "1", "2", "3" });
 
             v.SelfTransformFromStringTo(typeof(byte[]));
-            ValidateByteArray(new byte[] { 0x1, 0x2, 0x3}, v);
+            ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 }, v);
 
         }
         #endregion SelfTransformFromStringTo
@@ -3495,12 +3505,12 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDValueXmlSerializationGuid()
         {
-            ValidateXMLDeserialization(new DDValue(Guid.NewGuid ()));
+            ValidateXMLDeserialization(new DDValue(Guid.NewGuid()));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationGuidArray()
         {
-            ValidateXMLDeserialization(new DDValue(new Guid[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()}));
+            ValidateXMLDeserialization(new DDValue(new Guid[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() }));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationChar()

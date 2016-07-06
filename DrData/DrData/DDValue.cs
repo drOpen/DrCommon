@@ -123,7 +123,7 @@ namespace DrOpen.DrCommon.DrData
             else
             {
                 var value = ReadXmlValueArray(reader);
-                if (value != null) this.data = GetByteArray(typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
+                if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
             }
 
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
@@ -311,7 +311,9 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>byte []</returns>
         public static byte[] GetByteArray(object value)
         {
-            return GetByteArray(value.GetType(), value);
+            var t = value.GetType();
+            if (!ValidateType(t)) throw new DDTypeIncorrectException(t.ToString());
+            return GetByteArray(t, value);
         }
         /// <summary>
         /// Convert object by specified type to byte array (byte []).
@@ -342,7 +344,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(string[])) return Encoding.UTF8.GetBytes(string.Join("\0", (string[])value));
             if (type.IsArray) return JoinByteArray((Array)value);
 
-            throw new DDTypeIncorrectException(type.Name);
+            throw new DDTypeIncorrectException(type.ToString());
         }
 
         /// <summary>
@@ -371,7 +373,6 @@ namespace DrOpen.DrCommon.DrData
 
             if (type == typeof(byte[])) return HEX(value);
             if (type == typeof(byte)) return Convert.ToByte(value);
-            //if (type == typeof(byte)) return new[] { Convert.ToByte(value) };
 
             if (type == typeof(string)) return value.ToString();
             if (type == typeof(DateTime)) return Convert.ToDateTime(value);
@@ -386,7 +387,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(uint)) return Convert.ToUInt32(value);
             if (type == typeof(ulong)) return Convert.ToUInt64(value);
             if (type == typeof(Guid)) return new Guid(value);
-            throw new DDTypeIncorrectException(type);
+            throw new DDTypeIncorrectException(type.ToString());
         }
 
         /// <summary>
@@ -687,7 +688,8 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(Guid)) return GetValueAsGuid();
             if (Type == typeof(Guid[])) return GetValueAsGuidArray();
             if (Type == null) return null;
-            throw new DDTypeIncorrectException(Type);
+
+            throw new DDTypeIncorrectException(Type.ToString());
         }
         /// <summary>
         /// Get value as array by specified type
@@ -749,7 +751,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(bool))  return BitConverter.ToBoolean(data, 0);
             if (type == typeof(Guid)) return new Guid(data);
 
-            throw new DDTypeIncorrectException(type);
+            throw new DDTypeIncorrectException(type.ToString());
         }
 
         public virtual byte[] GetValueAsByteArray()
@@ -899,7 +901,8 @@ namespace DrOpen.DrCommon.DrData
 
         /// <summary>
         /// Checks the type.
-        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types
+        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types. 
+        /// Nullable array type is not supported.
         /// </summary>
         /// <param name="type">type for validation</param>
         /// <returns>rue if type is supported, otherwise false</returns>
@@ -907,6 +910,12 @@ namespace DrOpen.DrCommon.DrData
         {
 
             if (type == null) return false;
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                if (type.IsArray) return false; // nullable array type is not supported
+                type = Nullable.GetUnderlyingType(type); // Returns the underlying type argument of the specified nullable type. 
+            }
             if (type.IsArray) type = type.GetElementType(); // returns element type
 
             return (
@@ -965,7 +974,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(bool)) return sizeof(bool);
             if (type == typeof(DateTime)) return sizeof(Int64);
             if (type == typeof(Guid)) return Guid.Empty.ToByteArray().Length;
-            throw new DDTypeIncorrectException(type);
+            throw new DDTypeIncorrectException(type.ToString());
 
         }
         /// <summary>

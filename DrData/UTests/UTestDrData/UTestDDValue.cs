@@ -71,7 +71,7 @@ namespace UTestDrData
             try
             {
                 var value = a.GetValue();
-                Assert.IsTrue(null == value, "GetValue from null should be return null.");                          // Uncomment it if null type is supported
+                Assert.IsTrue(null == value, "GetValue from null should be return null.");      // Uncomment it if null type is supported
                 //Assert.Fail("a.GetValue() - cannot catch exception after try GetValue from null Data.Type;");     // Uncomment it if null type is unsupported
             }
             catch (Exception)
@@ -189,11 +189,63 @@ namespace UTestDrData
         #endregion test GetHashCode()
         #region ValidateType
 
+
         [TestMethod]
-        public void TestValidateTypeNulablleGUID()
+        public void TestValidateAllSupportedTypes()
         {
-            Guid? test = Guid.Empty;
-            Assert.IsTrue(DDValue.ValidateType(test.GetType()), String.Format("The correct type '{0}' catched as unssuported.", test.GetType().ToString()));
+
+            var t = new Type[] 
+                                {
+                                typeof(int), typeof(int[]),typeof(int?),
+                                typeof(string), typeof(string[]),
+                                typeof(DateTime), typeof(DateTime[]),typeof(DateTime?),
+                                typeof(char), typeof(char[]),typeof(char?), 
+                                typeof(bool), typeof(bool[]),typeof(bool?), 
+                                typeof(byte), typeof(byte[]),typeof(byte?), 
+                                typeof(short), typeof(short[]),typeof(short?),
+                                typeof(float), typeof(float[]),typeof(float?),
+                                typeof(long), typeof(long[]),typeof(long?),
+                                typeof(ushort), typeof(ushort[]),typeof(ushort?),
+                                typeof(char), typeof(char[]),typeof(char?),
+                                typeof(uint), typeof(uint[]),typeof(uint?),
+                                typeof(ulong), typeof(ulong[]),typeof(ulong?),
+                                typeof(char), typeof(char[]),typeof(char?),
+                                typeof(double), typeof(double[]),typeof(double?),
+                                typeof(Guid), typeof(Guid[]),typeof(Guid?)
+                                };
+
+            foreach (var item in t)
+            {
+                Assert.IsTrue(DDValue.ValidateType(item), String.Format("The correct type '{0}' catched as unssuported.", item.ToString()));
+            }
+        }
+
+        [TestMethod]
+        public void TestValidateUnsupportedTypes()
+        {
+            var t = new Type[] 
+                                {
+                                typeof(int?[]),
+                                typeof(DateTime?[]),
+                                typeof(char?[]),
+                                typeof(bool?[]),
+                                typeof(byte?[]),
+                                typeof(short?[]),
+                                typeof(float?[]),
+                                typeof(long?[]),
+                                typeof(ushort?[]),
+                                typeof(char?[]),
+                                typeof(uint?[]),
+                                typeof(ulong?[]),
+                                typeof(char?[]),
+                                typeof(double?[]),
+                                typeof(Guid?[])
+                                };
+
+            foreach (var item in t)
+            {
+                Assert.IsFalse(DDValue.ValidateType(item), String.Format("The incorrect type '{0}' catched as ssuported.", item.ToString()));
+            }
         }
 
         [TestMethod]
@@ -211,19 +263,39 @@ namespace UTestDrData
         [TestMethod]
         public void TestIncorrectDataType()
         {
+            var obj = new object[] 
+                                {
+                                new sbyte(),
+                                new int?[6] { null, 1, 2, null, 3, null }
+                                };
+
+            foreach (var item in obj)
+            {
+                CatchIncorrectDataType(item);
+            }
+
+        }
+
+        public void CatchIncorrectDataType(object value)
+        {
             try
             {
-                var dd = new DDValue(new sbyte());
-                Assert.Fail("Allow set incorect data type - sbyte");
+                var d = new DDValue(value);
+                Assert.Fail("Allow set incorrect data type - sbyte");
             }
             catch (AssertFailedException)
             {
                 throw;
             }
-            catch (Exception)
+            catch (DDTypeIncorrectException)
             {
+                // valid exception
             }
         }
+
+        
+
+
         #endregion test Incorrect DataType
         #region Test Empty object
         [TestMethod]

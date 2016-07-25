@@ -300,7 +300,10 @@ namespace DrOpen.DrCommon.DrCmd
             var ddNode = new DDNode(Name);
             foreach (var option in Options)
             {
-                ddNode.Attributes.Add(option.Name, option.Value);
+                if ((option.GetValueType() & DrCmdValueType.Forbidden) == DrCmdValueType.Forbidden)
+                    ddNode.Attributes.Add(option.Name, option.GetResultIsOptionSpecified()); // set true - false for DrCmdValueType.Forbidden value type
+                else
+                    ddNode.Attributes.Add(option.Name, option.Value);
             }
             return ddNode;
         }

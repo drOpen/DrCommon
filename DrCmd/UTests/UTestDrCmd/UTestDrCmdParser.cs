@@ -544,7 +544,7 @@ namespace UTestDrCmd
 
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("test2", new[] { "val1", "val2", "val3" });
-            expected.Attributes.Add("t1", string.Empty);
+            expected.Attributes.Add("t1", true);
             expected.Attributes.Add("test3", string.Empty);
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
@@ -663,14 +663,13 @@ namespace UTestDrCmd
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
             var expected = new DDNode("COMMAND");
-            expected.Attributes.Add("t1", string.Empty);
+            expected.Attributes.Add("t1", true);
             expected.Attributes.Add("test2", new[] { "val1", "val2", "val3" });
-            expected.Attributes.Add("test3", string.Empty);
-            expected.Attributes.Add("test4", string.Empty);
+            expected.Attributes.Add("test3", true);
+            expected.Attributes.Add("test4", String.Empty);
             ValidateOptionParser(result, expected);
-
-
         }
+
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestForbiddenValue_IsSpecifiedOnce()
         {

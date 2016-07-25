@@ -491,7 +491,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Description, "conditions for skip files. By default, this option is empty.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, @"");
+            opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, null);
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, @".*Interop\.dll");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;

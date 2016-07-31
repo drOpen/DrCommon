@@ -138,7 +138,7 @@ namespace DrOpen.DrCommon.DrCmd
             //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] {"log"});
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify path and name for log file.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString(), DrCmdOptionType.Optional.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "log file");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
@@ -153,7 +153,7 @@ namespace DrOpen.DrCommon.DrCmd
             //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] {"log"});
             opt.Attributes.Add(DrCmdOptionSettings.Description, "level of logging to a log file, the default value is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'. This option is used in conjunction with option '-{10}' only");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString()});
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Optional.ToString(), DrCmdValueType.Single.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Optional.ToString(), DrCmdValueFlags.Single.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, new[] { LogLevel.ALL_INFO.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames( typeof(LogLevel) ));
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(LogLevel)));
@@ -172,7 +172,7 @@ namespace DrOpen.DrCommon.DrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "x", "xml" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify path and name for xml file. This file should be contains the all settings for application. It's very very long description for value.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString()});
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "xml file");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
@@ -187,7 +187,7 @@ namespace DrOpen.DrCommon.DrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "mode" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for value. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, new[] { "ALL","ENABLED", "DISABLED" });
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "application mode");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");

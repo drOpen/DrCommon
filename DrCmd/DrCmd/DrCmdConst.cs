@@ -137,9 +137,9 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         Aliases,
         /// <summary>
-        /// Type of value. Restriction to analyse parameters of values of option. See <see cref="DrCmdValueType"/>.
+        /// Flags of value. Restriction to analyse parameters of values of option. See <see cref="DrCmdValueFlags"/>.
         /// </summary>
-        ValueType,
+        ValueFlags,
         /// <summary>
         /// Description of the option. This parameter is used to build option help.<para> </para>
         /// You can use the below listed substitutions:<para> </para>
@@ -227,60 +227,58 @@ namespace DrOpen.DrCommon.DrCmd
     public enum DrCmdOptionType
     {
         /// <summary>
-        /// Set optional type of options in the arguments. This is default type of option. 
-        /// You cannot specify this type, together with <see cref="Required"/> type
+        /// Set optional flag of options in the arguments. This is default flag of option. 
+        /// You cannot specify this flag, together with <see cref="Required"/> flag
         /// </summary>
         Optional = 1,
         /// <summary>
         /// set to the options that should be required to indicate in the parameter list
-        /// You cannot specify this type, together with <see cref="Optional"/> type
+        /// You cannot specify this flag, together with <see cref="Optional"/> flag
         /// </summary>
         Required = 2,
    }
 
     /// <summary>
-    /// Enums the types of options value
+    /// Represents options for value
     /// </summary>
     [Flags]
-    public enum DrCmdValueType
+    public enum DrCmdValueFlags
     {
         /// <summary>
-        /// Set this type of optional value for an option. This type allows the use of option as with and without value. This is default type of value.
-        /// You cannot specify this type, together with <see cref="Forbidden"/> or <see cref="Required"/> types
+        /// Set this flag of optional value for an option. This flag allows the use of option as with and without value. This is default flag of value.
+        /// You cannot specify this flag, together with <see cref="Forbidden"/> or <see cref="Required"/> flags
         /// </summary>
         Optional = 1,
         /// <summary>
-        /// This type allows the use of options with a value of only
-        /// You cannot specify this type, together with <see cref="Optional"/> or <see cref="Forbidden"/> types
+        /// This flag allows the use of options with a value of only
+        /// You cannot specify this flag, together with <see cref="Optional"/> or <see cref="Forbidden"/> flags
         /// </summary>
         Required = 2,
         /// <summary>
-        /// This type indicates that the option cannot have any value.
-        /// You cannot specify this type, together with <see cref="Optional"/> or <see cref="Required"/> types
+        /// This flag indicates that the option cannot have any value.
+        /// You cannot specify this flag, together with <see cref="Optional"/> or <see cref="Required"/> flags
         /// </summary>
         Forbidden = 4,
-
         /// <summary>
-        /// This type indicates that the option can have only one value.
-        /// You cannot specify this type, together with <see cref="Forbidden"/> or <see cref="List"/> types
+        /// This flag indicates that the option can have only one value.
+        /// You cannot specify this flag, together with <see cref="Forbidden"/> or <see cref="List"/> flags
         /// </summary>
         Single=64,
         /// <summary>
-        /// This type indicates that the option can have several values
-        /// You cannot specify this type, together with <see cref="Forbidden"/> or <see cref="Single"/> types
+        /// This flag indicates that the option can have several values
+        /// You cannot specify this flag, together with <see cref="Forbidden"/> or <see cref="Single"/> flags
         /// </summary>
         List=128,
-
         /// <summary>
-        /// This type indicates that the value of the option can only be specified from a list of restrictions.
-        /// <remarks>If you want to give the ability to also  specify a numeric representation of value you should be specified of additional type <see cref="AllowNumeric"/>.</remarks>
-        /// You cannot specify this type, together with <see cref="Forbidden"/> type
+        /// This flag indicates that the value of the option can only be specified from a list of restrictions.
+        /// <remarks>If you want to give the ability to also  specify a numeric representation of value you should be specified of additional flag <see cref="AllowNumeric"/>.</remarks>
+        /// You cannot specify this flag, together with <see cref="Forbidden"/> flag
         /// </summary>
         ListOfRestriction = 1024,
         /// <summary>
-        /// This option allows to replace the list of restrictions numeric value. Used only with the  <see cref="ListOfRestriction"/>.
+        /// This flag allows to replace the list of restrictions numeric value. Used only with the  <see cref="ListOfRestriction"/>.
         /// <remarks>If the list of restrictions is specified (<see cref="ListOfRestriction"/>), the value can be specified as numeric representation.</remarks>
-        /// You cannot specify this type, together with <see cref="Forbidden"/> type
+        /// You cannot specify this flag, together with <see cref="Forbidden"/> flag
         /// </summary>
         AllowNumeric=2048,
     }

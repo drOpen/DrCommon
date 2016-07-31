@@ -119,7 +119,7 @@ namespace UTestDrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, "lf");
             opt.Attributes.Add(DrCmdOptionSettings.Description, "log file");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString(), DrCmdOptionType.Optional.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.Single.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
         }
@@ -133,7 +133,7 @@ namespace UTestDrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "mode" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for value. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString() });
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, new[] { "ALL", "ENABLED", "DISABLED" });
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "application mode");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
@@ -287,7 +287,7 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Optional.ToString(), DrCmdValueType.Required.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Optional.ToString(), DrCmdValueFlags.Required.ToString() }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
@@ -304,7 +304,7 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Single.ToString(), DrCmdValueType.List.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Single.ToString(), DrCmdValueFlags.List.ToString() }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
@@ -519,11 +519,11 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Forbidden.ToString(), DrCmdValueType.Optional.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Forbidden.ToString(), DrCmdValueFlags.Optional.ToString() }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value type is specified with another type'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value flag is specified with another flag'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -537,7 +537,7 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Forbidden.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Forbidden.ToString() }, ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -556,11 +556,11 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'AllowNumeric value type is specified without RestrictionList type'.");
+                Assert.Fail("The incorrect arguments is not catched - 'AllowNumeric value flag is specified without RestrictionList flag'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -614,8 +614,8 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Single.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/test3").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Single.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Single.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/test3").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Single.ToString(), ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -635,7 +635,7 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Single.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Single.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Aliases, "alias", ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
@@ -657,8 +657,8 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3", "-test3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Forbidden.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/test3").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Forbidden.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Forbidden.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/test3").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Forbidden.ToString(), ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -677,7 +677,7 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Forbidden.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Forbidden.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Aliases, "alias", ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
@@ -698,7 +698,7 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Forbidden.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Forbidden.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Aliases, "alias", ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
@@ -720,8 +720,8 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "val1", "val2", "val3", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/test3").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/test3").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -739,7 +739,7 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Aliases, "alias", ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
@@ -759,7 +759,7 @@ namespace UTestDrCmd
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Aliases, "alias", ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
@@ -781,14 +781,14 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, new byte[] { 0x1, 0x2, 0x3 }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect argument type is not catched - 'RestrictionListAsNumeric type is byte[]'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionListAsNumeric flag is byte[]'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -803,8 +803,8 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
 
@@ -823,8 +823,8 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(true, false, args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
 
@@ -832,7 +832,7 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument type is not catched - 'RestrictionList, specified value is incorrected because case sensitive is enabled'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is incorrected because case sensitive is enabled'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -845,8 +845,8 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "123232", "777", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
 
@@ -865,15 +865,15 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "--", "-123232", "-+", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString(), DrCmdValueType.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument type is not catched - 'RestrictionList, specified value is negative number'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is negative number'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -886,15 +886,15 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), DrCmdValueType.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument type is not catched - 'RestrictionList, specified value is number but number is not allowed in the ValueType for this option'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is number but number is not allowed in the ValueFlags for this option'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -907,14 +907,14 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.AllowNumeric.ToString(), DrCmdValueType.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.AllowNumeric.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, new int[] { 1, 2 }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect argument type is not catched - 'Number of items in lists RestrictionList and RestrictionListAsNumeric is different.'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'Number of items in lists RestrictionList and RestrictionListAsNumeric is different.'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -927,15 +927,15 @@ namespace UTestDrCmd
             var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "value for test 3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, DrCmdValueType.Required.ToString(), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.AllowNumeric.ToString(), DrCmdValueType.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.AllowNumeric.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListDescription, new []{ "A", "B" }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect argument type is not catched - 'Number of items in lists RestrictionList and RestrictionListDescription is different.'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'Number of items in lists RestrictionList and RestrictionListDescription is different.'.");
             }
             catch (AssertFailedException e)
             { throw; }
@@ -955,7 +955,7 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect option type is not catched.");
+                Assert.Fail("The incorrect option flag is not catched.");
             }
             catch (AssertFailedException e)
             {
@@ -983,19 +983,19 @@ namespace UTestDrCmd
         }
 
         #endregion OptionType
-        #region ValueType
+        #region ValueFlags
 
-        [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetValueType")]
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetValueFlags")]
         public void TestGetValueType()
         {
             var args = new[] { "COMMAND", "-t1", "val1", "val2", "val3" };
 
             var root = GetInitialParametrs(args);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString(), "Incorrect" }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), "Incorrect" }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect option type is not catched.");
+                Assert.Fail("The incorrect option flag is not catched.");
             }
             catch (AssertFailedException e)
             {
@@ -1006,13 +1006,13 @@ namespace UTestDrCmd
                 // it's ok
             }
         }
-        [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetValueType")]
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetValueFlags")]
         public void TestGetValueTypeCaseInsensitive()
         {
             var args = "RuN -LogFile val1".Split(new[] { ' ' });
 
             var root = GetInitialParametrs(args);
-            root.GetNode("RUN/LogFile").Attributes.Add(DrCmdOptionSettings.ValueType, new[] { DrCmdValueType.Required.ToString().ToUpper(), DrCmdValueType.Required.ToString().ToLower() }, ResolveConflict.OVERWRITE);
+            root.GetNode("RUN/LogFile").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString().ToUpper(), DrCmdValueFlags.Required.ToString().ToLower() }, ResolveConflict.OVERWRITE);
 
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
@@ -1022,7 +1022,7 @@ namespace UTestDrCmd
             ValidateOptionParser(result, expected);
         }
 
-        #endregion ValueType
+        #endregion ValueFlags
         #region VerifyComandSettings
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("VerifyComandSettings")]
         public void TestVerifyComandSettingsDublicateOptionNameCaseInsensitive()
@@ -1137,7 +1137,7 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect format is not catched 'Option has both type Optional and Required'.");
+                Assert.Fail("The incorrect format is not catched 'Option has both flag Optional and Required'.");
             }
             catch (AssertFailedException e)
             {

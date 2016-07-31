@@ -300,8 +300,8 @@ namespace DrOpen.DrCommon.DrCmd
             var ddNode = new DDNode(Name);
             foreach (var option in Options)
             {
-                if ((option.GetValueType() & DrCmdValueType.Forbidden) == DrCmdValueType.Forbidden)
-                    ddNode.Attributes.Add(option.Name, option.GetResultIsOptionSpecified()); // set true - false for DrCmdValueType.Forbidden value type
+                if ((option.GetValueFlags() & DrCmdValueFlags.Forbidden) == DrCmdValueFlags.Forbidden)
+                    ddNode.Attributes.Add(option.Name, option.GetResultIsOptionSpecified()); // set true - false for DrCmdValueFlags.Forbidden value flag
                 else
                     ddNode.Attributes.Add(option.Name, option.Value);
             }
@@ -361,9 +361,9 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Returns help string with option description for specified option type.
+        /// Returns help string with option description for specified option flag.
         /// </summary>
-        /// <param name="type">option type to describe</param>
+        /// <param name="flag">option flag to describe</param>
         /// <returns></returns>
         private string GetHelpOptionDescription(DrCmdOptionType type)
         {
@@ -379,7 +379,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// <summary>
         /// Returns option description for command help
         /// </summary>
-        /// <param name="typeOption">option type to describe</param>
+        /// <param name="typeOption">option flag to describe</param>
         /// <returns></returns>
         private string GetOptionDescription(DrCmdOptionType typeOption)
         {

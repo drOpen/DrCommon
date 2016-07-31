@@ -165,7 +165,7 @@
   <data name="CANNOT_PARSE_VALUE_AS_TYPE_OF_OPTION" xml:space="preserve">
     <value>Cannot parse '{0}' as type of option.</value>
   </data>
-  <data name="CANNOT_PARSE_VALUE_AS_TYPE_OF_VALUE" xml:space="preserve">
+  <data name="CANNOT_PARSE_VALUE_AS_FLAG_OF_VALUE" xml:space="preserve">
     <value>Cannot parse '{0}' as type of value.</value>
   </data>
   <data name="CANNOT_SPECIFY_ONE_TYPE_WITHOUT_SECOND_TYPE" xml:space="preserve">

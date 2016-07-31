@@ -52,7 +52,7 @@ namespace DrOpen.DrCommon.DrCmd
             Command = command;
             name = GetOptionName();
             type = GetOptionType();
-            valueType = GetValueType();
+            valueFlags = GetValueFlags();
         }
         /// <summary>
         /// reference to parent command
@@ -81,26 +81,26 @@ namespace DrOpen.DrCommon.DrCmd
             get { return name; }
         }
         /// <summary>
-        /// Option type
+        /// Option flag
         /// </summary>
         private readonly DrCmdOptionType type;
         /// <summary>
-        /// Option type
+        /// Option flag
         /// </summary>
         public DrCmdOptionType Type
         {
             get { return type; }
         }
         /// <summary>
-        /// Value type
+        /// Value flag
         /// </summary>
-        private readonly DrCmdValueType valueType;
+        private readonly DrCmdValueFlags valueFlags;
         /// <summary>
-        /// Value type
+        /// Value flag
         /// </summary>
-        public DrCmdValueType ValueType
+        public DrCmdValueFlags ValueFlags
         {
-            get { return valueType; }
+            get { return valueFlags; }
         }
         /// <summary>
         /// Retruns parametr value of this option from <see cref="DrCmdOptionSettings.Value"/>
@@ -113,12 +113,12 @@ namespace DrOpen.DrCommon.DrCmd
         /// <summary>
         /// Gets the value from attribute collection associated with the specified name. When this method returns, 
         /// contains the value associated with the specified name, if the name is found; 
-        /// otherwise, the default value for the type of the value parameter.
+        /// otherwise, the default value for the flag of the value parameter.
         /// </summary>
         /// <param name="name">attribute name</param>
-        /// <param name="defaultValue">the default value for the type of the value parameter.</param>
+        /// <param name="defaultValue">the default value for the flag of the value parameter.</param>
         /// <returns>When this method returns, contains the value associated with the specified name, if the nameis found; 
-        /// otherwise, the default value for the type of the value parameter.</returns>
+        /// otherwise, the default value for the flag of the value parameter.</returns>
         public DDValue GetAttributeValue(object name, object defaultValue)
         {
             return Option.Attributes.GetValue(name.ToString(), defaultValue);
@@ -126,7 +126,7 @@ namespace DrOpen.DrCommon.DrCmd
 
         #region Default
         /// <summary>
-        /// Returns default option type <see cref="DrCmdOptionType.Optional"/>
+        /// Returns default option flag <see cref="DrCmdOptionType.Optional"/>
         /// </summary>
         /// <returns></returns>
         public static DrCmdOptionType GetDefaultOptionType()
@@ -134,12 +134,12 @@ namespace DrOpen.DrCommon.DrCmd
             return DrCmdOptionType.Optional;
         }
         /// <summary>
-        /// Returns default option value type <see cref="DrCmdValueType.Optional"/>
+        /// Returns default option value flag <see cref="DrCmdValueFlags.Optional"/>
         /// </summary>
         /// <returns></returns>
-        public static DrCmdValueType GetDefaultValueType()
+        public static DrCmdValueFlags GetDefaultValueFlags()
         {
-            return DrCmdValueType.Optional;
+            return DrCmdValueFlags.Optional;
         }
 
         #endregion Default
@@ -269,7 +269,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
         #region Build Type
         /// <summary>
-        /// Build options type from string array. Ignore case.
+        /// Build options flag from string array. Ignore case.
         /// </summary>
         /// <returns></returns>
         public DrCmdOptionType GetOptionType()
@@ -277,7 +277,7 @@ namespace DrOpen.DrCommon.DrCmd
             return GetOptionType(true);
         }
         /// <summary>
-        /// Build options type from string array from attribute <see cref="DrCmdOptionSettings.Type"/>.
+        /// Build options flag from string array from attribute <see cref="DrCmdOptionSettings.Type"/>.
         /// If cannot convert string representation to the OptionType <exception cref="FormatException">FormatException</exception> will be thrown.
         /// </summary>
         /// <param name="ignoreCase">if true ignore case, otherwise regard case</param>
@@ -302,38 +302,38 @@ namespace DrOpen.DrCommon.DrCmd
             return typeOptionAsEnum;
         }
         /// <summary>
-        /// Build values type from string array. Ignore case
+        /// Build values flags from string array. Ignore case
         /// </summary>
         /// <returns></returns>
-        public DrCmdValueType GetValueType()
+        public DrCmdValueFlags GetValueFlags()
         {
-            return GetValueType(true);
+            return GetValueFlags(true);
         }
 
         /// <summary>
-        /// Build values type from string array from attribute <see cref="DrCmdOptionSettings.ValueType"/>
-        /// If cannot convert string representation to the ValueType <exception cref="FormatException">FormatException</exception> will be threw.
+        /// Build values flags from string array from attribute <see cref="DrCmdOptionSettings.ValueFlags"/>
+        /// If cannot convert string representation to the ValueFlags <exception cref="FormatException">FormatException</exception> will be threw.
         /// </summary>
         /// <param name="ignoreCase">if true ignore case, otherwise regard case</param>
         /// <returns></returns>
-        public DrCmdValueType GetValueType(bool ignoreCase)
+        public DrCmdValueFlags GetValueFlags(bool ignoreCase)
         {
 
-            var typeValue = GetAttributeValue(DrCmdOptionSettings.ValueType, GetDefaultValueType().ToString()).GetValueAsStringArray();
-            var type = typeof(DrCmdValueType);
-            DrCmdValueType typeValueAsEnum = 0;
-            foreach (var item in typeValue)
+            var flagValue = GetAttributeValue(DrCmdOptionSettings.ValueFlags, GetDefaultValueFlags().ToString()).GetValueAsStringArray();
+            var flag = typeof(DrCmdValueFlags);
+            DrCmdValueFlags flagValueAsEnum = 0;
+            foreach (var item in flagValue)
             {
                 try
                 {
-                    typeValueAsEnum |= (DrCmdValueType)Enum.Parse(type, item, ignoreCase);
+                    flagValueAsEnum |= (DrCmdValueFlags)Enum.Parse(flag, item, ignoreCase);
                 }
                 catch (Exception e)
                 {
-                    throw new FormatException(string.Format(Msg.CANNOT_PARSE_VALUE_AS_TYPE_OF_VALUE, item), e);
+                    throw new FormatException(string.Format(Msg.CANNOT_PARSE_VALUE_AS_FLAG_OF_VALUE, item), e);
                 }
             }
-            return typeValueAsEnum;
+            return flagValueAsEnum;
         }
         #endregion Build Type
 
@@ -409,7 +409,7 @@ namespace DrOpen.DrCommon.DrCmd
             VerifyValueRestrictionsType();
         }
         /// <summary>
-        /// Checks type of attributes <see cref="DrCmdOptionSettings.RestrictionListAsNumeric"/>. 
+        /// Checks flag of attributes <see cref="DrCmdOptionSettings.RestrictionListAsNumeric"/>. 
         /// </summary>
         public void VerifyRestrictionListAsNumericType()
         {
@@ -418,7 +418,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Verify type of option. 
+        /// Verify flag of option. 
         /// In the case of the incongruous flags are detected ​​the <exception cref="FormatException">FormatException</exception>will be thrown
         /// </summary>
         public void VerifyOptionRestrictionsType()
@@ -429,7 +429,7 @@ namespace DrOpen.DrCommon.DrCmd
             }
         }
         /// <summary>
-        /// Verify type of value for option. 
+        /// Verify flag of value for option. 
         /// In the case of the incongruous flags are detected ​​the <exception cref="FormatException">FormatException</exception>will be thrown
         /// </summary>
         public void VerifyValueRestrictionsType()
@@ -437,14 +437,14 @@ namespace DrOpen.DrCommon.DrCmd
             try
             {
                 #region Forbidden
-                if ((ValueType.HasFlag(DrCmdValueType.Forbidden)) && (ValueType != DrCmdValueType.Forbidden))
-                    throw new FormatException(string.Format(Msg.WITH_THIS_TYPE_CANNOT_BE_SPECIFIED_MORE_THAN_OTHER_TYPES, DrCmdValueType.Forbidden));
+                if ((ValueFlags.HasFlag(DrCmdValueFlags.Forbidden)) && (ValueFlags != DrCmdValueFlags.Forbidden))
+                    throw new FormatException(string.Format(Msg.WITH_THIS_TYPE_CANNOT_BE_SPECIFIED_MORE_THAN_OTHER_TYPES, DrCmdValueFlags.Forbidden));
                 #endregion Forbidden
-                if ((ValueType.HasFlag(DrCmdValueType.AllowNumeric)) && (!ValueType.HasFlag(DrCmdValueType.ListOfRestriction)))
-                    throw new FormatException(string.Format(Msg.CANNOT_SPECIFY_ONE_TYPE_WITHOUT_SECOND_TYPE, DrCmdValueType.AllowNumeric, DrCmdValueType.ListOfRestriction)); // AllowNumeric without ListOfRestriction
+                if ((ValueFlags.HasFlag(DrCmdValueFlags.AllowNumeric)) && (!ValueFlags.HasFlag(DrCmdValueFlags.ListOfRestriction)))
+                    throw new FormatException(string.Format(Msg.CANNOT_SPECIFY_ONE_TYPE_WITHOUT_SECOND_TYPE, DrCmdValueFlags.AllowNumeric, DrCmdValueFlags.ListOfRestriction)); // AllowNumeric without ListOfRestriction
                 var restrictionList = GetAttributeValue(DrCmdOptionSettings.RestrictionList, new string[] { }).GetValueAsStringArray();
                 var restrictionListDescription = GetAttributeValue(DrCmdOptionSettings.RestrictionListDescription, new string[] { }).GetValueAsStringArray();
-                if (ValueType.HasFlag(DrCmdValueType.AllowNumeric)) // if AllowNumeric is true need to check both list element count -> RestrictionList and RestrictionListAsNumeric
+                if (ValueFlags.HasFlag(DrCmdValueFlags.AllowNumeric)) // if AllowNumeric is true need to check both list element count -> RestrictionList and RestrictionListAsNumeric
                 {
                     var restrictionListAsNumeric = GetAttributeValue(DrCmdOptionSettings.RestrictionListAsNumeric, new int[] { }).GetValueAsIntArray();
                     if (restrictionList.Length != restrictionListAsNumeric.Length)
@@ -452,22 +452,22 @@ namespace DrOpen.DrCommon.DrCmd
                 }
                 if ((restrictionList.Length>0) && (restrictionListDescription.Length>0) && (restrictionList.Length!=restrictionListDescription.Length))
                     throw new FormatException(string.Format(Msg.ELEMENT_COUNT_IN_RESTRICTION_LIST_IS_NOT_EQUALS_OF_RESTRICTIOM_DESCRIPTION_LIST, Name, restrictionList.Length.ToString(), restrictionListDescription.Length.ToString()));
-                CheckIncongruousTypeOfValue(ValueType, DrCmdValueType.Optional, DrCmdValueType.Required);                                                             // Optioanl & Required
-                CheckIncongruousTypeOfValue(ValueType, DrCmdValueType.Single, DrCmdValueType.List);                                                                   // Single & List
+                CheckIncongruousTypeOfValue(ValueFlags, DrCmdValueFlags.Optional, DrCmdValueFlags.Required);                                                             // Optioanl & Required
+                CheckIncongruousTypeOfValue(ValueFlags, DrCmdValueFlags.Single, DrCmdValueFlags.List);                                                                   // Single & List
             }
             catch (ApplicationException e)
             {
-                throw new FormatException(string.Format(Msg.OPTION_TYPE_IS_WRONG, Name, ValueType.ToString()), e);
+                throw new FormatException(string.Format(Msg.OPTION_TYPE_IS_WRONG, Name, ValueFlags.ToString()), e);
             }
         }
         /// <summary>
         /// Checks the current value of the two incongruous flags simultaneously. 
         /// If the two flags are detected ​​at the same time the <exception cref="FormatException">FormatException</exception> will be thrown.
         /// </summary>
-        /// <param name="current">Current type of value</param>
+        /// <param name="current">Current flag of value</param>
         /// <param name="first">the first incongruous flag to detect</param>
         /// <param name="second">the second  incongruous flag to detect</param>
-        private static void CheckIncongruousTypeOfValue(DrCmdValueType current, DrCmdValueType first, DrCmdValueType second)
+        private static void CheckIncongruousTypeOfValue(DrCmdValueFlags current, DrCmdValueFlags first, DrCmdValueFlags second)
         {
             if (((current & first) == first) & ((current & second) == second))
             {
@@ -483,16 +483,16 @@ namespace DrOpen.DrCommon.DrCmd
         {
             var isSpecifiedOption = GetAttributeValue(DrCmdOptionSettings.ResultIsOptionSpecified, false);
             if ((Type.HasFlag(DrCmdOptionType.Required)) & (isSpecifiedOption == false)) throw new ArgumentException(string.Format(Msg.REQUIRED_OPTION_IS_NOT_SPECIFIED, Name, CommandName));
-            // value type
+            // value flag
             var valueAsStringArray = GetAttributeValue(DrCmdOptionSettings.ResultValue, new string[] { }).GetValueAsStringArray();
             var valueAsString = GetAttributeValue(DrCmdOptionSettings.ResultValue, string.Empty).GetValueAsString();
             // Single
-            if ((ValueType.HasFlag(DrCmdValueType.Single)) & (valueAsStringArray.Length > 1)) throw new ArgumentException(string.Format(Msg.OPTION_CANNOT_CONTAINS_MORE_THAN_ONE_VALUE, Name, valueAsString, valueAsStringArray.Length, DrCmdValueType.Single, CommandName));
+            if ((ValueFlags.HasFlag(DrCmdValueFlags.Single)) & (valueAsStringArray.Length > 1)) throw new ArgumentException(string.Format(Msg.OPTION_CANNOT_CONTAINS_MORE_THAN_ONE_VALUE, Name, valueAsString, valueAsStringArray.Length, DrCmdValueFlags.Single, CommandName));
             // Forbidden
-            if ((ValueType.HasFlag(DrCmdValueType.Forbidden)) & (valueAsStringArray.Length > 0)) throw new ArgumentException(string.Format(Msg.OPTION_CANNOT_CONTAIN_VALUE, Name, valueAsString, DrCmdValueType.Forbidden, CommandName));
+            if ((ValueFlags.HasFlag(DrCmdValueFlags.Forbidden)) & (valueAsStringArray.Length > 0)) throw new ArgumentException(string.Format(Msg.OPTION_CANNOT_CONTAIN_VALUE, Name, valueAsString, DrCmdValueFlags.Forbidden, CommandName));
             // Required
-            if ((isSpecifiedOption) && (ValueType.HasFlag(DrCmdValueType.Required)) & (valueAsStringArray.Length == 0)) throw new ArgumentException(string.Format(Msg.OPTION_MUST_CONTAIN_VALUE, Name, DrCmdValueType.Required, CommandName));
-            if ((ValueType.HasFlag(DrCmdValueType.ListOfRestriction)) && (valueAsStringArray.Length > 0)) ValidateOptionValueByRestrictionList(valueAsStringArray); // RestrictionList and AllowNumeric
+            if ((isSpecifiedOption) && (ValueFlags.HasFlag(DrCmdValueFlags.Required)) & (valueAsStringArray.Length == 0)) throw new ArgumentException(string.Format(Msg.OPTION_MUST_CONTAIN_VALUE, Name, DrCmdValueFlags.Required, CommandName));
+            if ((ValueFlags.HasFlag(DrCmdValueFlags.ListOfRestriction)) && (valueAsStringArray.Length > 0)) ValidateOptionValueByRestrictionList(valueAsStringArray); // RestrictionList and AllowNumeric
 
         }
 
@@ -508,7 +508,7 @@ namespace DrOpen.DrCommon.DrCmd
             var ignoreCase = !Command.Settings.GetSettingsCaseSensitive();
             foreach (var val in valueAsStringArray)
             {
-                if ((ValueType.HasFlag(DrCmdValueType.AllowNumeric)) && (val.IsPositiveNumber())) continue;
+                if ((ValueFlags.HasFlag(DrCmdValueFlags.AllowNumeric)) && (val.IsPositiveNumber())) continue;
                 var isMatched = false;
                 foreach (var restrictionItem in restrictionListArray)
                 {
@@ -521,7 +521,7 @@ namespace DrOpen.DrCommon.DrCmd
                 if (!isMatched)
                 {
                     var text = string.Format(Msg.OPTION_HAS_INCORRECT_VALUE, Name, val, CommandName) + " ";
-                    if (ValueType.HasFlag(DrCmdValueType.AllowNumeric))
+                    if (ValueFlags.HasFlag(DrCmdValueFlags.AllowNumeric))
                         text += string.Format(Msg.OPTION_SUPPORT_ONLY_FOLLOWING_VALUES_OR_NUMERIC, GetRestrictionListWithValueAsString(", "));
                     else
                         text += string.Format(Msg.OPTION_SUPPORT_ONLY_FOLLOWING_VALUES, GetRestrictionListAsString(", "));
@@ -569,8 +569,8 @@ namespace DrOpen.DrCommon.DrCmd
 
         #region Help
         /// <summary>
-        /// Returns the synopsis for the option and her valuedepending on the type of option and value type
-        /// If value for this option can be optional, her value type is not <see cref="DrCmdValueType.Required"/> the function will be return option synopsis in square brackets <para> </para>
+        /// Returns the synopsis for the option and her valuedepending on the flag of option and value flag
+        /// If value for this option can be optional, her value flag is not <see cref="DrCmdValueFlags.Required"/> the function will be return option synopsis in square brackets <para> </para>
         /// How synopsis for the value will look of the function, see <see cref="GetOptionValueSynopsis"/><para> </para>
         /// <example>Example: OptName, [OptName], OptName [OptValue], [OptName [OptValue]]</example>
         /// </summary>
@@ -589,18 +589,18 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Returns the synopsis for the value of this option depending on the type of value. <para> </para>
-        /// If value for this option can be optional, her value type is not <see cref="DrCmdValueType.Required"/> the function will be return value synopsis in square brackets <para> </para>
-        /// If this option cannot contains value, her value type is <see cref="DrCmdValueType.Forbidden"/> the function will be return empty string 
+        /// Returns the synopsis for the value of this option depending on the flag of value. <para> </para>
+        /// If value for this option can be optional, her value flag is not <see cref="DrCmdValueFlags.Required"/> the function will be return value synopsis in square brackets <para> </para>
+        /// If this option cannot contains value, her value flag is <see cref="DrCmdValueFlags.Forbidden"/> the function will be return empty string 
         /// </summary>
         /// <returns></returns>
         internal string GetOptionValueSynopsis()
         {
             var text = string.Empty;
-            if (!ValueType.HasFlag(DrCmdValueType.Forbidden)) // this option can have value
+            if (!ValueFlags.HasFlag(DrCmdValueFlags.Forbidden)) // this option can have value
             {
                 text = GetAttributeValue(DrCmdOptionSettings.SynopsisValue,string.Empty);
-                if (!ValueType.HasFlag(DrCmdValueType.Required)) text = "[" + text + "]"; // this value is optional 
+                if (!ValueFlags.HasFlag(DrCmdValueFlags.Required)) text = "[" + text + "]"; // this value is optional 
             }
             return text;
         }

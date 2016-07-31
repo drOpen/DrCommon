@@ -265,8 +265,10 @@ namespace UTestDrData
         {
             var obj = new object[] 
                                 {
-                                new sbyte(),
-                                new int?[6] { null, 1, 2, null, 3, null }
+                                        new object[1]{null},
+                                        new object(),
+                                        new sbyte(),
+                                        new int?[6] { null, 1, 2, null, 3, null }
                                 };
 
             foreach (var item in obj)

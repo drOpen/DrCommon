@@ -151,7 +151,7 @@ namespace DrOpen.DrCommon.DrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] {"log"});
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "level of logging to a log file, the default value is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'. This option is used in conjunction with option '-{10}' only");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "level of logging to a log file, the default ac is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'. This option is used in conjunction with option '-{10}' only");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString()});
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Optional.ToString(), DrCmdValueFlags.Single.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, new[] { LogLevel.ALL_INFO.ToString() });
@@ -170,7 +170,7 @@ namespace DrOpen.DrCommon.DrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "x", "xml" });
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify path and name for xml file. This file should be contains the all settings for application. It's very very long description for value.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify path and name for xml file. This file should be contains the all settings for application. It's very very long description for ac.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Required.ToString()});
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "xml file");
@@ -185,7 +185,7 @@ namespace DrOpen.DrCommon.DrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "mode" });
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for value. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for ac. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, new[] { "ALL","ENABLED", "DISABLED" });

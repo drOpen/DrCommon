@@ -291,7 +291,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "h", "help" });
             opt.Attributes.Add(DrCmdOptionSettings.Description, "show help information for this command.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
-            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Forbidden.ToString() }); // without value
+            opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Forbidden.ToString() }); // without ac
             return opt;
         }
 
@@ -519,9 +519,10 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "depth source directory enumeration. The default value is '{4}' infinitely. Specify '1' for enumerating without subdirectories.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "depth source directory enumeration. The default ac is '{4}' infinitely. Specify '1' for enumerating without subdirectories.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 0);
             opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "s");
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "1");
@@ -536,9 +537,10 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             //opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "timeout" });
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify the timeout value in seconds for a data connection associated with sign server. The default value is '{4}' infinitely.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify the timeout ac in seconds for a data connection associated with sign server. The default ac is '{4}' infinitely.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 0);
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "timeout");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
@@ -551,9 +553,10 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "the maximum number of threads. The default value is '{4}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "the maximum number of threads. The default ac is '{4}'.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 10);
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "max thread");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
@@ -571,6 +574,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 1024);
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "block size");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
@@ -586,6 +590,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 32768);
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "block size");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
@@ -596,7 +601,7 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "level of console logging, the default value is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'.");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "level of console logging, the default ac is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, new[] { LogLevel.INFO.ToString() });
@@ -627,7 +632,7 @@ namespace DrSignSample
             var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "level of logging to a log file, the default value is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'. This option is used in conjunction with option '-{10}' only");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "level of logging to a log file, the default ac is: '{4}'. The follow values or its numeric equivalent is allowed: '{7}'. This option is used in conjunction with option '-{10}' only");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString(), DrCmdValueFlags.ListOfRestriction.ToString(), DrCmdValueFlags.AllowNumeric.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, new[] { LogLevel.ALL.ToString() });

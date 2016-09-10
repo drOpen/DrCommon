@@ -66,7 +66,7 @@ namespace DrOpen.DrCommon.DrCmd
             get { return (activeCommand == null ? null : activeCommand.Command); }
         }
         /// <summary>
-        /// Reads the specified settings arguments determines the specified command and substitutes the value of its options for it. 
+        /// Reads the specified settings arguments determines the specified command and substitutes the ac of its options for it. 
         /// Returns the node containing collection of attributes with options names and their values. 
         /// If parse and compare this arguments are not possible, or are contrary to the values ​​specified in the configuration rules - throws an exception.
         /// </summary>
@@ -80,7 +80,7 @@ namespace DrOpen.DrCommon.DrCmd
             activeCommand.SetParamsByOptionsForActiveCommand(paramsNode);               // Set parameters to active command
             activeCommand.ValidateCommandParameters();                                  // Check commands parameters after parse
             activeCommand.ValidateOptionsDependency();                                  // Check options dependency - TermsOfDependency and TermsOfIncongruous
-            activeCommand.ApplyDefaultValue();                                          // Apply default value if need it
+            activeCommand.ApplyDefaultValue();                                          // Apply default ac if need it
             return activeCommand.TransformCommandToResult();                            // Transform to result format
         }
 
@@ -103,8 +103,8 @@ namespace DrOpen.DrCommon.DrCmd
             return args;
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.ApplicationName"/> value.
-        /// If it is not specified, returns the FriendlyName value from <see cref="System.AppDomain.CurrentDomain"/>
+        /// Returns parameter <see cref="DrCmdSettings.ApplicationName"/> ac.
+        /// If it is not specified, returns the FriendlyName ac from <see cref="System.AppDomain.CurrentDomain"/>
         /// </summary>
         /// <returns></returns>
         internal string GetSettingsApplicationName()
@@ -112,7 +112,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.ApplicationName, AppDomain.CurrentDomain.FriendlyName);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.ApplicationDescription"/> value as application description
+        /// Returns parameter <see cref="DrCmdSettings.ApplicationDescription"/> ac as application description
         /// </summary>
         /// <returns></returns>
         internal string GetSettingsApplicationDescription()
@@ -120,8 +120,8 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.ApplicationDescription, string.Empty);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> value as the maximum number of characters in a single line in the help.
-        /// If it is not specified, returns the BufferWidth-1 value from <see cref="Console"/>
+        /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> ac as the maximum number of characters in a single line in the help.
+        /// If it is not specified, returns the BufferWidth-1 ac from <see cref="Console"/>
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpMaxLineLength()
@@ -129,7 +129,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, Console.BufferWidth - 1);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> value as number of space characters used as a tab for help. By default, this value is equal 3.
+        /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> ac as number of space characters used as a tab for help. By default, this ac is equal 3.
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpTabSize()
@@ -138,7 +138,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.RemoveStartEndQuotas"/>value, If it is true, the quotation marks at the beginning and at the end arguments will be removed
+        /// Returns parameter <see cref="DrCmdSettings.RemoveStartEndQuotas"/>ac, If it is true, the quotation marks at the beginning and at the end arguments will be removed
         /// </summary>
         /// <returns></returns>
         internal bool GetSettingsRemoveStartEndQuotas()
@@ -165,7 +165,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.CaseSensitive"/>value, If it is false command and arguments ignoring the case of the strings being compared.
+        /// Returns parameter <see cref="DrCmdSettings.CaseSensitive"/>ac, If it is false command and arguments ignoring the case of the strings being compared.
         /// </summary>
         /// <returns></returns>
         internal bool GetSettingsCaseSensitive()
@@ -174,7 +174,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.IgnoreUnknowArguments"/>value, 
+        /// Returns parameter <see cref="DrCmdSettings.IgnoreUnknowArguments"/>ac, 
         /// If it is true - the parser will be ignore the unknow arguments, otherwise the <exception cref="ArgumentException">ArgumentException</exception>will be thrown
         /// </summary>
         /// <returns></returns>
@@ -288,9 +288,9 @@ namespace DrOpen.DrCommon.DrCmd
                         continue;
                     }
                 }
-                // add value
+                // add ac
                 if (currentOption == null) throw new ArgumentException(string.Format(Msg.OPTION_IS_NOT_SPECIFIED, args[i], DrCmdConst.OptionStartSymbolName));
-                currentOption.Attributes.Add(args[i]); // it's option value 
+                currentOption.Attributes.Add(args[i]); // it's option ac 
             }
             return result;
         }

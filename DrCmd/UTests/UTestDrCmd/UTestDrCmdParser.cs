@@ -31,6 +31,7 @@ using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrCmd;
 using DrOpen.DrCommon.DrExt;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace UTestDrCmd
 {
@@ -56,7 +57,7 @@ namespace UTestDrCmd
             ddNode.Attributes.Add(DrCmdSettings.Arguments, args);
             ddNode.Attributes.Add(DrCmdSettings.CaseSensitive, caseSensetive);
             ddNode.Attributes.Add(DrCmdSettings.IgnoreUnknowArguments, ignoreUnknowArguments);
-            ddNode.Add("HELP").Type=DrCmdConst.TypeCommand;
+            ddNode.Add("HELP").Type = DrCmdConst.TypeCommand;
             ddNode.Add(GetCommandCOMMAND());
             ddNode.Add(GetCommandRUN());
 
@@ -106,14 +107,14 @@ namespace UTestDrCmd
             cmd.Attributes.Add(DrCmdCommandSettings.Example, "{0} {1} -xf xml file Example for this command.");
             cmd.Add(GetOptionLogFile());
             cmd.Add(GetOptionMode());
-            
+
             return cmd;
         }
 
         public static DDNode GetOptionLogFile()
         {
             var name = "LogFile";
-            var opt = new DDNode(name,DrCmdConst.TypeOption);
+            var opt = new DDNode(name, DrCmdConst.TypeOption);
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, "lf");
@@ -131,7 +132,7 @@ namespace UTestDrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "mode" });
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for value. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for ac. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, new[] { "ALL", "ENABLED", "DISABLED" });
@@ -162,7 +163,7 @@ namespace UTestDrCmd
             {
                 cmdParser.Parse();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 /* it's ok*/
                 Assert.IsNull(cmdParser.ActiveCommnand, "The empty command line must have 'null' active command.");
@@ -183,17 +184,15 @@ namespace UTestDrCmd
                 cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'command is вшыфидув'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         #endregion
         #region OptionIsSpecifiedMoreThanOnce
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("OptionIsSpecifiedMoreThanOnce")]
         public void TestOptionIsSpecifiedMoreThanOnce_SpecifyOptionTwise()
         {
-            var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3" , "-t1"};
+            var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3", "-t1" };
 
             var root = GetInitialParametrs(args);
             try
@@ -202,10 +201,8 @@ namespace UTestDrCmd
                 cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'option is specified twise'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("OptionIsSpecifiedMoreThanOnce")]
         public void TestOptionIsSpecifiedMoreThanOnce_SpecifyOptionTwiseByAlias()
@@ -219,17 +216,15 @@ namespace UTestDrCmd
                 cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'option is specified twise'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         #endregion OptionIsSpecifiedMoreThanOnce
         #region DisabledOption
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestDisabledOption")]
         public void TestDisabledOption_SpecifyDisabledOption()
         {
-            var args = new[] { "COMMAND", "-t1","-test2", "val1", "val2", "val3"};
+            var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Enabled, false, ResolveConflict.OVERWRITE);
@@ -239,10 +234,8 @@ namespace UTestDrCmd
                 cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'disabled option is specified'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         #endregion DisabledOption
         #region UnknowArguments
@@ -258,15 +251,13 @@ namespace UTestDrCmd
                 cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'unknow agument is specified'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestCheckSettingsUnknowArguments")]
         public void TestCheckSettingsUnknowArguments_AllowUnknowArguments()
         {
-            var args = new[] { "COMMAND", "-UnknowArgument", "-test2", "val1", "val2", "val3"};
+            var args = new[] { "COMMAND", "-UnknowArgument", "-test2", "val1", "val2", "val3" };
 
             var root = GetInitialParametrs(false, true, args);
             var cmdParser = new DrCmdParser(root);
@@ -291,12 +282,10 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of value for option are specified: Optional and Required'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of ac for option are specified: Optional and Required'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("CheckIncongruousTypeOfValue")]
         public void TestCheckIncongruousTypeOfValue_SingleVsList()
@@ -308,12 +297,10 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of value for option are specified: Single and List'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of ac for option are specified: Single and List'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         #endregion CheckIncongruousTypeOfValue
         #region ValidateOptionsIncongruous
@@ -330,10 +317,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'Incongruous option is specified'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateOptionsIncongruous")]
         public void TestValidateOptionsIncongruous_IncongruousValueIfIsNotSpecified()
@@ -368,10 +353,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'Incongruous option is specified by alias'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateOptionsIncongruous")]
         public void TestValidateOptionsIncongruous_IncongruousLinkToNotExistOption()
@@ -388,10 +371,8 @@ namespace UTestDrCmd
 
                 Assert.Fail("The incorrect arguments is not catched - 'Incongruous option is linked to not exist option'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateOptionsIncongruous")]
         public void TestValidateOptionsIncongruous_IncongruousLinkToDisabledOption()
@@ -408,10 +389,8 @@ namespace UTestDrCmd
 
                 Assert.Fail("The incorrect arguments is not catched - 'Incongruous option is linked to disabled option'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         #endregion ValidateOptionsIncongruous
         #region ValidateOptionsDependency
@@ -428,10 +407,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'Dependent option is not specified'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestValidateOptionsDependency_DependencyValueIfIsNotSpecified()
@@ -485,10 +462,8 @@ namespace UTestDrCmd
 
                 Assert.Fail("The incorrect arguments is not catched - 'Dependency option is linked to not exist option'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateOptionsIncongruous")]
         public void TestValidateOptionsDependency_DependencyLinkToDisabledOption()
@@ -505,10 +480,8 @@ namespace UTestDrCmd
 
                 Assert.Fail("The incorrect arguments is not catched - 'Dependency option is linked to disabled option'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         #endregion ValidateOptionsDependency
         #region VerifyValueRestrictionsType
@@ -523,12 +496,10 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value flag is specified with another flag'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden ac flag is specified with another flag'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestVerifyValueRestrictionsType_ForbiddenValueType()
@@ -560,14 +531,100 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'AllowNumeric value flag is specified without RestrictionList flag'.");
+                Assert.Fail("The incorrect arguments is not catched - 'AllowNumeric ac flag is specified without RestrictionList flag'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         #endregion VerifyValueRestrictionsType
+
+
+        #region ConvertResultValue
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
+        public void TestConvertResultValue_ConvertTypeException()
+        {
+            var valueTypeName = typeof(Int16).FullName;
+            var incorrectValue = "1s2";
+
+            var args = new[] { "COMMAND", "-test2", "val1", "val2", "val3", "-t1", incorrectValue };
+
+            var root = GetInitialParametrs(args);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueType, valueTypeName, ResolveConflict.OVERWRITE);
+            try
+            {
+                var cmdParser = new DrCmdParser(root);
+                var result = cmdParser.Parse();
+                Assert.Fail("The incorrect arguments is not catched - 'Convert '{0}' to '{1}'.", incorrectValue, valueTypeName);
+            }
+            catch (AssertFailedException) { throw; }
+            catch (DDValueConvertException e)
+            {
+                Assert.IsTrue(e.RequestedTypeFullName == valueTypeName, "The exception type for convertion is not correct.");
+                Assert.IsTrue(e.Value == incorrectValue, "The exception value for convertion is not correct.");
+            }
+        }
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
+        public void TestConvertResultValue_ConvertTypeStringArray2StringException()
+        {
+            var valueTypeName = typeof(string[]).FullName;
+            var value2TypeName = typeof(string).FullName;
+
+            var args = new[] { "COMMAND", "-test2", "val1", "val2", "val3", };
+
+            var root = GetInitialParametrs(args);
+            root.GetNode("COMMAND/test2").Attributes.Add(DrCmdOptionSettings.ValueType, value2TypeName, ResolveConflict.OVERWRITE);
+            try
+            {
+                var cmdParser = new DrCmdParser(root);
+                var result = cmdParser.Parse();
+                Assert.Fail("The incorrect arguments is not catched - 'Convert '{0}' to '{1}'.", valueTypeName, value2TypeName);
+            }
+            catch (AssertFailedException) { throw; }
+            catch (DDTypeConvertException e)
+            {
+                Assert.IsTrue(e.RequestedTypeName == value2TypeName, "The exception requested Type for convertion is not correct.");
+                Assert.IsTrue(e.TypeName == valueTypeName, "The exception value Type for convertion is not correct.");
+            }
+        }
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
+        public void TestConvertResultValue_ConvertTypeString2StringArrayException()
+        {
+            var valueTypeName = typeof(string).FullName;
+            var value2TypeName = typeof(string[]).FullName;
+
+            var args = new[] { "COMMAND", "-test2", "val1", };
+
+            var root = GetInitialParametrs(args);
+            root.GetNode("COMMAND/test2").Attributes.Add(DrCmdOptionSettings.ValueType, value2TypeName, ResolveConflict.OVERWRITE);
+            try
+            {
+                var cmdParser = new DrCmdParser(root);
+                var result = cmdParser.Parse();
+                Assert.Fail("The incorrect arguments is not catched - 'Convert '{0}' to '{1}'.", valueTypeName, value2TypeName);
+            }
+            catch (AssertFailedException) { throw; }
+            catch (DDTypeConvertException e)
+            {
+                Assert.IsTrue(e.RequestedTypeName == value2TypeName, "The exception requested Type for convertion is not correct.");
+                Assert.IsTrue(e.TypeName == valueTypeName, "The exception value Type for convertion is not correct.");
+            }
+        }
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
+        public void TestConvertResultValue_ConvertType2IntArrayException()
+        {
+            var value2TypeName = typeof(Int32[]).FullName;
+            var expectedValue = new DDValue(new int[] { -1, 0, 1 });
+
+            var args = new[] { "COMMAND", "-test2", "--", "-1", "0", "1" };
+
+            var root = GetInitialParametrs(args);
+            root.GetNode("COMMAND/test2").Attributes.Add(DrCmdOptionSettings.ValueType, value2TypeName, ResolveConflict.OVERWRITE);
+
+            var cmdParser = new DrCmdParser(root);
+            var result = cmdParser.Parse();
+            Assert.IsTrue(expectedValue==result.Attributes["test2"] );
+        }
+        #endregion ConvertResultValue
         #region RequiredOption
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRequiredOption_IsNotSpecified()
@@ -582,10 +639,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched - 'Required option is not specified'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRequiredOption_SpecifiedByAlias()
@@ -611,7 +666,7 @@ namespace UTestDrCmd
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestSingleValue_IsNotSpecified()
         {
-            var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "-test2", "val1", "val2", "val3", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Single.ToString(), ResolveConflict.OVERWRITE);
@@ -622,7 +677,7 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", string.Empty);
             expected.Attributes.Add("test2", new[] { "val1", "val2", "val3" });
-            expected.Attributes.Add("test3", new[] { "value for test 3" });
+            expected.Attributes.Add("test3", "ac for test 3");
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
 
@@ -642,12 +697,10 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Sigle value has more than one values'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Sigle ac has more than one values'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         #endregion SingleValue
         #region ForbiddenValue
@@ -684,12 +737,10 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value cannot have value'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden ac cannot have ac'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestForbiddenValue_SpecifiedMoreThanOne()
@@ -705,19 +756,17 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value has value'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden ac has ac'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         #endregion ForbiddenValue
         #region RequiredValue
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRequiredValue_IsSpecified()
         {
-            var args = new[] { "COMMAND", "-t1", "val1", "val2", "val3", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "val1", "val2", "val3", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -728,14 +777,14 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", new[] { "val1", "val2", "val3" });
             expected.Attributes.Add("test2", string.Empty);
-            expected.Attributes.Add("test3", new[] { "value for test 3" });
+            expected.Attributes.Add("test3", "ac for test 3");
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRequiredValue_IsSpecifiedByAlias()
         {
-            var args = new[] { "COMMAND", "-alias", "val1", "val2", "val3", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-alias", "val1", "val2", "val3", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.Type, DrCmdOptionType.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -747,7 +796,7 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", new[] { "val1", "val2", "val3" });
             expected.Attributes.Add("test2", string.Empty);
-            expected.Attributes.Add("test3", new[] { "value for test 3" });
+            expected.Attributes.Add("test3", "ac for test 3");
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
 
@@ -766,19 +815,17 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Required value without value'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Required ac without ac'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException e)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         #endregion RequiredValue
         #region RestrictionList
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_AsNumericIncorrectType()
         {
-            var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -790,17 +837,15 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect argument flag is not catched - 'RestrictionListAsNumeric flag is byte[]'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
 
 
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_ValueIsSpecified()
         {
-            var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -813,14 +858,14 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", new[] { "Val1", "vAl2", "val3" });
             expected.Attributes.Add("test2", string.Empty);
-            expected.Attributes.Add("test3", new[] { "value for test 3" });
+            expected.Attributes.Add("test3", "ac for test 3");
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_ValueIsSpecifiedCaseSensitive()
         {
-            var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "Val1", "vAl2", "val3", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(true, false, args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -832,17 +877,15 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is incorrected because case sensitive is enabled'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified ac is incorrected because case sensitive is enabled'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_ValueNumericIsSpecified()
         {
-            var args = new[] { "COMMAND", "-t1", "123232", "777", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "123232", "777", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -855,14 +898,14 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", new[] { "123232", "777" });
             expected.Attributes.Add("test2", string.Empty);
-            expected.Attributes.Add("test3", new[] { "value for test 3" });
+            expected.Attributes.Add("test3", "ac for test 3");
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_ValueNegativeNumericIsSpecified()
         {
-            var args = new[] { "COMMAND", "-t1", "--", "-123232", "-+", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "--", "-123232", "-+", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -873,17 +916,15 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is negative number'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified ac is negative number'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_ValueNumericIsNotAllow()
         {
-            var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -894,17 +935,15 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is number but number is not allowed in the ValueFlags for this option'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified ac is number but number is not allowed in the ValueFlags for this option'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (ArgumentException)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_ValueNumericAndAllowNumericHaveDifferentElementCount()
         {
-            var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
@@ -916,31 +955,27 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect argument flag is not catched - 'Number of items in lists RestrictionList and RestrictionListAsNumeric is different.'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/* it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ValidateCommandParameters")]
         public void TestRestrictionList_RestrictionDescriptionListWithDifferentElementCount()
         {
-            var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "value for test 3" };
+            var args = new[] { "COMMAND", "-t1", "1", "-test2", "-test3", "ac for test 3" };
 
             var root = GetInitialParametrs(args);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, DrCmdValueFlags.Required.ToString(), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.AllowNumeric.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() }, ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionList, Enum.GetNames(typeof(TestValue)), ResolveConflict.OVERWRITE);
             root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListAsNumeric, DrExtEnum.GetFlags(typeof(TestValue)), ResolveConflict.OVERWRITE);
-            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListDescription, new []{ "A", "B" }, ResolveConflict.OVERWRITE);
+            root.GetNode("COMMAND/t1").Attributes.Add(DrCmdOptionSettings.RestrictionListDescription, new[] { "A", "B" }, ResolveConflict.OVERWRITE);
             try
             {
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect argument flag is not catched - 'Number of items in lists RestrictionList and RestrictionListDescription is different.'.");
             }
-            catch (AssertFailedException e)
-            { throw; }
-            catch (FormatException)
-            {/* it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (Exception) { /* it's ok*/ }
         }
         #endregion RestrictionList
         #region OptionType
@@ -957,14 +992,8 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect option flag is not catched.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                // it's ok
-            }
+            catch (AssertFailedException) { throw; }
+            catch (Exception) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetOptionType")]
         public void TestGetOptionTypeCaseInsensitive()
@@ -977,8 +1006,8 @@ namespace UTestDrCmd
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
             var expected = new DDNode("RUN");
-            expected.Attributes.Add("LogFile", new[] { "val1" });
-            expected.Attributes.Add("m", String.Empty );
+            expected.Attributes.Add("LogFile", "val1");
+            expected.Attributes.Add("m", String.Empty);
             ValidateOptionParser(result, expected);
         }
 
@@ -997,14 +1026,8 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect option flag is not catched.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                // it's ok
-            }
+            catch (AssertFailedException) { throw; }
+            catch (Exception) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetValueFlags")]
         public void TestGetValueTypeCaseInsensitive()
@@ -1017,7 +1040,7 @@ namespace UTestDrCmd
             var cmdParser = new DrCmdParser(root);
             var result = cmdParser.Parse();
             var expected = new DDNode("RUN");
-            expected.Attributes.Add("LogFile", new[] { "val1" });
+            expected.Attributes.Add("LogFile", "val1");
             expected.Attributes.Add("m", String.Empty);
             ValidateOptionParser(result, expected);
         }
@@ -1037,12 +1060,8 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect arguments is not catched 'Command name is not specified.'");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (FormatException e)
-            {/*it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) { /* it's ok*/ }
 
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("VerifyComandSettings")]
@@ -1097,14 +1116,8 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect arguments is not catched 'Dublicate alias name .'");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (FormatException e)
-            {
-                //it's ok
-            }
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("VerifyComandSettings")]
         public void TestVerifyComandSettingsDublicateOptionAliasCaseSensitiveB()
@@ -1119,12 +1132,8 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect arguments is not catched 'Dublicate alias name .'");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (FormatException e)
-            {/*it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/*it's ok*/}
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("VerifyComandSettings")]
         public void TestVerifyComandSettingsIncorrectOptionType()
@@ -1139,12 +1148,8 @@ namespace UTestDrCmd
                 var cmdParser = new DrCmdParser(root);
                 Assert.Fail("The incorrect format is not catched 'Option has both flag Optional and Required'.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (FormatException e)
-            {/*it's ok*/}
+            catch (AssertFailedException) { throw; }
+            catch (FormatException) {/*it's ok*/}
         }
 
 
@@ -1163,7 +1168,7 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", string.Empty);
             expected.Attributes.Add("test2", string.Empty);
-            expected.Attributes.Add("test3", new[] { "val1 val2 val3" });
+            expected.Attributes.Add("test3", "val1 val2 val3");
             expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
 
@@ -1182,8 +1187,8 @@ namespace UTestDrCmd
             var expected = new DDNode("COMMAND");
             expected.Attributes.Add("t1", string.Empty);
             expected.Attributes.Add("test2", string.Empty);
-            expected.Attributes.Add("test3", new[] { " " });
-            expected.Attributes.Add("test4", new string[] { });
+            expected.Attributes.Add("test3", " ");
+            expected.Attributes.Add("test4", string.Empty);
             ValidateOptionParser(result, expected);
 
         }
@@ -1201,14 +1206,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched 'Command name is double quotas.'");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException nullExc)
-            {
-                // it's ok
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
 
         }
 
@@ -1223,15 +1222,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched 'Command name is not specified.'");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException nullExc)
-            {
-                // it's ok
-            }
-
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         #endregion GetSelectedCommandNameFromArguments
         #region TestSplitOptionsAndTheirValuesByArguments
@@ -1258,14 +1250,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("The incorrect arguments is not catched 'Command name is incorrect.'");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException argExc)
-            {
-                // it's true
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
 
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestSplitOptionsAndTheirValuesByArguments")]
@@ -1292,14 +1278,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("Case sensetive parameter doesnt' work correctly.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException argExc)
-            {
-                // it's true
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestSplitOptionsAndTheirValuesByArguments")]
         public void TestSplitOptionsAndTheirValuesByArgumentsCheckThrowValueWithoutOption()
@@ -1310,16 +1290,10 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("Contains the value of the option without declaring itself options.");
+                Assert.Fail("Contains the ac of the option without declaring itself options.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException argExc)
-            {
-                // it's true
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestSplitOptionsAndTheirValuesByArguments")]
         public void TestSplitOptionsAndTheirValuesByArgumentsOptionSpecifyTheOptionTwice()
@@ -1332,14 +1306,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail("Missed the opportunity to specify the option twice.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException argExc)
-            {
-                // it's true
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestSplitOptionsAndTheirValuesByArguments")]
         public void TestSplitOptionsAndTheirValuesByArgumentsOptionSymbolName()
@@ -1352,14 +1320,8 @@ namespace UTestDrCmd
                 var result = cmdParser.Parse();
                 Assert.Fail(string.Format("Option symbol name '{0}' is not catched.", DrCmdConst.OptionStartSymbolName));
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException argExc)
-            {
-                // it's true
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestSplitOptionsAndTheirValuesByArguments")]
         public void TestSplitOptionsAndTheirValuesByArgumentsParseMultipleOptions()
@@ -1387,16 +1349,10 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("Contains the value of the option without declaring itself options.");
+                Assert.Fail("Contains the ac of the option without declaring itself options.");
             }
-            catch (AssertFailedException e)
-            {
-                throw;
-            }
-            catch (ArgumentException exc)
-            {
-                // it's ok
-            }
+            catch (AssertFailedException) { throw; }
+            catch (ArgumentException) { /* it's ok*/ }
         }
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("TestSplitOptionsAndTheirValuesByArguments")]
         public void TestSplitOptionsAndTheirValuesByArgumentsParseStopScan()
@@ -1444,7 +1400,7 @@ namespace UTestDrCmd
             var result = cmdParser.Parse();
 
             var expected = new DDNode("COMMAND");
-            expected.Attributes.Add("t1", new[] { "-" });
+            expected.Attributes.Add("t1", "-");
             expected.Attributes.Add("test2", string.Empty);
             expected.Attributes.Add("test3", new[] { "val1", "val2", "val3" });
             expected.Attributes.Add("test4", string.Empty);
@@ -1461,7 +1417,7 @@ namespace UTestDrCmd
             var result = cmdParser.Parse();
 
             var expected = new DDNode("COMMAND");
-            expected.Attributes.Add("t1", new[] { "--" });
+            expected.Attributes.Add("t1", "--");
             expected.Attributes.Add("test2", string.Empty);
             expected.Attributes.Add("test3", new[] { "val1", "val2", "val3" });
             expected.Attributes.Add("test4", string.Empty);
@@ -1478,7 +1434,7 @@ namespace UTestDrCmd
             var result = cmdParser.Parse();
 
             var expected = new DDNode("COMMAND");
-            expected.Attributes.Add("t1", new[] { "-+" });
+            expected.Attributes.Add("t1", "-+");
             expected.Attributes.Add("test2", string.Empty);
             expected.Attributes.Add("test3", new[] { "val1", "val2", "val3" });
             expected.Attributes.Add("test4", string.Empty);

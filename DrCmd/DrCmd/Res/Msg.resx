@@ -261,4 +261,7 @@
   <data name="HELP_EXAMPLE" xml:space="preserve">
     <value>EXAMPLE</value>
   </data>
+  <data name="SPECIFIED_VALUE_TYPE_IS_NOT_SUPPORTED_BY_DDVALUE" xml:space="preserve">
+    <value>The specified value type '{0}' is not supported as DDValue type.</value>
+  </data>
 </root>

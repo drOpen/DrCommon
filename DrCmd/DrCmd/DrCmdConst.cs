@@ -36,7 +36,7 @@ namespace DrOpen.DrCommon.DrCmd
     {
         /// <summary>
         /// Contains the application name, 
-        /// if value is not specified the the FriendlyName value from <see cref="System.AppDomain.CurrentDomain"/> will be used.
+        /// if ac is not specified the the FriendlyName ac from <see cref="System.AppDomain.CurrentDomain"/> will be used.
         /// Used for help builder.
         /// </summary>
         ApplicationName,
@@ -47,12 +47,12 @@ namespace DrOpen.DrCommon.DrCmd
         ApplicationDescription,
         /// <summary>
         /// The maximum number of characters in a single line in the help.
-        /// if value is not specified the the BufferWidth value from <see cref="Console"/> will be used.
+        /// if ac is not specified the the BufferWidth ac from <see cref="Console"/> will be used.
         /// Used for help builder.
         /// </summary>
         HelpMaxLineLength,
         /// <summary>
-        /// Number of space characters used as a tab for help. By default, this value is equal 3.
+        /// Number of space characters used as a tab for help. By default, this ac is equal 3.
         /// </summary>
         HelpTabSize,
         /// <summary>
@@ -67,7 +67,6 @@ namespace DrOpen.DrCommon.DrCmd
         /// Match arguments ignoring the unknow arguments
         /// </summary>
         IgnoreUnknowArguments,
-
         /// <summary>
         /// Arguments to parse, as string array
         /// </summary>
@@ -137,9 +136,13 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         Aliases,
         /// <summary>
-        /// Flags of value. Restriction to analyse parameters of values of option. See <see cref="DrCmdValueFlags"/>.
+        /// Flags of ac. Restriction to analyse parameters of values of option. See <see cref="DrCmdValueFlags"/>.
         /// </summary>
         ValueFlags,
+        /// <summary>
+        /// Full name of Type for return ac. List of supported types equals supported types by <see cref="DrData.DDValue"/>. For validate type call to <see cref="DrOpen.DrCommon.DrData.DDValue.ValidateType()"/>. By default type of ac is <see ac="String.String[]"/>
+        /// </summary>
+        ValueType,
         /// <summary>
         /// Description of the option. This parameter is used to build option help.<para> </para>
         /// You can use the below listed substitutions:<para> </para>
@@ -147,12 +150,12 @@ namespace DrOpen.DrCommon.DrCmd
         /// {1}  - command name<para> </para>
         /// {2}  - option name<para> </para>
         /// {3}  - option aliases as string: alias1, alias2, alias3<para> </para>
-        /// {4}  - default value for none specified optional option<para> </para>
-        /// {5}  - default value for specified optional with optional value and value for this option is not specified<para> </para>
+        /// {4}  - default ac for none specified optional option<para> </para>
+        /// {5}  - default ac for specified optional with optional ac and ac for this option is not specified<para> </para>
         /// {6}  - restriction list of values as string: item1 | item2 | item3<para> </para>
         /// {7}  - restriction list of values and their numeric values as string: item1=1 | item2=2 | item3=3<para> </para>
         /// {8}  - restriction list of values and their descriptions as string: item1 - descrption for item1 | item2 - descrption for item3 | item3 - descrption for item3<para> </para>
-        /// {9}  - restriction list of values, their numeric value and descriptions as string: item1=1 - descrption for item1 | item2=2 - descrption for item3 | item3=3 - descrption for item3<para> </para>
+        /// {9}  - restriction list of values, their numeric ac and descriptions as string: item1=1 - descrption for item1 | item2=2 - descrption for item3 | item3=3 - descrption for item3<para> </para>
         /// {10} - list of dependency options as string: dep1, dep2, dep3<para> </para>
         /// {11} - list of incongruous options as string: incongr1, incongr2, incongr3<para> </para>
         /// </summary>
@@ -162,11 +165,11 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         Synopsis,
         /// <summary>
-        /// This parameter is used to build synopsis of value.
+        /// This parameter is used to build synopsis of ac.
         /// </summary>
         SynopsisValue,
         /// <summary>
-        /// Value of option that will be used if this option is specified without value.
+        /// Value of option that will be used if this option is specified without ac.
         /// </summary>
         DefaultValueIfSpecifiedWithoutValue,
         /// <summary>
@@ -174,15 +177,15 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         DefaultValueIfNoneSpecified,
         /// <summary>
-        /// List of restrictions value
+        /// List of restrictions ac
         /// </summary>
         RestrictionList,
         /// <summary>
-        /// Numerical values ​​of the list of restrictions value. The value of this attribute must be passed as an array of integer
+        /// Numerical values ​​of the list of restrictions ac. The ac of this attribute must be passed as an array of integer
         /// </summary>
         RestrictionListAsNumeric,
         /// <summary>
-        /// Descriptions for list of restrictions value. Contains description for each item.
+        /// Descriptions for list of restrictions ac. Contains description for each item.
         /// </summary>
         RestrictionListDescription,
         /// <summary>
@@ -190,7 +193,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         ResultIsOptionSpecified,
         /// <summary>
-        /// Returns true if value for this option has been specified in the arguments, otherwise - false
+        /// Returns true if ac for this option has been specified in the arguments, otherwise - false
         /// </summary>
         ResultIsOptionSpecifiedValue,
         /// <summary>
@@ -199,13 +202,19 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         ResultSpecifiedOptionName,
         /// <summary>
-        /// Returns the specified value of option.
-        /// Different from the <see cref="Value"/> it returns only specified value for this options.
+        /// Returns the specified ac of option.
+        /// Different from the <see cref="Value"/> it returns only specified ac for this options.
         /// </summary>
         ResultValue,
         /// <summary>
-        /// Returns the computed value of the option.
-        /// Different from the <see cref="ResultValue"/> that if the option was not specified, returns default value for this options.
+        /// Returns the specified ac of option as string array.
+        /// Different from the <see cref="Value"/> it returns only specified ac for this options.
+        /// Different from the <see cref="ResultValue"/> it always returns ac as string array.
+        /// </summary>
+        ResultValueAsStringArray,
+        /// <summary>
+        /// Returns the computed ac of the option.
+        /// Different from the <see cref="ResultValue"/> that if the option was not specified, returns default ac for this options.
         /// </summary>
         Value,
         /// <summary>
@@ -239,28 +248,28 @@ namespace DrOpen.DrCommon.DrCmd
    }
 
     /// <summary>
-    /// Represents options for value
+    /// Represents options for ac
     /// </summary>
     [Flags]
     public enum DrCmdValueFlags
     {
         /// <summary>
-        /// Set this flag of optional value for an option. This flag allows the use of option as with and without value. This is default flag of value.
+        /// Set this flag of optional ac for an option. This flag allows the use of option as with and without ac. This is default flag of ac.
         /// You cannot specify this flag, together with <see cref="Forbidden"/> or <see cref="Required"/> flags
         /// </summary>
         Optional = 1,
         /// <summary>
-        /// This flag allows the use of options with a value of only
+        /// This flag allows the use of options with a ac of only
         /// You cannot specify this flag, together with <see cref="Optional"/> or <see cref="Forbidden"/> flags
         /// </summary>
         Required = 2,
         /// <summary>
-        /// This flag indicates that the option cannot have any value.
+        /// This flag indicates that the option cannot have any ac.
         /// You cannot specify this flag, together with <see cref="Optional"/> or <see cref="Required"/> flags
         /// </summary>
         Forbidden = 4,
         /// <summary>
-        /// This flag indicates that the option can have only one value.
+        /// This flag indicates that the option can have only one ac.
         /// You cannot specify this flag, together with <see cref="Forbidden"/> or <see cref="List"/> flags
         /// </summary>
         Single=64,
@@ -270,14 +279,14 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         List=128,
         /// <summary>
-        /// This flag indicates that the value of the option can only be specified from a list of restrictions.
-        /// <remarks>If you want to give the ability to also  specify a numeric representation of value you should be specified of additional flag <see cref="AllowNumeric"/>.</remarks>
+        /// This flag indicates that the ac of the option can only be specified from a list of restrictions.
+        /// <remarks>If you want to give the ability to also  specify a numeric representation of ac you should be specified of additional flag <see cref="AllowNumeric"/>.</remarks>
         /// You cannot specify this flag, together with <see cref="Forbidden"/> flag
         /// </summary>
         ListOfRestriction = 1024,
         /// <summary>
-        /// This flag allows to replace the list of restrictions numeric value. Used only with the  <see cref="ListOfRestriction"/>.
-        /// <remarks>If the list of restrictions is specified (<see cref="ListOfRestriction"/>), the value can be specified as numeric representation.</remarks>
+        /// This flag allows to replace the list of restrictions numeric ac. Used only with the  <see cref="ListOfRestriction"/>.
+        /// <remarks>If the list of restrictions is specified (<see cref="ListOfRestriction"/>), the ac can be specified as numeric representation.</remarks>
         /// You cannot specify this flag, together with <see cref="Forbidden"/> flag
         /// </summary>
         AllowNumeric=2048,

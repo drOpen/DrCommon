@@ -103,7 +103,7 @@ namespace DrOpen.DrCommon.DrCmd
             get { return valueFlags; }
         }
         /// <summary>
-        /// Retruns parametr value of this option from <see cref="DrCmdOptionSettings.Value"/>
+        /// Retruns parametr ac of this option from <see cref="DrCmdOptionSettings.Value"/>
         /// </summary>
         public DDValue Value
         {
@@ -111,14 +111,14 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Gets the value from attribute collection associated with the specified name. When this method returns, 
-        /// contains the value associated with the specified name, if the name is found; 
-        /// otherwise, the default value for the flag of the value parameter.
+        /// Gets the ac from attribute collection associated with the specified name. When this method returns, 
+        /// contains the ac associated with the specified name, if the name is found; 
+        /// otherwise, the default ac for the flag of the ac parameter.
         /// </summary>
         /// <param name="name">attribute name</param>
-        /// <param name="defaultValue">the default value for the flag of the value parameter.</param>
-        /// <returns>When this method returns, contains the value associated with the specified name, if the nameis found; 
-        /// otherwise, the default value for the flag of the value parameter.</returns>
+        /// <param name="defaultValue">the default ac for the flag of the ac parameter.</param>
+        /// <returns>When this method returns, contains the ac associated with the specified name, if the nameis found; 
+        /// otherwise, the default ac for the flag of the ac parameter.</returns>
         public DDValue GetAttributeValue(object name, object defaultValue)
         {
             return Option.Attributes.GetValue(name.ToString(), defaultValue);
@@ -134,7 +134,7 @@ namespace DrOpen.DrCommon.DrCmd
             return DrCmdOptionType.Optional;
         }
         /// <summary>
-        /// Returns default option value flag <see cref="DrCmdValueFlags.Optional"/>
+        /// Returns default option ac flag <see cref="DrCmdValueFlags.Optional"/>
         /// </summary>
         /// <returns></returns>
         public static DrCmdValueFlags GetDefaultValueFlags()
@@ -177,7 +177,7 @@ namespace DrOpen.DrCommon.DrCmd
             return GetAttributeValue(DrCmdOptionSettings.RestrictionList, string.Empty).ToString().Replace("\0", separator);
         }
         /// <summary>
-        /// Returns restriction list and numeric value as single string separated by specified separator
+        /// Returns restriction list and numeric ac as single string separated by specified separator
         /// If the Length of the lists do not match a <exception cref="FormatException">FormatException</exception>will be thrown.
         /// <param name="separator">item separator</param>
         /// </summary>
@@ -195,7 +195,7 @@ namespace DrOpen.DrCommon.DrCmd
             return text;
         }
         /// <summary>
-        /// Returns restriction list and description value as single string separated by specified separator
+        /// Returns restriction list and description ac as single string separated by specified separator
         /// <param name="separator">item separator</param>
         /// </summary>
         private string GetRestrictionListWithDescriptionAsString(string separator)
@@ -212,7 +212,7 @@ namespace DrOpen.DrCommon.DrCmd
             return text;
         }
         /// <summary>
-        /// Returns restriction list with value  and description as single string separated by specified separator
+        /// Returns restriction list with ac  and description as single string separated by specified separator
         /// <param name="separator">item separator</param>
         /// </summary>
         private string GetRestrictionListWithValueAndDescriptionAsString(string separator)
@@ -362,14 +362,37 @@ namespace DrOpen.DrCommon.DrCmd
         /// <returns></returns>
         private static string[] GetOptionValueAsStringArray(DDNode value)
         {
-            var result = new string[value.Attributes.Values.Count];
+            return GetOptionValueAsStringArray(value.Attributes);
+        }
+
+        /// <summary>
+        /// Returns string array from all values in collections of attributes
+        /// </summary>
+        /// <returns></returns>
+        private static string[] GetOptionValueAsStringArray(DDAttributesCollection ac)
+        {
+            var result = new string[ac.Values.Count];
             int i = 0;
-            foreach (var item in value.Attributes.Values)
+            foreach (var item in ac.Values)
             {
                 result[i] = item;
                 i++;
             }
             return result;
+        }
+
+
+        private DDValue ConvertToDDValue(DDAttributesCollection ac)
+        {
+            if (ac == null) return new DDValue(null);
+            if (ac.Count == 0) return new DDValue();
+            if (ac.Count == 1)  
+            {
+                var en = ac.GetEnumerator();
+                en.MoveNext();
+                return en.Current.Value;
+            }
+            return new DDValue(GetOptionValueAsStringArray(ac));
         }
 
         /// <summary>
@@ -380,9 +403,11 @@ namespace DrOpen.DrCommon.DrCmd
         {
             Option.Attributes.Add(DrCmdOptionSettings.ResultIsOptionSpecified, true, ResolveConflict.OVERWRITE);                                        // option is specified
             Option.Attributes.Add(DrCmdOptionSettings.ResultSpecifiedOptionName, item.Key, ResolveConflict.OVERWRITE);                                  // specified option name
-            var optValues = GetOptionValueAsStringArray(item.Value);
-            Option.Attributes.Add(DrCmdOptionSettings.ResultValue, optValues, ResolveConflict.OVERWRITE);                                               // specified option value as string array
-            Option.Attributes.Add(DrCmdOptionSettings.ResultIsOptionSpecifiedValue, optValues.Length != 0, ResolveConflict.OVERWRITE);                  // specified option value as string array            
+            
+            Option.Attributes.Add(DrCmdOptionSettings.ResultValueAsStringArray, GetOptionValueAsStringArray(item.Value), ResolveConflict.OVERWRITE);                                               // specified option ac as string array
+            Option.Attributes.Add(DrCmdOptionSettings.ResultIsOptionSpecifiedValue, item.Value.HasAttributes, ResolveConflict.OVERWRITE);               // specified option as string array            
+
+            Option.Attributes.Add(DrCmdOptionSettings.ResultValue, ConvertToDDValue(item.Value.Attributes), ResolveConflict.OVERWRITE);                 // specified option DDValue
         }
 
         /// <summary>
@@ -395,6 +420,7 @@ namespace DrOpen.DrCommon.DrCmd
             Option.Attributes.Remove(DrCmdOptionSettings.ResultSpecifiedOptionName);
             Option.Attributes.Remove(DrCmdOptionSettings.ResultIsOptionSpecifiedValue);
             Option.Attributes.Remove(DrCmdOptionSettings.ResultValue);
+            Option.Attributes.Remove(DrCmdOptionSettings.ResultValueAsStringArray);
             Option.Attributes.Remove(DrCmdOptionSettings.Value);
   
         }
@@ -429,7 +455,7 @@ namespace DrOpen.DrCommon.DrCmd
             }
         }
         /// <summary>
-        /// Verify flag of value for option. 
+        /// Verify flag of ac for option. 
         /// In the case of the incongruous flags are detected ​​the <exception cref="FormatException">FormatException</exception>will be thrown
         /// </summary>
         public void VerifyValueRestrictionsType()
@@ -461,10 +487,10 @@ namespace DrOpen.DrCommon.DrCmd
             }
         }
         /// <summary>
-        /// Checks the current value of the two incongruous flags simultaneously. 
+        /// Checks the current ac of the two incongruous flags simultaneously. 
         /// If the two flags are detected ​​at the same time the <exception cref="FormatException">FormatException</exception> will be thrown.
         /// </summary>
-        /// <param name="current">Current flag of value</param>
+        /// <param name="current">Current flag of ac</param>
         /// <param name="first">the first incongruous flag to detect</param>
         /// <param name="second">the second  incongruous flag to detect</param>
         private static void CheckIncongruousTypeOfValue(DrCmdValueFlags current, DrCmdValueFlags first, DrCmdValueFlags second)
@@ -481,11 +507,18 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         public void ValidateOptionParameter()
         {
+            // start validate ac Type
+            if (Option.Attributes.Contains(DrCmdOptionSettings.ValueType))  // validate specified Type for convert
+            {
+                var valueType = System.Type.GetType(Option.Attributes[DrCmdOptionSettings.ValueType].GetValueAsString());
+                if (!DDValue.ValidateType(valueType)) throw new ArgumentException(string.Format(Msg.SPECIFIED_VALUE_TYPE_IS_NOT_SUPPORTED_BY_DDVALUE, valueType.ToString()));
+            }
+            // end validate ac Type
             var isSpecifiedOption = GetAttributeValue(DrCmdOptionSettings.ResultIsOptionSpecified, false);
             if ((Type.HasFlag(DrCmdOptionType.Required)) & (isSpecifiedOption == false)) throw new ArgumentException(string.Format(Msg.REQUIRED_OPTION_IS_NOT_SPECIFIED, Name, CommandName));
-            // value flag
-            var valueAsStringArray = GetAttributeValue(DrCmdOptionSettings.ResultValue, new string[] { }).GetValueAsStringArray();
-            var valueAsString = GetAttributeValue(DrCmdOptionSettings.ResultValue, string.Empty).GetValueAsString();
+            // ac flag
+            var valueAsStringArray = GetAttributeValue(DrCmdOptionSettings.ResultValueAsStringArray, new string[] { }).GetValueAsStringArray();
+            var valueAsString = GetAttributeValue(DrCmdOptionSettings.ResultValueAsStringArray, string.Empty).GetValueAsString();
             // Single
             if ((ValueFlags.HasFlag(DrCmdValueFlags.Single)) & (valueAsStringArray.Length > 1)) throw new ArgumentException(string.Format(Msg.OPTION_CANNOT_CONTAINS_MORE_THAN_ONE_VALUE, Name, valueAsString, valueAsStringArray.Length, DrCmdValueFlags.Single, CommandName));
             // Forbidden
@@ -497,8 +530,8 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Checks the value of the options on their compliance with the list of allowed values ​​or, if enabled, their numerical conform
-        /// If the option value is incorrect by restriction list from attribute <see cref="DrCmdOptionSettings.RestrictionList"/> the <exception cref="ArgumentException">ArgumentException</exception> will be thrown.
+        /// Checks the ac of the options on their compliance with the list of allowed values ​​or, if enabled, their numerical conform
+        /// If the option ac is incorrect by restriction list from attribute <see cref="DrCmdOptionSettings.RestrictionList"/> the <exception cref="ArgumentException">ArgumentException</exception> will be thrown.
         /// </summary>
         /// <param name="valueAsStringArray">option values as string array</param>
         private void ValidateOptionValueByRestrictionList(IEnumerable<string> valueAsStringArray)
@@ -544,7 +577,7 @@ namespace DrOpen.DrCommon.DrCmd
             }
         }
         /// <summary>
-        /// Save value ​​in the attribute Value based on the parameters passed, and / or using default values
+        /// Save ac ​​in the attribute Value based on the parameters passed, and / or using default values
         /// </summary>
         public void ApplyDefaultValue()
         {
@@ -553,25 +586,29 @@ namespace DrOpen.DrCommon.DrCmd
             {
                 if (GetAttributeValue(DrCmdOptionSettings.ResultIsOptionSpecifiedValue, false))
                 {
-                    value = GetAttributeValue(DrCmdOptionSettings.ResultValue, string.Empty);                                  // if option value is specified
+                    value = GetAttributeValue(DrCmdOptionSettings.ResultValue, string.Empty);                                  // if option ac is specified
                 }
                 else
                 {
-                    value = GetAttributeValue(DrCmdOptionSettings.DefaultValueIfSpecifiedWithoutValue, string.Empty);          // if option is specified without value
+                    value = GetAttributeValue(DrCmdOptionSettings.DefaultValueIfSpecifiedWithoutValue, string.Empty);          // if option is specified without ac
                 }
             }
             else
             {
                 value = GetAttributeValue(DrCmdOptionSettings.DefaultValueIfNoneSpecified, string.Empty);                       // if option is not specified
             }
+            if (Option.Attributes.Contains(DrCmdOptionSettings.ValueType)) // if ValueType is specified ac will be converted to specified Type
+            {
+                if ((value.Type == typeof(System.String)) || (value.Type == typeof(System.String[]))) value.ConvertFromStringTo(Option.Attributes[DrCmdOptionSettings.ValueType].GetValueAsString());
+            }
             Option.Attributes.Add(DrCmdOptionSettings.Value, value);
         }
 
         #region Help
         /// <summary>
-        /// Returns the synopsis for the option and her valuedepending on the flag of option and value flag
-        /// If value for this option can be optional, her value flag is not <see cref="DrCmdValueFlags.Required"/> the function will be return option synopsis in square brackets <para> </para>
-        /// How synopsis for the value will look of the function, see <see cref="GetOptionValueSynopsis"/><para> </para>
+        /// Returns the synopsis for the option and her valuedepending on the flag of option and ac flag
+        /// If ac for this option can be optional, her ac flag is not <see cref="DrCmdValueFlags.Required"/> the function will be return option synopsis in square brackets <para> </para>
+        /// How synopsis for the ac will look of the function, see <see cref="GetOptionValueSynopsis"/><para> </para>
         /// <example>Example: OptName, [OptName], OptName [OptValue], [OptName [OptValue]]</example>
         /// </summary>
         /// <returns></returns>
@@ -589,18 +626,18 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// Returns the synopsis for the value of this option depending on the flag of value. <para> </para>
-        /// If value for this option can be optional, her value flag is not <see cref="DrCmdValueFlags.Required"/> the function will be return value synopsis in square brackets <para> </para>
-        /// If this option cannot contains value, her value flag is <see cref="DrCmdValueFlags.Forbidden"/> the function will be return empty string 
+        /// Returns the synopsis for the ac of this option depending on the flag of ac. <para> </para>
+        /// If ac for this option can be optional, her ac flag is not <see cref="DrCmdValueFlags.Required"/> the function will be return ac synopsis in square brackets <para> </para>
+        /// If this option cannot contains ac, her ac flag is <see cref="DrCmdValueFlags.Forbidden"/> the function will be return empty string 
         /// </summary>
         /// <returns></returns>
         internal string GetOptionValueSynopsis()
         {
             var text = string.Empty;
-            if (!ValueFlags.HasFlag(DrCmdValueFlags.Forbidden)) // this option can have value
+            if (!ValueFlags.HasFlag(DrCmdValueFlags.Forbidden)) // this option can have ac
             {
                 text = GetAttributeValue(DrCmdOptionSettings.SynopsisValue,string.Empty);
-                if (!ValueFlags.HasFlag(DrCmdValueFlags.Required)) text = "[" + text + "]"; // this value is optional 
+                if (!ValueFlags.HasFlag(DrCmdValueFlags.Required)) text = "[" + text + "]"; // this ac is optional 
             }
             return text;
         }
@@ -612,12 +649,12 @@ namespace DrOpen.DrCommon.DrCmd
         /// {1}  - command name<para> </para>
         /// {2}  - option name<para> </para>
         /// {3}  - option aliases as string: alias1, alias2, alias3<para> </para>
-        /// {4}  - default value for none specified optional option<para> </para>
-        /// {5}  - default value for specified optional with optional value and value for this option is not specified<para> </para>
+        /// {4}  - default ac for none specified optional option<para> </para>
+        /// {5}  - default ac for specified optional with optional ac and ac for this option is not specified<para> </para>
         /// {6}  - restriction list of values as string: item1 | item2 | item3<para> </para>
         /// {7}  - restriction list of values and their numeric values as string: item1=1 | item2=2 | item3=3<para> </para>
         /// {8}  - restriction list of values and their descriptions as string: item1 - descrption for item1 | item2 - descrption for item3 | item3 - descrption for item3<para> </para>
-        /// {9}  - restriction list of values, their numeric value and descriptions as string: item1=1 - descrption for item1 | item2=2 - descrption for item3 | item3=3 - descrption for item3<para> </para>
+        /// {9}  - restriction list of values, their numeric ac and descriptions as string: item1=1 - descrption for item1 | item2=2 - descrption for item3 | item3=3 - descrption for item3<para> </para>
         /// {10} - list of dependency options as string: dep1, dep2, dep3<para> </para>
         /// {11} - list of incongruous options as string: incongr1, incongr2, incongr3<para> </para>
         /// </summary>
@@ -628,12 +665,12 @@ namespace DrOpen.DrCommon.DrCmd
                                  Command.Name,                                                                              // command name
                                  Option.Name,                                                                               // option name
                                  GetAliasesAsString(", "),                                                                  // option aliases as string: alias1, alias2, alias3
-                                 GetAttributeValue(DrCmdOptionSettings.DefaultValueIfNoneSpecified, string.Empty),          // default value for none specified optional option
-                                 GetAttributeValue(DrCmdOptionSettings.DefaultValueIfSpecifiedWithoutValue, string.Empty),  // default value for specified optional with optional value and value for this option is not specified
+                                 GetAttributeValue(DrCmdOptionSettings.DefaultValueIfNoneSpecified, string.Empty),          // default ac for none specified optional option
+                                 GetAttributeValue(DrCmdOptionSettings.DefaultValueIfSpecifiedWithoutValue, string.Empty),  // default ac for specified optional with optional ac and ac for this option is not specified
                                  GetRestrictionListAsString(" | "),                                                         // restriction list of values as string: item1 | item2 | item3
                                  GetRestrictionListWithValueAsString(" | "),                                                // restriction list of values and their numeric values as string: item1=1 | item2=2 | item3=3
                                  GetRestrictionListWithDescriptionAsString(" | "),                                          // restriction list of values and their descriptions as string: item1 - descrption for item1 | item2 - descrption for item3 | item3 - descrption for item3
-                                 GetRestrictionListWithValueAndDescriptionAsString(" | "),                                  // restriction list of values, their numeric value and descriptions as string: item1=1 - descrption for item1 | item2=2 - descrption for item3 | item3=3 - descrption for item3
+                                 GetRestrictionListWithValueAndDescriptionAsString(" | "),                                  // restriction list of values, their numeric ac and descriptions as string: item1=1 - descrption for item1 | item2=2 - descrption for item3 | item3=3 - descrption for item3
                                  GetTermsOfDependencyAsString(", "),                                                        // list of dependency options as string: dep1, dep2, dep3
                                  GetTermsOfIncongruousAsString(", "));                                                      // list of incongruous options as string: incongr1, incongr2, incongr3
 

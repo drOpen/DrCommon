@@ -2968,14 +2968,14 @@ namespace UTestDrData
 
         }
         #endregion ToStringArray
-        #region SelfTransformFromStringTo
+        #region ConvertFromStringTo
         [TestMethod]
         public void TestSelfTransformFromStringTo_FromNotString()
         {
             var v = new DDValue(0);
             try
             {
-                v.SelfTransformFromStringTo(typeof(string));
+                v.ConvertFromStringTo(typeof(string));
                 Assert.Fail("Can transfrom from not string type.");
             }
             catch (DDTypeConvertException)
@@ -2987,7 +2987,7 @@ namespace UTestDrData
             var v = new DDValue();
             try
             {
-                v.SelfTransformFromStringTo(typeof(string));
+                v.ConvertFromStringTo(typeof(string));
                 Assert.Fail("Can transfrom from null.");
             }
 
@@ -3000,7 +3000,7 @@ namespace UTestDrData
             var v = new DDValue("0");
             try
             {
-                v.SelfTransformFromStringTo(typeof(int[]));
+                v.ConvertFromStringTo(typeof(int[]));
                 Assert.Fail("Can transfrom from string to string array.");
             }
             catch (DDTypeConvertException)
@@ -3012,7 +3012,7 @@ namespace UTestDrData
             var v = new DDValue(new[] { "true", "false", "true" });
             try
             {
-                v.SelfTransformFromStringTo(typeof(bool));
+                v.ConvertFromStringTo(typeof(bool));
                 Assert.Fail("Can transfrom from string to string array.");
             }
             catch (DDTypeConvertException)
@@ -3022,7 +3022,7 @@ namespace UTestDrData
         public void TestSelfTransformFromStringTo_Empty()
         {
             var v = new DDValue(String.Empty);
-            v.SelfTransformFromStringTo(typeof(bool)); // incorrect data = 0 ToDo
+            v.ConvertFromStringTo(typeof(bool)); // incorrect data = 0 ToDo
             //ValidateBool(v, a);
 
         }
@@ -3030,14 +3030,14 @@ namespace UTestDrData
         public void TestSelfTransformFromStringTo_BoolTrue()
         {
             var v = new DDValue("true");
-            v.SelfTransformFromStringTo(typeof(bool));
+            v.ConvertFromStringTo(typeof(bool));
             ValidateBool(v, true);
         }
         [TestMethod]
         public void TestSelfTransformFromStringTo_BoolFalse()
         {
             var v = new DDValue("false");
-            v.SelfTransformFromStringTo(typeof(bool));
+            v.ConvertFromStringTo(typeof(bool));
             ValidateBool(v, false);
         }
         [TestMethod]
@@ -3045,7 +3045,7 @@ namespace UTestDrData
         {
             var v = new DDValue(new[] { "true", "false", "true" });
 
-            v.SelfTransformFromStringTo(typeof(bool[]));
+            v.ConvertFromStringTo(typeof(bool[]));
             ValidateBoolArray(new bool[] { true, false, true }, v);
 
         }
@@ -3054,11 +3054,11 @@ namespace UTestDrData
         {
             var v = new DDValue(new[] { "1", "2", "3" });
 
-            v.SelfTransformFromStringTo(typeof(byte[]));
+            v.ConvertFromStringTo(typeof(byte[]));
             ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 }, v);
 
         }
-        #endregion SelfTransformFromStringTo
+        #endregion ConvertFromStringTo
         #region ValidationType
         private void ValidateDateTime(DateTime dt, DDValue data)
         {

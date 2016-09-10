@@ -11,6 +11,7 @@ namespace UTestDrLogSrv
     public class UTestProviderLogFile
     {
         [TestMethod]
+        [Ignore]
         public void TestMethod1()
         {
             var logFile = new LogFile(new DDNode(new DDType (typeof(LogFile).Name)), true);

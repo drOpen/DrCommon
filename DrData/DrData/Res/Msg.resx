@@ -180,4 +180,7 @@
   <data name="EXPECTED_NODE_TYPE_IS_INCORRECT" xml:space="preserve">
     <value>The node type '{0}' is incorrect. Expected node type is '{1}.'</value>
   </data>
+  <data name="CANNOT_CONVERT_VALUE_TO_TYPE" xml:space="preserve">
+    <value>Cannot convert value '{0}' to specified type '{1}.'</value>
+  </data>
 </root>

@@ -106,6 +106,15 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot convert value &apos;{0}&apos; to specified type &apos;{1}.&apos;.
+        /// </summary>
+        internal static string CANNOT_CONVERT_VALUE_TO_TYPE {
+            get {
+                return ResourceManager.GetString("CANNOT_CONVERT_VALUE_TO_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot merge node &apos;{0}&apos;. The destination node &apos;{1}&apos; already has a child node with the same name..
         /// </summary>
         internal static string CANNOT_MERGE_NODE_WITH_EXIST_NAME {

@@ -60,4 +60,44 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// </summary>
         public virtual string Value { get; private set; }
     }
+
+    /// <summary>
+    /// Exception by conversion value to specified type
+    /// </summary>
+    public class DDValueConvertException : DDValueException
+    {
+        /// <summary>
+        /// Initializes a new instance of the DDValueConvertException class with the default message
+        /// </summary>
+        /// <param name="value">value to convert</param>
+        /// <param name="requestedType">requested type for conversion</param>
+        public DDValueConvertException(string value, Type requestedType) : base(value, string.Format(Res.Msg.CANNOT_CONVERT_VALUE_TO_TYPE, value, requestedType.FullName)) { this.RequestedTypeFullName = requestedType.FullName; }
+        /// <summary>
+        /// Initializes a new instance of the DDValueConvertException class with the default message and a reference to the inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="value">value to convert</param>
+        /// <param name="requestedType">requested type for conversion</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        public DDValueConvertException(string value, Type requestedType, Exception innerException) : base(value, string.Format(Res.Msg.CANNOT_CONVERT_VALUE_TO_TYPE, value, requestedType.FullName), innerException) { this.RequestedTypeFullName = requestedType.FullName; }
+        /// <summary>
+        /// Initializes a new instance of the DDValueConvertException class with the default message
+        /// </summary>
+        /// <param name="value">value to convert</param>
+        /// <param name="requestedType">requested type for conversion</param>
+        /// <param name="message">A message that describes the error.</param>
+        public DDValueConvertException(string value, Type requestedType, string message) : base(value, message) { this.RequestedTypeFullName = requestedType.FullName; }
+        /// <summary>
+        /// Initializes a new instance of the DDValueConvertException class with the specified message and a reference to the inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="value">value to convert</param>
+        /// <param name="requestedType">requested type for conversion</param>
+        /// <param name="message">A message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        public DDValueConvertException(string value, Type requestedType, string message, Exception innerException) : base(value, message, innerException) { this.RequestedTypeFullName = requestedType.FullName; }
+        /// <summary>
+        /// >requested type for conversion
+        /// </summary>
+        public virtual string RequestedTypeFullName { get; private set; }
+    }
+    
 }

@@ -41,14 +41,14 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <summary>
         /// DrData attributes exception
         /// </summary>
-        /// <param name="name">Type name</param>
+        /// <param name="name">Attribute name</param>
         /// <param name="message">A message that describes the error.</param>
         public DDAttributeException(string name, string message)
             : base(message) { this.Name = name; }
         /// <summary>
         /// DrData attributes exception
         /// </summary>
-        /// <param name="name">Type name</param>
+        /// <param name="name">Attribute name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDAttributeException(string name, string message, Exception innerException)
@@ -88,14 +88,14 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     {
         /// <summary>
         /// Initializes a new instance of the DDAttributeExistsException class with the default error message.
-        /// <param name="name">Type name</param>
+        /// <param name="name">Attribute name</param>
         /// </summary>
         public DDAttributeExistsException(string name)
             : base(name, string.Format(Res.Msg.ATTRIBUTE_EXISTS, name)) { }
         /// <summary>
         /// Initializes a new instance of the DDAttributeExistsException class with the specified error message.
         /// </summary>
-        /// <param name="name">Type name</param>
+        /// <param name="name">Attribute name</param>
         /// <param name="message">A message that describes the error.</param>
         public DDAttributeExistsException(string name, string message)
             : base(name, message) { }
@@ -103,7 +103,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <summary>
         /// Initializes a new instance of the DDAttributeExistsException class with the default error message.
         /// </summary>
-        /// <param name="name">Type name</param>
+        /// <param name="name">Attribute name</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDAttributeExistsException(string name, Exception innerException)
             : base(name, string.Format(Res.Msg.ATTRIBUTE_EXISTS, name), innerException) { }
@@ -111,7 +111,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <summary>
         /// nitializes a new instance of the DDAttributeExistsException class with the specified error message.
         /// </summary>
-        /// <param name="name">Type name</param>
+        /// <param name="name">Attribute name</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDAttributeExistsException(string name, string message, Exception innerException)

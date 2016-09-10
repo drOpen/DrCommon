@@ -370,23 +370,28 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>Converted object by specified type</returns>
         protected static object ConvertStringToSpecifiedTypeObject(Type type, string value)
         {
-
-            if (type == typeof(byte[])) return HEX(value);
-            if (type == typeof(byte)) return Convert.ToByte(value);
-
-            if (type == typeof(string)) return value.ToString();
-            if (type == typeof(DateTime)) return Convert.ToDateTime(value);
-            if (type == typeof(bool)) return Convert.ToBoolean(value);
-            if (type == typeof(char)) return Convert.ToChar(value);
-            if (type == typeof(float)) return Convert.ToSingle(value);
-            if (type == typeof(double)) return Convert.ToDouble(value);
-            if (type == typeof(short)) return Convert.ToInt16(value);
-            if (type == typeof(int)) return Convert.ToInt32(value);
-            if (type == typeof(long)) return Convert.ToInt64(value);
-            if (type == typeof(ushort)) return Convert.ToUInt16(value);
-            if (type == typeof(uint)) return Convert.ToUInt32(value);
-            if (type == typeof(ulong)) return Convert.ToUInt64(value);
-            if (type == typeof(Guid)) return new Guid(value);
+            try
+            {
+                if (type == typeof(byte[])) return HEX(value);
+                if (type == typeof(byte)) return Convert.ToByte(value);
+                if (type == typeof(string)) return value.ToString();
+                if (type == typeof(DateTime)) return Convert.ToDateTime(value);
+                if (type == typeof(bool)) return Convert.ToBoolean(value);
+                if (type == typeof(char)) return Convert.ToChar(value);
+                if (type == typeof(float)) return Convert.ToSingle(value);
+                if (type == typeof(double)) return Convert.ToDouble(value);
+                if (type == typeof(short)) return Convert.ToInt16(value);
+                if (type == typeof(int)) return Convert.ToInt32(value);
+                if (type == typeof(long)) return Convert.ToInt64(value);
+                if (type == typeof(ushort)) return Convert.ToUInt16(value);
+                if (type == typeof(uint)) return Convert.ToUInt32(value);
+                if (type == typeof(ulong)) return Convert.ToUInt64(value);
+                if (type == typeof(Guid)) return new Guid(value);
+            }
+            catch (Exception e)
+            {
+                throw new DDValueConvertException(value, type, e);
+            }
             throw new DDTypeIncorrectException(type.ToString());
         }
 
@@ -650,15 +655,6 @@ namespace DrOpen.DrCommon.DrData
         public virtual object GetValue()
         {
 
-            
-           /* 
-            if (Type.IsArray )
-                return GetValueAsArray<Type>();
-            else
-                return GetValueAs<Type>();
-            */
-            
-
             if (Type == typeof(string)) return GetValueAsString();
             if (Type == typeof(string[])) return GetValueAsStringArray();
             if (Type == typeof(DateTime)) return GetValueAsDateTime();
@@ -890,7 +886,7 @@ namespace DrOpen.DrCommon.DrData
         #region ValidateType
         /// <summary>
         /// Checks the type of object.
-        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types
+        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double and Guid or an array of the above types
         /// </summary>
         /// <param name="value">object whose type will be validate</param>
         /// <returns>true if type of object is supported, otherwise false</returns>
@@ -901,7 +897,7 @@ namespace DrOpen.DrCommon.DrData
 
         /// <summary>
         /// Checks the type.
-        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types. 
+        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double and Guid or an array of the above types. 
         /// Nullable array type is not supported.
         /// </summary>
         /// <param name="type">type for validation</param>
@@ -1222,20 +1218,33 @@ namespace DrOpen.DrCommon.DrData
             return bytes;
         }
         #endregion HEX
-        #region Transformation
+        #region Convert
+
         /// <summary>
-        /// Self transformation from string or string array type to specified type. Change themselves and their data type. Retruns itself after covertion.<para> </para>
+        /// Converts this value to specified type from string or string array. Change themselves and their data type.
         /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
         /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
         /// </summary>
         /// <param name="newType">convert to specified type</param>
         /// <returns></returns>
-        public DDValue SelfTransformFromStringTo(Type newType)
+        public void ConvertFromStringTo(string newType)
+        {
+            ConvertFromStringTo(Type.GetType(newType));
+        }
+
+        /// <summary>
+        /// Converts this value to specified type from string or string array. Change themselves and their data type.
+        /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
+        /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
+        /// </summary>
+        /// <param name="newType">convert to specified type</param>
+        /// <returns></returns>
+        public void ConvertFromStringTo(Type newType)
         {
             if (this.Type == null) throw new DDTypeNullException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
-            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.Name, newType.Name, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
-            if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertException(this.type.Name, newType.Name, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.Name, newType.Name));
-            if ((newType == typeof(string) || (newType == typeof(string[])))) return this; // nothing to do
+            if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.FullName, newType.FullName, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
+            if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertException(this.type.FullName, newType.FullName, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.FullName, newType.FullName));
+            if ((newType == typeof(string) || (newType == typeof(string[])))) return; // nothing to do
             if (data.Length > 0)
             {
                 if (this.Type.IsArray)
@@ -1256,8 +1265,7 @@ namespace DrOpen.DrCommon.DrData
                 }
             }
             this.type = newType;
-            return this;
         }
-        #endregion Transformation
+        #endregion Convert
     }
 }

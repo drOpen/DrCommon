@@ -112,7 +112,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.ApplicationName, AppDomain.CurrentDomain.FriendlyName);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.ApplicationDescription"/> ac as application description
+        /// Returns parameter <see cref="DrCmdSettings.ApplicationDescription"/> as application description
         /// </summary>
         /// <returns></returns>
         internal string GetSettingsApplicationDescription()
@@ -120,7 +120,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.ApplicationDescription, string.Empty);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> ac as the maximum number of characters in a single line in the help.
+        /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> as the maximum number of characters in a single line in the help.
         /// If it is not specified, returns the BufferWidth-1 ac from <see cref="Console"/>
         /// </summary>
         /// <returns></returns>
@@ -129,7 +129,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, Console.BufferWidth - 1);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> ac as number of space characters used as a tab for help. By default, this ac is equal 3.
+        /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> as number of space characters used as a tab for help. By default, this ac is equal 3.
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpTabSize()

@@ -522,7 +522,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Description, "depth source directory enumeration. The default ac is '{4}' infinitely. Specify '1' for enumerating without subdirectories.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return as int
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 0);
             opt.Attributes.Add(DrCmdOptionSettings.TermsOfDependency, "s");
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "1");
@@ -540,7 +540,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Description, "specify the timeout ac in seconds for a data connection associated with sign server. The default ac is '{4}' infinitely.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return as int
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 0);
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "timeout");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
@@ -556,7 +556,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Description, "the maximum number of threads. The default ac is '{4}'.");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return as int
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 10);
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "max thread");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
@@ -574,7 +574,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 1024);
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return as int
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "block size");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;
@@ -590,7 +590,7 @@ namespace DrSignSample
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.Single.ToString() }); // required and list
             opt.Attributes.Add(DrCmdOptionSettings.DefaultValueIfNoneSpecified, 32768);
-            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return ac as int
+            opt.Attributes.Add(DrCmdOptionSettings.ValueType, typeof(int).FullName); // return as int
             opt.Attributes.Add(DrCmdOptionSettings.SynopsisValue, "block size");
             opt.Attributes.Add(DrCmdOptionSettings.Synopsis, "Synopsis");
             return opt;

@@ -209,7 +209,7 @@ namespace DrOpen.DrCommon.DrCmd
         /// <summary>
         /// Returns the specified ac of option as string array.
         /// Different from the <see cref="Value"/> it returns only specified ac for this options.
-        /// Different from the <see cref="ResultValue"/> it always returns ac as string array.
+        /// Different from the <see cref="ResultValue"/> it always returns as string array.
         /// </summary>
         ResultValueAsStringArray,
         /// <summary>

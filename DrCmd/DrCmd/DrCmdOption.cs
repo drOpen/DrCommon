@@ -112,12 +112,12 @@ namespace DrOpen.DrCommon.DrCmd
 
         /// <summary>
         /// Gets the ac from attribute collection associated with the specified name. When this method returns, 
-        /// contains the ac associated with the specified name, if the name is found; 
+        /// contains the associated with the specified name, if the name is found; 
         /// otherwise, the default ac for the flag of the ac parameter.
         /// </summary>
         /// <param name="name">attribute name</param>
         /// <param name="defaultValue">the default ac for the flag of the ac parameter.</param>
-        /// <returns>When this method returns, contains the ac associated with the specified name, if the nameis found; 
+        /// <returns>When this method returns, contains the associated with the specified name, if the nameis found; 
         /// otherwise, the default ac for the flag of the ac parameter.</returns>
         public DDValue GetAttributeValue(object name, object defaultValue)
         {
@@ -177,7 +177,7 @@ namespace DrOpen.DrCommon.DrCmd
             return GetAttributeValue(DrCmdOptionSettings.RestrictionList, string.Empty).ToString().Replace("\0", separator);
         }
         /// <summary>
-        /// Returns restriction list and numeric ac as single string separated by specified separator
+        /// Returns restriction list and numeric as single string separated by specified separator
         /// If the Length of the lists do not match a <exception cref="FormatException">FormatException</exception>will be thrown.
         /// <param name="separator">item separator</param>
         /// </summary>
@@ -195,7 +195,7 @@ namespace DrOpen.DrCommon.DrCmd
             return text;
         }
         /// <summary>
-        /// Returns restriction list and description ac as single string separated by specified separator
+        /// Returns restriction list and description as single string separated by specified separator
         /// <param name="separator">item separator</param>
         /// </summary>
         private string GetRestrictionListWithDescriptionAsString(string separator)
@@ -404,7 +404,7 @@ namespace DrOpen.DrCommon.DrCmd
             Option.Attributes.Add(DrCmdOptionSettings.ResultIsOptionSpecified, true, ResolveConflict.OVERWRITE);                                        // option is specified
             Option.Attributes.Add(DrCmdOptionSettings.ResultSpecifiedOptionName, item.Key, ResolveConflict.OVERWRITE);                                  // specified option name
             
-            Option.Attributes.Add(DrCmdOptionSettings.ResultValueAsStringArray, GetOptionValueAsStringArray(item.Value), ResolveConflict.OVERWRITE);                                               // specified option ac as string array
+            Option.Attributes.Add(DrCmdOptionSettings.ResultValueAsStringArray, GetOptionValueAsStringArray(item.Value), ResolveConflict.OVERWRITE);                                               // specified option as string array
             Option.Attributes.Add(DrCmdOptionSettings.ResultIsOptionSpecifiedValue, item.Value.HasAttributes, ResolveConflict.OVERWRITE);               // specified option as string array            
 
             Option.Attributes.Add(DrCmdOptionSettings.ResultValue, ConvertToDDValue(item.Value.Attributes), ResolveConflict.OVERWRITE);                 // specified option DDValue

@@ -82,7 +82,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Command.Name;
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdCommandSettings.Description"/> ac as command description
+        /// Returns parameter <see cref="DrCmdCommandSettings.Description"/> as command description
         /// </summary>
         /// <returns></returns>
         public string GetCommandDescription()

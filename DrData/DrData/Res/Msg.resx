@@ -183,4 +183,7 @@
   <data name="CANNOT_CONVERT_VALUE_TO_TYPE" xml:space="preserve">
     <value>Cannot convert value '{0}' to specified type '{1}.'</value>
   </data>
+  <data name="ATTRIBUTES_DONT_EXIST" xml:space="preserve">
+    <value>The attributes '{0}' don't exist.</value>
+  </data>
 </root>

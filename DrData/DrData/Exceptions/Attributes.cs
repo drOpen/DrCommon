@@ -60,7 +60,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
 
     }
     /// <summary>
-    /// DrData -- attributes exception -- attribute doesn't exist
+    /// DrData -- attribute exception -- attribute doesn't exist
     /// </summary>
     public class DDMissingAttributeException : DDAttributeException
     {
@@ -79,6 +79,46 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         public DDMissingAttributeException(string name, Exception innerException)
             : base(name, string.Format(Res.Msg.ATTR_DOESNT_EXIST, name), innerException)
         { }
+    }
+
+    /// <summary>
+    /// DrData -- attributes exception -- attributes don't exist
+    /// </summary>
+    public class DDMissingSomeOfAttributesException : DDAttributeException
+    {
+        /// <summary>
+        /// attributes don't exist
+        /// </summary>
+        /// <param name="name">attributes name<s/param>
+        public DDMissingSomeOfAttributesException(params string[] names)
+            : base(String.Empty, string.Format(Res.Msg.ATTRIBUTES_DONT_EXIST, String.Join(", ", names)))
+        {
+            this.Names = names;
+        }
+        /// <summary>
+        /// attributes don't exist
+        /// </summary>
+        /// <param name="name">attributes names</param>
+        /// <param name="innerException">inner exception</param>
+        public DDMissingSomeOfAttributesException(Exception innerException, params string[] names)
+            : base(String.Empty, string.Format(Res.Msg.ATTRIBUTES_DONT_EXIST, String.Join(", ", names)), innerException)
+        {
+            this.Names = names;
+        }
+        /// <summary>
+        /// attributes names
+        /// </summary>
+        public virtual string[] Names { get; private set; }
+        /// <summary>
+        /// gets attributes name as string
+        /// </summary>
+        public override string Name
+        {
+            get
+            {
+                return String.Join(", ", Names);
+            }
+        }
     }
 
     /// <summary>

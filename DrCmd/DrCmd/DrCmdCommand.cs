@@ -270,7 +270,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
 
         /// <summary>
-        /// For each options in this command and save ac ​​in their attribute Value based on the parameters passed, and / or using default values
+        /// For each options in this command and save value ​​in their attribute Value based on the parameters passed, and / or using default values
         /// </summary>
         public void ApplyDefaultValue()
         {
@@ -301,7 +301,7 @@ namespace DrOpen.DrCommon.DrCmd
             foreach (var option in Options)
             {
                 if ((option.GetValueFlags() & DrCmdValueFlags.Forbidden) == DrCmdValueFlags.Forbidden)
-                    ddNode.Attributes.Add(option.Name, option.GetResultIsOptionSpecified()); // set true - false for DrCmdValueFlags.Forbidden ac flag
+                    ddNode.Attributes.Add(option.Name, option.GetResultIsOptionSpecified()); // set true - false for DrCmdValueFlags.Forbidden value flag
                 else
                     ddNode.Attributes.Add(option.Name, option.Value);
             }

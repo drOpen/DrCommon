@@ -132,7 +132,7 @@ namespace UTestDrCmd
             opt.Attributes.Add(DrCmdOptionSettings.Name, name);
             opt.Attributes.Add(DrCmdOptionSettings.Enabled, true);
             opt.Attributes.Add(DrCmdOptionSettings.Aliases, new[] { "mode" });
-            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for ac. {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
+            opt.Attributes.Add(DrCmdOptionSettings.Description, "specify mode. This is working mode for application. It's very very long description for value . {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}");
             opt.Attributes.Add(DrCmdOptionSettings.Type, new[] { DrCmdOptionType.Optional.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.ValueFlags, new[] { DrCmdValueFlags.Required.ToString(), DrCmdValueFlags.ListOfRestriction.ToString() });
             opt.Attributes.Add(DrCmdOptionSettings.RestrictionList, new[] { "ALL", "ENABLED", "DISABLED" });
@@ -282,7 +282,7 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of ac for option are specified: Optional and Required'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of value for option are specified: Optional and Required'.");
             }
             catch (AssertFailedException) { throw; }
             catch (FormatException) {/* it's ok*/}
@@ -297,7 +297,7 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of ac for option are specified: Single and List'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Incongruous types of value for option are specified: Single and List'.");
             }
             catch (AssertFailedException) { throw; }
             catch (FormatException) {/* it's ok*/}
@@ -496,7 +496,7 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden ac flag is specified with another flag'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value flag is specified with another flag'.");
             }
             catch (AssertFailedException) { throw; }
             catch (FormatException) {/* it's ok*/}
@@ -531,14 +531,27 @@ namespace UTestDrCmd
             try
             {
                 var cmdParser = new DrCmdParser(root);
-                Assert.Fail("The incorrect arguments is not catched - 'AllowNumeric ac flag is specified without RestrictionList flag'.");
+                Assert.Fail("The incorrect arguments is not catched - 'AllowNumeric value flag is specified without RestrictionList flag'.");
             }
             catch (AssertFailedException) { throw; }
             catch (FormatException) {/* it's ok*/}
         }
         #endregion VerifyValueRestrictionsType
+        #region DoubleQuotesInTheValue
+        [TestMethod, TestCategory("DrCmdParser"), TestCategory("GetOptionType")]
+        public void TestDoubleQuotesInTheValue()
+        {
+            var args = new[] { "COMMAND", "-t1", "val1 with space", "val2 \"with double qutes\"", "val3" };
 
+            var root = GetInitialParametrs(args);
 
+            var cmdParser = new DrCmdParser(root);
+            var result = cmdParser.Parse();
+            var expected = GetResultCOMMANDWithoutValue();
+            expected.Attributes.Add("t1", new [] {  "val1 with space", "val2 \"with double qutes\"", "val3"}, ResolveConflict.OVERWRITE);
+            ValidateOptionParser(result, expected);
+        }
+        #endregion DoubleQuotesInTheValue
         #region ConvertResultValue
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
         public void TestConvertResultValue_ConvertTypeException()
@@ -697,7 +710,7 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Sigle ac has more than one values'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Sigle value has more than one values'.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -737,7 +750,7 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden ac cannot have ac'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value cannot have value '.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -756,7 +769,7 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Forbidden ac has ac'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Forbidden value has value '.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -815,7 +828,7 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect arguments is not catched - 'Required ac without ac'.");
+                Assert.Fail("The incorrect arguments is not catched - 'Required value without value '.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -877,7 +890,7 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified ac is incorrected because case sensitive is enabled'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is incorrected because case sensitive is enabled'.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -916,7 +929,7 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified ac is negative number'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is negative number'.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -935,7 +948,7 @@ namespace UTestDrCmd
             {
                 var cmdParser = new DrCmdParser(root);
                 var result = cmdParser.Parse();
-                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified ac is number but number is not allowed in the ValueFlags for this option'.");
+                Assert.Fail("The incorrect argument flag is not catched - 'RestrictionList, specified value is number but number is not allowed in the ValueFlags for this option'.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) {/* it's ok*/}
@@ -1290,7 +1303,7 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("Contains the ac of the option without declaring itself options.");
+                Assert.Fail("Contains the value of the option without declaring itself options.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) { /* it's ok*/ }
@@ -1349,7 +1362,7 @@ namespace UTestDrCmd
             try
             {
                 var result = cmdParser.Parse();
-                Assert.Fail("Contains the ac of the option without declaring itself options.");
+                Assert.Fail("Contains the value of the option without declaring itself options.");
             }
             catch (AssertFailedException) { throw; }
             catch (ArgumentException) { /* it's ok*/ }

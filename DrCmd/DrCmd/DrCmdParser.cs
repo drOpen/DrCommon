@@ -66,7 +66,7 @@ namespace DrOpen.DrCommon.DrCmd
             get { return (activeCommand == null ? null : activeCommand.Command); }
         }
         /// <summary>
-        /// Reads the specified settings arguments determines the specified command and substitutes the ac of its options for it. 
+        /// Reads the specified settings arguments determines the specified command and substitutes the value of its options for it. 
         /// Returns the node containing collection of attributes with options names and their values. 
         /// If parse and compare this arguments are not possible, or are contrary to the values ​​specified in the configuration rules - throws an exception.
         /// </summary>
@@ -80,7 +80,7 @@ namespace DrOpen.DrCommon.DrCmd
             activeCommand.SetParamsByOptionsForActiveCommand(paramsNode);               // Set parameters to active command
             activeCommand.ValidateCommandParameters();                                  // Check commands parameters after parse
             activeCommand.ValidateOptionsDependency();                                  // Check options dependency - TermsOfDependency and TermsOfIncongruous
-            activeCommand.ApplyDefaultValue();                                          // Apply default ac if need it
+            activeCommand.ApplyDefaultValue();                                          // Apply default value if need it
             return activeCommand.TransformCommandToResult();                            // Transform to result format
         }
 
@@ -103,8 +103,8 @@ namespace DrOpen.DrCommon.DrCmd
             return args;
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.ApplicationName"/> ac.
-        /// If it is not specified, returns the FriendlyName ac from <see cref="System.AppDomain.CurrentDomain"/>
+        /// Returns parameter <see cref="DrCmdSettings.ApplicationName"/> value .
+        /// If it is not specified, returns the FriendlyName value from <see cref="System.AppDomain.CurrentDomain"/>
         /// </summary>
         /// <returns></returns>
         internal string GetSettingsApplicationName()
@@ -121,7 +121,7 @@ namespace DrOpen.DrCommon.DrCmd
         }
         /// <summary>
         /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> as the maximum number of characters in a single line in the help.
-        /// If it is not specified, returns the BufferWidth-1 ac from <see cref="Console"/>
+        /// If it is not specified, returns the BufferWidth-1 value from <see cref="Console"/>
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpMaxLineLength()
@@ -129,7 +129,7 @@ namespace DrOpen.DrCommon.DrCmd
             return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, Console.BufferWidth - 1);
         }
         /// <summary>
-        /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> as number of space characters used as a tab for help. By default, this ac is equal 3.
+        /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> as number of space characters used as a tab for help. By default, this value is equal 3.
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpTabSize()
@@ -288,9 +288,9 @@ namespace DrOpen.DrCommon.DrCmd
                         continue;
                     }
                 }
-                // add ac
+                // add value 
                 if (currentOption == null) throw new ArgumentException(string.Format(Msg.OPTION_IS_NOT_SPECIFIED, args[i], DrCmdConst.OptionStartSymbolName));
-                currentOption.Attributes.Add(args[i]); // it's option ac 
+                currentOption.Attributes.Add(args[i]); // it's option value 
             }
             return result;
         }

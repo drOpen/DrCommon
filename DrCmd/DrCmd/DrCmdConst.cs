@@ -310,6 +310,10 @@ namespace DrOpen.DrCommon.DrCmd
         /// Type of node for option
         /// </summary>
         public static string TypeOption = "DrCmdOption";
+        /// <summary>
+        /// default console buffer
+        /// </summary>
+        public const int DEFAULT_CONSOLE_BUFFER = 49;
 
         /// <summary>
         /// Symbol that starts options name

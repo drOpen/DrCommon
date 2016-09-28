@@ -47,6 +47,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Msg.resx</DependentUpon>
     </Compile>
+    <Compile Include="Win32\WinNT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\Msg.resx">

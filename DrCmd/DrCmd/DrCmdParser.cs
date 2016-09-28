@@ -28,11 +28,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DrCmd.Res;
+using DrExt.Win32;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrCmd
 {
+
     /// <summary>
     /// class to parse arguments
     /// </summary>
@@ -121,12 +123,19 @@ namespace DrOpen.DrCommon.DrCmd
         }
         /// <summary>
         /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> as the maximum number of characters in a single line in the help.
-        /// If it is not specified, returns the BufferWidth-1 value from <see cref="Console"/>
+        /// If it is not specified, returns the BufferWidth-1 value from <see cref="Console"/> 
+        /// Returns <see cref="DrCmdConst.DEFAULT_CONSOLE_BUFFER"/> if console is not available
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpMaxLineLength()
         {
-            return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, Console.BufferWidth - 1);
+            int consoleBuffer = DrCmdConst.DEFAULT_CONSOLE_BUFFER;
+            if (WinNT.ConsoleWindowsExist()) // if process was running as 'StartInfo.CreateNoWindow = true' - skip Console.BufferWidth because exception will throw 'System.Console.GetBufferInfo(Boolean throwOnNoConsole, Boolean& succeeded)'
+            {
+                try { consoleBuffer = Console.BufferWidth - 1; } // not always we can get Console.BufferWidth with exception 'System.Console.GetBufferInfo(Boolean throwOnNoConsole, Boolean& succeeded)'
+                catch { }
+            }
+            return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, consoleBuffer);
         }
         /// <summary>
         /// Returns parameter <see cref="DrCmdSettings.HelpTabSize"/> as number of space characters used as a tab for help. By default, this value is equal 3.
@@ -356,7 +365,7 @@ namespace DrOpen.DrCommon.DrCmd
             text += "\r\n" + Msg.HELP_SYNOPSIS + "\r\n\r\n";
             text += GetHelpSynopsis();
             text += "\r\n" + Msg.HELP_DESCRIPTION + "\r\n\r\n";
-            text += GetHelpCommandsDescriptions() ;
+            text += GetHelpCommandsDescriptions();
             if (withSynopsis)
             {
                 foreach (var command in Commands)

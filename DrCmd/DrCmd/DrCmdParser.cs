@@ -124,17 +124,20 @@ namespace DrOpen.DrCommon.DrCmd
         /// <summary>
         /// Returns parameter <see cref="DrCmdSettings.HelpMaxLineLength"/> as the maximum number of characters in a single line in the help.
         /// If it is not specified, returns the BufferWidth-1 value from <see cref="Console"/> 
-        /// Returns <see cref="DrCmdConst.DEFAULT_CONSOLE_BUFFER"/> if console is not available
+        /// Returns <see cref="DrCmdConst.SYMBOLS_LEIGHT_FOR_NONE_CONSOLE_OUT"/> value if StdOut is redirectred from console to something else
         /// </summary>
         /// <returns></returns>
         internal int GetSettingsHelpMaxLineLength()
         {
-            int consoleBuffer = DrCmdConst.DEFAULT_CONSOLE_BUFFER;
-            if (WinNT.ConsoleWindowsExist()) // if process was running as 'StartInfo.CreateNoWindow = true' - skip Console.BufferWidth because exception will throw 'System.Console.GetBufferInfo(Boolean throwOnNoConsole, Boolean& succeeded)'
+            int consoleBuffer = DrCmdConst.SYMBOLS_LEIGHT_FOR_NONE_CONSOLE_OUT;
+            uint cMode;
+
+            if (WinNT.GetConsoleMode(WinNT.GetStdHandle(WinNT.STD_OUTPUT_HANDLE), out cMode)) 
             {
-                try { consoleBuffer = Console.BufferWidth - 1; } // not always we can get Console.BufferWidth with exception 'System.Console.GetBufferInfo(Boolean throwOnNoConsole, Boolean& succeeded)'
-                catch { }
+                try   { consoleBuffer = Console.BufferWidth - 1; }
+                catch { consoleBuffer = DrCmdConst.DEFAULT_CONSOLE_BUFFER; }
             }
+
             return Settings.Attributes.GetValue(DrCmdSettings.HelpMaxLineLength, consoleBuffer);
         }
         /// <summary>

@@ -311,10 +311,13 @@ namespace DrOpen.DrCommon.DrCmd
         /// </summary>
         public static string TypeOption = "DrCmdOption";
         /// <summary>
-        /// default console buffer
+        /// default console buffer 49 symbols
         /// </summary>
         public const int DEFAULT_CONSOLE_BUFFER = 49;
-
+        /// <summary>
+        /// symbols for none console output
+        /// </summary>
+        public const int SYMBOLS_LEIGHT_FOR_NONE_CONSOLE_OUT= 256;
         /// <summary>
         /// Symbol that starts options name
         /// </summary>

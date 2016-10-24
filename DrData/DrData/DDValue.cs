@@ -32,7 +32,7 @@ using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Xml;
 using DrOpen.DrCommon.DrData.Exceptions;
-//integration
+
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>
@@ -42,9 +42,9 @@ namespace DrOpen.DrCommon.DrData
     public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable, IXmlSerializable
     {
         #region const
-        public const string SerializePropNameValue = "v";
-        public const string SerializePropNameType = "t";
-        public const string SerializePropNameSize = "s";
+        public const string SerializePropNameValue = "Value";
+        public const string SerializePropNameType = "Type";
+        public const string SerializePropNameSize = "Size";
         public const string SerializeDateTimeFormat = "o"; //ISO 8601 format
         public const string SerializeRoundTripFormat = "r"; //round-trip format for Single, Double, and BigInteger types.
         #endregion const

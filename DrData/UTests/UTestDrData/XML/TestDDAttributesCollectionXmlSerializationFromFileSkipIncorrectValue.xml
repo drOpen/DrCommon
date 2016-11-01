@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<DDAttributesCollection>
+<ac>
   Value
-  <Attribute>AttributeValue</Attribute>
-  <Attribute/>
+  <a>AttributeValue</a>
+  <a/>
   <Test>ValueTest</Test>
   <Test/>
-  <Attribute Name=""/>
-  <Attribute Name="A"/>
-  <Attribute Name="B">IncorrectValue
-    <DDValue Type="System.String[]">
-      <Value/>
-      <Value>Value_A</Value>
-      <Value>Value_B</Value>
-    </DDValue>
-    </Attribute>
-</DDAttributesCollection>
+  <a n=""/>
+  <a n="A"/>
+  <a n="B">IncorrectValue
+    <v t="System.String[]">
+      <i/>
+      <i>Value_A</i>
+      <i>Value_B</i>
+    </v>
+    </a>
+</ac>

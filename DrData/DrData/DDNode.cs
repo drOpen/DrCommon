@@ -41,18 +41,19 @@ namespace DrOpen.DrCommon.DrData
     /// Hierarchy data warehouse
     /// </summary>
     [Serializable]
+    [XmlRoot(ElementName = "n")]
     public class DDNode : IEnumerable<KeyValuePair<string, DDNode>>, ICloneable, IEquatable<DDNode>, IComparable, ISerializable, IXmlSerializable
     {
         #region const
-        public const string SerializePropName = "Name";
-        public const string SerializePropType = "Type";
+        public const string SerializePropName = "n";
+        public const string SerializePropType = "t";
 
-        public const string SerializePropIsRoot = "IsRoot";
+        public const string SerializePropIsRoot = "r";
 
-        public const string SerializePropAttributes = "Attributes";
-        public const string SerializePropChildren = "Children";
+        public const string SerializePropAttributes = "as";
+        public const string SerializePropChildren = "ch";
 
-        public const string SerializePropCount = "Count";
+        public const string SerializePropCount = "c";
         #endregion const
         #region Constructor
         public DDNode(string name, DDType type)
@@ -679,7 +680,7 @@ namespace DrOpen.DrCommon.DrData
             if (Name != null) writer.WriteAttributeString(SerializePropName, Name);
             if (String.IsNullOrEmpty(Type) == false) writer.WriteAttributeString(SerializePropType, Type); // write none empty type
             if (IsRoot) writer.WriteAttributeString(SerializePropIsRoot, IsRoot.ToString());
-            if (HasChildNodes) writer.WriteAttributeString(SerializePropChildren, Count.ToString());
+            if (HasChildNodes) writer.WriteAttributeString(SerializePropCount, Count.ToString());
 
             var serializer = new XmlSerializer(typeof(DDAttributesCollection));
             if (Attributes != null) serializer.Serialize(writer, Attributes);
@@ -704,10 +705,8 @@ namespace DrOpen.DrCommon.DrData
 
             attributes = new DDAttributesCollection();
             var serializerDDAttributeCollection = new XmlSerializer(typeof(DDAttributesCollection));
+            
             var serializerDDNode = new XmlSerializer(typeof(DDNode));
-
-            var typeNameDDAttributes = typeof(DDAttributesCollection).Name;
-            var typeNameSelf = this.GetType().Name;
 
             this.Name = reader.GetAttribute(SerializePropName);
             this.Type = reader.GetAttribute(SerializePropType);
@@ -722,25 +721,25 @@ namespace DrOpen.DrCommon.DrData
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
-                if (((reader.IsStartElement(typeNameDDAttributes) == false) && (reader.IsStartElement(typeNameSelf) == false)) || (reader.Depth > initialDepth))
+                if (((reader.IsStartElement(DDSchema.SERIALYZE_NODE_ATTRIBUTE_COLLECTION) == false) && (reader.IsStartElement(DDSchema.SERIALYZE_NODE) == false)) || (reader.Depth > initialDepth))
                 {
                     reader.Skip(); // Skip none <DDAttributesCollection> or <DDNode> elements with childs and subchilds. 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else
                 {
-                    if (reader.IsStartElement(typeNameDDAttributes)) attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
+                    if (reader.IsStartElement(DDSchema.SERIALYZE_NODE_ATTRIBUTE_COLLECTION)) attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
 
-                    if (reader.IsStartElement(typeNameSelf)) Add((DDNode)serializerDDNode.Deserialize(reader));
+                    if (reader.IsStartElement(DDSchema.SERIALYZE_NODE)) Add((DDNode)serializerDDNode.Deserialize(reader));
 
                     if (reader.HasValue) // read value of element if there is
                     {
                         reader.Read(); // read value of element
-                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name==typeNameSelf)) reader.ReadEndElement(); // need to close the opened element, only self type
+                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE)) reader.ReadEndElement(); // need to close the opened element, only self type
                     }
                 }
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // Need to close the opened element, only self type
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE)) reader.ReadEndElement(); // Need to close the opened element, only self type
         }
 
         #endregion IXmlSerializable
@@ -755,7 +754,7 @@ namespace DrOpen.DrCommon.DrData
             this.Name = (String)info.GetValue(SerializePropName, typeof(String));
             this.Type = (DDType)info.GetValue(SerializePropType, typeof(DDType));
             this.attributes = (DDAttributesCollection)info.GetValue(SerializePropAttributes, typeof(DDAttributesCollection));
-            this.childNodes = (Dictionary<string, DDNode>)info.GetValue(SerializePropChildren, typeof(Dictionary<string, DDNode>));
+            this.childNodes = (Dictionary<string, DDNode>)info.GetValue(SerializePropCount, typeof(Dictionary<string, DDNode>));
         }
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
@@ -767,7 +766,7 @@ namespace DrOpen.DrCommon.DrData
             info.AddValue(SerializePropName, Name, typeof(String));
             info.AddValue(SerializePropType, Type, typeof(DDType));
             info.AddValue(SerializePropAttributes, attributes, typeof(DDAttributesCollection));
-            info.AddValue(SerializePropChildren, childNodes, typeof(Dictionary<string, DDNode>));
+            info.AddValue(SerializePropCount, childNodes, typeof(Dictionary<string, DDNode>));
         }
         #endregion ISerializable
         #region Names/Values

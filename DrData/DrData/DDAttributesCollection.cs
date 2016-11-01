@@ -41,6 +41,7 @@ namespace DrOpen.DrCommon.DrData
     /// Represents a collection of DDValue that can be accessed by name.
     /// </summary>
     [Serializable]
+    [XmlRoot(ElementName = "ac")]
     public class DDAttributesCollection : IEnumerable<KeyValuePair<string, DDValue>>, ICloneable, IComparable, ISerializable, IXmlSerializable
     {
         public DDAttributesCollection()
@@ -49,10 +50,10 @@ namespace DrOpen.DrCommon.DrData
         }
         private Dictionary<string, DDValue> attributes;
         #region const
-        public const string SerializePropNameAttributes = "Attributes";
-        public const string SerializePropNameAttribute = "Attribute";
-        public const string SerializePropName = "Name";
-        public const string SerializePropCount = "Count";
+        public const string SerializePropNameAttributes = "as";
+        public const string SerializePropNameAttribute = "a";
+        public const string SerializePropName = "n";
+        public const string SerializePropCount = "c";
         #endregion const
         #region IXmlSerializable
         /// <summary>
@@ -89,8 +90,6 @@ namespace DrOpen.DrCommon.DrData
 
             attributes = new Dictionary<string, DDValue>();
             var serializer = new XmlSerializer(typeof(DDValue));
-            var typeNameDDValue = typeof(DDValue).Name;
-            var typeNameSelf = this.GetType().Name;
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
@@ -112,7 +111,7 @@ namespace DrOpen.DrCommon.DrData
                     if (reader.HasValue) reader.Read(); // read and skip node value
                     if (name != null)
                     {
-                        if (reader.IsStartElement(typeNameDDValue))
+                        if (reader.IsStartElement(DDSchema.SERIALYZE_NODE_VALUE))
                             attributes.Add(name, (DDValue)serializer.Deserialize(reader));
                         else
                             attributes.Add(name, null); // add null value
@@ -120,12 +119,12 @@ namespace DrOpen.DrCommon.DrData
                     if (reader.HasValue) // read value of element if there is
                     {
                         reader.Read(); // read value of element
-                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // need to close the opened element, only self type
+                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
                     }
                 }
                 reader.MoveToContent();
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name==typeNameSelf)) reader.ReadEndElement(); // need to close the opened element, only self type
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
         }
 
         #endregion IXmlSerializable

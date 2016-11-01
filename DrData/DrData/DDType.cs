@@ -52,7 +52,7 @@ namespace DrOpen.DrCommon.DrData
     public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType>, ISerializable
     {
 
-        private const string SerializePropName = "Type";
+        private const string SerializePropName = "t";
         #region Constructor
         public DDType(Enum name): this(name.ToString())
         { }

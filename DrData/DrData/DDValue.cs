@@ -32,22 +32,17 @@ using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Xml;
 using DrOpen.DrCommon.DrData.Exceptions;
-//integration
+
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>
     /// Data warehouse
     /// </summary>
     [Serializable]
+    [XmlRoot(ElementName = "v")]
     public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable, IXmlSerializable
     {
-        #region const
-        public const string SerializePropNameValue = "v";
-        public const string SerializePropNameType = "t";
-        public const string SerializePropNameSize = "s";
-        public const string SerializeDateTimeFormat = "o"; //ISO 8601 format
-        public const string SerializeRoundTripFormat = "r"; //round-trip format for Single, Double, and BigInteger types.
-        #endregion const
+
         #region DDValue
         /// <summary>
         /// Create empty value
@@ -79,13 +74,13 @@ namespace DrOpen.DrCommon.DrData
         {
             if (Type == null) return; // if data is null
 
-            writer.WriteAttributeString(SerializePropNameType, Type.ToString());
-            if (Size != 0) writer.WriteAttributeString(SerializePropNameSize, Size.ToString()); // write size only for none empty objects
+            writer.WriteAttributeString(DDSchema.SERIALYZE_ATTRIBUTE_TYPE, Type.ToString());
+            if (Size != 0) writer.WriteAttributeString(DDSchema.SERIALYZE_ATTRIBUTE_SIZE, Size.ToString()); // write size only for none empty objects
             if (IsThisTypeXMLSerialyzeAsArray(type))
             {
                 foreach (var element in ToStringArray())
                 {
-                    writer.WriteStartElement(SerializePropNameValue);
+                    writer.WriteStartElement(DDSchema.SERIALYZE_NODE_ARRAY_VALUE_ITEM);
                     writer.WriteString(element);
                     writer.WriteEndElement();
                 }
@@ -103,12 +98,11 @@ namespace DrOpen.DrCommon.DrData
         public virtual void ReadXml(XmlReader reader)
         {
 
-            var typeNameSelf = this.GetType().Name;
-
+            
             reader.MoveToContent();
             type = null;
 
-            var t = reader.GetAttribute(SerializePropNameType);
+            var t = reader.GetAttribute(DDSchema.SERIALYZE_ATTRIBUTE_TYPE);
             if (string.IsNullOrEmpty(t))
             {
                 data = null;
@@ -126,7 +120,7 @@ namespace DrOpen.DrCommon.DrData
                 if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
             }
 
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
         }
 
         /// <summary>
@@ -154,7 +148,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         protected virtual object[] ReadXmlValueArray(XmlReader reader)
         {
-            var dDValueTypeName = typeof(DDValue).Name;
+            
             int i = 0;
             object[] value = null;
             var elementType = type.GetElementType();
@@ -165,7 +159,7 @@ namespace DrOpen.DrCommon.DrData
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
-                if ((reader.IsStartElement(SerializePropNameValue) == false) || (reader.Depth > initialDepth))
+                if ((reader.IsStartElement(DDSchema.SERIALYZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
                 {
                     reader.Skip(); // Skip none <Value> elements with childs and subchilds <Value> elements 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
@@ -220,8 +214,8 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDValue(SerializationInfo info, StreamingContext context)
         {
-            this.type = (Type)info.GetValue(SerializePropNameType, typeof(Type));
-            this.data = (byte[])info.GetValue(SerializePropNameValue, typeof(byte[]));
+            this.type = (Type)info.GetValue(DDSchema.SERIALYZE_ATTRIBUTE_TYPE, typeof(Type));
+            this.data = (byte[])info.GetValue(DDSchema.SERIALYZE_NODE_ARRAY_VALUE_ITEM, typeof(byte[]));
         }
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
@@ -230,8 +224,8 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(SerializePropNameType, this.type, typeof(Type));
-            info.AddValue(SerializePropNameValue, this.data, typeof(byte[]));
+            info.AddValue(DDSchema.SERIALYZE_ATTRIBUTE_TYPE, this.type, typeof(Type));
+            info.AddValue(DDSchema.SERIALYZE_NODE_ARRAY_VALUE_ITEM, this.data, typeof(byte[]));
         }
         #endregion ISerializable
         #region Properties
@@ -1133,13 +1127,13 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>value as string</returns>
         protected static string GetObjAsStringByType(Type type, object value)
         {
-            if (type == typeof(DateTime)) return ((DateTime)value).ToString(SerializeDateTimeFormat);
+            if (type == typeof(DateTime)) return ((DateTime)value).ToString(DDSchema.SerializeDateTimeFormat);
             // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
             // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
             // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
-            if (type == typeof(Single)) return ((Single)value).ToString(SerializeRoundTripFormat);
-            if (type == typeof(Double)) return ((Double)value).ToString(SerializeRoundTripFormat);
-            if (type == typeof(float)) return ((float)value).ToString(SerializeRoundTripFormat);
+            if (type == typeof(Single)) return ((Single)value).ToString(DDSchema.SerializeRoundTripFormat);
+            if (type == typeof(Double)) return ((Double)value).ToString(DDSchema.SerializeRoundTripFormat);
+            if (type == typeof(float)) return ((float)value).ToString(DDSchema.SerializeRoundTripFormat);
             return value.ToString();
         }
 

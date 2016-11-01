@@ -46,6 +46,7 @@
     <Compile Include="Common.cs" />
     <Compile Include="DDEventArgs.cs" />
     <Compile Include="DDNodeST.cs" />
+    <Compile Include="DDSchema.cs" />
     <Compile Include="DDType.cs" />
     <Compile Include="DDValue.cs" />
     <Compile Include="DDNode.cs" />

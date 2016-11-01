@@ -3509,7 +3509,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDValueXmlSerializationNullFromXML()
         {
-            ValidateXMLDeserialization(new DDValue(), UTestDrDataCommon.GetMemoryStreamFromString("<" + DDSchema.SERIALYZE_NODE_VALUE + "/>"));
+            ValidateXMLDeserialization(new DDValue(), UTestDrDataCommon.GetMemoryStreamFromString("<" + DDSchema.XML_SERIALIZE_NODE_VALUE + "/>"));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationNull()

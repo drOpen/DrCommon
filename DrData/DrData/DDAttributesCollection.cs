@@ -49,12 +49,7 @@ namespace DrOpen.DrCommon.DrData
             attributes = new Dictionary<string, DDValue>();
         }
         private Dictionary<string, DDValue> attributes;
-        #region const
-        public const string SerializePropNameAttributes = "as";
-        public const string SerializePropNameAttribute = "a";
-        public const string SerializePropName = "n";
-        public const string SerializePropCount = "c";
-        #endregion const
+
         #region IXmlSerializable
         /// <summary>
         /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
@@ -69,12 +64,12 @@ namespace DrOpen.DrCommon.DrData
         {
             if (attributes == null) return; // if attributes is null
             var serializer = new XmlSerializer(typeof(DDValue));
-            if (attributes.Count != 0) writer.WriteAttributeString(SerializePropCount, attributes.Count.ToString()); // write element count for none empty collection
+            if (attributes.Count != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_COUNT, attributes.Count.ToString()); // write element count for none empty collection
 
             foreach (var a in attributes)
             {
-                writer.WriteStartElement(SerializePropNameAttribute);
-                writer.WriteAttributeString(SerializePropName, a.Key);
+                writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, a.Key);
                 if (a.Value != null) serializer.Serialize(writer, a.Value);  // skip null object
                 writer.WriteEndElement();
             }
@@ -99,19 +94,19 @@ namespace DrOpen.DrCommon.DrData
             
             while ((reader.Depth >= initialDepth)) // do all childs
             {
-                if ((reader.IsStartElement(SerializePropNameAttribute) == false) || (reader.Depth > initialDepth))
+                if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) == false) || (reader.Depth > initialDepth))
                 {
                     reader.Skip(); // Skip none <Attribute> elements with childs and subchilds <Attribute> elements 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else
                 {
-                    var name = reader.GetAttribute(SerializePropName);
+                    var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
                     if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
                     if (reader.HasValue) reader.Read(); // read and skip node value
                     if (name != null)
                     {
-                        if (reader.IsStartElement(DDSchema.SERIALYZE_NODE_VALUE))
+                        if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE))
                             attributes.Add(name, (DDValue)serializer.Deserialize(reader));
                         else
                             attributes.Add(name, null); // add null value
@@ -119,12 +114,12 @@ namespace DrOpen.DrCommon.DrData
                     if (reader.HasValue) // read value of element if there is
                     {
                         reader.Read(); // read value of element
-                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
+                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
                     }
                 }
                 reader.MoveToContent();
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.SERIALYZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
         }
 
         #endregion IXmlSerializable
@@ -136,7 +131,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDAttributesCollection(SerializationInfo info, StreamingContext context)
         {
-            this.attributes = (Dictionary<string, DDValue>)info.GetValue(SerializePropNameAttributes, typeof(Dictionary<string, DDValue>));
+            this.attributes = (Dictionary<string, DDValue>)info.GetValue(DDSchema.SERIALIZE_NODE_ATTRIBUTE_COLLECTION, typeof(Dictionary<string, DDValue>));
         }
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
@@ -145,7 +140,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(SerializePropNameAttributes, attributes, typeof(Dictionary<string, DDValue>));
+            info.AddValue(DDSchema.SERIALIZE_NODE_ATTRIBUTE_COLLECTION, attributes, typeof(Dictionary<string, DDValue>));
         }
         #endregion ISerializable
         #region Enumerator

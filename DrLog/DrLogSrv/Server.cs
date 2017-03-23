@@ -34,7 +34,7 @@ using DrOpen.DrCommon.DrLog.DrLogSrv.Providers;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
-    public class Server: IDisposable, IDDTypeSupport
+    public class Server: IDisposable
     {
 
         public Server()

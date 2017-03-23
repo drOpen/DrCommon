@@ -27,10 +27,6 @@
 using System;
 using System.Text;
 using DrOpen.DrCommon.DrData.Res;
-using System.Runtime.Serialization;
-using System.Xml.Serialization;
-using System.Xml.Schema;
-using System.Xml;
 using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrData
@@ -38,9 +34,9 @@ namespace DrOpen.DrCommon.DrData
     /// <summary>
     /// Data warehouse
     /// </summary>
-    [Serializable]
-    [XmlRoot(ElementName = "v")]
-    public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable, IXmlSerializable
+    //[Serializable]
+    //[XmlRoot(ElementName = "v")]
+    public class DDValue : IEquatable<DDValue>, ICloneable, IComparable//, ISerializable, IXmlSerializable
     {
 
         #region DDValue
@@ -59,174 +55,174 @@ namespace DrOpen.DrCommon.DrData
             SetValue(value);
         }
         #endregion DDValue
-        #region IXmlSerializable
-        /// <summary>
-        /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, 
-        /// if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
-        /// </summary>
-        /// <returns>null</returns>
-        public XmlSchema GetSchema() { return null; }
-        /// <summary>
-        /// Converts an object into its XML representation.
-        /// </summary>
-        /// <param name="writer"></param>
-        public virtual void WriteXml(XmlWriter writer)
-        {
-            if (Type == null) return; // if data is null
+        //#region IXmlSerializable
+        ///// <summary>
+        ///// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, 
+        ///// if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
+        ///// </summary>
+        ///// <returns>null</returns>
+        //public XmlSchema GetSchema() { return null; }
+        ///// <summary>
+        ///// Converts an object into its XML representation.
+        ///// </summary>
+        ///// <param name="writer"></param>
+        //public virtual void WriteXml(XmlWriter writer)
+        //{
+        //    if (Type == null) return; // if data is null
 
-            writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type.ToString());
-            if (Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, Size.ToString()); // write size only for none empty objects
-            if (IsThisTypeXMLSerialyzeAsArray(type))
-            {
-                foreach (var element in ToStringArray())
-                {
-                    writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM);
-                    writer.WriteString(element);
-                    writer.WriteEndElement();
-                }
-            }
-            else
-            {
-                writer.WriteString(ToString());
-            }
-        }
+        //    writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type.ToString());
+        //    if (Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, Size.ToString()); // write size only for none empty objects
+        //    if (IsThisTypeXMLSerialyzeAsArray(type))
+        //    {
+        //        foreach (var element in ToStringArray())
+        //        {
+        //            writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM);
+        //            writer.WriteString(element);
+        //            writer.WriteEndElement();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        writer.WriteString(ToString());
+        //    }
+        //}
 
-        /// <summary>
-        /// Generates an object from its XML representation.
-        /// </summary>
-        /// <param name="reader"></param>
-        public virtual void ReadXml(XmlReader reader)
-        {
+        ///// <summary>
+        ///// Generates an object from its XML representation.
+        ///// </summary>
+        ///// <param name="reader"></param>
+        //public virtual void ReadXml(XmlReader reader)
+        //{
 
-            reader.MoveToContent();
-            type = null;
+        //    reader.MoveToContent();
+        //    type = null;
 
-            var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-            if (string.IsNullOrEmpty(t))
-            {
-                data = null;
-                return; // null object
-            }
-            data = new byte[] { };
-            this.type = Type.GetType(t);
-            if (IsThisTypeXMLSerialyzeAsArray(type) == false)
-            {
-                this.data = GetByteArrayByTypeFromString(type, GetXmlElementValue(reader)); // read node value for none array types
-            }
-            else
-            {
-                var value = ReadXmlValueArray(reader);
-                if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
-            }
+        //    var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+        //    if (string.IsNullOrEmpty(t))
+        //    {
+        //        data = null;
+        //        return; // null object
+        //    }
+        //    data = new byte[] { };
+        //    this.type = Type.GetType(t);
+        //    if (IsThisTypeXMLSerialyzeAsArray(type) == false)
+        //    {
+        //        this.data = GetByteArrayByTypeFromString(type, GetXmlElementValue(reader)); // read node value for none array types
+        //    }
+        //    else
+        //    {
+        //        var value = ReadXmlValueArray(reader);
+        //        if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
+        //    }
 
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
-        }
+        //    if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
+        //}
 
-        /// <summary>
-        /// Return XML Element value.
-        /// Open XML Element if needed, read value, close element and return value 
-        /// </summary>
-        /// <param name="reader">Xml stream reder</param>
-        /// <returns>XML Element value</returns>
-        protected static string GetXmlElementValue(XmlReader reader)
-        {
-            if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-            var value = reader.Value; // read node value for none array types
-            if (reader.HasValue) // read value of element if there is
-            {
-                reader.Read(); // read value of element
-                if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
-            }
-            return value;
-        }
+        ///// <summary>
+        ///// Return XML Element value.
+        ///// Open XML Element if needed, read value, close element and return value 
+        ///// </summary>
+        ///// <param name="reader">Xml stream reder</param>
+        ///// <returns>XML Element value</returns>
+        //protected static string GetXmlElementValue(XmlReader reader)
+        //{
+        //    if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+        //    var value = reader.Value; // read node value for none array types
+        //    if (reader.HasValue) // read value of element if there is
+        //    {
+        //        reader.Read(); // read value of element
+        //        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+        //    }
+        //    return value;
+        //}
 
-        /// <summary>
-        /// Read XML Subling Nodes for array
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        protected virtual object[] ReadXmlValueArray(XmlReader reader)
-        {
+        ///// <summary>
+        ///// Read XML Subling Nodes for array
+        ///// </summary>
+        ///// <param name="reader"></param>
+        ///// <returns></returns>
+        //protected virtual object[] ReadXmlValueArray(XmlReader reader)
+        //{
             
-            int i = 0;
-            object[] value = null;
-            var elementType = type.GetElementType();
+        //    int i = 0;
+        //    object[] value = null;
+        //    var elementType = type.GetElementType();
 
-            reader.Read();
-            var initialDepth = reader.Depth;
-            if (reader.NodeType == XmlNodeType.None) return value; // Exit for element without child <DDvalue Type="String[]"/>
+        //    reader.Read();
+        //    var initialDepth = reader.Depth;
+        //    if (reader.NodeType == XmlNodeType.None) return value; // Exit for element without child <DDvalue Type="String[]"/>
 
-            while ((reader.Depth >= initialDepth)) // do all childs
-            {
-                if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
-                {
-                    reader.Skip(); // Skip none <Value> elements with childs and subchilds <Value> elements 'Deep proptection'
-                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
-                }
-                else
-                {
-                    Array.Resize(ref value, i + 1);
-                    value[i] = ConvertStringToSpecifiedTypeObject(elementType, GetXmlElementValue(reader));
-                    i++;
-                }
-                reader.MoveToContent();
-            }
-            return value;
-        }
+        //    while ((reader.Depth >= initialDepth)) // do all childs
+        //    {
+        //        if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
+        //        {
+        //            reader.Skip(); // Skip none <Value> elements with childs and subchilds <Value> elements 'Deep proptection'
+        //            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
+        //        }
+        //        else
+        //        {
+        //            Array.Resize(ref value, i + 1);
+        //            value[i] = ConvertStringToSpecifiedTypeObject(elementType, GetXmlElementValue(reader));
+        //            i++;
+        //        }
+        //        reader.MoveToContent();
+        //    }
+        //    return value;
+        //}
 
-        /// <summary>
-        /// Returns new string [] from object [].
-        /// This function call ToString() for each element for new array
-        /// </summary>
-        /// <param name="array">object[]</param>
-        /// <returns>Retrun new string[]</returns>
-        protected string[] ConvertObjectArrayToStringArray(Array array)
-        {
-            var result = new string[array.Length];
-            var i = 0;
-            foreach (var item in array)
-            {
-                result[i] = item.ToString();
-                i++;
-            }
-            return result;
-        }
+        ///// <summary>
+        ///// Returns new string [] from object [].
+        ///// This function call ToString() for each element for new array
+        ///// </summary>
+        ///// <param name="array">object[]</param>
+        ///// <returns>Retrun new string[]</returns>
+        //protected string[] ConvertObjectArrayToStringArray(Array array)
+        //{
+        //    var result = new string[array.Length];
+        //    var i = 0;
+        //    foreach (var item in array)
+        //    {
+        //        result[i] = item.ToString();
+        //        i++;
+        //    }
+        //    return result;
+        //}
 
-        /// <summary>
-        /// Return true if this type should be serialization per each array element
-        /// </summary>
-        /// <param name="type">Type to serialyze</param>
-        /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
-        /// <example>For example: byte[] should be serialize as HEX single string therefore return value is false for this type, all other arrays should be serialized per elements</example>
-        protected static bool IsThisTypeXMLSerialyzeAsArray(Type type)
-        {
-            return ((type.IsArray) && (type != typeof(byte[])));
-        }
+        ///// <summary>
+        ///// Return true if this type should be serialization per each array element
+        ///// </summary>
+        ///// <param name="type">Type to serialyze</param>
+        ///// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
+        ///// <example>For example: byte[] should be serialize as HEX single string therefore return value is false for this type, all other arrays should be serialized per elements</example>
+        //protected static bool IsThisTypeXMLSerialyzeAsArray(Type type)
+        //{
+        //    return ((type.IsArray) && (type != typeof(byte[])));
+        //}
 
 
-        #endregion IXmlSerializable
-        #region ISerializable
-        /// <summary>
-        /// The special constructor is used to deserialize values.
-        /// </summary>
-        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
-        public DDValue(SerializationInfo info, StreamingContext context)
-        {
-            this.type = (Type)info.GetValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, typeof(Type));
-            this.data = (byte[])info.GetValue(DDSchema.SERIALIZE_NODE_ARRAY_VALUE_ITEM, typeof(byte[]));
-        }
-        /// <summary>
-        /// Method to serialize data. The method is called on serialization.
-        /// </summary>
-        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
-        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.type, typeof(Type));
-            info.AddValue(DDSchema.SERIALIZE_NODE_ARRAY_VALUE_ITEM, this.data, typeof(byte[]));
-        }
-        #endregion ISerializable
+        //#endregion IXmlSerializable
+        //#region ISerializable
+        ///// <summary>
+        ///// The special constructor is used to deserialize values.
+        ///// </summary>
+        ///// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        ///// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        //public DDValue(SerializationInfo info, StreamingContext context)
+        //{
+        //    this.type = (Type)info.GetValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, typeof(Type));
+        //    this.data = (byte[])info.GetValue(DDSchema.SERIALIZE_NODE_ARRAY_VALUE_ITEM, typeof(byte[]));
+        //}
+        ///// <summary>
+        ///// Method to serialize data. The method is called on serialization.
+        ///// </summary>
+        ///// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        ///// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        //public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        //{
+        //    info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.type, typeof(Type));
+        //    info.AddValue(DDSchema.SERIALIZE_NODE_ARRAY_VALUE_ITEM, this.data, typeof(byte[]));
+        //}
+        //#endregion ISerializable
         #region Properties
         protected byte[] data;
         protected Type type;

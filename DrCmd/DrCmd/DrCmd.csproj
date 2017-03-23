@@ -43,7 +43,6 @@
     <Compile Include="DrCmdConst.cs" />
     <Compile Include="DrCmdOption.cs" />
     <Compile Include="DrCmdParser.cs" />
-    <Compile Include="DrDDCmdParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Res\Msg.Designer.cs">
       <AutoGen>True</AutoGen>

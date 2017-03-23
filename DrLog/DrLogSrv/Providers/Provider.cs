@@ -34,7 +34,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
     /// <summary>
     /// abstract provider for DrLog
     /// </summary>
-    public abstract class Provider : IProvider, IDDTypeSupport
+    public abstract class Provider : IProvider//, IDDTypeSupport
     {
 
         #region Provider

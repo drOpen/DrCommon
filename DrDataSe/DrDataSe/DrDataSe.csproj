@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DrData">
-      <HintPath>..\DrData\DrData\bin\Debug\DrData.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,7 +42,7 @@
     <Compile Include="DDSchema.cs" />
     <Compile Include="DDTypeSe.cs" />
     <Compile Include="DDValueSe.cs" />
-    <Compile Include="DrNodeSe.cs" />
+    <Compile Include="DDNodeSe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +52,12 @@
     <None Include="DrData.xsd">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DrData\DrData\DrData.csproj">
+      <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
+      <Name>DrData</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

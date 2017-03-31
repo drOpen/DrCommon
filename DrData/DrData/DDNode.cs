@@ -36,9 +36,7 @@ namespace DrOpen.DrCommon.DrData
     /// <summary>
     /// Hierarchy data warehouse
     /// </summary>
-    //[Serializable]
-    //[XmlRoot(ElementName = "n")]
-    public class DDNode : IEnumerable<KeyValuePair<string, DDNode>>, ICloneable, IEquatable<DDNode>, IComparable//, ISerializable, IXmlSerializable
+    public class DDNode : IEnumerable<KeyValuePair<string, DDNode>>, ICloneable, IEquatable<DDNode>, IComparable
     {
         #region Constructor
         public DDNode(string name, DDType type)
@@ -160,7 +158,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Dictonary of children nodes
         /// </summary>
-        private readonly Dictionary<string, DDNode> childNodes;
+        protected  Dictionary<string, DDNode> childNodes;
         /// <summary>
         /// Gets the parent of this node (for nodes that can have parents).
         /// </summary>
@@ -168,7 +166,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Gets the qualified name of the node
         /// </summary>
-        public virtual string Name { get; internal set; }
+        public virtual string Name { get; protected set; }
         /// <summary>
         /// The current level of this node
         /// </summary>
@@ -378,7 +376,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Gets an DDAttrubutesCollection containing the attributes of this node.
         /// </summary>
-        private DDAttributesCollection attributes;
+        protected DDAttributesCollection attributes;
         /// <summary>
         /// Gets an DDAttrubutesCollection containing the attributes of this node.
         /// </summary>

@@ -42,7 +42,7 @@ namespace DrOpen.DrCommon.DrDataSe
         public const string XML_SERIALIZE_ATTRIBUTE_TYPE = "t";
         public const string XML_SERIALIZE_ATTRIBUTE_ROOT = "r";
         public const string XML_SERIALIZE_ATTRIBUTE_SIZE = "s";
-        public const string XML_SERIALIZE_ATTRIBUTE_COUNT = "c";
+        public const string XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT = "c";
         
         #endregion Serialize xml
         #region Serialize bin

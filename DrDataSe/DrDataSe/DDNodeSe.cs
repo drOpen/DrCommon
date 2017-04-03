@@ -14,6 +14,8 @@ namespace DrOpen.DrCommon.DrDataSe
     [XmlRoot(ElementName = "n")]
     public class DDNodeSe: DrData.DDNode , ISerializable, IXmlSerializable
     {
+
+
         #region IXmlSerializable
         /// <summary>
         /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
@@ -29,17 +31,15 @@ namespace DrOpen.DrCommon.DrDataSe
             if (Name != null) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME , Name);
             if (String.IsNullOrEmpty(Type) == false) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type); // write none empty type
             if (IsRoot) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT, IsRoot.ToString());
-            if (HasChildNodes) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_COUNT, Count.ToString());
+            if (HasChildNodes) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT, Count.ToString());
 
-            var serializer = new XmlSerializer(typeof(DDAttributesCollection));
-            if (Attributes != null) serializer.Serialize(writer, Attributes);
+            if (Attributes != null) this.Attributes.WriteXml(writer);
 
             if (HasChildNodes)
             {
-                serializer = new XmlSerializer(typeof(DDNode));
                 foreach (var keyValuePair in this)
                 {
-                    if (keyValuePair.Value != null) serializer.Serialize(writer, keyValuePair.Value);
+                    //if (keyValuePair.Value != null) keyValuePair.Value.WriteXml(writer);
                 }
             }
         }

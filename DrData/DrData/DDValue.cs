@@ -42,7 +42,6 @@ namespace DrOpen.DrCommon.DrData
     [XmlRoot(ElementName = "v")]
     public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable, IXmlSerializable
     {
-
         #region DDValue
         /// <summary>
         /// Create empty value
@@ -72,22 +71,27 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            if (Type == null) return; // if data is null
-
-            writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type.ToString());
-            if (Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, Size.ToString()); // write size only for none empty objects
-            if (IsThisTypeXMLSerialyzeAsArray(type))
+            if (Type == null)
             {
-                foreach (var element in ToStringArray())
-                {
-                    writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM);
-                    writer.WriteString(element);
-                    writer.WriteEndElement();
-                }
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL);
             }
             else
             {
-                writer.WriteString(ToString());
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type.ToString());
+                if (Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, Size.ToString()); // write size only for none empty objects
+                if (IsThisTypeXMLSerialyzeAsArray(type))
+                {
+                    foreach (var element in ToStringArray())
+                    {
+                        writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM);
+                        writer.WriteString(element);
+                        writer.WriteEndElement();
+                    }
+                }
+                else
+                {
+                    writer.WriteString(ToString());
+                }
             }
         }
 
@@ -102,24 +106,27 @@ namespace DrOpen.DrCommon.DrData
             type = null;
 
             var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-            if (string.IsNullOrEmpty(t))
+            if ((string.IsNullOrEmpty(t)) || (t == DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL))
             {
                 data = null;
-                return; // null object
-            }
-            data = new byte[] { };
-            this.type = Type.GetType(t);
-            if (IsThisTypeXMLSerialyzeAsArray(type) == false)
-            {
-                this.data = GetByteArrayByTypeFromString(type, GetXmlElementValue(reader)); // read node value for none array types
+                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                if (reader.NodeType == XmlNodeType.EndElement)  reader.ReadEndElement(); // need to close the opened element
             }
             else
             {
-                var value = ReadXmlValueArray(reader);
-                if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
+                data = new byte[] { };
+                this.type = Type.GetType(t);
+                if (IsThisTypeXMLSerialyzeAsArray(type) == false)
+                {
+                    this.data = GetByteArrayByTypeFromString(type, GetXmlElementValue(reader)); // read node value for none array types
+                }
+                else
+                {
+                    var value = ReadXmlValueArray(reader);
+                    if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
+                }
             }
-
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </n>, only self
         }
 
         /// <summary>
@@ -720,7 +727,7 @@ namespace DrOpen.DrCommon.DrData
                 if (data == null) return null; // check Nullable type
                 type = Nullable.GetUnderlyingType(type); // Returns the underlying type argument of the specified nullable type. 
             }
-            
+
             if (type == typeof(string)) return Encoding.UTF8.GetString(data);
 
             if (type == typeof(DateTime)) return DateTime.FromBinary(BitConverter.ToInt64(data, 0));
@@ -737,7 +744,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(char)) return BitConverter.ToChar(data, 0);
             if (type == typeof(float)) return BitConverter.ToSingle(data, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(data, 0);
-            if (type == typeof(bool))  return BitConverter.ToBoolean(data, 0);
+            if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
             if (type == typeof(Guid)) return new Guid(data);
 
             throw new DDTypeIncorrectException(type.ToString());

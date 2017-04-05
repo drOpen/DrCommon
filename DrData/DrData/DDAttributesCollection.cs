@@ -51,7 +51,7 @@ namespace DrOpen.DrCommon.DrData
         }
         protected Dictionary<string, DDValue> attributes;
 
-                #region IXmlSerializable
+        #region IXmlSerializable
         /// <summary>
         /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
         /// </summary>
@@ -65,6 +65,7 @@ namespace DrOpen.DrCommon.DrData
         {
             if (attributes == null) return; // if attributes is null
             //var serializer = new XmlSerializer(typeof(DDValue));
+
             if (attributes.Count != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT, attributes.Count.ToString()); // write element count for none empty collection
 
             foreach (var a in attributes)
@@ -83,45 +84,91 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
-            reader.MoveToContent();
-
-            attributes = new Dictionary<string, DDValue>();
-            var serializer = new XmlSerializer(typeof(DDValue));
-
-            var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
-            reader.Read(); // read root element
-            if (isEmptyElement) return; // Exit for element without child <DDAttributesCollection />
-
-            var initialDepth = reader.Depth;
-
-            while ((reader.Depth >= initialDepth)) // do all childs
+            if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
             {
-                if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) == false) || (reader.Depth > initialDepth))
+                var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
+                if (name != null)
                 {
-                    reader.Skip(); // Skip none <Attribute> elements with childs and subchilds <Attribute> elements 'Deep proptection'
-                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
+                    var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+                    if (t == null)
+                    {
+                        attributes.Add(name, null);
+                        if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                    }
+                    else
+                    {
+                        var v = new DDValue();
+                        v.ReadXml(reader);
+                        attributes.Add(name, v);
+                    }
                 }
                 else
                 {
-                    var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
                     if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                    if (reader.HasValue) reader.Read(); // read and skip node value
-                    if (name != null)
-                    {
-                        if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE))
-                            attributes.Add(name, (DDValue)serializer.Deserialize(reader));
-                        else
-                            attributes.Add(name, null); // add null value
-                    }
-                    if (reader.HasValue) // read value of element if there is
-                    {
-                        reader.Read(); // read value of element
-                        if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
-                    }
+                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
                 }
-                reader.MoveToContent();
+
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
+            else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
+            {
+
+                reader.MoveToContent();
+
+                attributes = new Dictionary<string, DDValue>();
+                var serializer = new XmlSerializer(typeof(DDValue));
+
+                var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
+                reader.Read(); // read root element
+                if (isEmptyElement) return; // Exit for element without child <ac />
+
+                var initialDepth = reader.Depth;
+
+                while ((reader.Depth >= initialDepth)) // do all childs
+                {
+                    if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) == false) || (reader.Depth > initialDepth))
+                    {
+                        reader.Skip(); // Skip none <a> elements with childs and subchilds <Attribute> elements 'Deep proptection'
+                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
+                    }
+                    else
+                    {
+                        var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
+                        //if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                        //if (reader.HasValue) reader.Read(); // read and skip node value
+                        if (name != null)
+                        {
+                            var v = new DDValue();
+                            var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+                            if (t == null)
+                            {
+                                attributes.Add(name, null);
+                                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                                if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                            }
+                            else
+                            {
+                                v.ReadXml(reader);
+                                attributes.Add(name, v);
+                            }
+                        }
+                        else
+                        {
+                            if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                        }
+
+                        //if (reader.HasValue) // read value of element if there is
+                        //{
+                        //    reader.Read(); // read value of element
+                        //    if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
+                        //}
+                    }
+                    reader.MoveToContent();
+                }
+
+                if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
+            }
         }
 
         #endregion IXmlSerializable
@@ -582,8 +629,8 @@ namespace DrOpen.DrCommon.DrData
             long size = 0;
             foreach (var item in this)
             {
-                if (item.Value !=null) size += item.Value.Size ;
-                if (item.Key != null) size += Encoding.UTF8.GetBytes(item.Key).LongLength; 
+                if (item.Value != null) size += item.Value.Size;
+                if (item.Key != null) size += Encoding.UTF8.GetBytes(item.Key).LongLength;
             }
             return size;
         }
@@ -606,7 +653,7 @@ namespace DrOpen.DrCommon.DrData
         {
             foreach (var item in coll)
             {
-                Add(item.Key, item.Value,  res);
+                Add(item.Key, item.Value, res);
             }
         }
         #endregion Merge

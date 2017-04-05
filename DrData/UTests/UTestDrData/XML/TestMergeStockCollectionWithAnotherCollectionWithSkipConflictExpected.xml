@@ -1,67 +1,31 @@
 <?xml version="1.0"?>
 <n n="a" r="True" c="3">
-  <ac c="2">
-    <a n="value a-&gt;a">
-      <v t="System.String" s="6">string</v>
-    </a>
-    <a n="value a-&gt;b">
-      <v t="System.Boolean" s="1">True</v>
-    </a>
-    <a n="attr1">
-      <v t="System.String" s="6">string</v>
-    </a>
-    <a n="attr2">
-      <v t="System.Boolean" s="1">True</v>
-    </a>
-  </ac>
+  <a n="value a-&gt;a" t="System.String" s="6">string</a>
+  <a n="value a-&gt;b" t="System.Boolean" s="1">True</a>
+  <a n="attr1" t="System.String" s="6">string</a>
+  <a n="attr2" t="System.Boolean" s="1">True</a>
   <n n="a.b" c="1">
-    <ac />
     <n n="a.b.d" c="1">
-      <ac c="1">
-        <a n="Array">
-          <v t="System.String[]" s="16">
-            <i />
-            <i>Value_A</i>
-            <i>Value_B</i>
-          </v>
-        </a>
-      </ac>
+      <a n="Array" t="System.String[]" s="16">
+        <i />
+        <i>Value_A</i>
+        <i>Value_B</i>
+      </a>
       <n n="a.b.d.e">
-        <ac c="3">
-          <a n="value a.b.d.e-&gt;a">
-            <v t="System.Int32" s="4">1</v>
-          </a>
-          <a n="value a.b.d.e-&gt;b" />
-          <a n="Test" />
-        </ac>
+        <a n="value a.b.d.e-&gt;a" t="System.Int32" s="4">1</a>
+        <a n="value a.b.d.e-&gt;b" />
+        <a n="Test" />
       </n>
     </n>
   </n>
   <n n="a.c">
-    <ac c="3">
-      <a n="value a.c-&gt;a">
-        <v t="System.String" s="6">string</v>
-      </a>
-      <a n="value a.c-&gt;b">
-        <v t="System.Boolean" s="1">True</v>
-      </a>
-      <a n="value a.c-&gt;c">
-        <v t="System.DateTime" s="8">2013-06-14T15:15:30.0000000+03:00</v>
-      </a>
-    </ac>
+    <a n="value a.c-&gt;a" t="System.String" s="6">string</a>
+    <a n="value a.c-&gt;b" t="System.Boolean" s="1">True</a>
+    <a n="value a.c-&gt;c" t="System.DateTime" s="8">2013-06-14T15:15:30.0000000+03:00</a>
   </n>
   <n n="A.C">
-    <ac c="3">
-      <a n="value a.c-&gt;a">
-        <v t="System.String" s="6">STRING</v>
-      </a>
-      <a n="value a.c-&gt;b">
-        <v t="System.Boolean" s="1">False</v>
-      </a>
-      <a n="value a.c-&gt;c">
-        <v t="System.DateTime" s="8">2015-06-14T15:15:30.0000000+03:00</v>
-      </a>
-    </ac>
+    <a n="value a.c-&gt;a" t="System.String" s="6">STRING</a>
+    <a n="value a.c-&gt;b" t="System.Boolean" s="1">False</a>
+    <a n="value a.c-&gt;c" t="System.DateTime" s="8">2015-06-14T15:15:30.0000000+03:00</a>
   </n>
-
 </n>

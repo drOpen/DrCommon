@@ -133,8 +133,8 @@ namespace DrOpen.DrCommon.DrData
             reader.MoveToContent();
 
             this.attributes = new DDAttributesCollection();
-            var serializerDDAttributeCollection = new XmlSerializer(typeof(DDAttributesCollection));
 
+            var serializerDDAttributeCollection = new XmlSerializer(typeof(DDAttributesCollection));
             var serializerDDNode = new XmlSerializer(typeof(DDNode));
 
             this.Name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
@@ -152,8 +152,15 @@ namespace DrOpen.DrCommon.DrData
             {
                 if (((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION) == false) && (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE) == false)) || (reader.Depth > initialDepth))
                 {
-                    reader.Skip(); // Skip none <DDAttributesCollection> or <DDNode> elements with childs and subchilds. 'Deep proptection'
-                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
+                    if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
+                    {
+                        attributes.ReadXml(reader);
+                    }
+                    else
+                    {
+                        reader.Skip(); // Skip none <ac>,<a>,<n> elements with childs and subchilds. 'Deep proptection'
+                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
+                    }
                 }
                 else
                 {

@@ -29,15 +29,15 @@ using System;
 using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrData.Exceptions;
+using System.Runtime.Serialization;
 
 namespace DrOpen.DrCommon.DrData
 {
-
     /// <summary>
     /// the type of the object
     /// </summary>
-    //[Serializable]
-    public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType> //, ISerializable
+    [Serializable]
+    public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType> , ISerializable
     {
 
         #region Constructor
@@ -52,25 +52,25 @@ namespace DrOpen.DrCommon.DrData
         {
             this.Name = type.Name;
         }
-        ///// <summary>
-        ///// The special constructor is used to deserialize values.
-        ///// </summary>
-        ///// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
-        ///// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
-        //public DDType(SerializationInfo info, StreamingContext context)
-        //{
-        //    this.Name = (String)info.GetValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, typeof(String));
-        //}
+        /// <summary>
+        /// The special constructor is used to deserialize values.
+        /// </summary>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        public DDType(SerializationInfo info, StreamingContext context)
+        {
+            this.Name = (String)info.GetValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, typeof(String));
+        }
         #endregion Constructor
-        ///// <summary>
-        ///// Method to serialize data. The method is called on serialization.
-        ///// </summary>
-        ///// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
-        ///// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
-        //public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        //{
-        //    info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.Name, typeof(String));
-        //}
+        /// <summary>
+        /// Method to serialize data. The method is called on serialization.
+        /// </summary>
+        /// <param name="info">Stores all the data needed to serialize or deserialize an object.</param>
+        /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.Name, typeof(String));
+        }
 
 
         /// <summary>

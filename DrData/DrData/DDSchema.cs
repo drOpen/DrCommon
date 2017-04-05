@@ -45,6 +45,8 @@ namespace DrOpen.DrCommon.DrData
         public const string XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT = "c";
         public const string XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT = "a";
 
+        public const string XML_SERIALIZE_VALUE_TYPE_NULL = "null";
+
         #endregion Serialize xml
         #region Serialize bin
         public const string SERIALIZE_ATTRIBUTE_NAME = "n";

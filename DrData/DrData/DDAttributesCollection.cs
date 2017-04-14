@@ -64,15 +64,12 @@ namespace DrOpen.DrCommon.DrData
         public virtual void WriteXml(XmlWriter writer)
         {
             if (attributes == null) return; // if attributes is null
-            //var serializer = new XmlSerializer(typeof(DDValue));
-
             if (attributes.Count != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT, attributes.Count.ToString()); // write element count for none empty collection
 
             foreach (var a in attributes)
             {
                 writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, a.Key);
-                //if (a.Value != null) serializer.Serialize(writer, a.Value);  // skip null object
                 if (a.Value != null) a.Value.WriteXml(writer);
                 writer.WriteEndElement();
             }
@@ -86,89 +83,73 @@ namespace DrOpen.DrCommon.DrData
         {
             if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
             {
-                var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
-                if (name != null)
+                DeserializeAttribute(reader);
+                return;
+            }
+            if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
+            {
+                DeserializeAttributesCollection(reader);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Generates an attribute from its XML representation.
+        /// </summary>
+        /// <param name="reader"></param>
+        private void DeserializeAttribute(XmlReader reader)
+        {
+            var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
+            var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+
+            if (name != null)
+            {
+                DDValue v = null;
+                if (t != null)
                 {
-                    var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-                    if (t == null)
-                    {
-                        attributes.Add(name, null);
-                        if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
-                    }
-                    else
-                    {
-                        var v = new DDValue();
-                        v.ReadXml(reader);
-                        attributes.Add(name, v);
-                    }
+                    v = new DDValue();
+                    v.ReadXml(reader);
+                }
+                attributes.Add(name, v);
+            }
+
+            if ((name == null) || (t == null)) // reads and close empty node
+            {
+                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+                if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+            }
+        }
+
+        /// <summary>
+        /// Generates an attributes collection from its XML representation.
+        /// </summary>
+        /// <param name="reader"></param>
+        private void DeserializeAttributesCollection(XmlReader reader)
+        {
+            reader.MoveToContent();
+            this.attributes = new Dictionary<string, DDValue>();
+            var serializer = new XmlSerializer(typeof(DDValue));
+
+            var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
+            reader.Read(); // read root element
+            if (isEmptyElement) return; // Exit for element without child <ac />
+
+            var initialDepth = reader.Depth;
+
+            while ((reader.Depth >= initialDepth)) // do all childs
+            {
+                if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) == false) || (reader.Depth > initialDepth))
+                {
+                    reader.Skip(); // Skip none <a> elements with childs and subchilds <a> elements 'Deep proptection'
+                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else
                 {
-                    if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+                    DeserializeAttribute(reader); // deserializes attribute
                 }
-
-            }
-            else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
-            {
-
                 reader.MoveToContent();
-
-                attributes = new Dictionary<string, DDValue>();
-                var serializer = new XmlSerializer(typeof(DDValue));
-
-                var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
-                reader.Read(); // read root element
-                if (isEmptyElement) return; // Exit for element without child <ac />
-
-                var initialDepth = reader.Depth;
-
-                while ((reader.Depth >= initialDepth)) // do all childs
-                {
-                    if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) == false) || (reader.Depth > initialDepth))
-                    {
-                        reader.Skip(); // Skip none <a> elements with childs and subchilds <Attribute> elements 'Deep proptection'
-                        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
-                    }
-                    else
-                    {
-                        var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
-                        //if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                        //if (reader.HasValue) reader.Read(); // read and skip node value
-                        if (name != null)
-                        {
-                            var v = new DDValue();
-                            var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-                            if (t == null)
-                            {
-                                attributes.Add(name, null);
-                                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                                if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
-                            }
-                            else
-                            {
-                                v.ReadXml(reader);
-                                attributes.Add(name, v);
-                            }
-                        }
-                        else
-                        {
-                            if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                            if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
-                        }
-
-                        //if (reader.HasValue) // read value of element if there is
-                        //{
-                        //    reader.Read(); // read value of element
-                        //    if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
-                        //}
-                    }
-                    reader.MoveToContent();
-                }
-
-                if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
             }
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
         }
 
         #endregion IXmlSerializable

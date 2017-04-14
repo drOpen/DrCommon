@@ -39,7 +39,6 @@ namespace DrOpen.DrCommon.DrData
     [Serializable]
     public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType> , ISerializable
     {
-
         #region Constructor
         public DDType(Enum name): this(name.ToString())
         { }
@@ -72,13 +71,10 @@ namespace DrOpen.DrCommon.DrData
             info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.Name, typeof(String));
         }
 
-
         /// <summary>
         /// Get or set name of type 
         /// </summary>
         public virtual string Name { get; set; }
-
-
 
         #region NodeType
         #endregion NodeType
@@ -126,7 +122,7 @@ namespace DrOpen.DrCommon.DrData
         {
             if (((object)value1 == null) && ((object)value2 == null)) return 0; // if both are null -> return true
             if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
-            if ((value1.Name == null) || (value2.Name == null))
+            if ((value1.Name == null)    || (value2.Name == null))
             {
                 if (!((value1.Name == null) && (value2.Name == null))) return 1;
             }
@@ -141,7 +137,6 @@ namespace DrOpen.DrCommon.DrData
         { 
             return base.Equals(other);
         }
-
         /// <summary>
         /// Determines whether the specified System.Object is equal to the current DDType. Returns true if the specified System.Object is equal to the current DDType otherwise, false
         /// </summary>

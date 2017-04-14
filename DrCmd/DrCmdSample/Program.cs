@@ -45,7 +45,6 @@ namespace DrOpen.DrCommon.DrCmd
 
             Console.Write( cmd.GetHelp(true));
             Console.WriteLine();
-            DDNode resDdNode ;
             do
             {
                 Console.WriteLine("Specify arguments: ");

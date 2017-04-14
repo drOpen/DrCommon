@@ -90,7 +90,7 @@ namespace DrOpen.DrCommon.DrData
                 }
                 else
                 {
-                    writer.WriteString(ToString());
+                    writer.WriteString(this.ToString());
                 }
             }
         }
@@ -110,7 +110,6 @@ namespace DrOpen.DrCommon.DrData
             {
                 data = null;
                 if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                if (reader.NodeType == XmlNodeType.EndElement)  reader.ReadEndElement(); // need to close the opened element
             }
             else
             {
@@ -126,7 +125,7 @@ namespace DrOpen.DrCommon.DrData
                     if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
                 }
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </n>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </v>, only self
         }
 
         /// <summary>
@@ -154,20 +153,19 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         protected virtual object[] ReadXmlValueArray(XmlReader reader)
         {
-
             int i = 0;
             object[] value = null;
             var elementType = type.GetElementType();
 
             reader.Read();
             var initialDepth = reader.Depth;
-            if (reader.NodeType == XmlNodeType.None) return value; // Exit for element without child <DDvalue Type="String[]"/>
+            if (reader.NodeType == XmlNodeType.None) return value; // Exit for element without child <v t="System.String[]"/>
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
                 if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
                 {
-                    reader.Skip(); // Skip none <Value> elements with childs and subchilds <Value> elements 'Deep proptection'
+                    reader.Skip(); // Skip none <v> elements with childs and subchilds <v> elements 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else

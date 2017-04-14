@@ -24,7 +24,6 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
  */
-
 using System;
 
 namespace DrOpen.DrCommon.DrData

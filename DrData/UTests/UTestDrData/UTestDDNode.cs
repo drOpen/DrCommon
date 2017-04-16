@@ -57,17 +57,17 @@ namespace UTestDrData
             var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
 
             var a = new DDNode("a");
-            a.Attributes.Add(attStock1Name, "string");
-            a.Attributes.Add("value a->b", true);
+                a.Attributes.Add(attStock1Name, "string");
+                a.Attributes.Add("value a->b", true);
             var a_b = a.Add("a.b");
             var a_c = a.Add("a.c");
-            a_c.Attributes.Add("value a.c->a", "string");
-            a_c.Attributes.Add("value a.c->b", true);
-            a_c.Attributes.Add("value a.c->c", dtNow);
+                a_c.Attributes.Add("value a.c->a", "string");
+                a_c.Attributes.Add("value a.c->b", true);
+                a_c.Attributes.Add("value a.c->c", dtNow);
             var a_b_d = a_b.Add("a.b.d");
             var a_b_d_e = a_b_d.Add("a.b.d.e");
-            a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
-            a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
+                a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
+                a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
             return a;
         }
 
@@ -391,6 +391,25 @@ namespace UTestDrData
             var deep = true;
             var clone = (DDNode)root.Clone(deep);
             ValidateClone(root, clone, deep);
+        }
+
+        [TestMethod]
+        public void TestCloneLastNodesWithOutMerge()
+        {
+            var child = GetStockHierarhy().GetNode("/a.b/a.b.d");
+            var deep = true;
+            var clone = (DDNode)child.Clone(deep);
+            ValidateClone(child, clone, deep);
+        }
+
+        [TestMethod]
+        public void TestCloneLastNodesWithMerge()
+        {
+            var child = GetStockHierarhy().GetNode("/a.b/a.b.d");
+            var deep = true;
+            var clone = (DDNode)child.Clone(deep, true);
+            child.Attributes.Merge(child.GetRoot().Attributes); // add root attributtes to child
+            ValidateClone(child, clone, deep);
         }
 
         private void ValidateClone(DDNode sourceNode, DDNode clonedNode, bool deep)

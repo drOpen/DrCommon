@@ -1,37 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-    DrData.xsd - This XML Schema representation of data storage DrData in xml format, 1.0.1, April 20, 2015
-    Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+    DrData.xsd - This XML Schema representation of data storage DrData in xml format, 1.1, April 15, 201
+    Copyright (c) 2013-2017 Kudryashov Andrey aka Dr
     Kudryashov Andrey <kudryashov.andrey at gmail.com>
   -->
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="DDNode">
+  <xs:element name="n">
     <xs:annotation>
       <xs:documentation>Hierarchy data warehouse</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:choice maxOccurs="unbounded">
-          <xs:element ref="DDAttributesCollection" minOccurs="1" maxOccurs="1"/>
-          <xs:element ref="DDNode" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="a" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="n" minOccurs="0" maxOccurs="unbounded"/>
         </xs:choice>
       </xs:sequence>
-      <xs:attribute name="Name" type="xs:string" use="required" >
+      <xs:attribute name="n" type="xs:string" use="required" >
         <xs:annotation>
           <xs:documentation>Name of node. This attribute is required.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="Type" type="xs:string" use="optional" default="">
+      <xs:attribute name="t" type="xs:string" use="optional" default="">
         <xs:annotation>
           <xs:documentation>Type of node. This attribute is optional.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="IsRoot" type="xs:boolean" use="optional" default="false">
+      <xs:attribute name="r" type="xs:boolean" use="optional" default="false">
         <xs:annotation>
           <xs:documentation>Attribute exhibition on the root node. This attribute is optional and by default value is 'false'. This attribute information and is not used when creating an object.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="Children" type="xs:int" use="optional" default="0" >
+      <xs:attribute name="c" type="xs:int" use="optional" default="0" >
         <xs:annotation>
           <xs:documentation>Attribute informs about the number of children node. This attribute is optional and by default value is '0'. This attribute information and is not used when creating an object.</xs:documentation>
         </xs:annotation>
@@ -40,72 +40,44 @@
     </xs:complexType>
     <xs:unique name ="uniqNodeName">
       <xs:annotation >
-        <xs:documentation >Checking the uniqueness of the name of the DDNode on the same level</xs:documentation>
+        <xs:documentation >Checking the uniqueness of the name of the n on the same level</xs:documentation>
       </xs:annotation>
-      <xs:selector xpath="./DDNode"/>
-      <xs:field xpath="@Name"/>
+      <xs:selector xpath="./n"/>
+      <xs:field xpath="@n"/>
     </xs:unique>
-  </xs:element>
-
-  <xs:element name="DDAttributesCollection">
-    <xs:annotation>
-      <xs:documentation>Represents a named collection of DDValue.</xs:documentation>
-    </xs:annotation>
-    <xs:complexType>
-      <xs:sequence>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element ref="Attribute" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:choice>
-      </xs:sequence>
-      <xs:attribute name="Count" type="xs:int" use="optional" default="0" >
-        <xs:annotation>
-          <xs:documentation>Attribute informs about the number of attributes in collection. This attribute is optional and by default value is '0'. This attribute information and is not used when creating an object.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:anyAttribute processContents="skip" />
-    </xs:complexType>
     <xs:unique name ="uniqAttributeName">
       <xs:annotation >
         <xs:documentation >Checking the uniqueness of the name of the Attribute on the same level</xs:documentation>
       </xs:annotation>
-      <xs:selector xpath="./Attribute"/>
-      <xs:field xpath="@Name"/>
+      <xs:selector xpath="./a"/>
+      <xs:field xpath="@n"/>
     </xs:unique>
   </xs:element>
 
-  <xs:element name="Attribute">
-    <xs:annotation>
-      <xs:documentation>Represents access by name to DDValue.</xs:documentation>
-    </xs:annotation>
-    <xs:complexType>
-      <xs:sequence>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element ref="DDValue" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:choice>
-      </xs:sequence>
-      <xs:attribute name="Name" type="xs:string" use="required" >
-        <xs:annotation>
-          <xs:documentation>Name of attribute. This attribute is required.</xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:anyAttribute processContents="skip" />
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="DDValue">
+  <xs:element name="a">
     <xs:annotation>
       <xs:documentation>Data warehouse.</xs:documentation>
     </xs:annotation>
     <xs:complexType mixed="true">
       <xs:sequence>
-        <xs:element ref="Value" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="i" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="Type" type="ValueType" use="required" >
+      <xs:attribute name="n" type="xs:string" use="required" >
         <xs:annotation>
-          <xs:documentation>Data type.</xs:documentation>
+          <xs:documentation>Name of attribute. This attribute is required.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="Size" use="optional" default="0">
+      <xs:attribute name="t" type="ValueType" use="optional" >
+        <xs:annotation>
+          <xs:documentation>
+            Type of value. If this attribute is not specified then attribute value is null. However, null attribute is not equals than type of value is null!
+            (&quot;nullAttributeSample&quot;, null)  ---&gt;  &lt;a n=&quot;nullAttributeSample&quot;/&gt; &#44;
+            (&quot;nullValueSample&quot;, new DDValue())  ---&gt;   &lt;a n=&quot;nullValueSample&quot; t=&quot;null&quot;/&gt; 
+            are not the same
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="s" use="optional" default="0">
         <xs:annotation>
           <xs:documentation>Attribute informs about the size of value. This attribute is optional and by default value is '0'. This attribute information and is not used when creating an object.</xs:documentation>
         </xs:annotation>
@@ -114,7 +86,7 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="Value">
+  <xs:element name="i">
     <xs:annotation>
       <xs:documentation>Element of array.</xs:documentation>
     </xs:annotation>
@@ -144,7 +116,12 @@
       <xs:enumeration value="System.Byte[]"/>
       <xs:enumeration value="System.Guid"/>
       <xs:enumeration value="System.Guid[]"/>
+      <xs:enumeration value="null">
+        <xs:annotation>
+          <xs:documentation>type of null noties what value is null</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
-  
+
 </xs:schema>

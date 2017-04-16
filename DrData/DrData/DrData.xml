@@ -1,0 +1,11 @@
+﻿<n n="NameRoot" t="Sample.Type" r="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DrData.xsd">
+  <a n="a1" t="System.Char"></a>
+  <n n="Name1"/>
+  <n n ="Name2">
+    <a n="a1" t ="System.Char">a</a>
+    <a n="a2" t ="System.Int32" s="0">32</a>
+    </n>
+  <n n ="Name3"/>
+  <a n="a2"></a>
+</n>
+  

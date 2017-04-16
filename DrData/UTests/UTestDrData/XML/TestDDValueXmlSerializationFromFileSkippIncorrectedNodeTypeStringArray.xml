@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<DDValue Type="System.String[]">
-  <A/>
-  <Value/>
-  <value>val</value>
+<v t="System.String[]">
+  <B/>
+  <i/>
+  <I>val</I>
   <Test/>
-</DDValue>
+</v>

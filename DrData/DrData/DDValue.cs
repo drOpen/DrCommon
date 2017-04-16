@@ -27,11 +27,11 @@
 using System;
 using System.Text;
 using DrOpen.DrCommon.DrData.Res;
+using DrOpen.DrCommon.DrData.Exceptions;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using System.Xml.Schema;
 using System.Xml;
-using DrOpen.DrCommon.DrData.Exceptions;
+using System.Xml.Schema;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -39,15 +39,9 @@ namespace DrOpen.DrCommon.DrData
     /// Data warehouse
     /// </summary>
     [Serializable]
+    [XmlRoot(ElementName = "v")]
     public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable, IXmlSerializable
     {
-        #region const
-        public const string SerializePropNameValue = "Value";
-        public const string SerializePropNameType = "Type";
-        public const string SerializePropNameSize = "Size";
-        public const string SerializeDateTimeFormat = "o"; //ISO 8601 format
-        public const string SerializeRoundTripFormat = "r"; //round-trip format for Single, Double, and BigInteger types.
-        #endregion const
         #region DDValue
         /// <summary>
         /// Create empty value
@@ -77,22 +71,27 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            if (Type == null) return; // if data is null
-
-            writer.WriteAttributeString(SerializePropNameType, Type.ToString());
-            if (Size != 0) writer.WriteAttributeString(SerializePropNameSize, Size.ToString()); // write size only for none empty objects
-            if (IsThisTypeXMLSerialyzeAsArray(type))
+            if (Type == null)
             {
-                foreach (var element in ToStringArray())
-                {
-                    writer.WriteStartElement(SerializePropNameValue);
-                    writer.WriteString(element);
-                    writer.WriteEndElement();
-                }
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL);
             }
             else
             {
-                writer.WriteString(ToString());
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type.ToString());
+                if (Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, Size.ToString()); // write size only for none empty objects
+                if (IsThisTypeXMLSerialyzeAsArray(type))
+                {
+                    foreach (var element in ToStringArray())
+                    {
+                        writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM);
+                        writer.WriteString(element);
+                        writer.WriteEndElement();
+                    }
+                }
+                else
+                {
+                    writer.WriteString(this.ToString());
+                }
             }
         }
 
@@ -103,30 +102,30 @@ namespace DrOpen.DrCommon.DrData
         public virtual void ReadXml(XmlReader reader)
         {
 
-            var typeNameSelf = this.GetType().Name;
-
             reader.MoveToContent();
             type = null;
 
-            var t = reader.GetAttribute(SerializePropNameType);
-            if (string.IsNullOrEmpty(t))
+            var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+            if ((string.IsNullOrEmpty(t)) || (t == DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL))
             {
                 data = null;
-                return; // null object
-            }
-            data = new byte[] { };
-            this.type = Type.GetType(t);
-            if (IsThisTypeXMLSerialyzeAsArray(type) == false)
-            {
-                this.data = GetByteArrayByTypeFromString(type, GetXmlElementValue(reader)); // read node value for none array types
+                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
             }
             else
             {
-                var value = ReadXmlValueArray(reader);
-                if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
+                data = new byte[] { };
+                this.type = Type.GetType(t);
+                if (IsThisTypeXMLSerialyzeAsArray(type) == false)
+                {
+                    this.data = GetByteArrayByTypeFromString(type, GetXmlElementValue(reader)); // read node value for none array types
+                }
+                else
+                {
+                    var value = ReadXmlValueArray(reader);
+                    if (value != null) this.data = GetByteArray(Type, typeof(string[]) == Type ? ConvertObjectArrayToStringArray(value) : value);
+                }
             }
-
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == typeNameSelf)) reader.ReadEndElement(); // Need to close the opened element </DDValue>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </v>, only self
         }
 
         /// <summary>
@@ -154,20 +153,19 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         protected virtual object[] ReadXmlValueArray(XmlReader reader)
         {
-            var dDValueTypeName = typeof(DDValue).Name;
             int i = 0;
             object[] value = null;
             var elementType = type.GetElementType();
 
             reader.Read();
             var initialDepth = reader.Depth;
-            if (reader.NodeType == XmlNodeType.None) return value; // Exit for element without child <DDvalue Type="String[]"/>
+            if (reader.NodeType == XmlNodeType.None) return value; // Exit for element without child <v t="System.String[]"/>
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
-                if ((reader.IsStartElement(SerializePropNameValue) == false) || (reader.Depth > initialDepth))
+                if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
                 {
-                    reader.Skip(); // Skip none <Value> elements with childs and subchilds <Value> elements 'Deep proptection'
+                    reader.Skip(); // Skip none <v> elements with childs and subchilds <v> elements 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else
@@ -220,8 +218,8 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDValue(SerializationInfo info, StreamingContext context)
         {
-            this.type = (Type)info.GetValue(SerializePropNameType, typeof(Type));
-            this.data = (byte[])info.GetValue(SerializePropNameValue, typeof(byte[]));
+            this.type = (Type)info.GetValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, typeof(Type));
+            this.data = (byte[])info.GetValue(DDSchema.SERIALIZE_NODE_ARRAY_VALUE_ITEM, typeof(byte[]));
         }
         /// <summary>
         /// Method to serialize data. The method is called on serialization.
@@ -230,8 +228,8 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(SerializePropNameType, this.type, typeof(Type));
-            info.AddValue(SerializePropNameValue, this.data, typeof(byte[]));
+            info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.type, typeof(Type));
+            info.AddValue(DDSchema.SERIALIZE_NODE_ARRAY_VALUE_ITEM, this.data, typeof(byte[]));
         }
         #endregion ISerializable
         #region Properties
@@ -727,7 +725,7 @@ namespace DrOpen.DrCommon.DrData
                 if (data == null) return null; // check Nullable type
                 type = Nullable.GetUnderlyingType(type); // Returns the underlying type argument of the specified nullable type. 
             }
-            
+
             if (type == typeof(string)) return Encoding.UTF8.GetString(data);
 
             if (type == typeof(DateTime)) return DateTime.FromBinary(BitConverter.ToInt64(data, 0));
@@ -744,7 +742,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(char)) return BitConverter.ToChar(data, 0);
             if (type == typeof(float)) return BitConverter.ToSingle(data, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(data, 0);
-            if (type == typeof(bool))  return BitConverter.ToBoolean(data, 0);
+            if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
             if (type == typeof(Guid)) return new Guid(data);
 
             throw new DDTypeIncorrectException(type.ToString());
@@ -1133,13 +1131,13 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>value as string</returns>
         protected static string GetObjAsStringByType(Type type, object value)
         {
-            if (type == typeof(DateTime)) return ((DateTime)value).ToString(SerializeDateTimeFormat);
+            if (type == typeof(DateTime)) return ((DateTime)value).ToString(DDSchema.StringDateTimeFormat);
             // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
             // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
             // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
-            if (type == typeof(Single)) return ((Single)value).ToString(SerializeRoundTripFormat);
-            if (type == typeof(Double)) return ((Double)value).ToString(SerializeRoundTripFormat);
-            if (type == typeof(float)) return ((float)value).ToString(SerializeRoundTripFormat);
+            if (type == typeof(Single)) return ((Single)value).ToString(DDSchema.StringRoundTripFormat);
+            if (type == typeof(Double)) return ((Double)value).ToString(DDSchema.StringRoundTripFormat);
+            if (type == typeof(float)) return ((float)value).ToString(DDSchema.StringRoundTripFormat);
             return value.ToString();
         }
 

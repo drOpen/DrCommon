@@ -35,7 +35,7 @@ namespace DrOpen.DrCommon.DrCmd
         static void Main(string[] args)
         {
 
-            var ddNode = new DDNode(DrCmdConst.TypeSettings, DrCmdConst.TypeSettings);
+            var ddNode = new DDNode(DrCmdConst.TypeSettings, new DDType (DrCmdConst.TypeSettings));
             ddNode.Attributes.Add(DrCmdSettings.ApplicationDescription, "It's test application.");
             ddNode.Add(GetCommandHelp());
             ddNode.Add(GetCommandRUN());
@@ -45,7 +45,6 @@ namespace DrOpen.DrCommon.DrCmd
 
             Console.Write( cmd.GetHelp(true));
             Console.WriteLine();
-            DDNode resDdNode ;
             do
             {
                 Console.WriteLine("Specify arguments: ");

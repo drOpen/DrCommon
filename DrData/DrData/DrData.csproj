@@ -37,15 +37,14 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
-    <Compile Include="DDEventArgs.cs" />
     <Compile Include="DDNodeST.cs" />
+    <Compile Include="DDSchema.cs" />
     <Compile Include="DDType.cs" />
     <Compile Include="DDValue.cs" />
     <Compile Include="DDNode.cs" />
@@ -56,9 +55,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Exceptions\Value.cs" />
-    <Compile Include="IDrData.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Res\Msg.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -74,6 +70,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DrData.xml" />
     <Content Include="License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -83,7 +80,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

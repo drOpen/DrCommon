@@ -1,7 +1,7 @@
 ﻿/*
-  DDType.cs -- stored type of the 'DrData' general purpose Data abstraction layer 1.0.1, October 5, 2013
+  DDType.cs -- stored type of the 'DrData' general purpose Data abstraction layer 1.1, October 27, 2016
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -26,33 +26,19 @@
  */
 
 using System;
-using System.Runtime.Serialization;
 using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrData.Exceptions;
+using System.Runtime.Serialization;
 
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>
-    /// Implements support DDType 
-    /// </summary>
-    public interface IDDTypeSupport
-    {
-        /// <summary>
-        /// Returns supported DDNode type
-        /// </summary>
-        /// <returns></returns>
-        DDType GetDDType();
-    }
-
-    /// <summary>
     /// the type of the object
     /// </summary>
     [Serializable]
-    public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType>, ISerializable
+    public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType> , ISerializable
     {
-
-        private const string SerializePropName = "Type";
         #region Constructor
         public DDType(Enum name): this(name.ToString())
         { }
@@ -72,7 +58,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public DDType(SerializationInfo info, StreamingContext context)
         {
-            this.Name = (String)info.GetValue(SerializePropName, typeof(String));
+            this.Name = (String)info.GetValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, typeof(String));
         }
         #endregion Constructor
         /// <summary>
@@ -82,16 +68,13 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="context">Describes the source and destination of a given serialized stream, and provides an additional caller-defined context.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(SerializePropName, this.Name, typeof(String));
+            info.AddValue(DDSchema.SERIALIZE_ATTRIBUTE_TYPE, this.Name, typeof(String));
         }
 
-
         /// <summary>
-        /// the type of the object as a string
+        /// Get or set name of type 
         /// </summary>
         public virtual string Name { get; set; }
-
-
 
         #region NodeType
         #endregion NodeType
@@ -107,9 +90,9 @@ namespace DrOpen.DrCommon.DrData
         }
         #endregion
         /// <summary>
-        /// Compare type as string
+        /// Compare type by name
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">other type for comparison as object</param>
         /// <returns></returns>
         public int CompareTo(object obj)
         {
@@ -117,9 +100,9 @@ namespace DrOpen.DrCommon.DrData
             return CompareTo((DDType)obj);
         }
         /// <summary>
-        /// Compare type as string
+        /// Compare type by name
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">other type for comparison</param>
         /// <returns></returns>
         public int CompareTo(DDType other)
         {
@@ -139,26 +122,25 @@ namespace DrOpen.DrCommon.DrData
         {
             if (((object)value1 == null) && ((object)value2 == null)) return 0; // if both are null -> return true
             if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
-            if ((value1.Name == null) || (value2.Name == null))
+            if ((value1.Name == null)    || (value2.Name == null))
             {
                 if (!((value1.Name == null) && (value2.Name == null))) return 1;
             }
             return value1.CompareTo(value2);
         }
         /// <summary>
-        /// Determines whether the specified DDType is equal to the current DDType.
+        /// Determines whether the specified DDType is equal to the current DDType. Returns true if the specified DDType is equal to the current DDType otherwise, false.
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">other type for comparison</param>
         /// <returns>true if the specified DDType is equal to the current DDType otherwise, false.</returns>
         public virtual bool Equals(DDType other)
         { 
             return base.Equals(other);
         }
-
         /// <summary>
-        /// Determines whether the specified System.Object is equal to the current DDType.
+        /// Determines whether the specified System.Object is equal to the current DDType. Returns true if the specified System.Object is equal to the current DDType otherwise, false
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">other type for comparison as object</param>
         /// <returns>true if the specified System.Object is equal to the current DDType otherwise, false.</returns>
         public override bool Equals(object other)
         {
@@ -214,7 +196,7 @@ namespace DrOpen.DrCommon.DrData
         /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
         /// </summary>
         /// <param name="expectedType">expected node type</param>
-        public void ValidateExpectedNodeType(string expectedType)
+        public virtual void ValidateExpectedNodeType(string expectedType)
         {
             ValidateExpectedNodeType(this, expectedType);
         }
@@ -222,7 +204,7 @@ namespace DrOpen.DrCommon.DrData
         /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
         /// </summary>
         /// <param name="expectedType">expected node type</param>
-        public void ValidateExpectedNodeType(DDType expectedType)
+        public virtual void ValidateExpectedNodeType(DDType expectedType)
         {
             ValidateExpectedNodeType(expectedType.Name);
         }

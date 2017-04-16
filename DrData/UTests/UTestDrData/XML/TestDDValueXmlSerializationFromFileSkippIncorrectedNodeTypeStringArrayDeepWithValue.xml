@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<DDValue Type="System.String[]">
+<v t="System.String[]">
   NodeValue
-  <Value>TestValue<Value>valA</Value><Value/>
-  </Value>
+  <i>TestValue<i>valA</i><i/>
+  </i>
   <Test>
-    <Value>valB</Value>
+    <i>valB</i>
   </Test>
-  <DDValue>
+  <v>
     Value
-  </DDValue>
-  <Value>TheLastValue</Value>
-</DDValue>
+  </v>
+  <i>TheLastValue</i>
+</v>

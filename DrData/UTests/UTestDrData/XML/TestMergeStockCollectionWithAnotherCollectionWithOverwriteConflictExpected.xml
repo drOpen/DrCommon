@@ -1,66 +1,31 @@
 <?xml version="1.0"?>
-<DDNode Name="a" IsRoot="True" Children="32">
-  <DDAttributesCollection Count="4">
-    <Attribute Name="value a-&gt;a">
-      <DDValue Type="System.String" Size="6">string</DDValue>
-    </Attribute>
-    <Attribute Name="value a-&gt;b">
-      <DDValue Type="System.Boolean" Size="1">True</DDValue>
-    </Attribute>
-    <Attribute Name="attr1">
-      <DDValue Type="System.String" Size="6">string</DDValue>
-    </Attribute>
-    <Attribute Name="attr2">
-      <DDValue Type="System.Boolean" Size="1">True</DDValue>
-    </Attribute>
-  </DDAttributesCollection>
-  <DDNode Name="a.b" Children="1">
-    <DDAttributesCollection />
-    <DDNode Name="a.b.d" Children="1">
-       <DDAttributesCollection>
-	  <Attribute Name="Array">
-	    <DDValue Type="System.String[]">
-	      <Value/>
-	      <Value>Value_A</Value>
-	      <Value>Value_B</Value>
-	    </DDValue>
-	  </Attribute>
-      </DDAttributesCollection>
-      <DDNode Name="a.b.d.e">
-          <DDAttributesCollection Count="2">
-          <Attribute Name="value a.b.d.e-&gt;a">
-            <DDValue Type="System.Int32" Size="4">32</DDValue>
-          </Attribute>
-          <Attribute Name="value a.b.d.e-&gt;b" />
-          <Attribute Name="Test" />
-        </DDAttributesCollection>
-      </DDNode>
-    </DDNode>
-  </DDNode>
-  <DDNode Name="a.c">
-    <DDAttributesCollection Count="3">
-      <Attribute Name="value a.c-&gt;a">
-        <DDValue Type="System.String" Size="6">string</DDValue>
-      </Attribute>
-      <Attribute Name="value a.c-&gt;b">
-        <DDValue Type="System.Boolean" Size="1">True</DDValue>
-      </Attribute>
-      <Attribute Name="value a.c-&gt;c">
-        <DDValue Type="System.DateTime" Size="8">2013-06-14T15:15:30.0000000+03:00</DDValue>
-      </Attribute>
-    </DDAttributesCollection>
-  </DDNode>
-  <DDNode Name="A.C">
-    <DDAttributesCollection Count="3">
-      <Attribute Name="value a.c-&gt;a">
-        <DDValue Type="System.String" Size="6">STRING</DDValue>
-      </Attribute>
-      <Attribute Name="value a.c-&gt;b">
-        <DDValue Type="System.Boolean" Size="1">False</DDValue>
-      </Attribute>
-      <Attribute Name="value a.c-&gt;c">
-        <DDValue Type="System.DateTime" Size="8">2015-06-14T15:15:30.0000000+03:00</DDValue>
-      </Attribute>
-    </DDAttributesCollection>
-  </DDNode>
-</DDNode>
+<n n="a" r="True" c="32">
+  <a n="value a-&gt;a" t="System.String" s="6">string</a>
+  <a n="value a-&gt;b" t="System.Boolean" s="1">True</a>
+  <a n="attr1" t="System.String" s="6">string</a>
+  <a n="attr2" t="System.Boolean" s="1">True</a>
+  <n n="a.b" c="1">
+    <n n="a.b.d" c="1">
+      <a n="Array" t="System.String[]">
+        <i/>
+        <i>Value_A</i>
+        <i>Value_B</i>
+      </a>
+      <n n="a.b.d.e">
+        <a n="value a.b.d.e-&gt;a" t="System.Int32" s="4">32</a>
+        <a n="value a.b.d.e-&gt;b" />
+        <a n="Test" />
+      </n>
+    </n>
+  </n>
+  <n n="a.c">
+    <a n="value a.c-&gt;a" t="System.String" s="6">string</a>
+    <a n="value a.c-&gt;b" t="System.Boolean" s="1">True</a>
+    <a n="value a.c-&gt;c" t="System.DateTime" s="8">2013-06-14T15:15:30.0000000+03:00</a>
+  </n>
+  <n n="A.C">
+    <a n="value a.c-&gt;a" t="System.String" s="6">STRING</a>
+    <a n="value a.c-&gt;b" t="System.Boolean" s="1">False</a>
+    <a n="value a.c-&gt;c" t="System.DateTime" s="8">2015-06-14T15:15:30.0000000+03:00</a>
+  </n>
+</n>

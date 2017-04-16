@@ -1230,6 +1230,13 @@ namespace UTestDrData
         #endregion CompareTo
         #region ISerializable
         [TestMethod]
+        public void TestDDNodeISerializableType()
+        {
+            var ddNode = new DDNode("Name","Type");
+            ValidateDeserialization(ddNode, new BinaryFormatter());
+        }
+
+        [TestMethod]
         public void TestDDNodeISerializableNullData()
         {
             var ddNode = new DDNode();

@@ -228,20 +228,56 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>The cloned node.</returns>
         public virtual DDNode Clone(bool deep)
         {
+            return Clone(deep, false);
+        }
+        /// <summary>
+        /// Creates a duplicate of the node, when overridden in a derived class.
+        /// </summary>
+        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
+        /// <param name="mergeParentAttributes">Merges all attributes from all parent nodes (including root node) for attribute collection of cloned node only. 
+        /// The conflicted attributes by same name will be skipped.</param>
+        /// <returns>The cloned node.</returns>
+        public virtual DDNode Clone(bool deep, bool mergeParentAttributes)
+        {
+            return Clone(deep, mergeParentAttributes, ResolveConflict.SKIP);
+        }
+        /// <summary>
+        /// Returns attributes collection contains merged all attributes from all parent nodes (including root node) for specific node
+        /// </summary>
+        /// <param name="n">node</param>
+        /// <param name="rc">conflict resolution</param>
+        public static DDAttributesCollection GetMergedParentAttributes(DDNode n, ResolveConflict rc)
+        {
+            var current = new DDAttributesCollection();
+            while (n != null)
+            {
+                current.Merge(n.Attributes, rc);
+                n = n.Parent;
+            } 
+            return current;
+        }
+        /// <summary>
+        /// Merges all attributes from all parent nodes (including root node) for attribute collection of specific node
+        /// </summary>
+        /// <param name="n">node</param>
+        /// <param name="mergeParentAttributes">Merges all attributes from all parent nodes (including root node) for attribute collection of cloned node only</param>
+        /// <param name="rc">conflict resolution for merge attributes</param>
+        /// <returns>The cloned node.</returns>
+        public virtual DDNode Clone(bool deep, bool mergeParentAttributes, ResolveConflict rc)
+        {
             var newNode = new DDNode(this.Name, this.Type);
-            if (HasAttributes) newNode.attributes = (DDAttributesCollection)Attributes.Clone();
+            if ((HasAttributes) && (!mergeParentAttributes)) newNode.attributes = (DDAttributesCollection)Attributes.Clone();
+            if (mergeParentAttributes) newNode.attributes=GetMergedParentAttributes(this, rc);
 
             if (deep)
             {
                 foreach (var childNode in this)
                 {
-                    var clone = childNode.Value.Clone(true);
-                    newNode.Add(clone);
+                    newNode.Add(childNode.Value.Clone(true));
                 }
             }
             return newNode;
         }
-
         #endregion
         #region INotifyPropertyChanged Members
 

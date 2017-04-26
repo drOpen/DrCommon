@@ -49,13 +49,42 @@ namespace DrOpen.DrCommon.DrData
         /// </summary>
         public DDValue() { }
         /// <summary>
-        /// Create value with data. If type of object isn't supported throw application exception
+        /// Creates value with data. If type of object isn't supported throw application exception
         /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types
         /// </summary>
         /// <param name="value">data</param>
         public DDValue(object value)
         {
             SetValue(value);
+        }
+        /// <summary>
+        /// Creates value with specified type and convert string to specified type.
+        /// </summary>
+        /// <param name="t">Type of value</param>
+        /// <param name="v">Value as string</param>
+        public DDValue(Type t, string v)
+        {
+            if (t != null)
+            {
+                if (!ValidateType(t)) throw new DDTypeIncorrectException(t.ToString());
+                this.type = t;
+                this.data = GetByteArrayByTypeFromString(type, v);
+            }
+        }
+        /// <summary>
+        /// Creates value with specified type wheter be an array and convert string array to specified type.
+        /// </summary>
+        /// <param name="t">Type of value. The type must be an array</param>
+        /// <param name="v">Value as string array</param>
+        /// <exception cref="DDTypeIncorrectException">throws exception if type is incorrrect or is not array</exception>
+        public DDValue(Type t, string[] v)
+        {
+            if (t != null)
+            {
+                if (!ValidateType(t) || (t.IsArray==false)) throw new DDTypeIncorrectException(t.ToString());
+                this.type = t;
+                this.data = GetByteArray(t, typeof(string[]) == t ? ConvertObjectArrayToStringArray(v) : v);
+            }
         }
         #endregion DDValue
         #region IXmlSerializable

@@ -2968,7 +2968,21 @@ namespace UTestDrData
 
         }
         #endregion ToStringArray
-        #region ConvertFromStringTo
+        #region Convert
+
+        /// <summary>
+        /// compares to value and change one of them to validate equals
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        private void CompareDDValue(DDValue v1, DDValue v2)
+        {
+            Assert.IsTrue(v1 == v2, "Values must be mathematically equal.");
+            Assert.AreNotEqual(v1, v2, "Values should not be same.");
+            v2 = true; // change type no true
+            Assert.IsFalse(v1 == v2, "Changed value should not be equal to the another value.");
+        }
+
         [TestMethod]
         public void TestSelfTransformFromStringTo_FromNotString()
         {
@@ -3058,7 +3072,10 @@ namespace UTestDrData
             ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 }, v);
 
         }
-        #endregion ConvertFromStringTo
+
+
+
+        #endregion Convert
         #region ValidationType
         private void ValidateDateTime(DateTime dt, DDValue data)
         {
@@ -3720,31 +3737,6 @@ namespace UTestDrData
 
         #endregion IXmlSerializable
 
-        #region DDValue
-
-        [TestMethod]
-        public void TestDDValueInt()
-        {
-            CompareDDValue(new DDValue(typeof(int), "1"), new DDValue(1));
-        }
-        [TestMethod]
-        public void TestDDValueIntArray()
-        {
-            CompareDDValue(new DDValue(typeof(int[]), new string[] {"1", "2"}), new DDValue(new int[] { 1,2}));
-        }
-        /// <summary>
-        /// compares to value and change one of them to validate equals
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        private void CompareDDValue(DDValue v1, DDValue v2)
-        {
-            Assert.IsTrue(v1 == v2, "Values must be mathematically equal.");
-            Assert.AreNotEqual(v1, v2, "Values should not be same.");
-            v2 = true; // change type no true
-            Assert.IsFalse(v1 == v2, "Changed value should not be equal to the another value.");
-        }
-        #endregion DDValue
 
     }
 }

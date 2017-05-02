@@ -57,35 +57,6 @@ namespace DrOpen.DrCommon.DrData
         {
             SetValue(value);
         }
-        /// <summary>
-        /// Creates value with specified type and convert string to specified type.
-        /// </summary>
-        /// <param name="t">Type of value</param>
-        /// <param name="v">Value as string</param>
-        public DDValue(Type t, string v)
-        {
-            if (t != null)
-            {
-                if (!ValidateType(t)) throw new DDTypeIncorrectException(t.ToString());
-                this.type = t;
-                this.data = GetByteArrayByTypeFromString(type, v);
-            }
-        }
-        /// <summary>
-        /// Creates value with specified type wheter be an array and convert string array to specified type.
-        /// </summary>
-        /// <param name="t">Type of value. The type must be an array</param>
-        /// <param name="v">Value as string array</param>
-        /// <exception cref="DDTypeIncorrectException">throws exception if type is incorrrect or is not array</exception>
-        public DDValue(Type t, string[] v)
-        {
-            if (t != null)
-            {
-                if (!ValidateType(t) || (t.IsArray==false)) throw new DDTypeIncorrectException(t.ToString());
-                this.type = t;
-                this.data = GetByteArray(t, typeof(string[]) == t ? ConvertObjectArrayToStringArray(v) : v);
-            }
-        }
         #endregion DDValue
         #region IXmlSerializable
         /// <summary>
@@ -200,7 +171,7 @@ namespace DrOpen.DrCommon.DrData
                 else
                 {
                     Array.Resize(ref value, i + 1);
-                    value[i] = ConvertStringToSpecifiedTypeObject(elementType, GetXmlElementValue(reader));
+                    value[i] = ConvertFromStringTo(elementType, GetXmlElementValue(reader));
                     i++;
                 }
                 reader.MoveToContent();
@@ -385,41 +356,7 @@ namespace DrOpen.DrCommon.DrData
         {
             //if (type == typeof(byte[])) return HEX(value);
             //if (type == typeof(byte)) return new[] { Convert.ToByte(value) };
-            return GetByteArray(ConvertStringToSpecifiedTypeObject(type, value));
-        }
-
-        /// <summary>
-        /// Convert string to specified type.
-        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types
-        /// </summary>
-        /// <param name="type">convert to specified type</param>
-        /// <param name="value">string to convert</param>
-        /// <returns>Converted object by specified type</returns>
-        protected static object ConvertStringToSpecifiedTypeObject(Type type, string value)
-        {
-            try
-            {
-                if (type == typeof(byte[])) return HEX(value);
-                if (type == typeof(byte)) return Convert.ToByte(value);
-                if (type == typeof(string)) return value.ToString();
-                if (type == typeof(DateTime)) return Convert.ToDateTime(value);
-                if (type == typeof(bool)) return Convert.ToBoolean(value);
-                if (type == typeof(char)) return Convert.ToChar(value);
-                if (type == typeof(float)) return Convert.ToSingle(value);
-                if (type == typeof(double)) return Convert.ToDouble(value);
-                if (type == typeof(short)) return Convert.ToInt16(value);
-                if (type == typeof(int)) return Convert.ToInt32(value);
-                if (type == typeof(long)) return Convert.ToInt64(value);
-                if (type == typeof(ushort)) return Convert.ToUInt16(value);
-                if (type == typeof(uint)) return Convert.ToUInt32(value);
-                if (type == typeof(ulong)) return Convert.ToUInt64(value);
-                if (type == typeof(Guid)) return new Guid(value);
-            }
-            catch (Exception e)
-            {
-                throw new DDValueConvertException(value, type, e);
-            }
-            throw new DDTypeIncorrectException(type.ToString());
+            return GetByteArray(ConvertFromStringTo(type, value));
         }
 
         /// <summary>
@@ -1246,13 +1183,12 @@ namespace DrOpen.DrCommon.DrData
         }
         #endregion HEX
         #region Convert
-
         /// <summary>
         /// Converts this value to specified type from string or string array. Change themselves and their data type.
         /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
         /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
         /// </summary>
-        /// <param name="newType">convert to specified type</param>
+        /// <param name="elType">convert to specified type</param>
         /// <returns></returns>
         public void ConvertFromStringTo(string newType)
         {
@@ -1264,7 +1200,7 @@ namespace DrOpen.DrCommon.DrData
         /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
         /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
         /// </summary>
-        /// <param name="newType">convert to specified type</param>
+        /// <param name="elType">convert to specified type</param>
         /// <returns></returns>
         public void ConvertFromStringTo(Type newType)
         {
@@ -1279,9 +1215,10 @@ namespace DrOpen.DrCommon.DrData
                     var items = GetValueAsStringArray();
                     var objArray = new object[items.Length];
                     int i = 0;
+                    var elType = newType.GetElementType();
                     foreach (var item in items)
                     {
-                        objArray[i] = ConvertStringToSpecifiedTypeObject(newType.GetElementType(), item);
+                        objArray[i] = ConvertFromStringTo(elType, item);
                         i++;
                     }
                     this.data = GetByteArray(newType, objArray);
@@ -1294,5 +1231,96 @@ namespace DrOpen.DrCommon.DrData
             this.type = newType;
         }
         #endregion Convert
+        #region Convert Static
+        /// <summary>
+        /// Convert string to specified type.
+        /// Supports the following types: byte, byte[], string, DateTime, bool, char, double, short, int, float, long, ushort, uint, ulong, double, Guid
+        /// </summary>
+        /// <param name="type">convert to specified type</param>
+        /// <param name="value">string to convert</param>
+        /// <returns>Converted object to specified type</returns>
+        public static object ConvertFromStringTo(Type type, string value)
+        {
+            try
+            {
+                if (type == typeof(byte[])) return HEX(value);
+                if (type == typeof(byte)) return Convert.ToByte(value);
+                if (type == typeof(string)) return value.ToString();
+                if (type == typeof(DateTime)) return Convert.ToDateTime(value);
+                if (type == typeof(bool)) return Convert.ToBoolean(value);
+                if (type == typeof(char)) return Convert.ToChar(value);
+                if (type == typeof(float)) return Convert.ToSingle(value);
+                if (type == typeof(double)) return Convert.ToDouble(value);
+                if (type == typeof(short)) return Convert.ToInt16(value);
+                if (type == typeof(int)) return Convert.ToInt32(value);
+                if (type == typeof(long)) return Convert.ToInt64(value);
+                if (type == typeof(ushort)) return Convert.ToUInt16(value);
+                if (type == typeof(uint)) return Convert.ToUInt32(value);
+                if (type == typeof(ulong)) return Convert.ToUInt64(value);
+                if (type == typeof(Guid)) return new Guid(value);
+            }
+            catch (Exception e)
+            {
+                throw new DDValueConvertException(value, type, e);
+            }
+            throw new DDTypeIncorrectException(type.ToString());
+        }
+        /// <summary>
+        /// Convert string[] to specified type.
+        /// Supports the following types: byte[], string[], DateTime[], bool[], char[], double[], short[], int[], float[], long[], ushort[], uint[], ulong[], double[], Guid[]
+        /// </summary>
+        /// <param name="type">convert to specified type</param>
+        /// <param name="value">string array to convert</param>
+        /// <returns>Converted object to specified type</returns>
+        public static object ConvertFromStringArrayTo(Type type, string[] value)
+        {
+            try
+            {
+                var elType = type.GetElementType();
+                var objArray =  GetStubArrayByType(type, value.Length) ;
+                
+                int i = 0 ;
+                foreach (var item in value)
+                {
+                    objArray.SetValue( ConvertFromStringTo(elType, item), i );
+                    i++;
+                }
+                return  Convert.ChangeType(objArray, type);
+            }
+            catch (Exception e)
+            {
+                throw new DDValueConvertException(value, type, e);
+            }
+        }
+        /// <summary>
+        /// Returns specified type of array and lenght
+        /// Supports the following types: byte[], string[], DateTime[], bool[], char[], double[], short[], int[], float[], long[], ushort[], uint[], ulong[], double[], Guid[]
+        /// </summary>
+        /// <param name="type">create array of this type</param>
+        /// <param name="lenght">total number of elements</param>
+        /// <returns>Returns specified type of array and lenght</returns>
+        private static Array GetStubArrayByType(Type type, int lenght)
+        {
+            if (type.IsArray)
+            {
+                var t = type.GetElementType();
+                if (t == typeof(byte)) return new byte[lenght];
+                if (t == typeof(string)) return new string[lenght];
+                if (t == typeof(DateTime)) return new DateTime[lenght];
+                if (t == typeof(bool)) return new bool[lenght];
+                if (t == typeof(char)) return new char[lenght];
+                if (t == typeof(float)) return new float[lenght];
+                if (t == typeof(double)) return new double[lenght];
+                if (t == typeof(short)) return new Int16[lenght];
+                if (t == typeof(int)) return new Int32[lenght];
+                if (t == typeof(long)) return new Int64[lenght];
+                if (t == typeof(ushort)) return new ushort[lenght];
+                if (t == typeof(uint)) return new uint[lenght];
+                if (t == typeof(ulong)) return new ulong[lenght];
+                if (t == typeof(Guid)) return new Guid[lenght];
+            }
+            throw new DDTypeIncorrectException(type.ToString());
+        }
+        #endregion Convert Static
     }
 }

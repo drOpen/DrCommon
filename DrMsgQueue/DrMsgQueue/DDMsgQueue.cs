@@ -25,6 +25,7 @@
 
  */
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrDataSx;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -172,10 +173,10 @@ namespace DrOpen.DrCommon.DrMsgQueue
         /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            var serializer = new XmlSerializer(typeof(DDNode ));
+            var serializer = new XmlSerializer(typeof(DDNodeSx ));
             foreach (var item in this.qDDNode)
             {
-                if (item != null) serializer.Serialize(writer, item);
+                if (item != null) serializer.Serialize(writer, (DDNodeSx)item);
             }
         }
         /// <summary>

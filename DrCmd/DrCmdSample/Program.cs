@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.Serialization;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrExt;
+using DrOpen.DrCommon.DrDataSx;
 
 namespace DrOpen.DrCommon.DrCmd
 {
@@ -61,8 +62,8 @@ namespace DrOpen.DrCommon.DrCmd
             using (FileStream file = new FileStream("Sample.xml", FileMode.Create, FileAccess.Write))
             {
 
-                var serializer = new XmlSerializer(node.GetType());
-                serializer.Serialize(file, node);
+                var serializer = new XmlSerializer(typeof(DDNodeSx));
+                serializer.Serialize(file, ((DDNodeSx)node));
                 file.Flush();
             }
 

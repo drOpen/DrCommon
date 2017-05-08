@@ -1,6 +1,6 @@
 ﻿
 /*
-  DDSchema.cs -- stored schema for formating of the 'DrData' general purpose Data abstraction layer 1.0, October 30, 2016
+  DDSchema.cs -- stored schema for formating of the 'DrDataSx' general purpose Data abstraction layer 1.0, October 30, 2016
  
   Copyright (c) 2013-2016 Kudryashov Andrey aka Dr
  
@@ -28,7 +28,7 @@
 
 using System;
 
-namespace DrOpen.DrCommon.DrDataSe
+namespace DrOpen.DrCommon.DrDataSx
 {
     public static class DDSchema
     {
@@ -48,15 +48,6 @@ namespace DrOpen.DrCommon.DrDataSe
         public const string XML_SERIALIZE_VALUE_TYPE_NULL = "null";
 
         #endregion Serialize xml
-        #region Serialize bin
-        public const string SERIALIZE_ATTRIBUTE_NAME = "n";
-        public const string SERIALIZE_NODE_ATTRIBUTE_COLLECTION = "ac";
-        public const string SERIALIZE_NODE_ARRAY_VALUE_ITEM = "i";
-        public const string SERIALIZE_NODE_ATTRIBUTE = "a";
-        public const string SERIALIZE_ATTRIBUTE_TYPE = "t";
-        public const string SERIALIZE_ATTRIBUTE_CHILDREN_COUNT = "c";
-
-        #endregion Serialize bin
 
         #region string format
         public const string StringDateTimeFormat = "o"; //ISO 8601 format

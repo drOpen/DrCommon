@@ -25,6 +25,7 @@
 
  */
 
+using System;
 namespace DrOpen.DrCommon.DrData
 {
     /// <summary>

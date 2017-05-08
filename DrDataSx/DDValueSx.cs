@@ -1,4 +1,30 @@
-﻿using DrOpen.DrCommon.DrData;
+﻿/*
+  DDValueSx.cs -- provides XML formating serialization and deserialization for DDValue of the 'DrData'  1.0, May 8, 2017
+ 
+  Copyright (c) 2013-2017 Kudryashov Andrey aka Dr
+ 
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+      1. The origin of this software must not be misrepresented; you must not
+      claim that you wrote the original software. If you use this software
+      in a product, an acknowledgment in the product documentation would be
+      appreciated but is not required.
+
+      2. Altered source versions must be plainly marked as such, and must not be
+      misrepresented as being the original software.
+
+      3. This notice may not be removed or altered from any source distribution.
+
+      Kudryashov Andrey <kudryashov.andrey at gmail.com>
+
+*/
+using DrOpen.DrCommon.DrData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +36,9 @@ using System.Xml.Serialization;
 
 namespace DrOpen.DrCommon.DrDataSx
 {
-    [Serializable]
+    /// <summary>
+    /// provides XML formating serialization and deserialization for DDValue of the 'DrData'
+    /// </summary>
     [XmlRoot(ElementName = "v")]
     public class DDValueSx : IXmlSerializable
     {
@@ -19,14 +47,18 @@ namespace DrOpen.DrCommon.DrDataSx
         { }
         private DDValueSx(DDValue v)
         {
-            this.ddValue = v;
+            this.v = v;
         }
+        /// <summary>
+        /// returns/unboxes DDValue 
+        /// </summary>
+        /// <returns></returns>
         public DDValue GetDDValue()
         {
-            return this.ddValue;
+            return this.v;
         }
 
-        private DDValue ddValue;
+        private DDValue v;
 
         #region IXmlSerializable
         /// <summary>
@@ -41,17 +73,17 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            if (this.ddValue.Type == null)
+            if (this.v.Type == null)
             {
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL);
             }
             else
             {
-                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, this.ddValue.Type.ToString());
-                if (this.ddValue.Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, this.ddValue.Size.ToString()); // write size only for none empty objects
-                if (IsThisTypeXMLSerialyzeAsArray(this.ddValue.Type))
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, this.v.Type.ToString());
+                if (this.v.Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, this.v.Size.ToString()); // write size only for none empty objects
+                if (IsThisTypeXMLSerialyzeAsArray(this.v.Type))
                 {
-                    foreach (var element in this.ddValue.ToStringArray())
+                    foreach (var element in this.v.ToStringArray())
                     {
                         writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM);
                         writer.WriteString(element);
@@ -60,7 +92,7 @@ namespace DrOpen.DrCommon.DrDataSx
                 }
                 else
                 {
-                    writer.WriteString(this.ddValue.ToString());
+                    writer.WriteString(this.v.ToString());
                 }
             }
         }
@@ -76,7 +108,7 @@ namespace DrOpen.DrCommon.DrDataSx
             var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
             if ((string.IsNullOrEmpty(t)) || (t == DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL))
             {
-                this.ddValue = new DDValue();                // data = null;
+                this.v = new DDValue();                // data = null;
                 if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
             }
             else
@@ -87,29 +119,29 @@ namespace DrOpen.DrCommon.DrDataSx
                 {
                     var value = ReadXmlValueArray(reader);
                     if (value == null)  value = new string[]{}; // support empty array
-                    this.ddValue = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));                    
+                    this.v = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));                    
                 }
                 else
                 {
-                    this.ddValue = new DDValue(DDValue.ConvertFromStringTo(type, GetXmlElementValue(reader)));
+                    this.v = new DDValue(DDValue.ConvertFromStringTo(type, GetXmlElementValue(reader)));
                 }
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </v>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </n>, only self
         }
 
         /// <summary>
-        /// Return XML Element v.
-        /// Open XML Element if needed, read v, close element and return v 
+        /// Return XML Element n.
+        /// Open XML Element if needed, read n, close element and return n 
         /// </summary>
         /// <param name="reader">Xml stream reder</param>
-        /// <returns>XML Element v</returns>
+        /// <returns>XML Element n</returns>
         protected static string GetXmlElementValue(XmlReader reader)
         {
             if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-            var value = reader.Value; // read node v for none array types
-            if (reader.HasValue) // read v of element if there is
+            var value = reader.Value; // read node n for none array types
+            if (reader.HasValue) // read n of element if there is
             {
-                reader.Read(); // read v of element
+                reader.Read(); // read n of element
                 if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
             }
             return value;
@@ -127,13 +159,13 @@ namespace DrOpen.DrCommon.DrDataSx
 
             reader.Read();
             var initialDepth = reader.Depth;
-            if (reader.NodeType == XmlNodeType.None) return v; // Exit for element without child <v t="System.String[]"/>
+            if (reader.NodeType == XmlNodeType.None) return v; // Exit for element without child <n t="System.String[]"/>
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
                 if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
                 {
-                    reader.Skip(); // Skip none <v> elements with childs and subchilds <v> elements 'Deep proptection'
+                    reader.Skip(); // Skip none <n> elements with childs and subchilds <n> elements 'Deep proptection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else
@@ -151,7 +183,7 @@ namespace DrOpen.DrCommon.DrDataSx
         /// </summary>
         /// <param name="type">Type to serialyze</param>
         /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
-        /// <example>For example: byte[] should be serialize as HEX single string therefore return v is false for this type, all other arrays should be serialized per elements</example>
+        /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
         protected static bool IsThisTypeXMLSerialyzeAsArray(Type type)
         {
             return ((type.IsArray) && (type != typeof(byte[])));
@@ -161,15 +193,24 @@ namespace DrOpen.DrCommon.DrDataSx
         #endregion IXmlSerializabl
 
         #region explicit operator
+        /// <summary>
+        /// boxes DDValue to for XML formating serialization and deserialization
+        /// </summary>
+        /// <param name="n">DDValue for box</param>
+        /// <returns></returns>
         public static explicit operator DDValueSx(DDValue v)
         {
-            return new DDValueSx(v);
+            return(v == null ? null : new DDValueSx(v));
         }
-        public static explicit operator DDValue(DDValueSx v)
+        /// <summary>
+        /// unbox DDValue
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static implicit operator DDValue(DDValueSx v)
         {
-            return v.ddValue;
+            return(v == null ? null : v.v);
         }
-
         #endregion explicit operator
     }
 }

@@ -30,10 +30,8 @@ using System.Collections.Generic;
 using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData.Exceptions;
 using System.Text;
-using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using System.Xml;
-using System.Xml.Schema;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -41,8 +39,7 @@ namespace DrOpen.DrCommon.DrData
     /// Hierarchy data warehouse
     /// </summary>
     [Serializable]
-    [XmlRoot(ElementName = "n")]
-    public class DDNode : IEnumerable<KeyValuePair<string, DDNode>>, ICloneable, IEquatable<DDNode>, IComparable, ISerializable, IXmlSerializable
+    public class DDNode : IEnumerable<KeyValuePair<string, DDNode>>, ICloneable, IEquatable<DDNode>, IComparable, ISerializable
     {
         #region Constructor
         public DDNode(string name, DDType type)
@@ -92,97 +89,97 @@ namespace DrOpen.DrCommon.DrData
             Parent = parent;
         }
         #endregion Constructor
-        #region IXmlSerializable
-        /// <summary>
-        /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
-        /// </summary>
-        /// <returns>null</returns>
-        public XmlSchema GetSchema() { return null; }
-        /// <summary>
-        /// Converts an object into its XML representation.
-        /// </summary>
-        /// <param name="writer"></param>
-        public virtual void WriteXml(XmlWriter writer)
-        {
-            if (Name != null) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, Name);
-            if (String.IsNullOrEmpty(Type) == false) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type); // write none empty type
-            if (IsRoot) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT, IsRoot.ToString());
-            writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT, Count.ToString());
+        //#region IXmlSerializable
+        ///// <summary>
+        ///// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
+        ///// </summary>
+        ///// <returns>null</returns>
+        //public XmlSchema GetSchema() { return null; }
+        ///// <summary>
+        ///// Converts an object into its XML representation.
+        ///// </summary>
+        ///// <param name="writer"></param>
+        //public virtual void WriteXml(XmlWriter writer)
+        //{
+        //    if (Name != null) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, Name);
+        //    if (String.IsNullOrEmpty(Type) == false) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, Type); // write none empty type
+        //    if (IsRoot) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT, IsRoot.ToString());
+        //    writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT, Count.ToString());
 
-            if (Attributes != null) this.Attributes.WriteXml(writer);
+        //    if (Attributes != null) this.Attributes.WriteXml(writer);
 
-            if (HasChildNodes)
-            {
-                var serializer = new XmlSerializer(typeof(DDNode));
-                foreach (var keyValuePair in childNodes)
-                {
-                    if (keyValuePair.Value != null) serializer.Serialize(writer, keyValuePair.Value);
-                }
-            }
-        }
+        //    if (HasChildNodes)
+        //    {
+        //        var serializer = new XmlSerializer(typeof(DDNode));
+        //        foreach (var keyValuePair in childNodes)
+        //        {
+        //            if (keyValuePair.Value != null) serializer.Serialize(writer, keyValuePair.Value);
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// read element and return true if it's empty
-        /// </summary>
-        /// <param name="reader">Generates an object from its XML representation.</param>
-        /// <returns>returns true if element is empty</returns>
-        private bool isEmptyXMLElement(XmlReader reader)
-        {
-            var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
-            reader.Read(); // read root element
-            if ((isEmptyElement) | (reader.NodeType == XmlNodeType.EndElement)) return true;  // Exit if element without child '</n>' or is empty node '<n></n>'
-            return false;
-        }
+        ///// <summary>
+        ///// read element and return true if it's empty
+        ///// </summary>
+        ///// <param name="reader">Generates an object from its XML representation.</param>
+        ///// <returns>returns true if element is empty</returns>
+        //private bool isEmptyXMLElement(XmlReader reader)
+        //{
+        //    var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
+        //    reader.Read(); // read root element
+        //    if ((isEmptyElement) | (reader.NodeType == XmlNodeType.EndElement)) return true;  // Exit if element without child '</n>' or is empty node '<n></n>'
+        //    return false;
+        //}
 
-        /// <summary>
-        /// Generates an object from its XML representation.
-        /// </summary>
-        /// <param name="reader"></param>
-        public virtual void ReadXml(XmlReader reader)
-        {
-            reader.MoveToContent();
+        ///// <summary>
+        ///// Generates an object from its XML representation.
+        ///// </summary>
+        ///// <param name="reader"></param>
+        //public virtual void ReadXml(XmlReader reader)
+        //{
+        //    reader.MoveToContent();
 
-            this.attributes = new DDAttributesCollection();
+        //    this.attributes = new DDAttributesCollection();
 
-            var serializerDDAttributeCollection = new XmlSerializer(typeof(DDAttributesCollection));
-            var serializerDDNode = new XmlSerializer(typeof(DDNode));
+        //    var serializerDDAttributeCollection = new XmlSerializer(typeof(DDAttributesCollection));
+        //    var serializerDDNode = new XmlSerializer(typeof(DDNode));
 
-            this.Name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
-            this.Type = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+        //    this.Name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
+        //    this.Type = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
 
-            if (this.Type.Name == null) this.Type = string.Empty;
-            if (isEmptyXMLElement(reader)) return; // skip empty node <n/>
+        //    if (this.Type.Name == null) this.Type = string.Empty;
+        //    if (isEmptyXMLElement(reader)) return; // skip empty node <n/>
 
-            var initialDepth = reader.Depth;
+        //    var initialDepth = reader.Depth;
 
-            while ((reader.Depth >= initialDepth)) // do all childs
-            {
+        //    while ((reader.Depth >= initialDepth)) // do all childs
+        //    {
 
-                if (reader.Depth > initialDepth)
-                    reader.Skip(); // 'Deep proptection'
-                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
-                    this.attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
-                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
-                    this.attributes.ReadXml(reader);
-                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE))
-                    this.Add((DDNode)serializerDDNode.Deserialize(reader));
-                else
-                    reader.Skip(); // Skip none <ac>,<a>,<n> elements with childs and subchilds. 
+        //        if (reader.Depth > initialDepth)
+        //            reader.Skip(); // 'Deep proptection'
+        //        else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
+        //            this.attributes = ((DDAttributesCollection)serializerDDAttributeCollection.Deserialize(reader));
+        //        else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
+        //            this.attributes.ReadXml(reader);
+        //        else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE))
+        //            this.Add((DDNode)serializerDDNode.Deserialize(reader));
+        //        else
+        //            reader.Skip(); // Skip none <ac>,<a>,<n> elements with childs and subchilds. 
 
-                if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+        //        if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
 
-                if (reader.HasValue) // read value of element if there is
-                {
-                    reader.Read(); // read value of element
-                    if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE)) reader.ReadEndElement(); // need to close the opened element, only self type
-                }
-            }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE)) reader.ReadEndElement(); // Need to close the opened element, only self type
-        }
+        //        if (reader.HasValue) // read value of element if there is
+        //        {
+        //            reader.Read(); // read value of element
+        //            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE)) reader.ReadEndElement(); // need to close the opened element, only self type
+        //        }
+        //    }
+        //    if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE)) reader.ReadEndElement(); // Need to close the opened element, only self type
+        //}
 
 
 
-        #endregion IXmlSerializable
+        //#endregion IXmlSerializable
         #region ISerializable
         /// <summary>
         /// The special constructor is used to deserialize values.

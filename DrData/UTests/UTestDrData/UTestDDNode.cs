@@ -50,24 +50,25 @@ namespace UTestDrData
             TEST_ENUM_NULL,
         }
 
-        public const string attStock1Name = "value a->a";
+        public const string aName1 = "value a->a";
+        public static DateTime aValueDateTime1 = DateTime.Parse("2013-06-14T16:15:30+04");
 
         static private DDNode GetStockHierarhy()
         {
-            var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
+
 
             var a = new DDNode("a");
-                a.Attributes.Add(attStock1Name, "string");
-                a.Attributes.Add("value a->b", true);
+            a.Attributes.Add(aName1, "string");
+            a.Attributes.Add("value a->b", true);
             var a_b = a.Add("a.b");
             var a_c = a.Add("a.c");
-                a_c.Attributes.Add("value a.c->a", "string");
-                a_c.Attributes.Add("value a.c->b", true);
-                a_c.Attributes.Add("value a.c->c", dtNow);
+            a_c.Attributes.Add("value a.c->a", "string");
+            a_c.Attributes.Add("value a.c->b", true);
+            a_c.Attributes.Add("value a.c->c", aValueDateTime1);
             var a_b_d = a_b.Add("a.b.d");
             var a_b_d_e = a_b_d.Add("a.b.d.e");
-                a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
-                a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
+            a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
+            a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
             return a;
         }
 
@@ -76,7 +77,7 @@ namespace UTestDrData
             var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
 
             var a = new DDNode("a");
-            a.Attributes.Add("value a->a", new [] { true, false} );
+            a.Attributes.Add("value a->a", new[] { true, false });
 
             var a_a = a.Add("a.a");
             a_a.Attributes.Add("value a.a->a", new[] { true, false });
@@ -93,7 +94,7 @@ namespace UTestDrData
 
             var a_a_a_c = a_a_a.Add("a.a.a.c");
             a_a_a_c.Attributes.Add("Value", new[] { true, false });
-            
+
 
             var a_b = a.Add("a.b");
             a_b.Attributes.Add("value a.b->a", new[] { true, false });
@@ -774,7 +775,7 @@ namespace UTestDrData
         public void TestAddNodeNull()
         {
             var root = GetStockHierarhy();
-            
+
             try
             {
                 var n3 = root.Add(GetNullNode());
@@ -1251,7 +1252,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestDDNodeISerializableType()
         {
-            var ddNode = new DDNode("Name","Type");
+            var ddNode = new DDNode("Name", "Type");
             ValidateDeserialization(ddNode, new BinaryFormatter());
         }
 
@@ -1292,110 +1293,15 @@ namespace UTestDrData
 
             ValidateDeserialization(original, deserialyzed);
         }
-
+        #endregion ISerializable
         public static void ValidateDeserialization(DDNode original, DDNode deserialyzed)
         {
             Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
             Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
         }
-        #endregion ISerializable
-        #region IXmlSerializable
-
-        [TestMethod]
-        public void TestDDNodeXmlSerializationGetSchemaNull()
-        {
-            var dn = GetStockHierarhy();
-            Assert.IsNull(dn.GetSchema(), "XML schema should be null.");
-        }
-
-        [TestMethod]
-        public void TestDDNodeXmlSerializationNode()
-        {
-            var root = GetStockHierarhy();
-            ValidateXMLDeserialization(root);
-        }
-
-        [TestMethod]
-        public void TestDDNodeXmlSerializationEmpty()
-        {
-            var root = new DDNode();
-            ValidateXMLDeserialization(root);
-        }
-
-        [TestMethod]
-        public void TestDDNodeXmlSerializationWithoutAttributeCollection()
-        {
-            var stream = UTestDrDataCommon.GetMemoryStreamFromFile();
-            stream.Position = 0;
-            var deserialyzed = XMLDeserialyze(stream); // check looping
-
-        }
-
-        [TestMethod]
-        public void TestDDNodeXmlSerializationHierarchy()
-        {
-            var root = new DDNode("root", "NodeType");
-            var child_level_1 = root.Add("Child_Level_1");
-            var child_level_2 = child_level_1.Add("Child_Level_2");
-            ValidateXMLDeserialization(root);
-        }
-        [TestMethod]
-        public void TestDDNodeXmlSerializationFromFileSkipIncorrectedData()
-        {
-            ValidateXMLDeserialization(GetStockHierarhy(), UTestDrDataCommon.GetMemoryStreamFromFile());
-        }
-
-        [TestMethod]
-        public void TestDeserialyzeArrayValue()
-        {
-            ValidateXMLDeserialization(GetStockHierarhyWithArrayValue());
-        }
-
-        public static void ValidateXMLDeserialization(DDNode original)
-        {
-            var xml = XMLSerialyze(original);
-            ValidateXMLDeserialization(original, xml);
-        }
-
-        public static void ValidateXMLDeserialization(DDNode original, MemoryStream xml)
-        {
-            xml.Position = 0;
-
-            UTestDrDataCommon.WriteMemmoryStreamToXmlFile(xml);
-            var deserialyzed = XMLDeserialyze(xml);
-            ValidateDeserialization(original, deserialyzed);
-        }
 
 
-
-        public static MemoryStream XMLSerialyze(DDNode value)
-        {
-
-            var memoryStream = new MemoryStream();
-
-            var serializer = new XmlSerializer(value.GetType());
-            serializer.Serialize(memoryStream, value);
-            return memoryStream;
-
-        }
-
-        public static DDNode XMLDeserialyze(MemoryStream stream)
-        {
-            stream.Position = 0;
-            var serializer = new XmlSerializer(typeof(DDNode));
-            return (DDNode)serializer.Deserialize(stream);
-        }
-
-
-        #endregion IXmlSerializable
         #region Merge
-
-        [TestMethod]
-        public void TestMerge()
-        {
-            var dn = GetStockHierarhy();
-        }
-
         [TestMethod]
         public void TestMergeEmptyNodeWithEmptyNode()
         {
@@ -1407,41 +1313,34 @@ namespace UTestDrData
         [TestMethod]
         public void TestMergeEmptyNodeWithStock()
         {
-            var nDestination = new DDNode("Test");
-            var nSource = GetStockHierarhy();
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            var n1 = new DDNode("Test");
+            var n2 = GetStockHierarhy();
+            var tm = UTestDrDataCommon.GetTestMethodName();
+            UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.txt");
+            UTestDrDataCommon.WriteNodeToTextFile(n2, tm + ".n2.txt");
 
-            nDestination.Merge(nSource);
+            n1.Merge(n2);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
-            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
-
-            Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+            UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.result.txt");
+            UTestDrDataCommon.CompareTwoTextFileByLine(tm + ".n1.result.txt", ".\\TXT\\" + tm + ".n1.expected.txt");
         }
         [TestMethod]
         public void TestMergeStockCollectionWithEmptyCollection()
         {
 
-            var nDestination = GetStockHierarhy();
-            var nSource = new DDNode("Test");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            var n1 = GetStockHierarhy();
+            var n2 = new DDNode("Test");
+            var tm = UTestDrDataCommon.GetTestMethodName();
+            UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.txt");
+            UTestDrDataCommon.WriteNodeToTextFile(n2, tm + ".n2.txt");
 
-            nDestination.Merge(nSource);
+            n1.Merge(n2);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
-            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
-
-            Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+            UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.result.txt");
+            UTestDrDataCommon.CompareTwoTextFileByLine(tm + ".n1.result.txt", ".\\TXT\\" + tm + ".n1.expected.txt");
         }
-        [TestMethod]
-        public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild()
-        {
-            TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION.ATTRIBUTES, ResolveConflict.THROW_EXCEPTION);
-        }
+
+
         [TestMethod]
         public void TestMergeConflict()
         {
@@ -1453,55 +1352,323 @@ namespace UTestDrData
             }
             catch (DDAttributeExistsException e)
             {
-                Assert.AreEqual(attStock1Name, e.Name); // attribute name
+                Assert.AreEqual(aName1, e.Name); // attribute name
             }
-
         }
+        [TestMethod]
+        public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild()
+        {
+            #region source
+            /*
+            n: 'Source', t: ''
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'a.c', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+            */
+            #endregion
+            #region expected
+            /*
+            n: 'a', t: ''
+              a: 'value a->a', t: 'System.String', v: 'string'
+              a: 'value a->b', t: 'System.Boolean', v: 'True'
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'a.c', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->c', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+             */
+            #endregion
+            var n1 = new DDNode("Source");
+            n1.Attributes.Add("attr1", "string");
+            n1.Attributes.Add("attr2", true);
+            var n2 = n1.Add("a.b");
+            var n3 = n2.Add("a.b.d");
+            var n4 = n3.Add("a.b.d.e");
+            n4.Attributes.Add("value a.b.d.e->a", 1);
+            n4.Attributes.Add("value a.b.d.e->b", null);
+            var n5 = n1.Add("a.c");
+            n5.Attributes.Add("value a.c->a", "string");
+            n5.Attributes.Add("value a.c->b", true);
+            n5.Attributes.Add("value a.c->d", aValueDateTime1);
+
+            TestMergeStockCollectionWithAnotherCollection(n1, DDNODE_MERGE_OPTION.ATTRIBUTES, ResolveConflict.THROW_EXCEPTION);
+        }
+
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes()
         {
-            TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION.CHILD_NODES, ResolveConflict.THROW_EXCEPTION);
+            #region source
+            /*
+            n: 'Source', t: ''
+              a: 'a->a', t: 'System.String', v: 'string'
+              a: 'a->b', t: 'System.Boolean', v: 'True'
+                n: 'A.B', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+            */
+            #endregion
+            #region expected
+            /*
+            n: 'a', t: ''
+              a: 'value a->a', t: 'System.String', v: 'string'
+              a: 'value a->b', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'a.c', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->c', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+                n: 'A.B', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                n: 'A.C', t: ''
+             */
+            #endregion
+            var n1 = new DDNode("Source");
+            n1.Attributes.Add("a->a", "string");
+            n1.Attributes.Add("a->b", true);
+            var n2 = n1.Add("A.B");
+            var n3 = n2.Add("a.b.d");
+            var n4 = n3.Add("a.b.d.e");
+            n4.Attributes.Add("value a.b.d.e->a", 1);
+            n4.Attributes.Add("value a.b.d.e->b", null);
+            var n5 = n1.Add("A.C");
+            n5.Attributes.Add("value a.c->a", "string");
+            n5.Attributes.Add("value a.c->b", true);
+            n5.Attributes.Add("value a.c->d", aValueDateTime1);
+            TestMergeStockCollectionWithAnotherCollection(n1, DDNODE_MERGE_OPTION.CHILD_NODES, ResolveConflict.THROW_EXCEPTION);
         }
 
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithOutConflict()
         {
-            TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION.ALL, ResolveConflict.THROW_EXCEPTION);
+            #region source
+            /*
+            n: 'Source', t: ''
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'A.B', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+            */
+            #endregion
+            #region expected
+            /*
+            n: 'a', t: ''
+              a: 'value a->a', t: 'System.String', v: 'string'
+              a: 'value a->b', t: 'System.Boolean', v: 'True'
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'a.c', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->c', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+                n: 'A.B', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+             */
+            #endregion
+            var n1 = new DDNode("Source");
+            n1.Attributes.Add("attr1", "string");
+            n1.Attributes.Add("attr2", true);
+            var n2 = n1.Add("A.B");
+            var n3 = n2.Add("a.b.d");
+            var n4 = n3.Add("a.b.d.e");
+            n4.Attributes.Add("value a.b.d.e->a", 1);
+            n4.Attributes.Add("value a.b.d.e->b", null);
+            var n5 = n1.Add("A.C");
+            n5.Attributes.Add("value a.c->a", "string");
+            n5.Attributes.Add("value a.c->b", true);
+            n5.Attributes.Add("value a.c->d", aValueDateTime1);
+            TestMergeStockCollectionWithAnotherCollection(n1, DDNODE_MERGE_OPTION.ALL, ResolveConflict.THROW_EXCEPTION);
         }
 
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithSkipConflict()
         {
-            TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION.ALL, ResolveConflict.SKIP);
+            #region source
+            /*
+            n: 'Source', t: ''
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                      a: 'Array', t: 'System.String[]', v: 'Value_A Value_B'
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                          a: 'Test', t: 'null', v: 'null'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+            */
+            #endregion
+            #region expected
+            /*
+            n: 'a', t: ''
+              a: 'value a->a', t: 'System.String', v: 'string'
+              a: 'value a->b', t: 'System.Boolean', v: 'True'
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'a.c', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->c', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+                n: 'A.B', t: ''
+                    n: 'a.b.d', t: ''
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '1'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+             */
+            #endregion
+            var n1 = new DDNode("Source");
+            n1.Attributes.Add("attr1", "string");
+            n1.Attributes.Add("attr2", true);
+            var n2 = n1.Add("a.b");
+            var n3 = n2.Add("a.b.d");
+            n3.Attributes.Add("Array",new string [] { "Value_A", "Value_B"});
+            var n4 = n3.Add("a.b.d.e");
+            n4.Attributes.Add("value a.b.d.e->a", 1);
+            n4.Attributes.Add("value a.b.d.e->b", null);
+            n4.Attributes.Add("Test", null);
+            var n5 = n1.Add("A.C");
+            n5.Attributes.Add("value a.c->a", "string");
+            n5.Attributes.Add("value a.c->b", true);
+            n5.Attributes.Add("value a.c->d", aValueDateTime1);
+            TestMergeStockCollectionWithAnotherCollection(n1, DDNODE_MERGE_OPTION.ALL, ResolveConflict.SKIP);
         }
 
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflict()
         {
-            TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION.ALL, ResolveConflict.OVERWRITE);
+            #region source
+            /*
+            n: 'Source', t: ''
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                      a: 'Array', t: 'System.String[]', v: 'Value_A Value_B'
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '32'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                          a: 'Test', t: 'null', v: 'null'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'STRING'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'False'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+            */
+            #endregion
+            #region expected
+            /*
+            n: 'a', t: ''
+              a: 'value a->a', t: 'System.String', v: 'string'
+              a: 'value a->b', t: 'System.Boolean', v: 'True'
+              a: 'attr1', t: 'System.String', v: 'string'
+              a: 'attr2', t: 'System.Boolean', v: 'True'
+                n: 'a.b', t: ''
+                    n: 'a.b.d', t: ''
+                      a: 'Array', t: 'System.String[]', v: 'Value_A Value_B'
+                        n: 'a.b.d.e', t: ''
+                          a: 'value a.b.d.e->a', t: 'System.Int32', v: '32'
+                          a: 'value a.b.d.e->b', t: 'null', v: 'null'
+                          a: 'Test', t: 'null', v: 'null'
+                n: 'a.c', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'string'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'True'
+                  a: 'value a.c->c', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+                n: 'A.C', t: ''
+                  a: 'value a.c->a', t: 'System.String', v: 'STRING'
+                  a: 'value a.c->b', t: 'System.Boolean', v: 'False'
+                  a: 'value a.c->d', t: 'System.DateTime', v: '2013-06-14T16:15:30.0000000+04:00'
+             */
+            #endregion
+            var n1 = new DDNode("Source");
+            n1.Attributes.Add("attr1", "string");
+            n1.Attributes.Add("attr2", true);
+            var n2 = n1.Add("a.b");
+            var n3 = n2.Add("a.b.d");
+            n3.Attributes.Add("Array", new string[] { "Value_A", "Value_B" });
+            var n4 = n3.Add("a.b.d.e");
+            n4.Attributes.Add("value a.b.d.e->a", 32);
+            n4.Attributes.Add("value a.b.d.e->b", null);
+            n4.Attributes.Add("Test", null);
+            var n5 = n1.Add("A.C");
+            n5.Attributes.Add("value a.c->a", "STRING");
+            n5.Attributes.Add("value a.c->b", false);
+            n5.Attributes.Add("value a.c->d", aValueDateTime1);
+            TestMergeStockCollectionWithAnotherCollection(n1, DDNODE_MERGE_OPTION.ALL, ResolveConflict.OVERWRITE);
         }
 
-        private void TestMergeStockCollectionWithAnotherCollection(DDNODE_MERGE_OPTION option, ResolveConflict res)
+        private void TestMergeStockCollectionWithAnotherCollection(DDNode n2, DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
-            TestMergeNodeWithAnotherNode(GetStockHierarhy(), option, res);
+            TestMergeNodeWithAnotherNode(GetStockHierarhy(), n2, option, res);
         }
 
-        private void TestMergeNodeWithAnotherNode(DDNode nDestination, DDNODE_MERGE_OPTION option, ResolveConflict res)
+        private void TestMergeNodeWithAnotherNode(DDNode n1, DDNode n2, DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
-            var nSource = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+            //var n2 = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+            var tm = UTestDrDataCommon.GetTestMethodName();
+            UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.txt");
+            UTestDrDataCommon.WriteNodeToTextFile(n2, tm + ".n2.txt");
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            n1.Merge(n2, option, res);
 
-            nDestination.Merge(nSource, option, res);
-
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
-            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
-
-            Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
+            UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.result.txt");
+            UTestDrDataCommon.CompareTwoTextFileByLine(tm + ".n1.result.txt", ".\\TXT\\" + tm + ".n1.expected.txt");
         }
 
         #endregion Merge
+
     }
 }

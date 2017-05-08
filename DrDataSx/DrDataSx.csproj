@@ -38,6 +38,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DDNodeSx.cs" />
+    <Compile Include="DDAttributesCollectionSx.cs" />
     <Compile Include="DDSchema.cs" />
     <Compile Include="DDValueSx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -47,6 +49,11 @@
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
       <Name>DrData</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

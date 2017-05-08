@@ -32,6 +32,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using System.Text;
+using DrOpen.DrCommon.DrData;
 
 namespace UTestDrData
 {
@@ -76,7 +77,7 @@ namespace UTestDrData
         #region GetMemoryStreamFromFile
         public static MemoryStream GetMemoryStreamFromFile()
         {
-            return GetMemoryStreamFromFile(".\\XML\\" +  GetTestMethodName() + ".xml");
+            return GetMemoryStreamFromFile(".\\XML\\" + GetTestMethodName() + ".xml");
         }
 
         public static MemoryStream GetMemoryStreamFromFile(string file)
@@ -101,5 +102,64 @@ namespace UTestDrData
             ms.Position = 0;
             return ms;
         }
+
+
+        public static void CompareTwoTextFileByLine(string fn1, string fn2)
+        {
+            using (FileStream f1 = new FileStream(fn1, FileMode.Open, FileAccess.Read), f2 = new FileStream(fn2, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader s1 = new StreamReader(f1), s2 = new StreamReader(f2))
+                {
+                    string l1 = string.Empty;
+                    string l2 = string.Empty;
+                    int i = 0;
+                    while(true)
+                    {
+                        i++;
+                        l1 = s1.ReadLine();
+                        l2 = s2.ReadLine();
+                        if (l1 == null && l2 == null) break;
+
+                        if ((l1 == null) || (l2 == null) || (String.Compare(l1, l2)!=0)) throw new ApplicationException( 
+                            string.Format("File '{0}' isn't equals file '{1}' in line '{2}'. The line '{3}' != '{4}'.", fn1, fn2, i.ToString(), (l1 ?? "null") , (l2 ?? "null")));
+                    } 
+                }
+            }
+        }
+
+        public static void WriteNodeToTextFile(DDNode n, string fn)
+        {
+            using (var f = new FileStream(fn, FileMode.Create, FileAccess.ReadWrite))
+            {
+                var sw = new StreamWriter(f);
+                WriteNodeAsText(n, sw);
+                f.Flush();
+            }
+        }
+
+        public static void WriteNodeToTextFile(DDNode n, string fn, FileMode fm)
+        {
+            using (var f = new FileStream(fn, fm))
+            {
+                WriteNodeAsText(n, new StreamWriter(f));
+                f.Flush();
+            }
+        }
+
+        public static void WriteNodeAsText(DDNode n, StreamWriter w)
+        {
+            var tab = "".PadLeft((int)(n.Level - 1) * 4);
+            w.WriteLine(tab + "n: '" + (n.Name ?? "null") + "', t: '" + (n.Type ?? "null") + "'");
+            foreach (var a in n.Attributes)
+            {
+                w.WriteLine(tab + "  a: '" + (a.Key ?? "null") + "', t: '" + (a.Value == null ? "null" : a.Value.Type.ToString()) + "', v: '" + (a.Value == null ? "null" : a.Value.ToString()) + "'");
+            }
+            w.Flush();
+            foreach (var cn in n.Values)
+            {
+                WriteNodeAsText(cn, w);
+            }
+        }
+
     }
 }

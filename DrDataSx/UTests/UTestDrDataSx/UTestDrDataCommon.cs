@@ -1,5 +1,5 @@
 ﻿/*
-  UTestDrDataCommon.cs --  Common of Unit Tests for 'DrData' general purpose Data abstraction layer 1.0.1, January 5, 2014
+  UTestDrDataCommon.cs --  Common of Unit Tests for 'DrDataSx' general purpose Data abstraction layer 1.0.1, January 5, 2014
  
   Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
  

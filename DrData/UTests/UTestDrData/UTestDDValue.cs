@@ -568,7 +568,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateSetStringValue()
         {
-            string test = "Тест Unicode\r\n\t";
+            string test = "Тест Unicode\r\n2\t";
             var a = new DDValue();
             a.SetValue(test);
             ValidateString(test, a);
@@ -578,7 +578,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateSetImpicitStringValue()
         {
-            string test = "Тест Unicode\r\n\t";
+            string test = "Тест Unicode\r\n2\t";
             var a = new DDValue();
             a = test;
             ValidateString(test, a);
@@ -587,7 +587,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeStringValue()
         {
-            string test = "Тест Unicode\r\n\t";
+            string test = "Тест Unicode\r\n2\t";
             var a = new DDValue();
             a = test;
             ValidateString(test, a);
@@ -599,7 +599,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeTypeFromStringToBool()
         {
-            string test = "Тест Unicode\r\n\t";
+            string test = "Тест Unicode\r\n2\t";
             var a = new DDValue();
             a = test;
             ValidateString(test, a);
@@ -611,7 +611,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestStringToFromHex()
         {
-            string test = "UTF-8 строка\\\r\n\t\v";
+            string test = "UTF-8 строка\\\r\n2\t\v";
             var a = new DDValue(test);
             ValidateString(test, a);
             var hexValue = a.GetValueAsHEX();
@@ -639,7 +639,7 @@ namespace UTestDrData
         }
 
         [TestMethod]
-        public void TestCreateWithStringArraWithNullValue()
+        public void TestCreateWithStringArrayWithNullValue()
         {
             var test = new string[] { "1", null, "2" };
             var a = new DDValue(test);
@@ -656,7 +656,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateWithStringArrayMultipleValue()
         {
-            string[] test = new string[] { "", "Тест Unicode", "", "A\t\n\rA", "" };
+            string[] test = new string[] { "", "Тест Unicode", "", "A\t\n2\rA", "" };
             var a = new DDValue(test);
             ValidateStringArray(test, a);
         }
@@ -664,7 +664,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateSetStringArrayValue()
         {
-            string[] test = { "Тест Unicode\r\n\t" };
+            string[] test = { "Тест Unicode\r\n2\t" };
             var a = new DDValue();
             a.SetValue(test);
             ValidateStringArray(test, a);
@@ -674,7 +674,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestCreateSetImpicitStringArrayValue()
         {
-            string[] test = { "Тест Unicode\r\n\t" };
+            string[] test = { "Тест Unicode\r\n2\t" };
             var a = new DDValue();
             a = test;
             ValidateStringArray(test, a);
@@ -683,7 +683,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeStringArrayValueIncrease()
         {
-            string[] test = { "Тест Unicode\r\n\t" };
+            string[] test = { "Тест Unicode\r\n2\t" };
             var a = new DDValue();
             a = test;
             ValidateStringArray(test, a);
@@ -694,7 +694,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeStringArrayValueDecrease()
         {
-            string[] test = { "Тест Unicode\r\n\t", "", "1", "asdasdasdasd" };
+            string[] test = { "Тест Unicode\r\n2\t", "", "1", "asdasdasdasd" };
             var a = new DDValue();
             a = test;
             ValidateStringArray(test, a);
@@ -705,7 +705,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeStringArrayValueToEmpty()
         {
-            string[] test = { "Тест Unicode\r\n\t", "", "1", "asdasdasdasd" };
+            string[] test = { "Тест Unicode\r\n2\t", "", "1", "asdasdasdasd" };
             var a = new DDValue();
             a = test;
             ValidateStringArray(test, a);
@@ -717,7 +717,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestChangeTypeFromStringArrayToString()
         {
-            string[] test = { "Тест Unicode\r\n\t", "", "1", "asdasdasdasd" };
+            string[] test = { "Тест Unicode\r\n2\t", "", "1", "asdasdasdasd" };
             var a = new DDValue();
             a = test;
             ValidateStringArray(test, a);
@@ -730,7 +730,7 @@ namespace UTestDrData
         [TestMethod]
         public void TestStringArrayToFromHex()
         {
-            string[] test = { ", ", "UTF-8 строка\\\r\n\t\v", "" };
+            string[] test = { ", ", "UTF-8 строка\\\r\n2\t\v", "" };
             var a = new DDValue(test);
             ValidateStringArray(test, a);
             var hexValue = a.GetValueAsHEX();
@@ -3513,230 +3513,5 @@ namespace UTestDrData
             Assert.IsFalse(original == deserialyzed, "Changed deserialized object should not be equal to the original object.");
         }
         #endregion ISerializable
-
-        #region IXmlSerializable
-
-        [TestMethod]
-        public void TestDDValueXmlSerializationGetSchemaNull()
-        {
-            var ddValue = new DDValue(new[] { "test1", "test2" });
-            Assert.IsNull(ddValue.GetSchema(), "XML schema should be null.");
-        }
-
-        [TestMethod]
-        public void TestDDValueXmlSerializationNullFromXML()
-        {
-            ValidateXMLDeserialization(new DDValue(), UTestDrDataCommon.GetMemoryStreamFromString("<" + DDSchema.XML_SERIALIZE_NODE_VALUE + "/>"));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationNull()
-        {
-            ValidateXMLDeserialization(new DDValue());
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyString()
-        {
-            ValidateXMLDeserialization(new DDValue(string.Empty));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationUint()
-        {
-            ValidateXMLDeserialization(new DDValue((uint)uint.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationShort()
-        {
-            ValidateXMLDeserialization(new DDValue((short)short.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationUShort()
-        {
-            ValidateXMLDeserialization(new DDValue((ushort)ushort.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationDouble()
-        {
-            ValidateXMLDeserialization(new DDValue((double)double.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationLong()
-        {
-            ValidateXMLDeserialization(new DDValue((long)long.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationULong()
-        {
-            ValidateXMLDeserialization(new DDValue((ulong)ulong.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationULongArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new[] { ulong.MaxValue, ulong.MinValue }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFloat()
-        {
-            ValidateXMLDeserialization(new DDValue((float)float.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFloatArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new[] { float.MaxValue, float.MaxValue, float.MinValue }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationSingle()
-        {
-            ValidateXMLDeserialization(new DDValue((Single)Single.MaxValue));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationSingleArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new Single[] { Single.MaxValue, Single.MinValue, Single.MaxValue }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationGuid()
-        {
-            ValidateXMLDeserialization(new DDValue(Guid.NewGuid()));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationGuidArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new Guid[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationChar()
-        {
-            ValidateXMLDeserialization(new DDValue('c'));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationCharArray()
-        {
-            ValidateXMLDeserialization(new DDValue("char".ToCharArray()));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFromFileEmptyString()
-        {
-            ValidateXMLDeserialization(new DDValue(string.Empty), UTestDrDataCommon.GetMemoryStreamFromFile());
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringEmpty()
-        {
-            ValidateXMLDeserialization(new DDValue(string.Empty), UTestDrDataCommon.GetMemoryStreamFromFile());
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyStringArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new string[] { }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new string[] { }), UTestDrDataCommon.GetMemoryStreamFromFile());
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArrayDeep()
-        {
-            ValidateXMLDeserialization(new DDValue(new string[] { }), UTestDrDataCommon.GetMemoryStreamFromFile());
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArrayDeepWithValue()
-        {
-            ValidateXMLDeserialization(new DDValue(new string[] { "TestValue", "TheLastValue" }), UTestDrDataCommon.GetMemoryStreamFromFile());
-        }
-
-        [TestMethod]
-        public void TestDDValueXmlSerializationStringArrayThreeEmptyElements()
-        {
-            ValidateXMLDeserialization(new DDValue(new string[] { string.Empty, string.Empty, string.Empty }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationStringArrayThreeElements()
-        {
-            ValidateXMLDeserialization(new DDValue(new[] { "test1", string.Empty, "test3" }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationUnicodeStringArrayThreeElements()
-        {
-            ValidateXMLDeserialization(new DDValue(new[] { "test1", "Юникод", "test3" }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyByteArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new byte[] { }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyDateTimeArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new DateTime[] { }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationDateTimeArrayThreeElements()
-        {
-            ValidateXMLDeserialization(new DDValue(new DateTime[] { DateTime.Now, DateTime.Now.AddMinutes(1), DateTime.Now.AddYears(1) }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyBoolArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new bool[] { }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyGuidArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new Guid[] { }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationEmptyIntArray()
-        {
-            ValidateXMLDeserialization(new DDValue(new int[] { }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationIntArrayThreeElements()
-        {
-            ValidateXMLDeserialization(new DDValue(new[] { -1, 0, 1 }));
-        }
-        [TestMethod]
-        public void TestDDValueXmlSerializationByteArrayThreeElements()
-        {
-            //var ddValue = new DDValue(new[] { "test1", "test2" });
-            ValidateXMLDeserialization(new DDValue(new byte[] { 0x1, 0x2, 0x3 }));
-        }
-
-        private void ValidateXMLDeserialization(DDValue original)
-        {
-            var xml = XMLSerialyze(original);
-            ValidateXMLDeserialization(original, xml);
-
-        }
-
-        private void ValidateXMLDeserialization(DDValue original, MemoryStream xml)
-        {
-            xml.Position = 0;
-            var deserialyzed = XMLDeserialyze(xml);
-            UTestDrDataCommon.WriteMemmoryStreamToXmlFile(xml);
-            ValidateDeserialization(original, deserialyzed);
-        }
-
-
-        private MemoryStream XMLSerialyze(DDValue value)
-        {
-
-            var memoryStream = new MemoryStream();
-
-            var serializer = new XmlSerializer(value.GetType());
-            serializer.Serialize(memoryStream, value);
-            return memoryStream;
-
-        }
-
-        private DDValue XMLDeserialyze(MemoryStream stream)
-        {
-            var serializer = new XmlSerializer(typeof(DDValue));
-            return (DDValue)serializer.Deserialize(stream);
-        }
-
-
-        #endregion IXmlSerializable
-
-
     }
 }

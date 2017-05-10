@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
   DDSchema.cs -- stored schema for formating of the 'DrData' general purpose Data abstraction layer 1.0, October 30, 2016
  
   Copyright (c) 2013-2016 Kudryashov Andrey aka Dr

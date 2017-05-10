@@ -9,23 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UTests", "UTests", "{A7D15D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrData", "UTests\UTestDrData\UTestDrData.csproj", "{4A952ABA-689F-403F-AEF4-11196C1377CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataSx", "DrDataSx\DrDataSx.csproj", "{CEF8CDD2-404D-415F-AECF-4B92CEB3A23D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataSj", "DrDataSj\DrDataSj.csproj", "{3073040D-5BF2-4F7F-A56D-468A633DC320}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrDataSj", "UTests\UTestDrDataSj\UTestDrDataSj.csproj", "{62032100-1BE4-4302-96C9-5ED3E7C6E9D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrDataSx", "UTests\UTestDrDataSx\UTestDrDataSx.csproj", "{B64ECEF7-89CA-42D0-85DE-15B65AA3010B}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://draku.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = DrData\\DrData.csproj
-		SccProjectName1 = DrData
-		SccLocalPath1 = DrData
-		SccProjectUniqueName2 = DrDataSample\\DrDataSample.csproj
-		SccProjectName2 = DrDataSample
-		SccLocalPath2 = DrDataSample
-		SccProjectUniqueName3 = UTests\\UTestDrData\\UTestDrData.csproj
-		SccProjectTopLevelParentUniqueName3 = DrData.sln
-		SccProjectName3 = UTests/UTestDrData
-		SccLocalPath3 = UTests\\UTestDrData
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -43,11 +35,29 @@ Global
 		{4A952ABA-689F-403F-AEF4-11196C1377CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A952ABA-689F-403F-AEF4-11196C1377CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A952ABA-689F-403F-AEF4-11196C1377CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF8CDD2-404D-415F-AECF-4B92CEB3A23D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF8CDD2-404D-415F-AECF-4B92CEB3A23D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF8CDD2-404D-415F-AECF-4B92CEB3A23D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF8CDD2-404D-415F-AECF-4B92CEB3A23D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3073040D-5BF2-4F7F-A56D-468A633DC320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3073040D-5BF2-4F7F-A56D-468A633DC320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3073040D-5BF2-4F7F-A56D-468A633DC320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3073040D-5BF2-4F7F-A56D-468A633DC320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62032100-1BE4-4302-96C9-5ED3E7C6E9D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62032100-1BE4-4302-96C9-5ED3E7C6E9D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62032100-1BE4-4302-96C9-5ED3E7C6E9D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62032100-1BE4-4302-96C9-5ED3E7C6E9D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B64ECEF7-89CA-42D0-85DE-15B65AA3010B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B64ECEF7-89CA-42D0-85DE-15B65AA3010B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B64ECEF7-89CA-42D0-85DE-15B65AA3010B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B64ECEF7-89CA-42D0-85DE-15B65AA3010B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4A952ABA-689F-403F-AEF4-11196C1377CE} = {A7D15DA2-EB75-4964-9BCA-951B5777E06D}
+		{62032100-1BE4-4302-96C9-5ED3E7C6E9D2} = {A7D15DA2-EB75-4964-9BCA-951B5777E06D}
+		{B64ECEF7-89CA-42D0-85DE-15B65AA3010B} = {A7D15DA2-EB75-4964-9BCA-951B5777E06D}
 	EndGlobalSection
 EndGlobal

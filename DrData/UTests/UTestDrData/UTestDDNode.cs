@@ -74,8 +74,6 @@ namespace UTestDrData
 
         static private DDNode GetStockHierarhyWithArrayValue()
         {
-            var dtNow = DateTime.Parse("2013-06-14T16:15:30+04");
-
             var a = new DDNode("a");
             a.Attributes.Add("value a->a", new[] { true, false });
 

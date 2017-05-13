@@ -39,7 +39,7 @@ namespace DrOpen.DrCommon.DrDataSj
     /// <summary>
     /// provides json formating serialization and deserialization for DDAttributesCollection of the 'DrData'
     /// </summary>
-     public class DDAttributesCollectionSj
+    public class DDAttributesCollectionSj
     {
 
         private DDAttributesCollectionSj()
@@ -61,52 +61,39 @@ namespace DrOpen.DrCommon.DrDataSj
 
         public void Serialyze(StringBuilder sb)
         {
-            //StringWriter sw = new StringWriter(sb);
+            StringWriter sw = new StringWriter(sb);
 
-            //using (JsonWriter writer = new JsonTextWriter(sw))
-            //{
-            //    writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-
-            //    if (this.ac.Count != 0)
-            //    {
-            //        writer.WriteStartArray();
-
-            //        writer.WriteEndArray();
-            //    }
-            //    if (this.ac.Name != null)
-            //    {
-            //        writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
-            //        writer.WriteValue(this.n.Name);
-            //    }
-            //    if (String.IsNullOrEmpty(this.n.Type) == false)
-            //    {
-            //        writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-            //        writer.WriteValue(this.n.Type);
-            //    }
-            //    if (this.n.IsRoot)
-            //    {
-            //        writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT);
-            //        writer.WriteValue(this.n.IsRoot);
-            //    }
-            //    if (this.n.Count != 0)
-            //    {
-            //        writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT);
-            //        writer.WriteValue(this.n.Count);
-            //    }
-            //    if (this.n.HasChildNodes)
-            //    {
-            //        foreach (var keyValuePair in this.n)
-            //        {
-            //            if (keyValuePair.Value != null) ((DDNodeSj)keyValuePair.Value).Serialyze(sb);
-            //        }
-            //    }
-            //    writer.WriteEndObject();
-            //}
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                this.Serialyze(writer);
+            }
         }
 
+        public void Serialyze(JsonWriter writer)
+        {
+            if (this.ac.Count != 0)
+            {
+                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
+                writer.WriteStartArray();
+
+                foreach (var a in this.ac)
+                {
+                    writer.WriteStartObject();
+                    writer.WritePropertyName(a.Key);
+                    writer.WriteStartObject();
+                    if (a.Value != null)
+                        ((DDValueSj)a.Value).Serialyze(writer);
+
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                }
+                writer.WriteEndArray();
+            }
+        }
 
         //#region IXmlSerializable
-     
+
         ///// <summary>
         ///// Converts an object into its XML representation.
         ///// </summary>
@@ -221,7 +208,7 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <returns></returns>
         public static implicit operator DDAttributesCollection(DDAttributesCollectionSj ac)
         {
-            return ( ac == null ? null : ac.ac);
+            return (ac == null ? null : ac.ac);
         }
 
         #endregion explicit operator

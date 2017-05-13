@@ -61,15 +61,20 @@ namespace DrOpen.DrCommon.DrDataSj
 
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                //writer.
                 writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                this.Serialyze(writer);
+            }
+        }
 
-                writer.WriteStartObject();
+        public void Serialyze(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+
                 if (this.n.Name != null)
                 {
-                    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
-                    writer.WriteValue(this.n.Name);
+                    writer.WritePropertyName(this.n.Name);
                 }
+                writer.WriteStartObject();
                 if (String.IsNullOrEmpty(this.n.Type) == false)
                 {
                     writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
@@ -85,15 +90,25 @@ namespace DrOpen.DrCommon.DrDataSj
                     writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT);
                     writer.WriteValue(this.n.Count);
                 }
+                if (this.n.Attributes.Count > 0)
+                {
+                    //writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
+                    ((DDAttributesCollectionSj)this.n.Attributes).Serialyze(writer);
+                    //writer.WriteEnd();
+                }
                 if (this.n.HasChildNodes)
                 {
+                   writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE);
+                    writer.WriteStartArray();
                     foreach (var keyValuePair in this.n)
                     {
-                        if (keyValuePair.Value != null) ((DDNodeSj)keyValuePair.Value).Serialyze(sb);
+                        if (keyValuePair.Value != null) ((DDNodeSj)keyValuePair.Value).Serialyze(writer);
                     }
+                    writer.WriteEndArray();
+                    //writer.WriteEnd();
                 }
                 writer.WriteEndObject();
-            }
+                writer.WriteEndObject();
         }
 
         #region explicit operator

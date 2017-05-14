@@ -79,11 +79,36 @@ namespace DrOpen.DrCommon.DrDataSj
             {
                 writer.WriteValue(this.v.Type.ToString());
                 writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_VALUE);
-                writer.WriteValue(this.v.GetValue());
+                var a = IsThisTypeJsonSerialyzeAsArray(this.v.Type);
+                if (a)
+                {
+                    writer.WriteStartArray();
+                    foreach (var i in (Array)this.v.GetValue())
+                    {
+                        writer.WriteValue(i);
+                    }
+                    writer.WriteEndArray();
+                }
+                else
+                {
+                    if (this.v.Type == typeof (byte[]))
+                        writer.WriteValue(this.v.GetValueAsHEX());
+                    else
+                        writer.WriteValue(this.v.GetValue());
+                }
             }
         }
 
-
+        /// <summary>
+        /// Return true if this type should be serialization per each array element
+        /// </summary>
+        /// <param name="type">Type to serialyze</param>
+        /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
+        /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
+        protected static bool IsThisTypeJsonSerialyzeAsArray(Type type)
+        {
+            return ((type.IsArray) && (type != typeof(byte[])));
+        }
 
         #region explicit operator
         /// <summary>

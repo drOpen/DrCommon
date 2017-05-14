@@ -47,20 +47,20 @@ namespace UTestDrDataSj
             a.Attributes.Add("value a->a", new[] { true, false });
 
             var a_a = a.Add("a.a");
-            a_a.Attributes.Add("value a.a->a", new[] { true, false });
-            a_a.Attributes.Add("value a.a->b", new[] { true, false });
+            a_a.Attributes.Add("value a.a->a", new[] { "stringA", "stringB"});
+            a_a.Attributes.Add("value a.a->b", new[] { (byte)1, (byte)255, (byte)107});
 
             var a_a_a = a_a.Add("a.a.a");
-            a_a_a.Attributes.Add("Value", new[] { true, false });
+            a_a_a.Attributes.Add("Value", new[] { 1, 0, -1, 1024, Int16.MaxValue, Int16.MinValue });
 
             var a_a_a_a = a_a_a.Add("a.a.a.a");
-            a_a_a_a.Attributes.Add("Value", new[] { true, false });
+            a_a_a_a.Attributes.Add("Value", new bool[] { });
 
             var a_a_a_b = a_a_a.Add("a.a.a.b");
-            a_a_a_b.Attributes.Add("Value", new[] { true, false });
+            a_a_a_b.Attributes.Add("Value", new bool[] { false });
 
             var a_a_a_c = a_a_a.Add("a.a.a.c");
-            a_a_a_c.Attributes.Add("Value", new[] { true, false });
+            a_a_a_c.Attributes.Add("Value", new[] { Int32.MinValue, 0 , Int32.MaxValue });
 
 
             var a_b = a.Add("a.b");
@@ -76,6 +76,13 @@ namespace UTestDrDataSj
         {
             var  sb = new StringBuilder();
             ((DDNodeSj)GetStockHierarhy()).Serialyze(sb);
+
+        }
+        [TestMethod]
+        public void TestMethod2()
+        {
+            var sb = new StringBuilder();
+            ((DDNodeSj)GetStockHierarhyWithArrayValue()).Serialyze(sb);
 
         }
     }

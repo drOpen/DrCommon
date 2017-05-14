@@ -80,16 +80,16 @@ namespace DrOpen.DrCommon.DrDataSj
                     writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
                     writer.WriteValue(this.n.Type);
                 }
-                if (this.n.IsRoot)
-                {
-                    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT);
-                    writer.WriteValue(this.n.IsRoot);
-                }
-                if (this.n.Count != 0)
-                {
-                    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT);
-                    writer.WriteValue(this.n.Count);
-                }
+                //if (this.n.IsRoot)
+                //{
+                //    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT);
+                //    writer.WriteValue(this.n.IsRoot);
+                //}
+                //if (this.n.Count != 0)
+                //{
+                //    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT);
+                //    writer.WriteValue(this.n.Count);
+                //}
                 if (this.n.Attributes.Count > 0)
                 {
                     //writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);

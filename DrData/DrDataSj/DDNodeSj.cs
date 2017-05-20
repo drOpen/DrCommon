@@ -57,65 +57,29 @@ namespace DrOpen.DrCommon.DrDataSj
 
         public void Serialyze(StringBuilder sb)
         {
-            StringWriter sw = new StringWriter(sb);
-
-            using (JsonWriter writer = new JsonTextWriter(sw))
-            {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                this.Serialyze(writer);
-            }
+            this.n.Serialyze(sb);
         }
 
         public void Serialyze(JsonWriter writer)
         {
-            writer.WriteStartObject();
+            this.n.Serialyze(writer);
+        }
 
-                if (this.n.Name != null)
-                {
-                    writer.WritePropertyName(this.n.Name);
-                }
-                writer.WriteStartObject();
-                if (String.IsNullOrEmpty(this.n.Type) == false)
-                {
-                    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-                    writer.WriteValue(this.n.Type);
-                }
-                //if (this.n.IsRoot)
-                //{
-                //    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT);
-                //    writer.WriteValue(this.n.IsRoot);
-                //}
-                //if (this.n.Count != 0)
-                //{
-                //    writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT);
-                //    writer.WriteValue(this.n.Count);
-                //}
-                if (this.n.Attributes.Count > 0)
-                {
-                    //writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
-                    ((DDAttributesCollectionSj)this.n.Attributes).Serialyze(writer);
-                    //writer.WriteEnd();
-                }
-                if (this.n.HasChildNodes)
-                {
-                   writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE);
-                    writer.WriteStartArray();
-                    foreach (var keyValuePair in this.n)
-                    {
-                        if (keyValuePair.Value != null) ((DDNodeSj)keyValuePair.Value).Serialyze(writer);
-                    }
-                    writer.WriteEndArray();
-                    //writer.WriteEnd();
-                }
-                writer.WriteEndObject();
-                writer.WriteEndObject();
+        public void Deserialyze(string s)
+        {
+            this.n = DDNodeSje.Deserialyze(s);
+        }
+
+        public void Deserialyze(JsonReader reader)
+        {
+            this.n = DDNodeSje.Deserialyze(reader);
         }
 
         #region explicit operator
         /// <summary>
         /// boxes DDNode to for XML formating serialization and deserialization
         /// </summary>
-        /// <param name="n">DDNode for box</param>
+        /// <param prevName="n">DDNode for box</param>
         /// <returns></returns>
         public static explicit operator DDNodeSj(DDNode n)
         {
@@ -124,7 +88,7 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <summary>
         /// unbox DDNode
         /// </summary>
-        /// <param name="n"></param>
+        /// <param prevName="n"></param>
         /// <returns></returns>
         public static implicit operator DDNode(DDNodeSj n)
         {
@@ -133,4 +97,121 @@ namespace DrOpen.DrCommon.DrDataSj
 
         #endregion explicit operator
     }
+
+    public static class DDNodeSje
+    {
+
+        #region Serialyze
+        public static void Serialyze(this DDNode n, StringBuilder sb)
+        {
+            StringWriter sw = new StringWriter(sb);
+
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                n.Serialyze(writer);
+            }
+        }
+
+        public static void Serialyze(this DDNode n, JsonWriter writer)
+        {
+            writer.WriteStartObject();
+
+            if (n.Name != null)
+            {
+                writer.WritePropertyName(n.Name);
+            }
+            writer.WriteStartObject();
+            if (String.IsNullOrEmpty(n.Type) == false)
+            {
+                writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+                writer.WriteValue(n.Type);
+            }
+            if (n.Attributes.Count > 0)
+            {
+                n.Attributes.Serialyze(writer);
+            }
+            if (n.HasChildNodes)
+            {
+                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE);
+                writer.WriteStartArray();
+                foreach (var keyValuePair in n)
+                {
+                    if (keyValuePair.Value != null) keyValuePair.Value.Serialyze(writer);
+                }
+                writer.WriteEndArray();
+            }
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
+        #endregion Serialyze
+
+        #region Deserialyze
+        public static DDNode Deserialyze(string s)
+        {
+            var sr = new StringReader(s);
+
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                return Deserialyze(reader);
+            }
+        }
+
+        public static DDNode Deserialyze(JsonReader reader)
+        {
+            DDNode n = null;
+            string prevValueString = null;
+            string prevName = null;
+
+            JsonToken prevTokenType = JsonToken.None;
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject) break; 
+
+                if ((reader.TokenType == JsonToken.PropertyName) && (n == null) && (reader.Value != null))
+                {
+                    n = new DDNode(reader.Value.ToString());
+                }
+
+                if ((reader.TokenType == JsonToken.String) && (n != null) && (prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE) && (reader.Value != null))
+                {
+                    n.Type = reader.Value.ToString();
+                }
+
+                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) && (n != null))  // attributes collection
+                {
+                        n.Attributes.Deserialyze(reader);
+                }
+
+                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE) && (n != null)) // nodes collection
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.TokenType == JsonToken.EndArray) break; // end list of nodes
+                        if (reader.TokenType == JsonToken.StartObject) n.Add(Deserialyze(reader)); // end list of nodes
+                    }
+                }
+
+                prevTokenType = reader.TokenType;
+                if (reader.TokenType == JsonToken.None)
+                {
+                    prevValueString = null;
+                    prevName = null;
+                }
+                else if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    prevName = reader.Value.ToString();
+                }
+                else if (reader.TokenType == JsonToken.String)
+                {
+                    prevValueString = reader.Value.ToString();
+                }
+                
+            }
+            return n;
+        }
+        #endregion Deserialyze
+    }
+
 }

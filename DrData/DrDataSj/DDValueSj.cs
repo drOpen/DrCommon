@@ -102,7 +102,7 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <summary>
         /// Return true if this type should be serialization per each array element
         /// </summary>
-        /// <param name="type">Type to serialyze</param>
+        /// <param prevName="type">Type to serialyze</param>
         /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
         /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
         protected static bool IsThisTypeJsonSerialyzeAsArray(Type type)
@@ -114,7 +114,7 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <summary>
         /// boxes DDValue to for json formating serialization and deserialization
         /// </summary>
-        /// <param name="n">DDNode for box</param>
+        /// <param prevName="n">DDNode for box</param>
         /// <returns></returns>
         public static explicit operator DDValueSj(DDValue v)
         {
@@ -123,7 +123,7 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <summary>
         /// unbox DDValue
         /// </summary>
-        /// <param name="v"></param>
+        /// <param prevName="v"></param>
         /// <returns></returns>
         public static implicit operator DDValue(DDValueSj v)
         {

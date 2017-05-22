@@ -192,7 +192,7 @@ namespace DrOpen.DrCommon.DrDataSj
                         if (reader.TokenType == JsonToken.StartObject) n.Add(Deserialyze(reader)); // end list of nodes
                     }
                 }
-
+                //  save current values
                 prevTokenType = reader.TokenType;
                 if (reader.TokenType == JsonToken.None)
                 {

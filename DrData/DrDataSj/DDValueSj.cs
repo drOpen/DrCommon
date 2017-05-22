@@ -61,53 +61,22 @@ namespace DrOpen.DrCommon.DrDataSj
 
         public void Serialyze(StringBuilder sb)
         {
-            StringWriter sw = new StringWriter(sb);
-
-            using (JsonWriter writer = new JsonTextWriter(sw))
-            {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                this.Serialyze(writer);
-            }
+            this.v.Serialyze(sb);
         }
 
         public void Serialyze(JsonWriter writer)
         {
-            writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-            if (this.v.Type == null)
-                writer.WriteNull();
-            else
-            {
-                writer.WriteValue(this.v.Type.ToString());
-                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_VALUE);
-                var a = IsThisTypeJsonSerialyzeAsArray(this.v.Type);
-                if (a)
-                {
-                    writer.WriteStartArray();
-                    foreach (var i in (Array)this.v.GetValue())
-                    {
-                        writer.WriteValue(i);
-                    }
-                    writer.WriteEndArray();
-                }
-                else
-                {
-                    if (this.v.Type == typeof (byte[]))
-                        writer.WriteValue(this.v.GetValueAsHEX());
-                    else
-                        writer.WriteValue(this.v.GetValue());
-                }
-            }
+            this.v.Serialyze(writer);
         }
 
-        /// <summary>
-        /// Return true if this type should be serialization per each array element
-        /// </summary>
-        /// <param prevName="type">Type to serialyze</param>
-        /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
-        /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
-        protected static bool IsThisTypeJsonSerialyzeAsArray(Type type)
+        public void Deserialyze(string s)
         {
-            return ((type.IsArray) && (type != typeof(byte[])));
+            this.v = DDValueSje.Deserialyze(s);
+        }
+
+        public void Deserialyze(JsonReader reader)
+        {
+            this.v = DDValueSje.Deserialyze(reader);
         }
 
         #region explicit operator
@@ -133,4 +102,132 @@ namespace DrOpen.DrCommon.DrDataSj
         #endregion explicit operator
 
     }
+
+    /// <summary>
+    /// provides json formating serialization and deserialization for DDAttributesCollection of the 'DrData'
+    /// </summary>
+    public static class DDValueSje
+    {
+        #region Serialyze
+        public static void Serialyze(this DDValue v, StringBuilder sb)
+        {
+            StringWriter sw = new StringWriter(sb);
+
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                v.Serialyze(writer);
+            }
+        }
+        public static void Serialyze(this DDValue v, JsonWriter writer)
+        {
+            writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+            if (v.Type == null)
+                writer.WriteNull();
+            else
+            {
+                writer.WriteValue(v.Type.ToString());
+                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_VALUE);
+                var a = IsThisTypeJsonSerialyzeAsArray(v.Type);
+                if (a)
+                {
+                    writer.WriteStartArray();
+                    foreach (var i in (Array)v.GetValue())
+                    {
+                        writer.WriteValue(i);
+                    }
+                    writer.WriteEndArray();
+                }
+                else
+                {
+                    if (v.Type == typeof(byte[]))
+                        writer.WriteValue(v.GetValueAsHEX());
+                    else
+                        writer.WriteValue(v.GetValue());
+                }
+            }
+        }
+        /// <summary>
+        /// Return true if this type should be serialization per each array element
+        /// </summary>
+        /// <param prevName="type">Type to serialyze</param>
+        /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
+        /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
+        private static bool IsThisTypeJsonSerialyzeAsArray(Type type)
+        {
+            return ((type.IsArray) && (type != typeof(byte[])));
+        }
+        #endregion Serialyze
+        #region Deserialyze
+        public static DDValue Deserialyze(string s)
+        {
+            var sr = new StringReader(s);
+
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                return Deserialyze(reader);
+            }
+        }
+        public static DDValue Deserialyze(JsonReader reader)
+        {
+            DDValue v = null;
+            object objValue = null;
+            object t = null;
+            string prevValueString = null;
+            string prevName = null;
+            JsonToken prevTokenType = JsonToken.None;
+
+            while (reader.Read())
+            {
+                if ((reader.TokenType == JsonToken.EndArray) || (reader.TokenType == JsonToken.EndObject)) // end value or array of values
+                {
+                    if      ((t == null) && (objValue == null)) break;                      // returns null object "{ }"
+                    else if ((t == null) && (objValue != null)) v = new DDValue(objValue);  // ptoperty type isn't specified auto convertion
+
+                    else    v = new DDValue(DDValue.ConvertFromStringTo(Type.GetType(t.ToString()), objValue.ToString()));
+                    break; 
+                }
+                if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE))
+                {
+                    if (reader.TokenType == JsonToken.Null) v = new DDValue(); // null type
+                    t = reader.Value;
+                }
+                if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_NODE_VALUE))
+                {
+                    if (reader.TokenType == JsonToken.Date)
+                        objValue = ((DateTime)reader.Value).ToString(DDSchema.StringDateTimeFormat);
+                    else
+                        objValue = reader.Value;
+                }
+
+                if ((reader.TokenType == JsonToken.StartArray))  // array of values
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.TokenType == JsonToken.EndArray) break; // end list of nodes
+                    }
+                }
+
+                //  save current values
+                prevTokenType = reader.TokenType;
+                if (reader.TokenType == JsonToken.None)
+                {
+                    prevValueString = null;
+                    prevName = null;
+                }
+                else if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    prevName = reader.Value.ToString();
+                }
+                else if (reader.TokenType == JsonToken.String)
+                {
+                    prevValueString = reader.Value.ToString();
+                }
+
+            }
+            return v;
+        }
+        #endregion Deserialyze
+    }
+
 }

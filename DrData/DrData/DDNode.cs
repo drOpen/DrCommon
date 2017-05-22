@@ -708,7 +708,6 @@ namespace DrOpen.DrCommon.DrData
             return Compare(this, (DDNode)obj);
         }
         #endregion CompareTo
-
         #region Names/Values
         /// <summary>
         /// Gets a collection containing the names of child
@@ -897,7 +896,6 @@ namespace DrOpen.DrCommon.DrData
             }
         }
         #endregion Merge
-
         #region Extension
 
         /// <summary>

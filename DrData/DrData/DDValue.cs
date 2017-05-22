@@ -80,7 +80,7 @@ namespace DrOpen.DrCommon.DrData
         protected byte[] data;
         protected Type type;
         /// <summary>
-        /// the type of data stored
+        /// Get the type of data stored
         /// </summary>
         public virtual Type Type
         {

@@ -87,10 +87,10 @@ namespace DrOpen.DrCommon.DrDataSj
         ///// <param prevName="reader"></param>
         //public virtual void WriteXml(XmlWriter reader)
         //{
-        //    if (this.ac == null) return; // if attributes is null
-        //    if (this.ac.Count != 0) reader.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT, this.ac.Count.ToString()); // write element count for none empty collection
+        //    if (this.v == null) return; // if attributes is null
+        //    if (this.v.Count != 0) reader.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT, this.v.Count.ToString()); // write element count for none empty collection
 
-        //    foreach (var a in this.ac)
+        //    foreach (var a in this.v)
         //    {
         //        reader.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
         //        reader.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, a.Key);
@@ -134,7 +134,7 @@ namespace DrOpen.DrCommon.DrDataSj
         //            v = (DDValueSx)new DDValue();
         //            v.ReadXml(reader);
         //        }
-        //        this.ac.Add(prevName, v);
+        //        this.v.Add(prevName, v);
         //    }
 
         //    if ((prevName == null) || (t == null)) // reads and close empty node
@@ -151,12 +151,12 @@ namespace DrOpen.DrCommon.DrDataSj
         //private void DeserializeAttributesCollection(XmlReader reader)
         //{
         //    reader.MoveToContent();
-        //    this.ac = new DDAttributesCollection();
+        //    this.v = new DDAttributesCollection();
         //    var serializer = new XmlSerializer(typeof(DDValueSx));
 
         //    var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
         //    reader.Read(); // read root element
-        //    if (isEmptyElement) return; // Exit for element without child <ac />
+        //    if (isEmptyElement) return; // Exit for element without child <v />
 
         //    var initialDepth = reader.Depth;
 
@@ -191,7 +191,7 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <summary>
         /// unbox DDNode
         /// </summary>
-        /// <param prevName="ac"></param>
+        /// <param prevName="v"></param>
         /// <returns></returns>
         public static implicit operator DDAttributesCollection(DDAttributesCollectionSj ac)
         {
@@ -266,35 +266,11 @@ namespace DrOpen.DrCommon.DrDataSj
             {
                 if (reader.TokenType == JsonToken.EndArray) break; // end list of attributes
 
-                if ((reader.TokenType == JsonToken.PropertyName) && (prevTokenType == JsonToken.PropertyName) && (reader.Value != null))
+                if ((reader.TokenType == JsonToken.PropertyName) && (prevTokenType == JsonToken.StartObject) && (reader.Value != null))
                 {
-                    ac.Add(reader.Value.ToString(),"");
+                    ac.Add(reader.Value.ToString(),DDValueSje.Deserialyze(reader));
                 }
-
-                //if ((reader.TokenType == JsonToken.String) && (n != null) && (prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE) && (reader.Value != null))
-                //{
-                //    n.Type = reader.Value.ToString();
-                //}
-
-                //if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) && (n != null))  // attributes collection
-                //{
-                //    while (reader.Read())
-                //    {
-                //        if (reader.TokenType == JsonToken.EndArray) break; // end list of nodes
-
-
-                //    }
-                //}
-
-                //if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE) && (n != null)) // nodes collection
-                //{
-                //    while (reader.Read())
-                //    {
-                //        if (reader.TokenType == JsonToken.EndArray) break; // end list of nodes
-                //        if (reader.TokenType == JsonToken.StartObject) n.Add(Deserialyze(reader)); // end list of nodes
-                //    }
-                //}
-
+                //  save current values
                 prevTokenType = reader.TokenType;
                 if (reader.TokenType == JsonToken.None)
                 {
@@ -309,7 +285,6 @@ namespace DrOpen.DrCommon.DrDataSj
                 {
                     prevValueString = reader.Value.ToString();
                 }
-
             }
             return ac;
         }

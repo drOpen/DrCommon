@@ -35,7 +35,7 @@ namespace DrOpen.DrCommon.DrDataSj
         #region Serialize xml
         public const string XML_SERIALIZE_NODE_VALUE = "v";
         public const string XML_SERIALIZE_NODE = "n";
-        public const string XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION = "ac";
+        public const string XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION = "v";
         public const string XML_SERIALIZE_NODE_ATTRIBUTE = "a";
         public const string XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM = "i";
         public const string XML_SERIALIZE_ATTRIBUTE_NAME = "n";

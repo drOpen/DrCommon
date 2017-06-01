@@ -77,7 +77,7 @@ namespace DrOpen.DrCommon.DrDataSj
 
         #region explicit operator
         /// <summary>
-        /// boxes DDNode to for XML formating serialization and deserialization
+        /// boxes DDNode to for json formating serialization and deserialization
         /// </summary>
         /// <param prevName="n">DDNode for box</param>
         /// <returns></returns>
@@ -102,6 +102,15 @@ namespace DrOpen.DrCommon.DrDataSj
     {
 
         #region Serialyze
+
+        public static void Serialyze(this DDNode n, TextWriter tw)
+        {
+            using (JsonWriter writer = new JsonTextWriter(tw))
+            {
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                n.Serialyze(writer);
+            }
+        }
         public static void Serialyze(this DDNode n, StringBuilder sb)
         {
             StringWriter sw = new StringWriter(sb);
@@ -147,6 +156,13 @@ namespace DrOpen.DrCommon.DrDataSj
         #endregion Serialyze
 
         #region Deserialyze
+        public static DDNode Deserialyze(TextReader tr)
+        {
+            using (JsonReader reader = new JsonTextReader(tr))
+            {
+                return Deserialyze(reader);
+            }
+        }
         public static DDNode Deserialyze(string s)
         {
             var sr = new StringReader(s);
@@ -167,7 +183,7 @@ namespace DrOpen.DrCommon.DrDataSj
 
             while (reader.Read())
             {
-                if (reader.TokenType == JsonToken.EndObject) break; 
+                if (reader.TokenType == JsonToken.EndObject) break;
 
                 if ((reader.TokenType == JsonToken.PropertyName) && (n == null) && (reader.Value != null))
                 {
@@ -181,7 +197,7 @@ namespace DrOpen.DrCommon.DrDataSj
 
                 if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) && (n != null))  // attributes collection
                 {
-                        n.Attributes.Deserialyze(reader);
+                    n.Attributes.Deserialyze(reader);
                 }
 
                 if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE) && (n != null)) // nodes collection
@@ -207,7 +223,7 @@ namespace DrOpen.DrCommon.DrDataSj
                 {
                     prevValueString = reader.Value.ToString();
                 }
-                
+
             }
             return n;
         }

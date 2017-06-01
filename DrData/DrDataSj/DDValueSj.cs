@@ -49,7 +49,7 @@ namespace DrOpen.DrCommon.DrDataSj
             this.v = v;
         }
         /// <summary>
-        /// returns/unboxes DDAttributesCollection 
+        /// returns/unboxes DDValue 
         /// </summary>
         /// <returns></returns>
         public DDValue GetDDValue()
@@ -104,11 +104,19 @@ namespace DrOpen.DrCommon.DrDataSj
     }
 
     /// <summary>
-    /// provides json formating serialization and deserialization for DDAttributesCollection of the 'DrData'
+    /// provides json formating serialization and deserialization for DDValue of the 'DrData'
     /// </summary>
     public static class DDValueSje
     {
         #region Serialyze
+        public static void Serialyze(this DDValue v, TextWriter tw)
+        {
+            using (JsonWriter writer = new JsonTextWriter(tw))
+            {
+                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                v.Serialyze(writer);
+            }
+        }
         public static void Serialyze(this DDValue v, StringBuilder sb)
         {
             StringWriter sw = new StringWriter(sb);
@@ -158,7 +166,9 @@ namespace DrOpen.DrCommon.DrDataSj
             return ((type.IsArray) && (type != typeof(byte[])));
         }
         #endregion Serialyze
+
         #region Deserialyze
+
         public static DDValue Deserialyze(string s)
         {
             var sr = new StringReader(s);
@@ -168,23 +178,32 @@ namespace DrOpen.DrCommon.DrDataSj
                 return Deserialyze(reader);
             }
         }
+        public static DDValue Deserialyze(TextReader tr)
+        {
+            using (JsonReader reader = new JsonTextReader(tr))
+            {
+                return Deserialyze(reader);
+            }
+        }
         public static DDValue Deserialyze(JsonReader reader)
         {
-            DDValue v = null;
-            object objValue = null;
-            object t = null;
-            string prevValueString = null;
-            string prevName = null;
+            DDValue v               = null;
+            object objValue         = null;
+            string[] objValueArray  = null;
+            object t                = null;
+            string prevValueString  = null;
+            string prevName         = null;
             JsonToken prevTokenType = JsonToken.None;
 
             while (reader.Read())
             {
-                if ((reader.TokenType == JsonToken.EndArray) || (reader.TokenType == JsonToken.EndObject)) // end value or array of values
+                if ((reader.TokenType == JsonToken.EndArray) || (reader.TokenType == JsonToken.EndObject))          // end value or array of values
                 {
-                    if      ((t == null) && (objValue == null)) break;                      // returns null object "{ }"
-                    else if ((t == null) && (objValue != null)) v = new DDValue(objValue);  // ptoperty type isn't specified auto convertion
-
-                    else    v = new DDValue(DDValue.ConvertFromStringTo(Type.GetType(t.ToString()), objValue.ToString()));
+                    if ((t == null) && (objValue == null) && (objValueArray == null)) break;                        // returns null object "{ }"
+                    else if ((t == null) && (objValue != null)) v = new DDValue(objValue);                          // ptoperty type isn't specified auto convertion 
+                    else if ((t == null) && (objValueArray != null)) v = new DDValue(objValueArray);                // ptoperty type isn't specified auto convertion string array
+                    else if ((t != null) &&  (objValueArray != null)) v = new DDValue(DDValue.ConvertFromStringArrayTo(Type.GetType(t.ToString()), objValueArray));  // array
+                    else v = new DDValue(DDValue.ConvertFromStringTo(Type.GetType(t.ToString()), objValue.ToString()));
                     break; 
                 }
                 if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE))
@@ -202,9 +221,14 @@ namespace DrOpen.DrCommon.DrDataSj
 
                 if ((reader.TokenType == JsonToken.StartArray))  // array of values
                 {
+                    int i = 0;
+                    objValueArray = new string[]{};
                     while (reader.Read())
                     {
                         if (reader.TokenType == JsonToken.EndArray) break; // end list of nodes
+                        Array.Resize(ref objValueArray, i + 1);
+                        objValueArray[i] = reader.Value.ToString();
+                        i++;
                     }
                 }
 

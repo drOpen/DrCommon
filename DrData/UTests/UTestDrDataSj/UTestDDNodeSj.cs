@@ -168,9 +168,86 @@ namespace UTestDrDataSj
             var result = DDNodeSje.Deserialyze(j);
             ValidateDeserialization(n, result);
         }
-        
-        
+
         #endregion Node + Attributes + Value
+
+        #region Node + Attribute + Value array
+
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteStringArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new[] { "valueA", "valueB" });
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteBoolArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new[] { false, true, false});
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteEmptyBoolArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new bool[] { });
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteEmptyIntArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new int[] { });
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteIntArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new int[] { 1, 2 , 3 , 0});
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteFloatArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new float[] { float.MaxValue, 1, 2, 3, 0, float.MinValue, float.NaN });
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteEmptyStringArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new string[] { });
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteEmptyStringArray2()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(new string[] { "", null, String.Empty});
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonSingleAttributteNullStringArray()
+        {
+            string[] v = null;
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add(v);
+            var res = SerialyzeDeserialyzeValidate(n);
+        }
+        [TestMethod]
+        public void TestDDNodeJsonManualFormatSingleAttributteGUIDArray()
+        {
+            var n = new DDNode("NodeName", "NodeType");
+            n.Attributes.Add("a", new DDValue(new [] { new Guid("faf77826-1f05-42d2-880f-ca19fa1bc60e"), new Guid("faf77826-1f05-42d2-880f-ca19fa1bc70e")}));
+            string j = "{\"NodeName\":{\"a\": [{\"a\": {\"v\":[\"faf77826-1f05-42d2-880f-ca19fa1bc60e\",\"faf77826-1f05-42d2-880f-ca19fa1bc70e\"],\"t\": \"System.Guid[]\"}}], \"t\":\"NodeType\"}}";
+            var result = DDNodeSje.Deserialyze(j);
+            ValidateDeserialization(n, result);
+        }
+        #endregion Node + Attribute + Value array
+
         [TestMethod]
         public void TestMethod1()
         {

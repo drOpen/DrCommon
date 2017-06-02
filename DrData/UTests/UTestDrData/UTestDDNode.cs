@@ -51,7 +51,7 @@ namespace UTestDrData
         }
 
         public const string aName1 = "value a->a";
-        public static DateTime aValueDateTime1 = DateTime.Parse("2013-06-14T16:15:30+04");
+        public static DateTime aValueDateTime1 = DateTime.Parse("2013-06-14T16:15:30+03:00");
 
         static private DDNode GetStockHierarhy()
         {

@@ -92,6 +92,14 @@ namespace UTestDrDataSe
         }
 
         [TestMethod]
+        public void TestDDNodeXmlSerializationSingleNodeAndAtribute()
+        {
+            var n = new DDNode();
+            n.Attributes.Add(true);
+            ValidateXMLDeserialization(n);
+        }
+
+        [TestMethod]
         public void TestDDNodeXmlSerializationEmpty()
         {
             var root = new DDNode();

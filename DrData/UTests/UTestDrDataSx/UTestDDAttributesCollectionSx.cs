@@ -7,6 +7,7 @@ using UTestDrData;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace UTestDrDataSe
 {
@@ -73,19 +74,32 @@ namespace UTestDrDataSe
         {
             stream.Position = 0;
             UTestDrDataCommon.WriteMemmoryStreamToBinFile((MemoryStream)stream);
-            var deserialyzed = (DDAttributesCollection)DeserializeItem(stream, iFormatter);
+            var deserialized = (DDAttributesCollection)DeserializeItem(stream, iFormatter);
 
-            ValidateDeserialization(original, deserialyzed);
+            ValidateDeserialization(original, deserialized);
         }
 
-        private void ValidateDeserialization(DDAttributesCollection original, DDAttributesCollection deserialyzed)
+        private void ValidateDeserialization(DDAttributesCollection original, DDAttributesCollection deserialized)
         {
-            Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
-            Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
+            Assert.IsTrue(original == deserialized, "Deserialized object must be mathematically equal to the original object.");
+            Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
         }
         #endregion ISerializable
 
         #region IXmlSerializable
+
+        [TestMethod]
+        public void TestDDAttributesCollectionXmlDirectSerialization()
+        {
+            var n = new DDNode("name", "type");
+            n.Attributes.Add("bool", false);
+            n.Attributes.Add("int", -1);
+            n.Add("ChildNode").Add("SubChildNode").Attributes.Add("string", "string");
+            StringBuilder sb = new StringBuilder();
+            n.Attributes.Serialize(sb);
+            var ac = DDAttributesCollectionSxe.Deserialize(sb.ToString());
+            ValidateDeserialization(n.Attributes, ac);
+        }
 
         [TestMethod]
         public void TestDDAttributesCollectionXmlSerializationGetSchemaNull()
@@ -146,7 +160,7 @@ namespace UTestDrDataSe
 
         private void ValidateXMLDeserialization(DDAttributesCollection original)
         {
-            var xml = XMLSerialyze(original);
+            var xml = XMLSerialize(original);
             ValidateXMLDeserialization(original, xml);
         }
 
@@ -154,12 +168,12 @@ namespace UTestDrDataSe
         {
             xml.Position = 0;
             UTestDrDataCommon.WriteMemmoryStreamToXmlFile(xml);
-            var deserialyzed = XMLDeserialyze(xml);
-            ValidateDeserialization(original, (DDAttributesCollection)deserialyzed);
+            var deserialized = XMLDeserialize(xml);
+            ValidateDeserialization(original, (DDAttributesCollection)deserialized);
 
         }
 
-        private MemoryStream XMLSerialyze(DDAttributesCollection value)
+        private MemoryStream XMLSerialize(DDAttributesCollection value)
         {
             var v = (DDAttributesCollectionSx)value;
             var memoryStream = new MemoryStream();
@@ -169,7 +183,7 @@ namespace UTestDrDataSe
 
         }
 
-        private DDAttributesCollectionSx XMLDeserialyze(MemoryStream stream)
+        private DDAttributesCollectionSx XMLDeserialize(MemoryStream stream)
         {
             var serializer = new XmlSerializer(typeof(DDAttributesCollectionSx));
             return (DDAttributesCollectionSx)serializer.Deserialize(stream);

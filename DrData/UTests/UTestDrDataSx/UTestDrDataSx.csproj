@@ -76,6 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="XML\TestDDNodeXmlDeserializationFromFileLegacyAttributeCollectionWithHierarchy.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\TestDDAttributesCollectionXmlSerializationFromFile.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -83,6 +86,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\TestDDAttributesCollectionXmlSerializationFromFileSkipIncorrectValue.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestDDNodeXmlDeserializationFromFileLegacyAttributeCollection.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\TestDDNodeXmlSerializationFromFileSkipIncorrectedData.xml">
@@ -106,40 +112,40 @@
     <Content Include="XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringEmpty.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeEmptyNodeWithStockExpected.xml">
+    <Content Include="XML\TestMergeEmptyNodeWithStock.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributesExpected.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributesSource.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes.Source.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChildExpected.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChildSource.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild.Source.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictExpected.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflict.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictSource.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflict.Source.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflictExpected.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflict.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflictSource.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflict.Source.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflictExpected.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflict.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflictSource.xml">
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflict.Source.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\TestMergeStockCollectionWithEmptyCollectionExpected.xml">
+    <Content Include="XML\TestMergeStockCollectionWithEmptyCollection.Expected.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

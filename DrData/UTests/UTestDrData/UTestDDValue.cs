@@ -3501,16 +3501,16 @@ namespace UTestDrData
         {
             stream.Position = 0;
             UTestDrDataCommon.WriteMemmoryStreamToBinFile((MemoryStream)stream);
-            var deserialyzed = (DDValue)DeserializeItem(stream, iFormatter);
-            ValidateDeserialization(original, deserialyzed);
+            var deserialized = (DDValue)DeserializeItem(stream, iFormatter);
+            ValidateDeserialization(original, deserialized);
         }
 
-        private void ValidateDeserialization(DDValue original, DDValue deserialyzed)
+        private void ValidateDeserialization(DDValue original, DDValue deserialized)
         {
-            Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
-            Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
-            deserialyzed = true; // change type no true
-            Assert.IsFalse(original == deserialyzed, "Changed deserialized object should not be equal to the original object.");
+            Assert.IsTrue(original == deserialized, "Deserialized object must be mathematically equal to the original object.");
+            Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
+            deserialized = true; // change type no true
+            Assert.IsFalse(original == deserialized, "Changed deserialized object should not be equal to the original object.");
         }
         #endregion ISerializable
     }

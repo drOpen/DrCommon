@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using DrOpen.DrCommon.DrData.Exceptions;
+using System.Text;
 
 namespace UTestDrDataSe
 {
@@ -85,6 +86,15 @@ namespace UTestDrDataSe
         }
 
         [TestMethod]
+        public void TestDDNodeXmlSerializationNodeTwoLevels()
+        {
+            var n = new DDNode("A");
+            n.Attributes.Add("_a", "a");
+            n.Add("B").Attributes.Add("_b", "b");
+            ValidateXMLDeserialization(n);
+        }
+
+        [TestMethod]
         public void TestDDNodeXmlSerializationNode()
         {
             var root = GetStockHierarhy();
@@ -111,7 +121,7 @@ namespace UTestDrDataSe
         {
             var stream = UTestDrDataCommon.GetMemoryStreamFromFile();
             stream.Position = 0;
-            var deserialyzed = XMLDeserialyze(stream); // check looping
+            var deserialized = XMLDeserialize(stream); // check looping
 
         }
 
@@ -128,31 +138,59 @@ namespace UTestDrDataSe
         {
             ValidateXMLDeserialization(GetStockHierarhy(), UTestDrDataCommon.GetMemoryStreamFromFile());
         }
+        [TestMethod]
+        public void TestDDNodeXmlDeserializationFromFileLegacyAttributeCollection()
+        {
+            var n = new DDNode("name", "type");
+            n.Attributes.Add("bool", true);
+            n.Attributes.Add("int", 1);
+            ValidateXMLDeserialization(n, UTestDrDataCommon.GetMemoryStreamFromFile());
+        }
+        [TestMethod]
+        public void TestDDNodeXmlDeserializationFromFileLegacyAttributeCollectionWithHierarchy()
+        {
+            var n = new DDNode("name", "type");
+            n.Attributes.Add("bool", false);
+            n.Attributes.Add("int", -1);
+            n.Add("ChildNode").Add("SubChildNode").Attributes.Add("string", "string");
+            ValidateXMLDeserialization(n, UTestDrDataCommon.GetMemoryStreamFromFile());
+        }
+        [TestMethod]
+        public void TestDDNodeXmlDirectSerialization()
+        {
+            var n = new DDNode("name", "type");
+            n.Attributes.Add("bool", false);
+            n.Attributes.Add("int", -1);
+            n.Add("ChildNode").Add("SubChildNode").Attributes.Add("string", "string");
+            StringBuilder sb = new StringBuilder();
+            n.Serialize(sb);
+            var d = DDNodeSxe.Deserialize(sb.ToString());
+            ValidateDeserialization(n, d);
+        }
 
         [TestMethod]
-        public void TestDeserialyzeArrayValue()
+        public void TestDeserializeArrayValue()
         {
             ValidateXMLDeserialization(GetStockHierarhyWithArrayValue());
         }
 
         public static void ValidateXMLDeserialization(DDNode original)
         {
-            var xml = XMLSerialyze(original);
+            var xml = XMLSerialize(original);
             ValidateXMLDeserialization(original, xml);
         }
 
         public static void ValidateXMLDeserialization(DDNode original, MemoryStream xml)
         {
             xml.Position = 0;
-
             UTestDrDataCommon.WriteMemmoryStreamToXmlFile(xml);
-            var deserialyzed = XMLDeserialyze(xml);
-            ValidateDeserialization(original, (DDNode)deserialyzed);
+            var deserialized = XMLDeserialize(xml);
+            ValidateDeserialization(original, (DDNode)deserialized);
         }
 
 
 
-        public static MemoryStream XMLSerialyze(DDNode value)
+        public static MemoryStream XMLSerialize(DDNode value)
         {
 
             var n = (DDNodeSx)value;
@@ -164,7 +202,7 @@ namespace UTestDrDataSe
 
         }
 
-        public static DDNodeSx XMLDeserialyze(MemoryStream stream)
+        public static DDNodeSx XMLDeserialize(MemoryStream stream)
         {
             stream.Position = 0;
             var serializer = new XmlSerializer(typeof(DDNodeSx));
@@ -174,10 +212,10 @@ namespace UTestDrDataSe
 
         #endregion IXmlSerializable
 
-        public static void ValidateDeserialization(DDNode original, DDNode deserialyzed)
+        public static void ValidateDeserialization(DDNode original, DDNode deserialized)
         {
-            Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
-            Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
+            Assert.IsTrue(original == deserialized, "Deserialized object must be mathematically equal to the original object.");
+            Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
         }
 
         #region Merge
@@ -201,14 +239,14 @@ namespace UTestDrDataSe
         {
             var nDestination = new DDNode("Test");
             var nSource = GetStockHierarhy();
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nSource), UTestDrDataCommon.GetTestMethodName() + ".Source.xml");
 
             nDestination.Merge(nSource);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
-            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Actual.xml");
+            var nExpected = XMLDeserialize(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + ".Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nExpected), UTestDrDataCommon.GetTestMethodName() + ".Expected.xml");
 
             Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
         }
@@ -218,14 +256,14 @@ namespace UTestDrDataSe
 
             var nDestination = GetStockHierarhy();
             var nSource = new DDNode("Test");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nSource), UTestDrDataCommon.GetTestMethodName() + ".Source.xml");
 
             nDestination.Merge(nSource);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
-            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Actual.xml");
+            var nExpected = XMLDeserialize(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + ".Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nExpected), UTestDrDataCommon.GetTestMethodName() + ".Expected.xml");
 
             Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
         }
@@ -280,16 +318,16 @@ namespace UTestDrDataSe
 
         private void TestMergeNodeWithAnotherNode(DDNode nDestination, DDNode.DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
-            var nSource = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+            var nSource = XMLDeserialize(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + ".Source.xml"));
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Destination.xml");
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nSource), UTestDrDataCommon.GetTestMethodName() + "Source.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Destination.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nSource), UTestDrDataCommon.GetTestMethodName() + ".Source.xml");
 
             nDestination.Merge(nSource, option, res);
 
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nDestination), UTestDrDataCommon.GetTestMethodName() + "Actual.xml");
-            var nExpected = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Expected.xml"));
-            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialyze(nExpected), UTestDrDataCommon.GetTestMethodName() + "Expected.xml");
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Actual.xml");
+            var nExpected = XMLDeserialize(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + ".Expected.xml"));
+            UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nExpected), UTestDrDataCommon.GetTestMethodName() + ".Expected.xml");
 
             Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
         }

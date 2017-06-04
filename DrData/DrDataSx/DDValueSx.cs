@@ -24,15 +24,14 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
 */
-using DrOpen.DrCommon.DrData;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-
+using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSx
 {
@@ -73,7 +72,7 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            v.WriteXml(writer);
+            DDValueSxe.XMLSerialize(v, writer);
         }
         /// <summary>
         /// Generates an object from its XML representation.
@@ -81,10 +80,8 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
-            this.v = DDValueSxs.ReadXml(reader);
+            this.v = DDValueSxe.Deserialize(reader);
         }
-
-
         #endregion IXmlSerializabl
 
         #region explicit operator
@@ -109,9 +106,76 @@ namespace DrOpen.DrCommon.DrDataSx
         #endregion explicit operator
     }
 
-    public static class DDValueSxs
+    /// <summary>
+    /// provides XML formating serialization and deserialization for DDValue of the 'DrData'
+    /// </summary>
+    public static class DDValueSxe
     {
-        public static void WriteXml(this DDValue v, XmlWriter writer)
+        #region Serialize
+        /// <summary>
+        /// Serializes the specified DDValue into its XML representation and writes to a text writer.
+        /// The parent XML element &lt;v&gt; will be writed&lt;/v&gt;
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="tw">text writer used to write the XML document.</param>
+        public static void Serialize(this DDValue v, TextWriter tw)
+        {
+            using (XmlWriter writer = new XmlTextWriter(tw))
+            {
+                v.Serialize(writer);
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDValue into its XML representation and writes to a string builder.
+        /// The parent XML element &lt;v&gt; will be writed&lt;/v&gt;
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="sb">string builder used to write the XML document.</param>
+        public static void Serialize(this DDValue v, StringBuilder sb)
+        {
+            using (StringWriter sw = new StringWriter(sb))
+            {
+                using (XmlWriter writer = new XmlTextWriter(sw))
+                {
+                    v.Serialize(writer);
+                }
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDValue into its XML representation and writes to a stream.
+        /// The parent XML element &lt;v&gt; will be writed&lt;/v&gt;
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="s">stream used to write the XML document.</param>
+        public static void Serialize(this DDValue v, Stream s)
+        {
+            using (StreamWriter sw = new StreamWriter(s))
+            {
+                using (XmlWriter writer = new XmlTextWriter(sw))
+                {
+                    v.Serialize(writer);
+                }
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDValue into its XML representation and writes to a XML writer.
+        /// The parent XML element &lt;v&gt; will be writed&lt;/v&gt;
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="writer">XML writer used to write the XML document.</param>
+        public static void Serialize(this DDValue v, XmlWriter writer)
+        {
+            writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE);
+            XMLSerialize(v, writer);
+            writer.WriteEndElement();
+        } 
+        /// <summary>
+        /// Serializes the specified DDValue into its XML representation and writes to a XML writer.
+        /// The parent XML element &lt;v&gt; will be writed&lt;/v&gt;
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="writer">XML writer used to write the XML document.</param>
+        internal static void XMLSerialize(DDValue v, XmlWriter writer)
         {
             if (v.Type == null)
             {
@@ -120,8 +184,7 @@ namespace DrOpen.DrCommon.DrDataSx
             else
             {
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, v.Type.ToString());
-                if (v.Size != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_SIZE, v.Size.ToString()); // write size only for none empty objects
-                if (IsThisTypeXMLSerialyzeAsArray(v.Type))
+                if (IsThisTypeXMLSerializeAsArray(v.Type))
                 {
                     foreach (var element in v.ToStringArray())
                     {
@@ -139,18 +202,87 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <summary>
         /// Return true if this type should be serialization per each array element
         /// </summary>
-        /// <param name="type">Type to serialyze</param>
+        /// <param name="type">Type to serialize</param>
         /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
         /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
-        private static bool IsThisTypeXMLSerialyzeAsArray(Type type)
+        private static bool IsThisTypeXMLSerializeAsArray(Type type)
         {
             return ((type.IsArray) && (type != typeof(byte[])));
+        }
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new DDValue from its XML representation.
+        /// </summary>
+        /// <param name="s">stream</param>
+        /// <returns>an new DDValue </returns>
+        public static DDValue Deserialize(Stream s)
+        {
+            using (StreamReader sr = new StreamReader(s))
+            {
+                using (XmlReader r = new XmlTextReader(sr))
+                {
+                    return Deserialize(r);
+                }
+            }
+        }
+        /// <summary>
+        /// Generates an new DDValue from its XML representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="s">stream</param>
+        public static void Deserialize(this DDValue v, Stream s)
+        {
+            v.Deserialize(s);
+        }
+        /// <summary>
+        /// Generates an new DDValue from its XML representation.
+        /// </summary>
+        /// <param name="tr">text reader</param>
+        /// <returns>an new DDValue </returns>
+        public static DDValue Deserialize(TextReader tr)
+        {
+            using (XmlReader r = XmlReader.Create(tr))
+            {
+                return Deserialize(r);
+            }
+        }
+        /// <summary>
+        /// Generates an new DDValue from its XML representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="tr">text reader</param>
+        public static void Deserialize(this DDValue v, TextReader tr)
+        {
+            v.Deserialize(tr);
+        }
+        /// <summary>
+        /// Generates an new DDValue from its XML representation.
+        /// </summary>
+        /// <param name="s">string</param>
+        /// <returns>an new DDValue </returns>
+        public static DDValue Deserialize(String s)
+        {
+            using (XmlReader r = XmlReader.Create(new StringReader(s)))
+            {
+                return Deserialize(r);
+            }
+        }
+        /// <summary>
+        /// Generates an new DDValue from its XML representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="s">string</param>
+        public static void Deserialize(this DDValue v, String s)
+        {
+            v.Deserialize(s);
         }
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
-        /// <param name="reader"></param>
-        public static DDValue ReadXml(XmlReader reader)
+        /// <param name="reader">XML reader</param>
+        /// <returns>an new DDValue </returns>
+        public static DDValue Deserialize(XmlReader reader)
         {
             DDValue v = null;
             reader.MoveToContent();
@@ -164,7 +296,7 @@ namespace DrOpen.DrCommon.DrDataSx
             else
             {
                 var type = Type.GetType(t);
-                if (IsThisTypeXMLSerialyzeAsArray(type))
+                if (IsThisTypeXMLSerializeAsArray(type))
                 {
                     var value = ReadXmlValueArray(reader);
                     if (value == null) value = new string[] { }; // support empty array
@@ -228,6 +360,7 @@ namespace DrOpen.DrCommon.DrDataSx
             }
             return v;
         }
+        #endregion Deserialize
     }
 }
 

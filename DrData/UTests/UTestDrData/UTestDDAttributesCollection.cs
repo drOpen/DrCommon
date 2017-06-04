@@ -694,15 +694,15 @@ namespace UTestDrData
         {
             stream.Position = 0;
             UTestDrDataCommon.WriteMemmoryStreamToBinFile((MemoryStream)stream);
-            var deserialyzed = (DDAttributesCollection)DeserializeItem(stream, iFormatter);
+            var deserialized = (DDAttributesCollection)DeserializeItem(stream, iFormatter);
 
-            ValidateDeserialization(original, deserialyzed);
+            ValidateDeserialization(original, deserialized);
         }
 
-        private void ValidateDeserialization(DDAttributesCollection original, DDAttributesCollection deserialyzed)
+        private void ValidateDeserialization(DDAttributesCollection original, DDAttributesCollection deserialized)
         {
-            Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
-            Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
+            Assert.IsTrue(original == deserialized, "Deserialized object must be mathematically equal to the original object.");
+            Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
         }
         #endregion ISerializable
 

@@ -24,14 +24,13 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
 */
-using DrOpen.DrCommon.DrData;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSx
 {
@@ -72,7 +71,7 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <param name="writer"></param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            this.ac.WriteXml(writer);
+            DDAttributesCollectionSxe.XMLSerialize(this.ac, writer);
         }
         /// <summary>
         /// Generates an object from its XML representation.
@@ -80,7 +79,7 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <param name="reader"></param>
         public virtual void ReadXml(XmlReader reader)
         {
-            this.ac = DDAttributesCollectionSxs.ReadXml(reader);
+            this.ac = DDAttributesCollectionSxe.Deserialize(reader);
         }
 
 
@@ -98,7 +97,7 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <summary>
         /// unbox DDNode
         /// </summary>
-        /// <param name="ac"></param>
+        /// <param name="n"></param>
         /// <returns></returns>
         public static implicit operator DDAttributesCollection(DDAttributesCollectionSx ac)
         {
@@ -107,49 +106,195 @@ namespace DrOpen.DrCommon.DrDataSx
 
         #endregion explicit operator
     }
-    public static class DDAttributesCollectionSxs
+
+    /// <summary>
+    /// provides XML formating serialization and deserialization for DDAttributesCollection of the 'DrData'
+    /// </summary>
+    public static class DDAttributesCollectionSxe
     {
+        #region Serialize
         /// <summary>
-        /// Converts an object into its XML representation.
+        /// Serializes the specified DDAttributesCollection into its XML representation and writes to a text writer.
+        /// The parent XML element &lt;ac&gt; will be writed&lt;/ac&gt;
         /// </summary>
-        /// <param name="writer"></param>
-        public static void WriteXml(this DDAttributesCollection ac, XmlWriter writer)
+        /// <param name="n">the attributes collection to serialize</param>
+        /// <param name="tw">text writer used to write the XML document.</param>
+        public static void Serialize(this DDAttributesCollection ac, TextWriter tw)
+        {
+            using (XmlWriter writer = new XmlTextWriter(tw))
+            {
+                ac.Serialize(writer);
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection into its XML representation and writes to a string builder.
+        /// The parent XML element &lt;ac&gt; will be writed&lt;/ac&gt;
+        /// </summary>
+        /// <param name="n">the attributes collection to serialize</param>
+        /// <param name="sb">string builder used to write the XML document.</param>
+        public static void Serialize(this DDAttributesCollection ac, StringBuilder sb)
+        {
+            using (StringWriter sw = new StringWriter(sb))
+            {
+                using (XmlWriter writer = new XmlTextWriter(sw))
+                {
+                    ac.Serialize(writer);
+                }
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection into its XML representation and writes to a stream.
+        /// The parent XML element &lt;ac&gt; will be writed&lt;/ac&gt;
+        /// </summary>
+        /// <param name="n">the attributes collection to serialize</param>
+        /// <param name="s">stream used to write the XML document.</param>
+        public static void Serialize(this DDAttributesCollection ac, Stream s)
+        {
+            using (StreamWriter sw = new StreamWriter(s))
+            {
+                using (XmlWriter writer = new XmlTextWriter(sw))
+                {
+                    ac.Serialize(writer);
+                }
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection into its XML representation and writes to a XML writer.
+        /// The parent XML element &lt;ac&gt; will be writed&lt;/ac&gt;
+        /// </summary>
+        /// <param name="n">the attributes collection to serialize</param>
+        /// <param name="writer">XML writer used to write the XML document.</param>
+        public static void Serialize(this DDAttributesCollection ac, XmlWriter writer)
+        {
+            writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION);
+            XMLSerialize(ac, writer);
+            writer.WriteEndElement();
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection into its XML representation and writes to a XML writer.
+        /// The parent node must exist, for example, use IXmlSerializable interface
+        /// </summary>
+        /// <param name="n">the attributes collection to serialize</param>
+        /// <param name="writer">XML writer used to write the XML document.</param>
+        internal static void XMLSerialize(DDAttributesCollection ac, XmlWriter writer)
         {
             if (ac == null) return; // if attributes is null
-            if (ac.Count != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT, ac.Count.ToString()); // write element count for none empty collection
 
             foreach (var a in ac)
             {
                 writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, a.Key);
-                if (a.Value != null) DDValueSxs.WriteXml(a.Value, writer);
+                if (a.Value != null) DDValueSxe.XMLSerialize(a.Value, writer);
                 writer.WriteEndElement();
             }
         }
+        #endregion Serialize
+        #region Serialize
+
         /// <summary>
-        /// Generates an object from its XML representation.
+        /// Generates an new DDAttributesCollection from its XML representation.
         /// </summary>
-        /// <param name="reader"></param>
-        public static DDAttributesCollection ReadXml(XmlReader reader)
+        /// <param name="s">stream</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(Stream s)
         {
-            DDAttributesCollection ac = null;
-            if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
-            {
-                ac = new DDAttributesCollection();
-                AddDeserializedAttribute(ref ac, reader);
-            }
-            else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
-            {  
-                AddDeserializedAttributesCollection(out ac, reader);
-            }
+            var ac = new DDAttributesCollection();
+            ac.Deserialize(s);
             return ac;
         }
-
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="s">stream</param>
+        public static void Deserialize(this DDAttributesCollection ac, Stream s)
+        {
+            using (StreamReader sr = new StreamReader(s))
+            {
+                using (XmlReader r = new XmlTextReader(sr))
+                {
+                    ac.Deserialize(r);
+                }
+            }
+        }
+        /// <summary>
+        /// Generates an new DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="tr">text reader</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(TextReader tr)
+        {
+            var ac = new DDAttributesCollection();
+            ac.Deserialize(tr);
+            return ac;
+        }
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="tr">text reader</param>
+        public static void Deserialize(this DDAttributesCollection ac, TextReader tr)
+        {
+            using (XmlReader r = XmlReader.Create(tr))
+            {
+                ac.Deserialize(r);
+            }
+        }
+        /// <summary>
+        /// Generates an new DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="s">string</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(String s)
+        {
+            var ac = new DDAttributesCollection();
+            ac.Deserialize(s);
+            return ac;
+        }
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="s">string</param>
+        public static void Deserialize(this DDAttributesCollection ac, String s)
+        {
+            using (XmlReader r = XmlReader.Create(new StringReader(s)))
+            {
+                ac.Deserialize(r);
+            }
+        }
+        /// <summary>
+        /// Generates an new DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="reader">XML reader stream</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(XmlReader reader)
+        {
+            var ac = new DDAttributesCollection();
+            ac.Deserialize(reader);
+            return ac;
+        }
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its XML representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="reader">XML reader stream</param>
+        public static void Deserialize(this DDAttributesCollection ac, XmlReader reader)
+        {
+            if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
+            {
+                AddDeserializedAttribute(ac, reader);
+            }
+            else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
+            {
+                AddDeserializedAttributesCollection(ac, reader);
+            }
+        }
         /// <summary>
         /// Generates an attribute from its XML representation.
         /// </summary>
         /// <param name="reader"></param>
-        private static void AddDeserializedAttribute(ref DDAttributesCollection ac, XmlReader reader)
+        private static void AddDeserializedAttribute(DDAttributesCollection ac, XmlReader reader)
         {
             var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
             var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
@@ -157,7 +302,7 @@ namespace DrOpen.DrCommon.DrDataSx
             if (name != null)
             {
                 DDValue v = null;
-                if (t != null) v = DDValueSxs.ReadXml(reader);
+                if (t != null) v = DDValueSxe.Deserialize(reader);
                 ac.Add(name, v);
             }
 
@@ -172,14 +317,13 @@ namespace DrOpen.DrCommon.DrDataSx
         /// Generates an attributes collection from its XML representation.
         /// </summary>
         /// <param name="reader"></param>
-        private static void AddDeserializedAttributesCollection(out DDAttributesCollection ac, XmlReader reader)
+        private static void AddDeserializedAttributesCollection(DDAttributesCollection ac, XmlReader reader)
         {
             reader.MoveToContent();
-            ac = new DDAttributesCollection();
 
             var isEmptyElement = reader.IsEmptyElement; // Save Empty Status of Root Element
             reader.Read(); // read root element
-            if (isEmptyElement) return; // Exit for element without child <ac />
+            if (isEmptyElement) return; // Exit for element without child <n />
 
             var initialDepth = reader.Depth;
 
@@ -192,11 +336,12 @@ namespace DrOpen.DrCommon.DrDataSx
                 }
                 else
                 {
-                    AddDeserializedAttribute(ref ac, reader); // deserializes attribute
+                    AddDeserializedAttribute(ac, reader); // deserializes attribute
                 }
                 reader.MoveToContent();
             }
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
         }
+        #endregion Serialize
     }
 }

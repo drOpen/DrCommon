@@ -24,15 +24,13 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
 */
-using DrOpen.DrCommon.DrData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using System.IO;
 
+using System;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSj
 {
@@ -59,25 +57,77 @@ namespace DrOpen.DrCommon.DrDataSj
 
         private DDAttributesCollection ac;
 
-        public void Serialyze(StringBuilder sb)
+        #region Serialize
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a text writer
+        /// </summary>
+        /// <param name="tw">text writer used to write the Json document.</param>
+        public void Serialize(TextWriter tw)
         {
-            this.ac.Serialyze(sb);
+            this.ac.Serialize(tw);
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a string builder
+        /// </summary>
+        /// <param name="sb">string builder used to write the Json document.</param>
+        public void Serialize(StringBuilder sb)
+        {
+            this.ac.Serialize(sb);
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a stream
+        /// </summary>
+        /// <param name="s">stream used to write the Json document.</param>
+        public void Serialize(Stream s)
+        {
+            this.ac.Serialize(s);
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        public void Serialize(JsonWriter writer)
+        {
+            this.ac.Serialize(writer);
+        }
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        public void Deserialize(TextReader tr)
+        {
+            DDAttributesCollectionSje.Deserialize(this.ac, tr);
+        }
+        /// <summary>
+        ///  Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        public void Deserialize(string s)
+        {
+            this.ac = DDAttributesCollectionSje.Deserialize(s);
         }
 
-        public void Serialyze(JsonWriter writer)
+        /// <summary>
+        ///  Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public void Deserialize(Stream s)
         {
-            this.ac.Serialyze(writer);
+            this.ac = DDAttributesCollectionSje.Deserialize(s);
         }
-
-        public void Deserialyze(string s)
+        /// <summary>
+        ///  Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="reader">Json stream reader</param>
+        /// <returns>an new DDAttributesCollection</returns>
+        public void Deserialize(JsonReader reader)
         {
-            this.ac = DDAttributesCollectionSje.Deserialyze(s);
+            this.ac = DDAttributesCollectionSje.Deserialize(reader);
         }
-
-        public void Deserialyze(JsonReader reader)
-        {
-            this.ac = DDAttributesCollectionSje.Deserialyze(reader);
-        }
+        #endregion Deserialize
 
         #region explicit operator
         /// <summary>
@@ -108,32 +158,71 @@ namespace DrOpen.DrCommon.DrDataSj
     /// </summary>
     public static class DDAttributesCollectionSje
     {
-        #region Serialyze
-        public static void Serialyze(this DDAttributesCollection ac, TextWriter tw)
+        #region Serialize
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a text writer
+        /// </summary>
+        /// <param name="ac">the attributes collection to serialize</param>
+        /// <param name="tw">text writer used to write the Json document.</param>
+        public static void Serialize(this DDAttributesCollection ac, TextWriter tw)
         {
             using (JsonWriter writer = new JsonTextWriter(tw))
             {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                ac.Serialyze(writer);
+                ac.Serialize(writer);
             }
         }
-
-        public static void Serialyze(this DDAttributesCollection ac, StringBuilder sb)
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a string builder
+        /// </summary>
+        /// <param name="ac">the attributes collection to serialize</param>
+        /// <param name="sb">string builder used to write the Json document.</param>
+        public static void Serialize(this DDAttributesCollection ac, StringBuilder sb)
         {
-            StringWriter sw = new StringWriter(sb);
-
-            using (JsonWriter writer = new JsonTextWriter(sw))
+            using (StringWriter sw = new StringWriter(sb))
             {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                ac.Serialyze(writer);
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    ac.Serialize(writer);
+                }
             }
         }
-
-        public static void Serialyze(this DDAttributesCollection ac, JsonWriter writer)
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a stream
+        /// </summary>
+        /// <param name="ac">the attributes collection to serialize</param>
+        /// <param name="s">stream used to write the Json document.</param>
+        public static void Serialize(this DDAttributesCollection ac, Stream s)
         {
+            using (StreamWriter sw = new StreamWriter(s))
+            {
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    ac.Serialize(writer);
+                }
+            }
+        }
+                /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="ac">the attributes collection to serialize</param>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        public static void Serialize(this DDAttributesCollection ac, JsonWriter writer)
+        {
+            writer.WriteStartObject();
+            JsonSerialize(ac, writer);
+            writer.WriteEndObject();
+        }
+        /// <summary>
+        /// Serializes the specified DDAttributesCollection and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="ac">the attributes collection to serialize</param>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        internal static void JsonSerialize(DDAttributesCollection ac, JsonWriter writer)
+        {
+            writer.Formatting = Newtonsoft.Json.Formatting.Indented;
             if (ac.Count != 0)
             {
-                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
+                writer.WritePropertyName(DDSchema.JSON_SERIALIZE_NODE_ATTRIBUTE_COLLECTION);
                 writer.WriteStartArray();
 
                 foreach (var a in ac)
@@ -141,38 +230,124 @@ namespace DrOpen.DrCommon.DrDataSj
                     writer.WriteStartObject();
                     writer.WritePropertyName(a.Key);
                     writer.WriteStartObject();
-                    if (a.Value != null)
-                        ((DDValueSj)a.Value).Serialyze(writer);
-
+                    if (a.Value != null) DDValueSje.JsonSerialize(a.Value, writer);
                     writer.WriteEndObject();
                     writer.WriteEndObject();
                 }
                 writer.WriteEndArray();
             }
         }
-        #endregion Serialyze
-        #region Deserialyze
-        public static DDAttributesCollection Deserialyze(TextReader tr)
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(TextReader tr)
+        {
+            var ac = new DDAttributesCollection();
+            Deserialize(ac, tr);
+            return ac;
+        }
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDAttributesCollection ac, TextReader tr)
         {
             using (JsonReader reader = new JsonTextReader(tr))
             {
-                return Deserialyze(reader);
+                Deserialize(ac, reader);
             }
         }
-        public static DDAttributesCollection Deserialyze(string s)
+        /// <summary>
+        ///  Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(string s)
+        {
+            var ac = new DDAttributesCollection();
+            Deserialize(ac, s);
+            return ac;
+        }
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDAttributesCollection ac, string s)
         {
             var sr = new StringReader(s);
-
             using (JsonReader reader = new JsonTextReader(sr))
             {
-                return Deserialyze(reader);
+                Deserialize(ac, reader);
             }
         }
-        public static DDAttributesCollection Deserialyze(JsonReader reader)
+        /// <summary>
+        ///  Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDAttributesCollection </returns>
+        public static DDAttributesCollection Deserialize(Stream s)
         {
-            return new DDAttributesCollection().Deserialyze(reader);
+            var ac = new DDAttributesCollection();
+            Deserialize(ac, s);
+            return ac;
         }
-        public static DDAttributesCollection Deserialyze(this DDAttributesCollection ac, JsonReader reader)
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDAttributesCollection ac, Stream s)
+        {
+            using (StreamReader sr = new StreamReader(s))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    ac.Deserialize(reader);
+                }
+            }
+        }
+        /// <summary>
+        ///  Generates an new DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="reader">Json stream reader</param>
+        /// <returns>an new DDAttributesCollection</returns>
+        public static DDAttributesCollection Deserialize(JsonReader reader)
+        {
+            var ac = new DDAttributesCollection();
+            Deserialize(ac, reader);
+            return ac;
+        }
+                /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="s">Json stream reader</param>
+        public static void Deserialize(this DDAttributesCollection ac, JsonReader reader)
+        {
+            string prevName = null;
+            while (reader.Read())
+            {
+                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.JSON_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))  // attributes collection
+                {
+                    JsonDeserialize(ac, reader);
+                    break;
+                }
+                //  save current values
+                if (reader.TokenType == JsonToken.PropertyName) prevName = reader.Value.ToString();
+            }
+        }
+        /// <summary>
+        /// Adds an new items to specified DDAttributesCollection from its Json representation.
+        /// </summary>
+        /// <param name="ac">The deserialized attributes collection.</param>
+        /// <param name="s">Json stream reader</param>
+        internal static void JsonDeserialize(this DDAttributesCollection ac, JsonReader reader)
         {
             string prevValueString = null;
             string prevName = null;
@@ -185,7 +360,7 @@ namespace DrOpen.DrCommon.DrDataSj
 
                 if ((reader.TokenType == JsonToken.PropertyName) && (prevTokenType == JsonToken.StartObject) && (reader.Value != null))
                 {
-                    ac.Add(reader.Value.ToString(),DDValueSje.Deserialyze(reader));
+                    ac.Add(reader.Value.ToString(), DDValueSje.Deserialize(reader));
                 }
                 //  save current values
                 prevTokenType = reader.TokenType;
@@ -203,8 +378,7 @@ namespace DrOpen.DrCommon.DrDataSj
                     prevValueString = reader.Value.ToString();
                 }
             }
-            return ac;
         }
-        #endregion Deserialyze
+        #endregion Deserialize
     }
 }

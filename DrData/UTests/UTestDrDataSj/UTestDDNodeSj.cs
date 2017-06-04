@@ -70,33 +70,33 @@ namespace UTestDrDataSj
             return a;
         }
 
-        public static void ValidateDeserialization(DDNode original, DDNode deserialyzed)
+        public static void ValidateDeserialization(DDNode original, DDNode deserialized)
         {
-            Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
-            Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
+            Assert.IsTrue(original == deserialized, "Deserialized object must be mathematically equal to the original object.");
+            Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
         }
-        public static DDNode SerialyzeDeserialyzeValidate(DDNode n)
+        public static DDNode SerializeDeserializeValidate(DDNode n)
         {
             var sb = new StringBuilder();
-            ((DDNodeSj)n).Serialyze(sb);
+            ((DDNodeSj)n).Serialize(sb);
 
             var result = (DDNodeSj)new DDNode();
 
             var s = sb.ToString();
-            result.Deserialyze(s);
+            result.Deserialize(s);
             ValidateDeserialization(n, result);
             return result;
         }
         [TestMethod]
         public void TestDDNodeJsonSingleNode()
         {
-            var res = SerialyzeDeserialyzeValidate(new DDNode());
+            var res = SerializeDeserializeValidate(new DDNode());
 
         }
         [TestMethod]
         public void TestDDNodeJsonSingleNodeWithType()
         {
-            var res = SerialyzeDeserialyzeValidate(new DDNode("NodeName", "NodeType"));
+            var res = SerializeDeserializeValidate(new DDNode("NodeName", "NodeType"));
         }
         [TestMethod]
         public void TestDDNodeJsonNodeOneLevelChild()
@@ -105,7 +105,7 @@ namespace UTestDrDataSj
             n.Add("childA", "childTypeA");
             n.Add("childB");
             n.Add("childC", "childTypeC");
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
 
         #region Node + Attributes + Value
@@ -114,14 +114,14 @@ namespace UTestDrDataSj
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(null);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteString()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add("It's string");
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteStringNull()
@@ -129,43 +129,43 @@ namespace UTestDrDataSj
             var n = new DDNode("NodeName", "NodeType");
             string str = null;
             n.Attributes.Add(str);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteBool()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(true);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteInt()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(11);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteFloat()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(float.MaxValue);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteDate()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(DateTime.Now);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonManualFormatSingleAttributteGUID()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add("a", new DDValue(new Guid("faf77826-1f05-42d2-880f-ca19fa1bc60e")));
-            string j = "{\"NodeName\":{\"a\": [{\"a\": {\"v\":\"faf77826-1f05-42d2-880f-ca19fa1bc60e\",\"t\": \"System.Guid\"}}], \"t\":\"NodeType\"}}";
-            var result = DDNodeSje.Deserialyze(j);
+            string j = "{\"NodeName\":{\"ac\": [{\"a\": {\"v\":\"faf77826-1f05-42d2-880f-ca19fa1bc60e\",\"t\": \"System.Guid\"}}], \"t\":\"NodeType\"}}";
+            var result = DDNodeSje.Deserialize(j);
             ValidateDeserialization(n, result);
         }
 
@@ -178,56 +178,56 @@ namespace UTestDrDataSj
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new[] { "valueA", "valueB" });
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteBoolArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new[] { false, true, false});
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteEmptyBoolArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new bool[] { });
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteEmptyIntArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new int[] { });
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteIntArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new int[] { 1, 2 , 3 , 0});
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteFloatArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new float[] { float.MaxValue, 1, 2, 3, 0, float.MinValue, float.NaN });
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteEmptyStringArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new string[] { });
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteEmptyStringArray2()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(new string[] { "", null, String.Empty});
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonSingleAttributteNullStringArray()
@@ -235,15 +235,15 @@ namespace UTestDrDataSj
             string[] v = null;
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add(v);
-            var res = SerialyzeDeserialyzeValidate(n);
+            var res = SerializeDeserializeValidate(n);
         }
         [TestMethod]
         public void TestDDNodeJsonManualFormatSingleAttributteGUIDArray()
         {
             var n = new DDNode("NodeName", "NodeType");
             n.Attributes.Add("a", new DDValue(new [] { new Guid("faf77826-1f05-42d2-880f-ca19fa1bc60e"), new Guid("faf77826-1f05-42d2-880f-ca19fa1bc70e")}));
-            string j = "{\"NodeName\":{\"a\": [{\"a\": {\"v\":[\"faf77826-1f05-42d2-880f-ca19fa1bc60e\",\"faf77826-1f05-42d2-880f-ca19fa1bc70e\"],\"t\": \"System.Guid[]\"}}], \"t\":\"NodeType\"}}";
-            var result = DDNodeSje.Deserialyze(j);
+            string j = "{\"NodeName\":{\"ac\": [{\"a\": {\"v\":[\"faf77826-1f05-42d2-880f-ca19fa1bc60e\",\"faf77826-1f05-42d2-880f-ca19fa1bc70e\"],\"t\": \"System.Guid[]\"}}], \"t\":\"NodeType\"}}";
+            var result = DDNodeSje.Deserialize(j);
             ValidateDeserialization(n, result);
         }
         #endregion Node + Attribute + Value array
@@ -251,12 +251,24 @@ namespace UTestDrDataSj
         [TestMethod]
         public void TestMethod1()
         {
-            var res = SerialyzeDeserialyzeValidate(GetStockHierarhy());
+            var res = SerializeDeserializeValidate(GetStockHierarhy());
         }
         [TestMethod]
         public void TestMethod2()
         {
-            var res = SerialyzeDeserialyzeValidate(GetStockHierarhyWithArrayValue());
+            var res = SerializeDeserializeValidate(GetStockHierarhyWithArrayValue());
+        }
+        [TestMethod]
+        public void TestDDNodeJsonDirectSerialization()
+        {
+            var n = new DDNode("name", "type");
+            n.Attributes.Add("bool", false);
+            n.Attributes.Add("int", -1);
+            n.Add("ChildNode").Add("SubChildNode").Attributes.Add("string", "string");
+            StringBuilder sb = new StringBuilder();
+            n.Serialize(sb);
+            var d = DDNodeSje.Deserialize(sb.ToString());
+            ValidateDeserialization(n, d);
         }
     }
 }

@@ -43,7 +43,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DrDataSx\DrDataSx.csproj">
+    <ProjectReference Include="..\..\DrData\DrDataSx\DrDataSx.csproj">
       <Project>{cef8cdd2-404d-415f-aecf-4b92ceb3a23d}</Project>
       <Name>DrDataSx</Name>
     </ProjectReference>

@@ -32,22 +32,18 @@ namespace DrOpen.DrCommon.DrDataSj
 {
     public static class DDSchema
     {
-        #region Serialize xml
-        public const string XML_SERIALIZE_NODE_VALUE = "v";
-        public const string XML_SERIALIZE_NODE = "n";
-        public const string XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION = "v";
-        public const string XML_SERIALIZE_NODE_ATTRIBUTE = "a";
-        public const string XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM = "i";
-        public const string XML_SERIALIZE_ATTRIBUTE_NAME = "n";
-        public const string XML_SERIALIZE_ATTRIBUTE_TYPE = "t";
-        public const string XML_SERIALIZE_ATTRIBUTE_ROOT = "r";
-        public const string XML_SERIALIZE_ATTRIBUTE_SIZE = "s";
-        public const string XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT = "c";
-        public const string XML_SERIALIZE_ATTRIBUTE_CHILDREN_ATTRIBUTE_COUNT = "a";
+        #region Serialize Json
 
-        public const string XML_SERIALIZE_VALUE_TYPE_NULL = "null";
+        public const string JSON_SERIALIZE_NODE_VALUE = "v";
+        public const string JSON_SERIALIZE_NODE = "n";
+        public const string JSON_SERIALIZE_NODE_ATTRIBUTE_COLLECTION = "ac";
+        public const string JSON_SERIALIZE_NODE_ATTRIBUTE = "a";
+        public const string JSON_SERIALIZE_NODE_ARRAY_VALUE_ITEM = "i";
+        public const string JSON_SERIALIZE_ATTRIBUTE_NAME = "n";
+        public const string JSON_SERIALIZE_ATTRIBUTE_TYPE = "t";
 
-        #endregion Serialize xml
+
+        #endregion Serialize Json
 
         #region string format
         public const string StringDateTimeFormat = "o"; //ISO 8601 format

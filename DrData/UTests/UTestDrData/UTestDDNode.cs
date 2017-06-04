@@ -1287,15 +1287,15 @@ namespace UTestDrData
         {
             stream.Position = 0;
             UTestDrDataCommon.WriteMemmoryStreamToBinFile((MemoryStream)stream);
-            var deserialyzed = (DDNode)DeserializeItem(stream, iFormatter);
+            var deserialized = (DDNode)DeserializeItem(stream, iFormatter);
 
-            ValidateDeserialization(original, deserialyzed);
+            ValidateDeserialization(original, deserialized);
         }
         #endregion ISerializable
-        public static void ValidateDeserialization(DDNode original, DDNode deserialyzed)
+        public static void ValidateDeserialization(DDNode original, DDNode deserialized)
         {
-            Assert.IsTrue(original == deserialyzed, "Deserialized object must be mathematically equal to the original object.");
-            Assert.AreNotEqual(original, deserialyzed, "Deserialized object should not be same as original object.");
+            Assert.IsTrue(original == deserialized, "Deserialized object must be mathematically equal to the original object.");
+            Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
         }
 
 
@@ -1655,7 +1655,7 @@ namespace UTestDrData
 
         private void TestMergeNodeWithAnotherNode(DDNode n1, DDNode n2, DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
-            //var n2 = XMLDeserialyze(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
+            //var n2 = XMLDeserialize(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + "Source.xml"));
             var tm = UTestDrDataCommon.GetTestMethodName();
             UTestDrDataCommon.WriteNodeToTextFile(n1, tm + ".n1.txt");
             UTestDrDataCommon.WriteNodeToTextFile(n2, tm + ".n2.txt");

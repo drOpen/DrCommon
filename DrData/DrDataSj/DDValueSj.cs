@@ -24,20 +24,17 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
 */
-using DrOpen.DrCommon.DrData;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.IO;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-using System.IO;
-
+using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSj
 {
     /// <summary>
-    /// provides json formating serialization and deserialization for DDAttributesCollection of the 'DrData'
+    /// provides json formating serialization and deserialization for DDValue of the 'DrData'
     /// </summary>
     public class DDValueSj
     {
@@ -59,26 +56,74 @@ namespace DrOpen.DrCommon.DrDataSj
 
         private DDValue v;
 
-        public void Serialyze(StringBuilder sb)
+        #region Serialize
+        /// Serializes the DDValueSj and writes the Json document to a text writer
+        /// </summary>
+        /// <param name="tw">text writer used to write the Json document.</param>
+        public void Serialize(TextWriter tw)
         {
-            this.v.Serialyze(sb);
+            this.v.Serialize(tw);
         }
-
-        public void Serialyze(JsonWriter writer)
+        /// <summary>
+        /// Serializes the DDValueSj and writes the Json document to a string builder
+        /// </summary>
+        /// <param name="sb">string builder used to write the Json document.</param>
+        public void Serialize(StringBuilder sb)
         {
-            this.v.Serialyze(writer);
+            this.v.Serialize(sb);
         }
-
-        public void Deserialyze(string s)
+        /// <summary>
+        /// Serializes the DDValueSj and writes the Json document to a stream
+        /// </summary>
+        /// <param name="s">stream used to write the Json document.</param>
+        public void Serialize(Stream s)
         {
-            this.v = DDValueSje.Deserialyze(s);
+            this.v.Serialize(s);
         }
-
-        public void Deserialyze(JsonReader reader)
+        /// <summary>
+        /// Serializes the DDValueSj and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        public void Serialize(JsonWriter writer)
         {
-            this.v = DDValueSje.Deserialyze(reader);
+            this.v.Serialize(writer);
         }
-
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new item to specified DDValue from its Json representation.
+        /// </summary>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        public void Deserialize( string s)
+        {
+            this.v = DDValueSje.Deserialize(s);
+        }
+        /// <summary>
+        /// Generates an new item to specified DDValue from its Json representation.
+        /// </summary>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        public void Deserialize(TextReader tr)
+        {
+            this.v = DDValueSje.Deserialize(tr);
+        }
+        /// <summary>
+        /// Adds an new items to specified DDValue from its Json representation.
+        /// </summary>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        public void Deserialize(Stream s)
+        {
+            this.v = DDValueSje.Deserialize(s);
+        }
+        /// <summary>
+        ///  Generates an new DDValue from its Json representation.
+        /// </summary>
+        /// <param name="reader">Json stream reader</param>
+        /// <returns>an new DDValue</returns>
+        public void Deserialize(JsonReader reader)
+        {
+            this.v = DDValueSje.Deserialize(reader);
+        }
+        #endregion Deserialize
         #region explicit operator
         /// <summary>
         /// boxes DDValue to for json formating serialization and deserialization
@@ -100,7 +145,6 @@ namespace DrOpen.DrCommon.DrDataSj
         }
 
         #endregion explicit operator
-
     }
 
     /// <summary>
@@ -108,35 +152,78 @@ namespace DrOpen.DrCommon.DrDataSj
     /// </summary>
     public static class DDValueSje
     {
-        #region Serialyze
-        public static void Serialyze(this DDValue v, TextWriter tw)
+        #region Serialize
+        /// <summary>
+        /// Serializes the specified DDValue and writes the Json document to a text writer
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="tw">text writer used to write the Json document.</param>
+        public static void Serialize(this DDValue v, TextWriter tw)
         {
             using (JsonWriter writer = new JsonTextWriter(tw))
             {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                v.Serialyze(writer);
+                v.Serialize(writer);
             }
         }
-        public static void Serialyze(this DDValue v, StringBuilder sb)
+        /// <summary>
+        /// Serializes the specified DDValue and writes the Json document to a string builder
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="sb">string builder used to write the Json document.</param>
+        public static void Serialize(this DDValue v, StringBuilder sb)
         {
-            StringWriter sw = new StringWriter(sb);
-
-            using (JsonWriter writer = new JsonTextWriter(sw))
+            using (StringWriter sw = new StringWriter(sb))
             {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                v.Serialyze(writer);
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    v.Serialize(writer);
+                }
             }
         }
-        public static void Serialyze(this DDValue v, JsonWriter writer)
+        /// <summary>
+        /// Serializes the specified DDValue and writes the Json document to a stream
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="s">stream used to write the Json document.</param>
+        public static void Serialize(this DDValue v, Stream s)
         {
-            writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+            using (StreamWriter sw = new StreamWriter(s))
+            {
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    v.Serialize(writer);
+                }
+            }
+        }
+                /// <summary>
+        /// Serializes the specified DDValue and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        public static void Serialize(this DDValue v, JsonWriter writer)
+        {
+            writer.WriteStartObject();
+            JsonSerialize(v, writer);
+            writer.WriteEndObject();
+        }
+
+
+        /// <summary>
+        /// Serializes the specified DDValue and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="v">the value to serialize</param>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        internal static void JsonSerialize(DDValue v, JsonWriter writer)
+        {
+            writer.Formatting = Newtonsoft.Json.Formatting.Indented;
+            writer.WritePropertyName(DDSchema.JSON_SERIALIZE_ATTRIBUTE_TYPE);
             if (v.Type == null)
                 writer.WriteNull();
             else
             {
                 writer.WriteValue(v.Type.ToString());
-                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE_VALUE);
-                var a = IsThisTypeJsonSerialyzeAsArray(v.Type);
+                writer.WritePropertyName(DDSchema.JSON_SERIALIZE_NODE_VALUE);
+                var a = IsThisTypeJsonSerializeAsArray(v.Type);
                 if (a)
                 {
                     writer.WriteStartArray();
@@ -158,34 +245,99 @@ namespace DrOpen.DrCommon.DrDataSj
         /// <summary>
         /// Return true if this type should be serialization per each array element
         /// </summary>
-        /// <param prevName="type">Type to serialyze</param>
+        /// <param prevName="type">Type to serialize</param>
         /// <returns>Return true if this type should be serialization per each array element, otherwise: false</returns>
         /// <example>For example: byte[] should be serialize as HEX single string therefore return n is false for this type, all other arrays should be serialized per elements</example>
-        private static bool IsThisTypeJsonSerialyzeAsArray(Type type)
+        private static bool IsThisTypeJsonSerializeAsArray(Type type)
         {
             return ((type.IsArray) && (type != typeof(byte[])));
         }
-        #endregion Serialyze
-
-        #region Deserialyze
-
-        public static DDValue Deserialyze(string s)
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new item to specified DDValue from its Json representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDValue v, string s)
+        {
+            v = Deserialize(s);
+        }
+        /// <summary>
+        ///  Generates an new DDValue from its Json representation.
+        /// </summary>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        /// <returns>an new DDValue </returns>
+        public static DDValue Deserialize(string s)
         {
             var sr = new StringReader(s);
 
             using (JsonReader reader = new JsonTextReader(sr))
             {
-                return Deserialyze(reader);
+                return Deserialize(reader);
             }
         }
-        public static DDValue Deserialyze(TextReader tr)
+        /// <summary>
+        /// Generates an new item to specified DDValue from its Json representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDValue v, TextReader tr)
+        {
+            v = Deserialize(tr);
+        }
+        /// <summary>
+        /// Generates an new DDValue from its Json representation.
+        /// </summary>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDValue</returns>
+        public static DDValue Deserialize(TextReader tr)
         {
             using (JsonReader reader = new JsonTextReader(tr))
             {
-                return Deserialyze(reader);
+                return Deserialize(reader);
             }
         }
-        public static DDValue Deserialyze(JsonReader reader)
+        /// <summary>
+        /// Adds an new items to specified DDValue from its Json representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDValue v, Stream s)
+        {
+            v = Deserialize(s);
+        }
+
+        /// <summary>
+        ///  Generates an new DDValue from its Json representation.
+        /// </summary>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDValue </returns>
+        public static DDValue Deserialize(Stream s)
+        {
+            using (StreamReader sr = new StreamReader(s))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    return Deserialize(reader);
+                }
+            }
+        }
+        /// <summary>
+        ///  Generates an new DDValue from its Json representation.
+        /// </summary>
+        /// <param name="v">The deserialized value.</param>
+        /// <param name="s">Json stream reader</param>
+        public static void Deserialize(this DDValue v, JsonReader reader)
+        {
+            v = Deserialize(reader);
+        }
+        /// <summary>
+        ///  Generates an new DDValue from its Json representation.
+        /// </summary>
+        /// <param name="reader">Json stream reader</param>
+        /// <returns>an new DDValue</returns>
+        public static DDValue Deserialize(JsonReader reader)
         {
             DDValue v               = null;
             object objValue         = null;
@@ -206,12 +358,12 @@ namespace DrOpen.DrCommon.DrDataSj
                     else v = new DDValue(DDValue.ConvertFromStringTo(Type.GetType(t.ToString()), objValue.ToString()));
                     break; 
                 }
-                if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE))
+                if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.JSON_SERIALIZE_ATTRIBUTE_TYPE))
                 {
                     if (reader.TokenType == JsonToken.Null) v = new DDValue(); // null type
                     t = reader.Value;
                 }
-                if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_NODE_VALUE))
+                if ((prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.JSON_SERIALIZE_NODE_VALUE))
                 {
                     if (reader.TokenType == JsonToken.Date)
                         objValue = ((DateTime)reader.Value).ToString(DDSchema.StringDateTimeFormat);
@@ -251,7 +403,7 @@ namespace DrOpen.DrCommon.DrDataSj
             }
             return v;
         }
-        #endregion Deserialyze
+        #endregion Deserialize
     }
 
 }

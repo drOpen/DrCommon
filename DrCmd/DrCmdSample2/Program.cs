@@ -1,5 +1,6 @@
 ﻿using DrOpen.DrCommon.DrCmd;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrDataSx;
 using DrOpen.DrCommon.DrExt;
 using DrOpen.DrCommon.DrLog.DrLogClient;
 using System;
@@ -648,11 +649,11 @@ namespace DrSignSample
 
         static void SerializeConfig(DDNode n)
         {
-            var f = new XmlSerializer(n.GetType());
+            var f = new XmlSerializer(typeof(DDNodeSx));
 
             using (var s = new FileStream("config.xml", FileMode.Create, FileAccess.Write))
             {
-                f.Serialize(s, n);
+                f.Serialize(s, (DDNodeSx)n);
             }
         }
 

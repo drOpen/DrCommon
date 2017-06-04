@@ -24,13 +24,13 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
 */
-using DrOpen.DrCommon.DrData;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSx
 {
@@ -67,19 +67,19 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <summary>
         /// Converts an object into its XML representation.
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">XML writer</param>
         public virtual void WriteXml(XmlWriter writer)
         {
-            this.n.WriteXml(writer);
+            DDNodeSxe.XMLSerialize(this.n, writer);
         }
 
         /// <summary>
         /// Generates an object from its XML representation.
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">XML reader</param>
         public virtual void ReadXml(XmlReader reader)
         {
-            this.n = DDNodeSxs.ReadXml(reader);
+            this.n = DDNodeSxe.Deserialize(reader);
         }
 
         #endregion IXmlSerializable
@@ -107,36 +107,167 @@ namespace DrOpen.DrCommon.DrDataSx
         #endregion explicit operator
     }
 
-    public static class DDNodeSxs
+    /// <summary>
+    /// provides XML formating serialization and deserialization for DDNode of the 'DrData'
+    /// </summary>
+    public static class DDNodeSxe
     {
+        #region Serialize
+        /// <summary>
+        /// Serializes the specified DDNode into its XML representation and writes to a text writer.
+        /// The parent XML element &lt;n&gt; will be writed&lt;/n&gt;
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="tw">text writer used to write the XML document.</param>
+        public static void Serialize(this DDNode n, TextWriter tw)
+        {
+            using (XmlWriter writer = new XmlTextWriter(tw))
+            {
+                n.Serialize(writer);
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDNode into its XML representation and writes to a string builder.
+        /// The parent XML element &lt;n&gt; will be writed&lt;/n&gt;
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="sb">string builder used to write the XML document.</param>
+        public static void Serialize(this DDNode n, StringBuilder sb)
+        {
+            using (StringWriter sw = new StringWriter(sb))
+            {
+                using (XmlWriter writer = new XmlTextWriter(sw))
+                {
+                    n.Serialize(writer);
+                }
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDNode into its XML representation and writes to a stream.
+        /// The parent XML element &lt;n&gt; will be writed&lt;/n&gt;
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="s">stream used to write the XML document.</param>
+        public static void Serialize(this DDNode n, Stream s)
+        {
+            using (StreamWriter sw = new StreamWriter(s))
+            {
+                using (XmlWriter writer = new XmlTextWriter(sw))
+                {
+                    n.Serialize(writer);
+                }
+            }
+        }
         /// <summary>
         /// Converts an object into its XML representation.
+        /// The parent XML element &lt;n&gt; will be writed&lt;/n&gt;
         /// </summary>
-        /// <param name="writer"></param>
-        public static void WriteXml(this DDNode n, XmlWriter writer)
+        /// <param name="n">the node to serialize</param>
+        /// <param name="writer">XML writer used to write the XML document.</param>
+        public static void Serialize(this DDNode n, XmlWriter writer)
+        {
+            writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE);
+            XMLSerialize(n, writer);
+            writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Converts an object into its XML representation. 
+        /// The parent node must exist, for example, use IXmlSerializable interface
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="writer">XML writer used to write the XML document.</param>
+        internal static void XMLSerialize(DDNode n, XmlWriter writer)
         {
             if (n.Name != null) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, n.Name);
             if (String.IsNullOrEmpty(n.Type) == false) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, n.Type); // write none empty type
-            if (n.IsRoot) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_ROOT, n.IsRoot.ToString());
-            if (n.Count != 0) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_CHILDREN_COUNT, n.Count.ToString());
-
-            if (n.Attributes != null) ((DDAttributesCollectionSx)n.Attributes).WriteXml(writer);
+            if (n.Attributes != null) DDAttributesCollectionSxe.XMLSerialize(n.Attributes, writer);
 
             if (n.HasChildNodes)
             {
-                var serializer = new XmlSerializer(typeof(DDNodeSx));
                 foreach (var keyValuePair in n)
                 {
-                    if (keyValuePair.Value != null) serializer.Serialize(writer, (DDNodeSx)keyValuePair.Value);
+                    if (keyValuePair.Value != null) keyValuePair.Value.Serialize(writer);
                 }
             }
         }
 
+
+        #endregion Serialize
+        #region Serialize
         /// <summary>
-        /// Generates an object from its XML representation.
+        /// Generates an new DDNode from its XML representation.
         /// </summary>
-        /// <param name="reader"></param>
-        public static DDNode ReadXml(XmlReader reader)
+        /// <param name="s">stream</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(Stream s)
+        {
+            using (StreamReader sr = new StreamReader(s))
+            {
+                using (XmlReader r = new XmlTextReader(sr))
+                {
+                    return Deserialize(r);
+                }
+            }
+        }
+        /// <summary>
+        /// Generates an new DDNode from its XML representation.
+        /// </summary>
+        /// <param name="n">The deserialized node.</param>
+        /// <param name="s">stream</param>
+        public static void Deserialize(this DDNode n, Stream s)
+        {
+            n.Deserialize(s);
+        }
+
+        /// <summary>
+        /// Generates an new DDNode from its XML representation.
+        /// </summary>
+        /// <param name="tr">text reader</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(TextReader tr)
+        {
+            using (XmlReader r = XmlReader.Create(tr))
+            {
+                return Deserialize(r);
+            }
+        }
+        /// <summary>
+        /// Generates an new DDNode from its XML representation.
+        /// </summary>
+        /// <param name="n">The deserialized node.</param>
+        /// <param name="tr">text reader</param>
+        public static void Deserialize(this DDNode n, TextReader tr)
+        {
+            n.Deserialize(tr);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its XML representation.
+        /// </summary>
+        /// <param name="s">string</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(String s)
+        {
+            using (XmlReader r = XmlReader.Create(new StringReader(s)))
+            {
+                return Deserialize(r);
+            }
+        }
+        /// <summary>
+        /// Generates an new DDNode from its XML representation.
+        /// </summary>
+        /// <param name="v">The deserialized node.</param>
+        /// <param name="s">string</param>
+        public static void Deserialize(this DDNode n, String s)
+        {
+            n.Deserialize(s);
+        }
+        /// <summary>
+        /// Generates an node from its XML representation.
+        /// </summary>
+        /// <param name="reader">XML reader</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(XmlReader reader)
         {
             DDNode n = null;
             reader.MoveToContent();
@@ -157,16 +288,13 @@ namespace DrOpen.DrCommon.DrDataSx
             while ((reader.Depth >= initialDepth)) // do all childs
             {
                 if (reader.Depth > initialDepth)
-                    reader.Skip(); // 'Deep proptection'
-                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION))
-                    // stupid solution for backward compatible
-                    n.Attributes.Merge(((DDAttributesCollectionSx)sDDAttributeCollection.Deserialize(reader)).GetDDAttributesCollection());
-                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
-                    ((DDAttributesCollectionSx)n.Attributes).ReadXml(reader);
+                    reader.Skip(); // 'Deep protection'
+                else if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE)) || (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)))
+                    n.Attributes.Deserialize(reader);
                 else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE))
-                    n.Add(ReadXml(reader));
+                    n.Add(Deserialize(reader));
                 else
-                    reader.Skip(); // Skip none <ac>,<a>,<n> elements with childs and subchilds. 
+                    reader.Skip(); // Skip none <n>,<a>,<n> elements with childs and subchilds. 
 
                 if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
 
@@ -192,6 +320,7 @@ namespace DrOpen.DrCommon.DrDataSx
             if ((isEmptyElement) | (reader.NodeType == XmlNodeType.EndElement)) return true;  // Exit if element without child '</n>' or is empty node '<n></n>'
             return false;
         }
+        #endregion Serialize
     }
 }
 

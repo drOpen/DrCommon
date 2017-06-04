@@ -24,14 +24,13 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
 */
-using DrOpen.DrCommon.DrData;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSj
 {
@@ -54,27 +53,74 @@ namespace DrOpen.DrCommon.DrDataSj
         }
 
         private DDNode n;
-
-        public void Serialyze(StringBuilder sb)
+        #region Serialize
+        /// <summary>
+        /// Serializes the DDNode and writes the Json document to a text writer
+        /// </summary>
+        /// <param name="tw">text writer used to write the Json document.</param>
+        public void Serialize(TextWriter tw)
         {
-            this.n.Serialyze(sb);
+            this.n.Serialize(tw);
         }
-
-        public void Serialyze(JsonWriter writer)
+        /// <summary>
+        /// Serializes the DDNode and writes the Json document to a string builder
+        /// </summary>
+        /// <param name="sb">string builder used to write the Json document.</param>
+        public void Serialize(StringBuilder sb)
         {
-            this.n.Serialyze(writer);
+            this.n.Serialize(sb);
         }
-
-        public void Deserialyze(string s)
+        /// <summary>
+        /// Serializes the DDNode and writes the Json document to a stream
+        /// </summary>
+        /// <param name="s">stream used to write the Json document.</param>
+        public void Serialize(Stream s)
         {
-            this.n = DDNodeSje.Deserialyze(s);
+            this.n.Serialize(s);
         }
-
-        public void Deserialyze(JsonReader reader)
+        /// <summary>
+        /// Serializes the DDNode and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        public void Serialize(JsonWriter writer)
         {
-            this.n = DDNodeSje.Deserialyze(reader);
+            this.n.Serialize(writer);
         }
-
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        public void Deserialize(TextReader tr)
+        {
+            this.n = DDNodeSje.Deserialize(tr);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        public void Deserialize(string s)
+        {
+            this.n = DDNodeSje.Deserialize(s);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        public void Deserialize(Stream s)
+        {
+            this.n = DDNodeSje.Deserialize(s);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="s">Json stream reader</param>
+        public void Deserialize(JsonReader reader)
+        {
+            this.n = DDNodeSje.Deserialize(reader);
+        }
+        #endregion Deserialize
         #region explicit operator
         /// <summary>
         /// boxes DDNode to for json formating serialization and deserialization
@@ -100,30 +146,57 @@ namespace DrOpen.DrCommon.DrDataSj
 
     public static class DDNodeSje
     {
-
-        #region Serialyze
-
-        public static void Serialyze(this DDNode n, TextWriter tw)
+        #region Serialize
+        /// <summary>
+        /// Serializes the specified DDNode and writes the Json document to a text writer
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="tw">text writer used to write the Json document.</param>
+        public static void Serialize(this DDNode n, TextWriter tw)
         {
             using (JsonWriter writer = new JsonTextWriter(tw))
             {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                n.Serialyze(writer);
+                n.Serialize(writer);
             }
         }
-        public static void Serialyze(this DDNode n, StringBuilder sb)
+        /// <summary>
+        /// Serializes the specified DDNode and writes the Json document to a string builder
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="sb">string builder used to write the Json document.</param>
+        public static void Serialize(this DDNode n, StringBuilder sb)
         {
-            StringWriter sw = new StringWriter(sb);
-
-            using (JsonWriter writer = new JsonTextWriter(sw))
+            using (StringWriter sw = new StringWriter(sb))
             {
-                writer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                n.Serialyze(writer);
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    n.Serialize(writer);
+                }
             }
         }
-
-        public static void Serialyze(this DDNode n, JsonWriter writer)
+        /// <summary>
+        /// Serializes the specified DDNode and writes the Json document to a stream
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="s">stream used to write the Json document.</param>
+        public static void Serialize(this DDNode n, Stream s)
         {
+            using (StreamWriter sw = new StreamWriter(s))
+            {
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    n.Serialize(writer);
+                }
+            }
+        }
+        /// <summary>
+        /// Serializes the specified DDNode and writes the Json document to a Json writer
+        /// </summary>
+        /// <param name="n">the node to serialize</param>
+        /// <param name="writer">Json writer used to write the Json document.</param>
+        public static void Serialize(this DDNode n, JsonWriter writer)
+        {
+            writer.Formatting = Newtonsoft.Json.Formatting.Indented;
             writer.WriteStartObject();
 
             if (n.Name != null)
@@ -133,47 +206,111 @@ namespace DrOpen.DrCommon.DrDataSj
             writer.WriteStartObject();
             if (String.IsNullOrEmpty(n.Type) == false)
             {
-                writer.WritePropertyName(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
+                writer.WritePropertyName(DDSchema.JSON_SERIALIZE_ATTRIBUTE_TYPE);
                 writer.WriteValue(n.Type);
             }
             if (n.Attributes.Count > 0)
             {
-                n.Attributes.Serialyze(writer);
+                DDAttributesCollectionSje.JsonSerialize(n.Attributes, writer);
             }
             if (n.HasChildNodes)
             {
-                writer.WritePropertyName(DDSchema.XML_SERIALIZE_NODE);
+                writer.WritePropertyName(DDSchema.JSON_SERIALIZE_NODE);
                 writer.WriteStartArray();
                 foreach (var keyValuePair in n)
                 {
-                    if (keyValuePair.Value != null) keyValuePair.Value.Serialyze(writer);
+                    if (keyValuePair.Value != null) keyValuePair.Value.Serialize(writer);
                 }
                 writer.WriteEndArray();
             }
             writer.WriteEndObject();
             writer.WriteEndObject();
         }
-        #endregion Serialyze
-
-        #region Deserialyze
-        public static DDNode Deserialyze(TextReader tr)
+        #endregion Serialize
+        #region Deserialize
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="n">The deserialized node.</param>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDNode n, TextReader tr)
+        {
+            n = Deserialize(tr);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="tr">Text reader stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(TextReader tr)
         {
             using (JsonReader reader = new JsonTextReader(tr))
             {
-                return Deserialyze(reader);
+                return Deserialize(reader);
             }
         }
-        public static DDNode Deserialyze(string s)
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="n">The deserialized node.</param>
+        /// <param name="s">String that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDNode n, string s)
+        {
+            n = Deserialize(s);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="tr">String that contains the Json document to deserialize.</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(string s)
         {
             var sr = new StringReader(s);
 
             using (JsonReader reader = new JsonTextReader(sr))
             {
-                return Deserialyze(reader);
+                return Deserialize(reader);
             }
         }
-
-        public static DDNode Deserialyze(JsonReader reader)
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="n">The deserialized node.</param>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        public static void Deserialize(this DDNode n, Stream s)
+        {
+            n = Deserialize(s);
+        }
+        /// <summary>
+        ///  Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="s">Stream that contains the Json document to deserialize.</param>
+        /// <returns>an new DDNode </returns>
+        public static DDNode Deserialize(Stream s)
+        {
+            using (StreamReader sr = new StreamReader(s))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    return Deserialize(reader);
+                }
+            }
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="n">The deserialized node.</param>
+        /// <param name="s">Json stream reader</param>
+        public static void Deserialize(this DDNode n, JsonReader reader)
+        {
+            n = Deserialize(reader);
+        }
+        /// <summary>
+        /// Generates an new DDNode from its Json representation.
+        /// </summary>
+        /// <param name="reader">Json stream reader</param>
+        /// <returns>an new DDNode</returns>
+        public static DDNode Deserialize(JsonReader reader)
         {
             DDNode n = null;
             string prevValueString = null;
@@ -190,22 +327,23 @@ namespace DrOpen.DrCommon.DrDataSj
                     n = new DDNode(reader.Value.ToString());
                 }
 
-                if ((reader.TokenType == JsonToken.String) && (n != null) && (prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE) && (reader.Value != null))
+                if ((reader.TokenType == JsonToken.String) && (n != null) && (prevTokenType == JsonToken.PropertyName) && (prevName == DDSchema.JSON_SERIALIZE_ATTRIBUTE_TYPE) && (reader.Value != null))
                 {
                     n.Type = reader.Value.ToString();
                 }
 
-                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE) && (n != null))  // attributes collection
+                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.JSON_SERIALIZE_NODE_ATTRIBUTE_COLLECTION) && (n != null))  // attributes collection
                 {
-                    n.Attributes.Deserialyze(reader);
+                    //n.Attributes.Deserialize(reader);
+                    DDAttributesCollectionSje.JsonDeserialize(n.Attributes, reader);
                 }
 
-                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.XML_SERIALIZE_NODE) && (n != null)) // nodes collection
+                if ((reader.TokenType == JsonToken.StartArray) && (prevName == DDSchema.JSON_SERIALIZE_NODE) && (n != null)) // nodes collection
                 {
                     while (reader.Read())
                     {
                         if (reader.TokenType == JsonToken.EndArray) break; // end list of nodes
-                        if (reader.TokenType == JsonToken.StartObject) n.Add(Deserialyze(reader)); // end list of nodes
+                        if (reader.TokenType == JsonToken.StartObject) n.Add(Deserialize(reader)); // end list of nodes
                     }
                 }
                 //  save current values
@@ -227,7 +365,7 @@ namespace DrOpen.DrCommon.DrDataSj
             }
             return n;
         }
-        #endregion Deserialyze
+        #endregion Deserialize
     }
 
 }

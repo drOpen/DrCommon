@@ -70,5 +70,28 @@ namespace UTestDrData
             Assert.IsFalse(ddType1.Equals(ddType2), "Objects cannot be equals.");
             Assert.IsFalse(ddType2.Equals(ddType1), "Objects cannot be equals.");
         }
+        /// <summary>
+        /// check fix StackOverflow issue
+        /// </summary>
+        [TestMethod]
+        public void TestTypeNotEqualByObject()
+        {
+            var expected = "type";
+            var ddType1 = new DDType(expected);
+            var ddType2 = new DDType(expected);
+
+            Assert.AreNotEqual(ddType1, ddType2, "Objects should be equals.");
+        }
+        /// <summary>
+        /// check fix StackOverflow issue
+        /// </summary>
+        [TestMethod]
+        public void TestTypeEqualByObject()
+        {
+            var expected = "type";
+            var ddType1 = new DDType(expected);
+
+            Assert.AreEqual(ddType1, (object)ddType1, "Objects should be equals.");
+        }
     }
 }

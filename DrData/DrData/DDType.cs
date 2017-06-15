@@ -37,10 +37,11 @@ namespace DrOpen.DrCommon.DrData
     /// the type of the object
     /// </summary>
     [Serializable]
-    public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType> , ISerializable
+    public class DDType : IComparable, IComparable<DDType>, IEquatable<DDType>, ISerializable
     {
         #region Constructor
-        public DDType(Enum name): this(name.ToString())
+        public DDType(Enum name)
+            : this(name.ToString())
         { }
 
         public DDType(string name)
@@ -122,7 +123,7 @@ namespace DrOpen.DrCommon.DrData
         {
             if (((object)value1 == null) && ((object)value2 == null)) return 0; // if both are null -> return true
             if (((object)value1 == null) || ((object)value2 == null)) return 1; // if only one of them are null ->  return false
-            if ((value1.Name == null)    || (value2.Name == null))
+            if ((value1.Name == null) || (value2.Name == null))
             {
                 if (!((value1.Name == null) && (value2.Name == null))) return 1;
             }
@@ -134,7 +135,7 @@ namespace DrOpen.DrCommon.DrData
         /// <param name="other">other type for comparison</param>
         /// <returns>true if the specified DDType is equal to the current DDType otherwise, false.</returns>
         public virtual bool Equals(DDType other)
-        { 
+        {
             return base.Equals(other);
         }
         /// <summary>
@@ -145,7 +146,7 @@ namespace DrOpen.DrCommon.DrData
         public override bool Equals(object other)
         {
             if (other.GetType() != typeof(DDType)) return false;
-            return this.Equals(other);
+            return this.Equals((DDType)other);
         }
         /// <summary>
         /// Returns the hash code for this DDType which get from Name property

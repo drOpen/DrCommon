@@ -896,45 +896,6 @@ namespace DrOpen.DrCommon.DrData
             }
         }
         #endregion Merge
-        #region Extension
 
-        /// <summary>
-        /// Returns attribute value by attribute name for specified path to the node . If the attribute does not exist returns the default value.
-        /// </summary>
-        /// <param name="node">Current node</param>
-        /// <param name="path">The path to the node at which it is necessary to take the value of an attribute</param>
-        /// <param name="name">Attribute name</param>
-        /// <param name="defaultValue">Default value</param>
-        /// <returns>Returns attribute value by attribute name for specified path to the node . If the attribute does not exist returns the default value.</returns>
-        public static DDValue GetAttributeValue(DDNode node, string path, string name, object defaultValue)
-        {
-            try
-            {
-                return GetAttributeValue(node.GetNode(path), name, defaultValue);
-            }
-            catch
-            {
-                return new DDValue(defaultValue);
-            }
-        }
-        /// <summary>
-        /// Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.
-        /// </summary>
-        /// <param name="node">Current node</param>
-        /// <param name="name">Attribute name</param>
-        /// <param name="defaultValue">Default value</param>
-        /// <returns>Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.</returns>
-        public static DDValue GetAttributeValue(DDNode node, string name, object defaultValue)
-        {
-            try
-            {
-                return node.Attributes.GetValue(name, defaultValue);
-            }
-            catch
-            {
-                return new DDValue(defaultValue);
-            }
-        }
-        #endregion Extension
     }
 }

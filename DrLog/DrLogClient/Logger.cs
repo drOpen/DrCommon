@@ -34,54 +34,8 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
     /// <summary>
     /// Create client logging messages
     /// </summary>
-    public class Logger
+    public class Logger : DrLogClient.ILogger
     {
-
-        #region Singleton
-        /// <summary>
-        /// log server
-        /// </summary>
-        private DrLogSrv.Server logSrv;
-        /// <summary>
-        /// Stored Logger instance
-        /// </summary>
-        private static volatile Logger stInstance;
-        /// <summary>
-        /// lock object for creating Logger
-        /// </summary>
-        private static object lockLogger = new Object();
-        static Logger()
-        {
-        }
-
-        Logger()
-        {
-            this.LogFullSourceName = false;
-            this.LogThreadName = true;
-            this.logSrv = new DrLogSrv.Server();
-            // Source FullName for current class
-            currentSourceFullName = new StackTrace().GetFrame(0).GetMethod().ReflectedType.FullName;
-        }
-
-        /// <summary>
-        /// returns existing instance or create new Logger instance
-        /// </summary>
-        public static Logger GetInstance
-        {
-            get
-            {
-                if (stInstance == null)
-                {
-                    lock (lockLogger)
-                    {
-                        if (stInstance == null) stInstance = new Logger(); // double check 'stInstance' must have
-                    }
-                }
-                return stInstance;
-            }
-        }
-
-        #endregion Singleton
         /// <summary>
         /// Source FullName for current class
         /// </summary>

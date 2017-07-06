@@ -1,7 +1,7 @@
 ﻿/*
-  LoggerST.cs -- single tone for data of the 'Logger' client for DrLog, July 02, 2017
+  LoggerST.cs -- single tone for client of DrLog, July 02, 2017
  
-  Copyright (c) 2013-2014 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2017 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,12 +30,12 @@ using System.Collections.Generic;
 
 namespace DrOpen.DrCommon.DrLog.DrLogClient
 {
-        /// <summary>
+    /// <summary>
     /// singletone of Logger
     /// </summary>
     public class LoggerST : Logger
     {
-                #region Singleton
+        #region Singleton
         /// <summary>
         /// static instance of logger
         /// </summary>
@@ -93,7 +93,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
                     logger = new Logger();
                     sm_instance.Add(name, logger);
                 }
-            }          
+            }
             return logger;
         }
         #endregion Singleton

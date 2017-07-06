@@ -1,7 +1,7 @@
 ﻿/*
   Logger.cs -- client for DrLog 1.0.0, August 30, 2015
  
-  Copyright (c) 2013-2015 Kudryashov Andrey aka Dr
+  Copyright (c) 2013-2017 Kudryashov Andrey aka Dr
  
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -32,35 +32,63 @@ using DrLogClient.Res;
 namespace DrOpen.DrCommon.DrLog.DrLogClient
 {
     /// <summary>
-    /// Create client logging messages
+    /// Instance of client logging messages
     /// </summary>
     public class Logger : DrLogClient.ILogger
     {
+
+        public Logger()
+        {
+            this.LogFullSourceName = false;
+            this.LogThreadName = true;
+            // Source FullName for current class
+            currentSourceFullName = getCurrentSourceFullName();
+        }
+        
+        /// <summary>
+        /// Gets the fully qualified name of the System.Type, including the namespace of the System.Type but not the assembly fro current class
+        /// </summary>
+        /// <returns></returns>
+        private string getCurrentSourceFullName()
+        {
+            string res = String.Empty;
+            try
+            {
+                res = new StackTrace().GetFrame(0).GetMethod().ReflectedType.FullName;
+            }
+            catch { }
+            return res;
+        }
+
         /// <summary>
         /// Source FullName for current class
         /// </summary>
         private readonly string currentSourceFullName = string.Empty;
         /// <summary>
-        /// Log FullSourceName: Logger or DrOpen.DrCommon.DrLog.DrLogClient.Logger<para> </para>
-        /// By default - false;
+        /// Specify true for log source name with namespace as 'DrOpen.DrCommon.DrLog.DrLogClient.Logger', otherwise log short name as 'Logger', by default - false
         /// </summary>
         public bool LogFullSourceName { get; set; }
         /// <summary>
-        /// Log current thread name: Logger or DrOpen.DrCommon.DrLog.DrLogClient.Logger<para> </para>
-        ///  By default - true;
+        /// Specify true for log current thread name with thread id as [112::main]. By default, it's true
         /// </summary>
         public bool LogThreadName { get; set; }
 
         #region Buildsource
-
+        /// <summary>
+        /// Concatinates source 
+        /// </summary>
+        /// <returns></returns>
         private string GetSource()
         {
             if (LogThreadName)
-                return GetThreadInfo() + ">>" + GetSourceNameFromStack();
+                return GetThreadInfo() + GetSourceNameFromStack();
             else
                 return GetSourceNameFromStack();
         }
-
+        /// <summary>
+        /// Returns source name by stack
+        /// </summary>
+        /// <returns></returns>
         private string GetSourceNameFromStack()
         {
             var frames = new StackTrace().GetFrames();
@@ -77,20 +105,21 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
                 }
             return strName;
         }
-
-
-
+          /// <summary>
+          /// Returns thread name and thread id for current thread
+          /// </summary>
+          /// <returns></returns>
         private string GetThreadInfo()
         {
             if (System.Threading.Thread.CurrentThread.Name != null)
-                return System.Threading.Thread.CurrentThread.Name.Trim() + "(" + System.Threading.Thread.CurrentThread.ManagedThreadId + ")";
+                return "[" + System.Threading.Thread.CurrentThread.ManagedThreadId + "::" + System.Threading.Thread.CurrentThread.Name.Trim() +"]";
             else
-                return String.Empty;
+                return "[" + System.Threading.Thread.CurrentThread.ManagedThreadId.ToString() + "]";
         }
         #endregion Buildsource
 
         /// <summary>
-        /// return message as DDNode with basic attributes
+        /// returns message as DDNode with basic attributes
         /// </summary>
         /// <param name="createdDateTime">message creation date time</param>
         /// <param name="logLevel">log level</param>
@@ -102,7 +131,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// <returns></returns>
         public static DDNode MessageItem(DateTime createdDateTime, LogLevel logLevel, string source, Exception exception, string body, string[] providers, string[] recipients)
         {
-            var node = new DDNode(new DDType(SchemaMsg.MessageType)) { Type = SchemaMsg.MessageType };
+            var node = new DDNode(new DDType(SchemaMsg.MessageType));
 
             if (exception != null) node.Add(exception); // add exception
             node.Attributes.Add(SchemaMsg.AttDateTime, createdDateTime);
@@ -117,24 +146,36 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         #region write
 
         /// <summary>
-        /// Send MessageItem to transport for logging. Temporary transport doesn't support
+        /// Send MessageItem to transport for logging.
         /// </summary>
         /// <param name="msg">message</param>
         public virtual void Write(DDNode msg)
         {
             try
             {
-               //this.logSrv
+                //this.logSrv
             }
             catch (Exception e)
             {
-               
+
             }
         }
 
         /// <summary>
-        /// Build MessageItem as DDNode and send to LogSrv across PipeTransport.<para> </para>
-        /// Exposes the current time for this message. Defines the source name.<para> </para>
+        /// Build MessageItem as DDNode
+        /// Exposes the current time for this message. Defines the source name.
+        /// Also replaces the format item in a specified body with the string representation of a corresponding object in a specified bodyArgs.
+        /// </summary>
+        /// <param name="logLevel">associated log level for current log message, which identifies how important/detailed the message is</param>
+        /// <param name="body">body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        public virtual void Write(LogLevel logLevel, string body, params object[] bodyArgs)
+        {
+            Write(logLevel, null, null, null, body, bodyArgs);
+        }
+        /// <summary>
+        /// Build MessageItem as DDNode
+        /// Exposes the current time for this message. Defines the source name.
         /// Also replaces the format item in a specified body with the string representation of a corresponding object in a specified bodyArgs.
         /// </summary>
         /// <param name="logLevel">associated log level for current log message, which identifies how important/detailed the message is</param>
@@ -152,7 +193,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
             catch (Exception e)
             {
                 var bodyF = body ?? "null";
-                WriteError(e, Msg.CANNOT_BUILD_MSG_BODY , bodyF, Args2String(bodyArgs)); 
+                WriteError(e, Msg.CANNOT_BUILD_MSG_BODY, bodyF, Args2String(bodyArgs));
             }
             Write(MessageItem(DateTime.Now, logLevel, GetSource(), exception, body, providers, recipients));
         }

@@ -33,13 +33,13 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
     /// <summary>
     /// singletone of Logger
     /// </summary>
-    public class LoggerST : Logger
+    public class LoggerST<T> where T : Logger, new()
     {
         #region Singleton
         /// <summary>
         /// static instance of logger
         /// </summary>
-        static volatile Dictionary<string, Logger> sm_instance;
+        static volatile Dictionary<string, T> sm_instance;
         /// <summary>
         /// object for lock
         /// </summary>
@@ -61,12 +61,12 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// return logger
         /// </summary>
         /// <returns></returns>
-        public static Logger GetInstance()
+        public static T GetInstance()
         {
             return GetInstance(string.Empty);
         }
 
-        public static Logger GetInstance(Enum name)
+        public static T GetInstance(Enum name)
         {
             return GetInstance(name.ToString());
         }
@@ -74,14 +74,14 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// return named instance
         /// </summary>
         /// <param name="name">name of child node. Empty for root node</param>
-        public static Logger GetInstance(string name)
+        public static T GetInstance(string name)
         {
-            Logger logger;
+            T logger;
             if (sm_instance == null)
             {
                 lock (lockLogger)
                 {
-                    if (sm_instance == null) sm_instance = new Dictionary<string, Logger>();
+                    if (sm_instance == null) sm_instance = new Dictionary<string, T>();
                 }
             }
             lock (lockLogger) // lock here must have -) UTest
@@ -90,7 +90,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
                     logger = sm_instance[name]; // return exist named node
                 else
                 {
-                    logger = new Logger();
+                    logger = new T ();
                     sm_instance.Add(name, logger);
                 }
             }

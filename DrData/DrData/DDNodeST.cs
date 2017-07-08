@@ -31,7 +31,7 @@ namespace DrOpen.DrCommon.DrData
     /// <summary>
     /// singletone of hierarchy data warehouse
     /// </summary>
-    public class DDNodeST : DDNode
+    public class DDNodeST
     {
         #region Singleton
         /// <summary>

@@ -58,6 +58,10 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// </summary>
         public const string AttSource = "Source";
         /// <summary>
+        /// Contains thread name if it is specified, otherwise contains thread id
+        /// </summary>
+        public const string AttThreadInfo = "ThreadInfo";
+        /// <summary>
         /// The list of providers who will be read this message. by default all providers
         /// </summary>
         public const string AttProviders = "Providers";

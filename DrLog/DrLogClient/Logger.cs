@@ -34,17 +34,29 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
     /// <summary>
     /// Instance of client logging messages
     /// </summary>
-    public class Logger : DrLogClient.ILogger
+    public abstract class Logger : ILogger
     {
+        /// <summary>
+        /// Returns instance of logger with message filter <paramref name="LogLevel.TRACE"/>, log short name of source and log thread name
+        /// </summary>
+        public Logger(): this(LogLevel.TRACE, false, true)
+        {  }
 
-        public Logger()
+        /// <summary>
+        /// Returns instance of logger
+        /// </summary>
+        /// <param name="filterMsg">set message filter by log level</param>
+        /// <param name="logFullSourceName">log full source name with name space</param>
+        /// <param name="logThreadName">log thread name</param>
+        public Logger(LogLevel filterMsg, bool logFullSourceName, bool logThreadName)
         {
-            this.LogFullSourceName = false;
-            this.LogThreadName = true;
+            this.FilterMsg = filterMsg;
+            this.LogFullSourceName = logFullSourceName;
+            this.LogThreadName = logThreadName;
             // Source FullName for current class
             currentSourceFullName = getCurrentSourceFullName();
         }
-        
+
         /// <summary>
         /// Gets the fully qualified name of the System.Type, including the namespace of the System.Type but not the assembly fro current class
         /// </summary>
@@ -60,6 +72,10 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
             return res;
         }
 
+        /// <summary>
+        /// filter messages by their level
+        /// </summary>
+        public LogLevel FilterMsg { get; set; }
         /// <summary>
         /// Source FullName for current class
         /// </summary>
@@ -106,15 +122,15 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
             return strName;
         }
           /// <summary>
-          /// Returns thread name and thread id for current thread
+          /// Returns thread name if it is specified, otherwise returns thread id
           /// </summary>
           /// <returns></returns>
         private string GetThreadInfo()
         {
             if (System.Threading.Thread.CurrentThread.Name != null)
-                return "[" + System.Threading.Thread.CurrentThread.ManagedThreadId + "::" + System.Threading.Thread.CurrentThread.Name.Trim() +"]";
+                return  System.Threading.Thread.CurrentThread.Name.Trim();
             else
-                return "[" + System.Threading.Thread.CurrentThread.ManagedThreadId.ToString() + "]";
+                return System.Threading.Thread.CurrentThread.ManagedThreadId.ToString() ;
         }
         #endregion Buildsource
 
@@ -122,22 +138,24 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// returns message as DDNode with basic attributes
         /// </summary>
         /// <param name="createdDateTime">message creation date time</param>
-        /// <param name="logLevel">log level</param>
-        /// <param name="source">source</param>
+        /// <param name="msgLevel">level of message</param>
+        /// <param name="source">source of messages</param>
+        /// <param name="threadInfo">information about thread: id or name</param>
         /// <param name="exception">exception with inner exception. This attribute support null for message without exception</param>
         /// <param name="body">body of message</param>
         /// <param name="providers">array of supported providers. All connected providers will be get this message if array is empty</param>
         /// <param name="recipients">array of supported recipients. All connected recipients will be get this message if array is empty</param>
         /// <returns></returns>
-        public static DDNode MessageItem(DateTime createdDateTime, LogLevel logLevel, string source, Exception exception, string body, string[] providers, string[] recipients)
+        public static DDNode MessageItem(DateTime createdDateTime, LogLevel msgLevel, string source, string threadInfo, Exception exception, string body, string[] providers, string[] recipients)
         {
             var node = new DDNode(new DDType(SchemaMsg.MessageType));
 
             if (exception != null) node.Add(exception); // add exception
             node.Attributes.Add(SchemaMsg.AttDateTime, createdDateTime);
-            node.Attributes.Add(SchemaMsg.AttLevel, logLevel.ToString());
+            node.Attributes.Add(SchemaMsg.AttLevel, msgLevel.ToString());
             if (!string.IsNullOrEmpty(body)) node.Attributes.Add(SchemaMsg.AttBody, body);
             if (!string.IsNullOrEmpty(source)) node.Attributes.Add(SchemaMsg.AttSource, source);
+            if (!string.IsNullOrEmpty(threadInfo)) node.Attributes.Add(SchemaMsg.AttThreadInfo, threadInfo);
             if ((providers != null) && (providers.Length > 0)) node.Attributes.Add(SchemaMsg.AttProviders, providers);
             if ((recipients != null) && (recipients.Length > 0)) node.Attributes.Add(SchemaMsg.AttRecipients, recipients);
             return node;
@@ -149,43 +167,34 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         /// Send MessageItem to transport for logging.
         /// </summary>
         /// <param name="msg">message</param>
-        public virtual void Write(DDNode msg)
-        {
-            try
-            {
-                //this.logSrv
-            }
-            catch (Exception e)
-            {
-
-            }
-        }
+        public abstract void Write(DDNode msg);
 
         /// <summary>
         /// Build MessageItem as DDNode
         /// Exposes the current time for this message. Defines the source name.
         /// Also replaces the format item in a specified body with the string representation of a corresponding object in a specified bodyArgs.
         /// </summary>
-        /// <param name="logLevel">associated log level for current log message, which identifies how important/detailed the message is</param>
+        /// <param name="msgLevel">level of message, which identifies important of message</param>
         /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
-        public virtual void Write(LogLevel logLevel, string body, params object[] bodyArgs)
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
+        public virtual void Write(LogLevel msgLevel, string body, params object[] bodyArgs)
         {
-            Write(logLevel, null, null, null, body, bodyArgs);
+            Write(msgLevel, null, null, null, body, bodyArgs);
         }
         /// <summary>
         /// Build MessageItem as DDNode
         /// Exposes the current time for this message. Defines the source name.
         /// Also replaces the format item in a specified body with the string representation of a corresponding object in a specified bodyArgs.
         /// </summary>
-        /// <param name="logLevel">associated log level for current log message, which identifies how important/detailed the message is</param>
+        /// <param name="msgLevel">level of message, which identifies important of message</param>
         /// <param name="exception">exception for this message. Can be null</param>
         /// <param name="providers">The list of providers who will be read this message. by default all providers</param>
         /// <param name="recipients">The list of recipients who will be receive this message. by default all recipients</param>
         /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
-        public virtual void Write(LogLevel logLevel, Exception exception, string[] providers, string[] recipients, string body, params object[] bodyArgs)
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
+        public virtual void Write(LogLevel msgLevel, Exception exception, string[] providers, string[] recipients, string body, params object[] bodyArgs)
         {
+            if ((msgLevel & FilterMsg) != msgLevel) return; // skip messages by filter
             try
             {
                 body = ((bodyArgs != null) && (bodyArgs.Length != 0) ? string.Format(body, bodyArgs) : body);
@@ -195,38 +204,38 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
                 var bodyF = body ?? "null";
                 WriteError(e, Msg.CANNOT_BUILD_MSG_BODY, bodyF, Args2String(bodyArgs));
             }
-            Write(MessageItem(DateTime.Now, logLevel, GetSource(), exception, body, providers, recipients));
+            Write(MessageItem(DateTime.Now, msgLevel, GetSourceNameFromStack(), GetThreadInfo(), exception, body, providers, recipients));
         }
         /// <summary>
         /// Build MessageItem as DDNode and send to LogSrv across PipeTransport.<para> </para>
         /// Exposes the current time for this message. Defines the source name.<para> </para>
         /// Also replaces the format item in a specified body with the string representation of a corresponding object in a specified bodyArgs.
         /// </summary>
-        /// <param name="logLevel">associated log level for current log message, which identifies how important/detailed the message is</param>
+        /// <param name="msgLevel">level of message, which identifies important of message</param>
         /// <param name="exception">exception for this message. Can be null</param>
         /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
-        public virtual void Write(LogLevel logLevel, Exception exception, string body, params object[] bodyArgs)
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
+        public virtual void Write(LogLevel msgLevel, Exception exception, string body, params object[] bodyArgs)
         {
-            Write(logLevel, exception, null, null, body, bodyArgs);
+            Write(msgLevel, exception, null, null, body, bodyArgs);
         }
-
+        #endregion write
         #region WriteError
         /// <summary>
-        /// Write error message
+        /// Writes error message
         /// </summary>
-        /// <param name="exception">exception for this message. Can be null</param>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="exception">Exception for this message. Can be null</param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteError(Exception exception, string body, params object[] bodyArgs)
         {
             Write(LogLevel.ERR, exception, body, bodyArgs);
         }
         /// <summary>
-        /// Write error message
+        /// Writes error message
         /// </summary>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteError(string body, params object[] bodyArgs)
         {
             Write(LogLevel.ERR, null, body, bodyArgs);
@@ -234,20 +243,20 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         #endregion WriteError
         #region WriteWarning
         /// <summary>
-        /// Write warning message
+        /// Writes warning message
         /// </summary>
         /// <param name="exception">exception for this message. Can be null</param>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteWarning(Exception exception, string body, params object[] bodyArgs)
         {
             Write(LogLevel.WAR, exception, body, bodyArgs);
         }
         /// <summary>
-        /// Write warning message
+        /// Writes warning message
         /// </summary>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteWarning(string body, params object[] bodyArgs)
         {
             Write(LogLevel.WAR, null, body, bodyArgs);
@@ -255,20 +264,20 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         #endregion WriteWarning
         #region WriteInfo
         /// <summary>
-        /// Write information message
+        /// Writes information message
         /// </summary>
-        /// <param name="exception">exception for this message. Can be null</param>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="exception">Exception for this message. Can be null</param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteInfo(Exception exception, string body, params object[] bodyArgs)
         {
             Write(LogLevel.INF, exception, body, bodyArgs);
         }
         /// <summary>
-        /// Write information message
+        /// Writes information message
         /// </summary>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteInfo(string body, params object[] bodyArgs)
         {
             Write(LogLevel.INF, null, body, bodyArgs);
@@ -276,20 +285,20 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         #endregion WriteInfo
         #region WriteTrace
         /// <summary>
-        /// Write trace message
+        /// Writes trace message
         /// </summary>
-        /// <param name="exception">exception for this message. Can be null</param>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="exception">Exception for this message. Can be null</param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteTrace(Exception exception, string body, params object[] bodyArgs)
         {
             Write(LogLevel.TRC, exception, body, bodyArgs);
         }
         /// <summary>
-        /// Write trace message
+        /// Writes trace message
         /// </summary>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteTrace(string body, params object[] bodyArgs)
         {
             Write(LogLevel.TRC, null, body, bodyArgs);
@@ -297,26 +306,25 @@ namespace DrOpen.DrCommon.DrLog.DrLogClient
         #endregion WriteTrace
         #region WriteDebug
         /// <summary>
-        /// Write debug message
+        /// Writes debug message
         /// </summary>
-        /// <param name="exception">exception for this message. Can be null</param>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="exception">Exception for this message. Can be null</param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteDebug(Exception exception, string body, params object[] bodyArgs)
         {
             Write(LogLevel.DBG, exception, body, bodyArgs);
         }
         /// <summary>
-        /// Write debug message
+        /// Writes debug message
         /// </summary>
-        /// <param name="body">body of this message</param>
-        /// <param name="bodyArgs">An object array that contains zero or more objects to format body. </param>
+        /// <param name="body">Body of this message</param>
+        /// <param name="bodyArgs">An object array that contains zero or more objects which formatting body of message.</param>
         public virtual void WriteDebug(string body, params object[] bodyArgs)
         {
             Write(LogLevel.DBG, null, body, bodyArgs);
         }
         #endregion WriteDebug
-        #endregion write
         #region Static
         /// <summary>
         /// Convert arguments string array to string like "'param1', 'empty', 'null'"

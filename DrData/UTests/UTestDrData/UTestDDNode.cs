@@ -783,7 +783,7 @@ namespace UTestDrData
             {
                 throw;
             }
-            catch (DDNodeAddNullException)
+            catch (DDNodeNullException)
             {/* it's ok */}
         }
 

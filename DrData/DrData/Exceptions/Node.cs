@@ -67,7 +67,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="path">Path to node</param>
         public DDNodeAddNodeWithParent(string path)
             : base(path, string.Format(Res.Msg.CANNOT_ADD_NODE_BELONG_TO_ANOTHER_PARENT_NODE, path))
-        {  }
+        { }
         /// <summary>
         /// Initializes a new instance of the DDNodeAddNodeWithParent class with a specified error message.
         /// </summary>
@@ -121,7 +121,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDNodeAddSelf(string path, Exception innerException)
             : base(path, string.Format(Res.Msg.CANNOT_ADD_YOURSELF_AS_CHILD, path), innerException)
-        {}
+        { }
         /// <summary>
         /// Initializes a new instance of the DDNodeAddSelf class with a specified error message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
@@ -130,31 +130,31 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDNodeAddSelf(string path, string message, Exception innerException)
             : base(path, message, innerException)
-        {}
+        { }
     }
     /// <summary>
-    /// DrData -- node exception -- the exception that is thrown when the try add null node.
+    /// DrData -- node exception -- the exception that is thrown when the node is null.
     /// </summary>
-    public class DDNodeAddNullException : DDNodeException
+    public class DDNodeNullException : DDNodeException
     {
         /// <summary>
         /// Initializes a new instance of the DDNodeAddNullException class with the default error message.
         /// </summary>
-        public DDNodeAddNullException()
+        public DDNodeNullException()
             : base(Res.Msg.CANNOT_NULL_NODE)
         { }
         /// <summary>
         /// Initializes a new instance of the DDNodeAddNullException class with a specified error message.
         /// </summary>
         /// <param name="message">A message that describes the error</param>
-        public DDNodeAddNullException(string message)
+        public DDNodeNullException(string message)
             : base(message)
         { }
         /// <summary>
         /// Initializes a new instance of the DDNodeAddNullException class with the default message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDNodeAddNullException(Exception innerException)
+        public DDNodeNullException(Exception innerException)
             : base(Res.Msg.CANNOT_NULL_NODE, innerException)
         { }
         /// <summary>
@@ -162,7 +162,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// </summary>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
-        public DDNodeAddNullException(string message, Exception innerException)
+        public DDNodeNullException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }
@@ -231,7 +231,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDNodePathAboveRootException(string path, Exception innerException)
             : base(path, string.Format(Res.Msg.RISE_ABOVE_ROOT_NODE, path), innerException)
-        {  }
+        { }
         /// <summary>
         /// Initializes a new instance of the DDNodePathAboveRootException class with a specified error message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
@@ -239,8 +239,8 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDNodePathAboveRootException(string path, string message, Exception innerException)
-            : base(path , message, innerException)
-        {  }
+            : base(path, message, innerException)
+        { }
     }
 
     /// <summary>
@@ -308,7 +308,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <param name="name">name of node</param>
         /// <param name="destinationPath">path to destination node</param>
         /// <param name="message">A message that describes the error.</param>
-        public DDNodeMergeNameException(string name,  string destinationPath ,string message)
+        public DDNodeMergeNameException(string name, string destinationPath, string message)
             : base(name, message)
         {
             this.DestinationPath = destinationPath;
@@ -380,5 +380,87 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// Node name
         /// </summary>
         public virtual string Name { get; private set; }
+    }
+    /// <summary>
+    /// DrData -- node with same name already exist exception
+    /// </summary>
+    public class DDNodeExistsException : DDNodeException
+    {
+        /// <summary>
+        /// Initializes a new instance of the DDNodeExistsException class with the default error message.
+        /// <param name="name">Node name</param>
+        /// </summary>
+        public DDNodeExistsException(string name)
+            : base(string.Format(Res.Msg.NODE_EXISTS, name)) { this.Name = name; }
+        /// <summary>
+        /// Initializes a new instance of the DDNodeExistsException class with the specified error message.
+        /// </summary>
+        /// <param name="name">Node name</param>
+        /// <param name="message">A message that describes the error.</param>
+        public DDNodeExistsException(string name, string message)
+            : base(message) { this.Name = name; }
+
+        /// <summary>
+        /// Initializes a new instance of the DDNodeExistsException class with the default error message.
+        /// </summary>
+        /// <param name="name">Node name</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        public DDNodeExistsException(string name, Exception innerException)
+            : base(string.Format(Res.Msg.NODE_EXISTS, name), innerException) { this.Name = name; }
+
+        /// <summary>
+        /// Initializes a new instance of the DDNodeExistsException class with the specified error message.
+        /// </summary>
+        /// <param name="name">Node name</param>
+        /// <param name="message">A message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        public DDNodeExistsException(string name, string message, Exception innerException)
+            : base(message, innerException) { this.Name = name; }
+
+        /// <summary>
+        /// Node name
+        /// </summary>
+        public virtual string Name { get; private set; }
+    }
+    /// <summary>
+    /// DrData -- nodes belong to the different trees
+    /// </summary>
+    public class DDNodesBelongDifferentTrees: DDNodeException
+    {
+        /// <summary>
+        /// Initializes a new instance of the DDNodesBelongDifferentTrees class with the default error message.
+        /// <param name="name">Node name</param>
+        /// </summary>
+        public DDNodesBelongDifferentTrees(params string[] names)
+            : base(string.Format(Res.Msg.NODE_EXISTS, String.Join(", ",  names))) { this.Names = names; }
+        /// <summary>
+        /// Initializes a new instance of the DDNodesBelongDifferentTrees class with the specified error message.
+        /// </summary>
+        /// <param name="name">Node name</param>
+        /// <param name="message">A message that describes the error.</param>
+        public DDNodesBelongDifferentTrees(string[] names, string message)
+            : base(message) { this.Names = names; }
+
+        /// <summary>
+        /// Initializes a new instance of the DDNodesBelongDifferentTrees class with the default error message.
+        /// </summary>
+        /// <param name="name">Node name</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        public DDNodesBelongDifferentTrees(string[] names, Exception innerException)
+            : base(string.Format(Res.Msg.NODE_EXISTS, String.Join(", ",  names)), innerException) { this.Names = names; }
+
+        /// <summary>
+        /// Initializes a new instance of the DDNodesBelongDifferentTrees class with the specified error message.
+        /// </summary>
+        /// <param name="name">Nodes names</param>
+        /// <param name="message">A message that describes the error.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        public DDNodesBelongDifferentTrees(string[] names, string message, Exception innerException)
+            : base(message, innerException) { this.Names = names; }
+
+        /// <summary>
+        /// Node name
+        /// </summary>
+        public virtual string[] Names { get; private set; }
     }
 }

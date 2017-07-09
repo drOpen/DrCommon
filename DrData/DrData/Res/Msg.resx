@@ -186,4 +186,10 @@
   <data name="ATTRIBUTES_DONT_EXIST" xml:space="preserve">
     <value>The attributes '{0}' don't exist.</value>
   </data>
+  <data name="NODES_BELONG_DIFF_TREE" xml:space="preserve">
+    <value>The nodes '{0}' belong to the different trees.</value>
+  </data>
+  <data name="NODE_EXISTS" xml:space="preserve">
+    <value>The node with name '{0}' already exists.</value>
+  </data>
 </root>

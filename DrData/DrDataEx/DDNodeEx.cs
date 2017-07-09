@@ -36,13 +36,14 @@ namespace DrOpen.DrCommon.DrData
         #region GetAttributeValue
 
         /// <summary>
-        /// Returns attribute value by attribute name for specified path to the nTop . If the attribute does not exist returns the default value.
+        /// Returns attribute value by attribute name for specified path to the node . If the node by path or attribute does not exist return the default value.
         /// </summary>
-        /// <param name="nTop">Current nTop</param>
-        /// <param name="path">The path to the nTop at which it is necessary to take the value of an attribute</param>
+        /// <param name="node">Current node</param>
+        /// <param name="path">The path to the node at which it is necessary to take the value of an attribute</param>
         /// <param name="name">Attribute name</param>
         /// <param name="defaultValue">Default value</param>
-        /// <returns>Returns attribute value by attribute name for specified path to the nTop . If the attribute does not exist returns the default value.</returns>
+        /// <returns>Returns attribute value by attribute name for specified path to the node. 
+        /// If the attribute does not exist returns the default value.</returns>
         public static DDValue GetAttributeValue(this DDNode node, string path, string name, object defaultValue)
         {
             try
@@ -55,12 +56,12 @@ namespace DrOpen.DrCommon.DrData
             }
         }
         /// <summary>
-        /// Returns attribute value by attribute name for current nTop. If the attribute does not exist returns the default value.
+        /// Returns attribute value by attribute name for current node. If the attribute does not exist return the default value.
         /// </summary>
-        /// <param name="nTop">Current nTop</param>
+        /// <param name="node">Current node</param>
         /// <param name="name">Attribute name</param>
         /// <param name="defaultValue">Default value</param>
-        /// <returns>Returns attribute value by attribute name for current nTop. If the attribute does not exist returns the default value.</returns>
+        /// <returns>Returns attribute value by attribute name for current node. If the attribute does not exist returns the default value.</returns>
         public static DDValue GetAttributeValue(this DDNode node, string name, object defaultValue)
         {
             try

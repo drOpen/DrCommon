@@ -130,7 +130,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Creates a duplicate of the node, when overridden in a derived class.
         /// </summary>
-        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
+        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the specified node. </param>
         /// <returns>The cloned node.</returns>
         public virtual DDNode Clone(bool deep)
         {
@@ -139,7 +139,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Creates a duplicate of the node, when overridden in a derived class.
         /// </summary>
-        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
+        /// <param name="deep">true to recursively clone the subtree under the specified node; false to clone only the specified node. </param>
         /// <param name="mergeParentAttributes">Merges all attributes from all parent nodes (including root node) for attribute collection of cloned node only. 
         /// The conflicted attributes by same name will be skipped.</param>
         /// <returns>The cloned node.</returns>
@@ -159,7 +159,7 @@ namespace DrOpen.DrCommon.DrData
             {
                 current.Merge(n.Attributes, rc);
                 n = n.Parent;
-            } 
+            }
             return current;
         }
         /// <summary>
@@ -173,7 +173,7 @@ namespace DrOpen.DrCommon.DrData
         {
             var newNode = new DDNode(this.Name, this.Type);
             if ((HasAttributes) && (!mergeParentAttributes)) newNode.attributes = (DDAttributesCollection)Attributes.Clone();
-            if (mergeParentAttributes) newNode.attributes=GetMergedParentAttributes(this, rc);
+            if (mergeParentAttributes) newNode.attributes = GetMergedParentAttributes(this, rc);
 
             if (deep)
             {
@@ -299,13 +299,53 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>added child node</returns>
         public virtual DDNode Add(DDNode node)
         {
-            if (null == node) throw new DDNodeAddNullException();
+            return Add(node, ResolveConflict.THROW_EXCEPTION);
+        }
+        /// <summary>
+        /// Adds the specified node as child
+        /// </summary>
+        /// <param name="node">child node</param>
+        /// <param name="resolve">Rules of behavior in conflict resolution names.
+        /// Throw a new exception; <exception cref="DDNodeExistsException"/>
+        /// Update the existing value;
+        /// Skip this action and preserve exists node
+        /// </param>
+        /// <returns>added child node</returns>
+        /// <exception cref="DDNodeNullException"/>
+        public virtual DDNode Add(DDNode node, ResolveConflict resolve)
+        {
+            if (null == node) throw new DDNodeNullException();
             if (Equals(node)) throw new DDNodeAddSelf(node.Path);
             if (node.Parent == null)
                 node.Parent = this;
             else
                 if (!this.Equals(node.Parent)) throw new DDNodeAddNodeWithParent(node.Path);
-            childNodes.Add(node.Name, node);
+
+
+            switch (resolve)
+            {
+                case ResolveConflict.OVERWRITE:
+                    if (Contains(node.Name))
+                    {
+                        Remove(node.Name); //remove exists node
+                    }
+                    break;
+                case ResolveConflict.SKIP:
+                    if (this.Contains(node.Name))
+                    {
+                        return null; // return null because the node was not added
+                    }
+                    break;
+            }
+            try
+            {
+                childNodes.Add(node.Name, node);
+            }
+            catch (ArgumentException e)
+            {
+                throw new DDNodeExistsException(node.Name, e);
+            }
+
             return node;
         }
         #endregion Add
@@ -889,13 +929,67 @@ namespace DrOpen.DrCommon.DrData
                     else
                     {
                         if (res == ResolveConflict.THROW_EXCEPTION) throw new DDNodeMergeNameException(item.Value.Name, Path);
-                        //if (res == ResolveConflict.SKIP) continue ; // skip only attributes. this line must be commented
                         GetNode(item.Value.Name).Merge(item.Value, option, res);
                     }
                 }
             }
         }
         #endregion Merge
+        #region Copy
+        #endregion Copy
+        public DDNode Copy(DDNode destinationNode, ResolveConflict resolve)
+        {
+            throw new NotImplementedException();
+        }
+        #region Move
+        /// <summary>
+        /// Moves current node as child to destination node. The current and the destination nodes should have the same root.
+        /// </summary>
+        /// <param name="destinationNode">destination node. New parent for current node</param>
+        public DDNode Move(DDNode destinationNode, ResolveConflict resolve)
+        {
+            throw new NotImplementedException();
+            //if (destinationNode == null) throw new DDNodeNullException();
+            //if (IsRoot) throw new DDNodeException("Cannot move root node.");
+            ////****
+            //// need protect move to child node
+            //if (AreTheseNodesGrowFromATree(this, destinationNode) == false) throw new DDNodesBelongDifferentTrees(Name, destinationNode.Name);
+
+            //switch (resolve)
+            //{
+            //    case ResolveConflict.OVERWRITE:
+            //        if (destinationNode.Contains(Name))
+            //        {
+            //            Parent.Remove(Name); //remove self
+            //        }
+            //        break;
+            //    case ResolveConflict.SKIP:
+            //        if (destinationNode.Contains(Name))
+            //        {
+            //            return null; // return null because the node was not added
+            //        }
+            //        break;
+            //}
+            //try
+            //{
+            //    Parent = destinationNode;
+            //}
+            //catch (ArgumentException e)
+            //{
+            //    throw new DDNodeExistsException(Name, e);
+            //}
+
+        }
+        /// <summary>
+        /// This function returns true if nodes belong to a same tree, otherwise returns false if the current and specified node don't have the same root node.
+        /// </summary>
+        /// <param name="n">node to check root</param>
+        /// <returns></returns>
+        public static bool AreTheseNodesGrowFromATree(DDNode n1, DDNode n2)
+        {
+            return n1.GetRoot().Equals(n2.GetRoot());
+        }
+        #endregion Move
 
     }
 }

@@ -196,11 +196,29 @@ namespace DrOpen.DrCommon.DrData.Res {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The node with name &apos;{0}&apos; already exists..
+        /// </summary>
+        internal static string NODE_EXISTS {
+            get {
+                return ResourceManager.GetString("NODE_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Node type &apos;{0}&apos; does not match the expected type &apos;{1}&apos;..
         /// </summary>
         internal static string NODE_TYPE_IS_NOT_MATCHED {
             get {
                 return ResourceManager.GetString("NODE_TYPE_IS_NOT_MATCHED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The nodes &apos;{0}&apos; belong to the different trees..
+        /// </summary>
+        internal static string NODES_BELONG_DIFF_TREE {
+            get {
+                return ResourceManager.GetString("NODES_BELONG_DIFF_TREE", resourceCulture);
             }
         }
         

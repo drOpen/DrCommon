@@ -32,6 +32,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using DrOpen.DrCommon.DrData;
+using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrDataSx
 {
@@ -296,6 +297,7 @@ namespace DrOpen.DrCommon.DrDataSx
             else
             {
                 var type = Type.GetType(t);
+                if (type == null) throw new DDTypeIncorrectException(t);
                 if (IsThisTypeXMLSerializeAsArray(type))
                 {
                     var value = ReadXmlValueArray(reader);

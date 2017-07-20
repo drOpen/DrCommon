@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="DDAttributesCollectionEx.cs" />
     <Compile Include="DDNodeEx.cs" />
+    <Compile Include="DDValueEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

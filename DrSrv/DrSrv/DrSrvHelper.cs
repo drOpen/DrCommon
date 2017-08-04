@@ -31,7 +31,7 @@ using System.Text;
 
 namespace DrOpen.DrCommon.DrSrv
 {
-    public class DrSrvHelper
+    public static class DrSrvHelper
     {
 
         #region win32 declaration

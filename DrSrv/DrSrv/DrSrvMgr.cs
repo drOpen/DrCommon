@@ -1,15 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+  DrSrvMgr.cs -- manager of services 1.0, July 23, 2017
+ 
+  Copyright (c) 2013-2017 Kudryashov Andrey aka Dr
+ 
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+      1. The origin of this software must not be misrepresented; you must not
+      claim that you wrote the original software. If you use this software
+      in a product, an acknowledgment in the product documentation would be
+      appreciated but is not required.
+
+      2. Altered source versions must be plainly marked as such, and must not be
+      misrepresented as being the original software.
+
+      3. This notice may not be removed or altered from any source distribution.
+
+      Kudryashov Andrey <kudryashov.andrey at gmail.com>
+
+ */
+
+using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 
 namespace DrOpen.DrCommon.DrSrv
 {
     public class DrSrvMgr : IDisposable
     {
+        #region DrSrvMgr
         /// <summary>
         /// Inits new DrSrvMgr object allows throw win32 exception
         /// </summary>
@@ -24,10 +49,8 @@ namespace DrOpen.DrCommon.DrSrv
         {
             this.AllowThrowWin32Exception = allowThrowWin32Exception;
         }
-        /// <summary>
-        /// Service change status event
-        /// </summary>
-        public event EventHandler<DrSrvChangeStatusEventArgs> ChangeStatusEvent;
+        #endregion DrSrvMgr
+        #region Fields
         /// <summary>
         /// allow throw win32 exception when function return win32 error
         /// </summary>
@@ -45,6 +68,135 @@ namespace DrOpen.DrCommon.DrSrv
         /// a handle to the openned service.
         /// </summary>
         public IntPtr HService { get; private set; }
+        #endregion Fields
+        #region Events
+        #region OpenSCM
+        public event EventHandler<DrSrvEventArgsBeforeOpenSCM> EventBeforeOpenSCM;
+        protected virtual void OnBeforeOpenSCM(DrSrvEventArgsBeforeOpenSCM e)
+        {
+            EventHandler<DrSrvEventArgsBeforeOpenSCM> handler = EventBeforeOpenSCM;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DrSrvEventArgsAfterOpenSCM> EventAfterOpenSCM;
+        protected virtual void OnAfterOpenSCM(DrSrvEventArgsAfterOpenSCM e)
+        {
+            EventHandler<DrSrvEventArgsAfterOpenSCM> handler = EventAfterOpenSCM;
+            if (handler != null) handler(this, e);
+        }
+        #endregion OpenSCM
+        #region OpenService
+        public event EventHandler<DrSrvEventArgsBeforeOpenService> EventBeforeOpenService;
+        protected virtual void OnBeforeOpenService(DrSrvEventArgsBeforeOpenService e)
+        {
+            EventHandler<DrSrvEventArgsBeforeOpenService> handler = EventBeforeOpenService;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DrSrvEventArgsAfterOpenService> EventAfterOpenService;
+        protected virtual void OnAfterOpenService(DrSrvEventArgsAfterOpenService e)
+        {
+            EventHandler<DrSrvEventArgsAfterOpenService> handler = EventAfterOpenService;
+            if (handler != null) handler(this, e);
+        }
+        #endregion OpenService
+        #region WaitExpectedServiceState
+        public event EventHandler<DrSrvEventArgsBeforeWaitExpectedServiceState> EventBeforeWaitExpectedServiceState;
+        protected virtual void OnBeforeWaitExpectedServiceState(DrSrvEventArgsBeforeWaitExpectedServiceState e)
+        {
+            EventHandler<DrSrvEventArgsBeforeWaitExpectedServiceState> handler = EventBeforeWaitExpectedServiceState;
+            if (handler != null) handler(this, e);
+        }
+        public event EventHandler<DrSrvEventArgsWaitExpectedServiceState> EventWaitExpectedServiceState;
+        protected virtual void OnWaitExpectedServiceState(DrSrvEventArgsWaitExpectedServiceState e)
+        {
+            EventHandler<DrSrvEventArgsWaitExpectedServiceState> handler = EventWaitExpectedServiceState;
+            if (handler != null) handler(this, e);
+        }
+        public event EventHandler<DrSrvEventArgsAfterWaitExpectedServiceState> EventAfterWaitExpectedServiceState;
+        protected virtual void OnAfterWaitExpectedServiceState(DrSrvEventArgsAfterWaitExpectedServiceState e)
+        {
+            EventHandler<DrSrvEventArgsAfterWaitExpectedServiceState> handler = EventAfterWaitExpectedServiceState;
+            if (handler != null) handler(this, e);
+        }
+        #endregion WaitExpectedServiceState
+        #region ServiceControl
+        public event EventHandler<DrSrvEventArgsBeforeServiceControl> EventBeforeServiceControl;
+        protected virtual void OnBeforeServiceControl(DrSrvEventArgsBeforeServiceControl e)
+        {
+            EventHandler<DrSrvEventArgsBeforeServiceControl> handler = EventBeforeServiceControl;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DrSrvEventArgsAfterServiceControl> EventAfterServiceControl;
+        protected virtual void OnAfterServiceControl(DrSrvEventArgsAfterServiceControl e)
+        {
+            EventHandler<DrSrvEventArgsAfterServiceControl> handler = EventAfterServiceControl;
+            if (handler != null) handler(this, e);
+        }
+        #endregion ServiceControl
+        #region ServiceStart
+        public event EventHandler<DrSrvEventArgsBeforeServiceStart> EventBeforeServiceStart;
+        protected virtual void OnBeforeServiceStart(DrSrvEventArgsBeforeServiceStart e)
+        {
+            EventHandler<DrSrvEventArgsBeforeServiceStart> handler = EventBeforeServiceStart;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DrSrvEventArgsAfterServiceStart> EventAfterServiceStart;
+        protected virtual void OnAfterServiceStart(DrSrvEventArgsAfterServiceStart e)
+        {
+            EventHandler<DrSrvEventArgsAfterServiceStart> handler = EventAfterServiceStart;
+            if (handler != null) handler(this, e);
+        }
+        #endregion ServiceStart
+        #region CloseHandle
+        public event EventHandler<DrSrvEventArgsHandle> EventBeforeCloseHandle;
+        protected virtual void OnBeforeCloseHandle(DrSrvEventArgsHandle e)
+        {
+            EventHandler<DrSrvEventArgsHandle> handler = EventBeforeCloseHandle;
+            if (handler != null) handler(this, e);
+        }
+        #endregion CloseHandle
+        #region CreateService
+        public event EventHandler<DrSrvEventArgsBeforeCreateService> EventBeforeCreateService;
+        protected virtual void OnBeforeCreateService(DrSrvEventArgsBeforeCreateService e)
+        {
+            EventHandler<DrSrvEventArgsBeforeCreateService> handler = EventBeforeCreateService;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DrSrvEventArgsAfterCreateService> EventAfterCreateService;
+        protected virtual void OnAfterCreateService(DrSrvEventArgsAfterCreateService e)
+        {
+            EventHandler<DrSrvEventArgsAfterCreateService> handler = EventAfterCreateService;
+            if (handler != null) handler(this, e);
+        }
+        #endregion CreateService
+        #region ServiceDelete
+        public event EventHandler<DrSrvEventArgsBeforeServiceDelete> EventBeforeServiceDelete;
+        protected virtual void OnBeforeServiceDelete(DrSrvEventArgsBeforeServiceDelete e)
+        {
+            EventHandler<DrSrvEventArgsBeforeServiceDelete> handler = EventBeforeServiceDelete;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DrSrvEventArgService> EventAfterServiceDelete;
+        protected virtual void OnAfterServiceDelete(DrSrvEventArgService e)
+        {
+            EventHandler<DrSrvEventArgService> handler = EventAfterServiceDelete;
+            if (handler != null) handler(this, e);
+        }
+        #endregion ServiceDelete
+        #region Win32Error
+        public event EventHandler<DrSrvEventArgBeforeThrowWin32Error> EventBeforeThrowWin32Error;
+        protected virtual void OnBeforeThrowWin32Error(DrSrvEventArgBeforeThrowWin32Error e)
+        {
+            EventHandler<DrSrvEventArgBeforeThrowWin32Error> handler = EventBeforeThrowWin32Error;
+            if (handler != null) handler(this, e);
+        }
+        #endregion Win32Error
+        #endregion Events
         /// <summary>
         /// Sets Win32Exception to property <paramref name="LastError"/> and throws this exception if value of property <paramref name="AllowThrowWin32Exception"/> is true
         /// </summary>
@@ -53,7 +205,11 @@ namespace DrOpen.DrCommon.DrSrv
         private bool win32ErrorHandling(int error)
         {
             LastError = new Win32Exception(error);
-            if (AllowThrowWin32Exception) throw LastError;
+            var eBeforeArgs = new DrSrvEventArgBeforeThrowWin32Error(LastError, this.AllowThrowWin32Exception);
+
+            OnBeforeThrowWin32Error(eBeforeArgs);
+
+            if (!eBeforeArgs.Cancel) throw LastError;
             return false;
         }
 
@@ -88,13 +244,17 @@ namespace DrOpen.DrCommon.DrSrv
         public bool OpenSCM(string serverName, DrSrvHelper.SC_MANAGER access)
         {
             if (String.IsNullOrEmpty(serverName)) serverName = "."; // set localhost for empty or null server name
+            var eBeforeArgs = new DrSrvEventArgsBeforeOpenSCM(serverName, access);
+            OnBeforeOpenSCM(eBeforeArgs); // raise event before open SCM
+            if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED); // Canceled by user
             // close all openned handles
             CloseHandle(this.HService);
             this.HService = IntPtr.Zero;
             CloseHandle(this.HSCManager);
-            this.HSCManager = IntPtr.Zero; ;
+            this.HSCManager = IntPtr.Zero;
             this.HSCManager = DrSrvHelper.OpenSCManager(serverName, null, (int)access);
             if (this.HSCManager.ToInt32() <= 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            OnAfterOpenSCM(new DrSrvEventArgsAfterOpenSCM(serverName, access, this.HSCManager)); // raise event after open SCM
             return true;
         }
         #endregion OpenSCM
@@ -106,7 +266,11 @@ namespace DrOpen.DrCommon.DrSrv
         /// <returns></returns>
         public bool CloseHandle(IntPtr ptr) //close openned SCM
         {
-            if (IntPtr.Zero != ptr) return DrSrvHelper.CloseServiceHandle(ptr); //close openned SCM
+            if (IntPtr.Zero != ptr)
+            {
+                OnBeforeCloseHandle(new DrSrvEventArgsHandle(ptr));
+                return DrSrvHelper.CloseServiceHandle(ptr); //close openned SCM
+            }
             return true;
         }
         /// <summary>
@@ -152,10 +316,14 @@ namespace DrOpen.DrCommon.DrSrv
         /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
         public bool OpenService(IntPtr hSCManager, string serviceName, DrSrvHelper.SERVICE_ACCESS access)
         {
+            var eBeforeArgs = new DrSrvEventArgsBeforeOpenService(serviceName, access, hSCManager);
+            OnBeforeOpenService(eBeforeArgs); // raise event before open service
+            if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED); // Canceled by user
             CloseHandle(this.HService);
             this.HService = IntPtr.Zero;
             this.HService = DrSrvHelper.OpenService(hSCManager, serviceName, (int)access);
             if (this.HService.ToInt32() <= 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            OnAfterOpenService(new DrSrvEventArgsAfterOpenService(serviceName, access, this.HSCManager, this.HService)); // raise event after open service
             return true;
         }
         #endregion OpenService
@@ -183,27 +351,44 @@ namespace DrOpen.DrCommon.DrSrv
         }
         #endregion GetServiceCurrentStatus
         #region WaitServiceCurrentStatus
-
-        protected virtual void OnChangeStatusEvent(DrSrvChangeStatusEventArgs e)
+        /// <summary>
+        /// Wait expected specified service status. Raise event <paramref name="WaitExpectedStatus"/>
+        /// </summary>
+        /// <param name="serviceName">service name</param>
+        /// <param name="state">expected status</param>
+        /// <param name="timeOut">time out period is sec.</param>
+        /// <returns></returns>
+        public virtual bool ServiceWaitStatus(string serviceName, DrSrvHelper.SERVICE_CURRENT_STATE state, int timeOut)
         {
-            EventHandler<DrSrvChangeStatusEventArgs> handler = ChangeStatusEvent;
-            if (handler != null)
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS)))
             {
-                handler(this, e);
+                return ServiceWaitStatus(this.HService, state, timeOut);
             }
+            return false;
         }
-
-        public virtual bool ServiceWaiteStatus(DrSrvHelper.SERVICE_CURRENT_STATE state, int timeOut)
+        /// <summary>
+        /// Wait expected service status. Raise event <paramref name="WaitExpectedStatus"/>
+        /// </summary>
+        /// <param name="state">expected status</param>
+        /// <param name="timeOut">time out period is sec.</param>
+        /// <returns></returns>
+        public virtual bool ServiceWaitStatus(DrSrvHelper.SERVICE_CURRENT_STATE state, int timeOut)
         {
-            return ServiceWaiteStatus(this.HService, state, timeOut);
+            return ServiceWaitStatus(this.HService, state, timeOut);
         }
-
-        public virtual bool ServiceWaiteStatus(IntPtr hService, DrSrvHelper.SERVICE_CURRENT_STATE state, int timeOut)
+        /// <summary>
+        /// Wait expected service status. This function raises event <paramref name="WaitExpectedStatus"/>
+        /// </summary>
+        /// <param name="hService">a service handle</param>
+        /// <param name="state">expected status</param>
+        /// <param name="timeOut">time out period is sec.</param>
+        /// <returns></returns>
+        public virtual bool ServiceWaitStatus(IntPtr hService, DrSrvHelper.SERVICE_CURRENT_STATE state, int timeOut)
         {
             DrSrvHelper.SERVICE_STATUS currentServiceStatus;
-            var eventArgs = new DrSrvChangeStatusEventArgs(hService, state);
-            eventArgs.Cancel = false;
-            eventArgs.RemainigTimeOut = timeOut;
+            var eventArgs = new DrSrvEventArgsWaitExpectedServiceState(hService, state, timeOut);
+            OnBeforeWaitExpectedServiceState((DrSrvEventArgsBeforeWaitExpectedServiceState)eventArgs);
+            if (eventArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED);
             do
             {
                 GetServiceCurrentStatus(hService, out currentServiceStatus);
@@ -211,12 +396,14 @@ namespace DrOpen.DrCommon.DrSrv
                 if (currentServiceStatus.serviceState == state)
                 {
                     Thread.Sleep(100);
+                    OnAfterWaitExpectedServiceState(new DrSrvEventArgsAfterWaitExpectedServiceState(hService, state, timeOut - eventArgs.RemainigTimeOut));
                     return true;
                 }
-                OnChangeStatusEvent(eventArgs);
-                Thread.Sleep(1000);
+                OnWaitExpectedServiceState(eventArgs);
                 if (eventArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED);
+                Thread.Sleep(1000);
                 eventArgs.RemainigTimeOut--;
+                eventArgs.SpentOnTimeWait++;
             } while (0 <= eventArgs.RemainigTimeOut);
             return win32ErrorHandling(DrSrvHelper.ERROR_SERVICE_REQUEST_TIMEOUT);
         }
@@ -281,7 +468,7 @@ namespace DrOpen.DrCommon.DrSrv
             return ServiceControl(this.HService, serviceControl, expectedSrvState, timeOut);
         }
         /// <summary>
-        /// Sends a control code to a specified service. Use the following commands from <paramref name="DrSrvHelper.SERVICE_CONTROL"/> , for example, STOP, START etc
+        /// Sends a control code to a specified service. Use the following commands from <paramref name="DrSrvHelper.SERVICE_CONTROL"/> , for example, STOP, START etc. This function raises event <paramref name="WaitExpectedStatus"/>
         /// </summary>
         /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function, and it must have the SERVICE_START access right. For more information, see Service Security and Access Rights.</param>
         /// <param name="serviceControl">service control code <paramref name="DrSrvHelper.SERVICE_CONTROL"/></param>
@@ -291,22 +478,42 @@ namespace DrOpen.DrCommon.DrSrv
         public bool ServiceControl(IntPtr hService, DrSrvHelper.SERVICE_CONTROL serviceControl, DrSrvHelper.SERVICE_CURRENT_STATE expectedSrvState, int timeOut)
         {
             DrSrvHelper.SERVICE_STATUS currentSrvStatus;
+            var eBeforeArgs = new DrSrvEventArgsBeforeServiceControl(hService, serviceControl, expectedSrvState, timeOut);
+            OnBeforeServiceControl(eBeforeArgs);
+            if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED);
             if (!GetServiceCurrentStatus(hService, out currentSrvStatus)) return false;
             if (currentSrvStatus.serviceState == expectedSrvState) return true; // exit if current service status equals expected service status. nothing to do
             // send service commond
             if (DrSrvHelper.ControlService(hService, serviceControl, ref currentSrvStatus) != true) return win32ErrorHandling(Marshal.GetLastWin32Error());
-
+            OnAfterServiceControl((DrSrvEventArgsAfterServiceControl)eBeforeArgs);
             if (timeOut == 0) return true;
-            return ServiceWaiteStatus(hService, expectedSrvState, timeOut);
+            return ServiceWaitStatus(hService, expectedSrvState, timeOut);
         }
         #region Stop
+        /// <summary>
+        /// Stops the specified service by name. If curent service handle is oppened this function will close openned service handle and open specified service with the following access:
+        /// <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP"/> | <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS"/> | <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS"/>
+        /// </summary>
+        /// <param name="serviceName">The name of the service to be opened. This is the name specified by the lpServiceName parameter of the CreateService function when the service object was created, not the service display name that is shown by user interface applications to identify the service.
+        /// The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are invalid service name characters.</param>
+        /// <param name="timeOut">time wait period expected service status in sec. If parameter is 0 function will not wait expected service status.</param>
+        /// <param name="stopDependences">If value is 'true' automatically stops dependent services, otherwise, stops only specified service</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool ServiceStop(string serviceName, int timeOut, bool stopDependences)
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS)))
+            {
+                return ServiceStop(this.HService, timeOut, stopDependences);
+            }
+            return false;
+        }
         /// <summary>
         /// Stops current service
         /// </summary>
         /// <param name="timeOut">time wait period in sec. If parameter is 0 function will not wait expected service status.</param>
         /// <param name="stopDependences">If value is 'true' automatically stops dependent services, otherwise, stops only specified service</param>
         /// <returns></returns>
-        public bool ServiceStop( int timeOut, bool stopDependences)
+        public bool ServiceStop(int timeOut, bool stopDependences)
         {
             return ServiceStop(this.HService, timeOut, stopDependences);
         }
@@ -327,9 +534,14 @@ namespace DrOpen.DrCommon.DrSrv
                 if (depServices != null)
                 {
                     IntPtr hDService;
+                    var access = (DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS);
                     foreach (var serviceStatus in depServices)
                     {
-                        hDService = DrSrvHelper.OpenService(this.HSCManager, serviceStatus.pServiceName, (int)(DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS));
+                        var eBeforeArgs = new DrSrvEventArgsBeforeOpenService(serviceStatus.pServiceName, access, this.HSCManager);
+                        OnBeforeOpenService(eBeforeArgs);
+                        if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED); // Canceled by user
+                        hDService = DrSrvHelper.OpenService(this.HSCManager, serviceStatus.pServiceName, (int)access);
+                        OnAfterOpenService(new DrSrvEventArgsAfterOpenService(serviceStatus.pServiceName, access, this.HSCManager, hDService));
                         if (!this.ServiceStop(hDService, timeOut, stopDependences)) return false;
                     }
                 }
@@ -340,6 +552,23 @@ namespace DrOpen.DrCommon.DrSrv
         #endregion Stop
         #region Start
         /// <summary>
+        /// Starts the specified service by name. If current service handle is oppened this function will close openned service handle and open specified service with the following access:
+        /// <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_START"/> | <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS"/>
+        /// </summary>
+        /// <param name="serviceName">The name of the service to be opened. This is the name specified by the lpServiceName parameter of the CreateService function when the service object was created, not the service display name that is shown by user interface applications to identify the service.
+        /// The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are invalid service name characters.</param>
+        /// <param name="timeOut">time wait period expected service status in sec. If parameter is 0 function will not wait expected service status.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool ServiceStart(string serviceName, int timeOut)
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_START | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS)))
+            {
+                return ServiceStart(this.HService, timeOut);
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Starts current service
         /// </summary>
         /// <param name="timeOut">time wait period in sec. If parameter is 0 function will not wait expected service status.</param>
@@ -349,19 +578,324 @@ namespace DrOpen.DrCommon.DrSrv
             return ServiceStart(this.HService, timeOut);
         }
         /// <summary>
-        /// Starts specified service
+        /// Starts specified service. This function raises event <paramref name="WaitExpectedStatus"/>
         /// </summary>
         /// <param name="hService">a service handle</param>
         /// <param name="timeOut">time wait period in sec. If parameter is 0 function will not wait expected service status.</param>
         /// <returns></returns>
         public bool ServiceStart(IntPtr hService, int timeOut)
         {
+            var eBeforeArgs = new DrSrvEventArgsBeforeServiceStart(hService, timeOut);
+            OnBeforeServiceStart(eBeforeArgs);
+            if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED);
             if (DrSrvHelper.StartService(hService, 0, null) != true) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            OnAfterServiceStart((DrSrvEventArgsAfterServiceStart)eBeforeArgs);
             if (timeOut == 0) return true;
-            return ServiceWaiteStatus(hService, DrSrvHelper.SERVICE_CURRENT_STATE.SERVICE_RUNNING, timeOut);
+            return ServiceWaitStatus(hService, DrSrvHelper.SERVICE_CURRENT_STATE.SERVICE_RUNNING, timeOut);
         }
         #endregion Start
         #endregion ServiceControl
+        #region ServiceDelete
+        /// <summary>
+        /// Marks the specified service for deletion from the service control manager database. If current service handle is oppened this function will close openned service handle and open specified service with the following access:
+        /// <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_DELETE"/> 
+        /// <param name="serviceName">The name of the service to be opened. This is the name specified by the lpServiceName parameter of the CreateService function when the service object was created, not the service display name that is shown by user interface applications to identify the service.
+        /// The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are invalid service name characters.</param>
+        /// </summary>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool ServiceDelete(string serviceName)
+        {
+            return ServiceDelete(serviceName, false, 0, false);
+        }
+        /// <summary>
+        /// Marks the specified service for deletion from the service control manager database. If current service handle is oppened this function will close openned service handle and open specified service with the following access:
+        /// <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_DELETE"/>  or <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP"/> | <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS"/> | <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS"/> depend on <paramref name="stopBeforeDelete"/>
+        /// <param name="serviceName">The name of the service to be opened. This is the name specified by the lpServiceName parameter of the CreateService function when the service object was created, not the service display name that is shown by user interface applications to identify the service.
+        /// The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are invalid service name characters.</param>
+        /// <param name="stopBeforeDelete">stops service before marks for deleteion</param>
+        /// <param name="timeOut">time wait period expected service status in sec. If parameter is 0 function will not wait expected service status.</param>
+        /// <param name="stopDependences">If value is 'true' automatically stops dependent services, otherwise, stops only specified service</param>
+        /// </summary>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool ServiceDelete(string serviceName, bool stopBeforeDelete, int timeOut, bool stopDependences)
+        {
+            var access = (stopBeforeDelete ? (DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_DELETE | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS) : DrSrvHelper.SERVICE_ACCESS.SERVICE_DELETE);
 
+            if (!OpenService(serviceName, access)) return false;
+            if (stopBeforeDelete)
+            {
+                if (ServiceStop(this.HService, timeOut, stopDependences)) return false;
+            }
+            return ServiceDelete(this.HService);
+        }
+        /// <summary>
+        /// Marks the current service for deletion from the service control manager database.
+        /// </summary>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool ServiceDelete()
+        {
+            return ServiceDelete(this.HService);
+        }
+        /// <summary>
+        /// Marks the specified service for deletion from the service control manager database.
+        /// </summary>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function, and it must have the DELETE access right. For more information, see Service Security and Access Rights.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool ServiceDelete(IntPtr hService)
+        {
+            var eBeforeArgs = new DrSrvEventArgsBeforeServiceDelete(hService);
+            OnBeforeServiceDelete(eBeforeArgs);
+            if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED);
+            if (!DrSrvHelper.DeleteService(hService)) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            OnAfterServiceDelete((DrSrvEventArgService)eBeforeArgs);
+            return true;
+        }
+        #endregion Service Delete
+        #region SetServiceDescription
+        /// <summary>
+        /// Sets description to specified service. If current service handle is oppened this function will close openned service handle and open specified service with the following access:
+        /// <paramref name="DrSrvHelper.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG"/>
+        /// </summary>
+        /// <param name="serviceName">service name</param>
+        /// <param name="description">The description of the service. If this member is NULL, the description remains unchanged. If this value is an empty string (""), the current description is deleted. The service description must not exceed the size of a registry value of type REG_SZ. This member can specify a localized string using the following format: @[path\]dllname,-strID The string with identifier strID is loaded from dllname; the path is optional. For more information, see RegLoadMUIString. Windows Server 2003 and Windows XP/2000:  Localized strings are not supported until Windows Vista.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool SetServiceDescription(string serviceName, string description)
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG)))
+            {
+                return SetServiceDescription(description);
+            }
+            return false;
+        }
+        /// <summary>
+        /// Sets description to current service 
+        /// </summary>
+        /// <param name="description">The description of the service. If this member is NULL, the description remains unchanged. If this value is an empty string (""), the current description is deleted. The service description must not exceed the size of a registry value of type REG_SZ. This member can specify a localized string using the following format: @[path\]dllname,-strID The string with identifier strID is loaded from dllname; the path is optional. For more information, see RegLoadMUIString. Windows Server 2003 and Windows XP/2000:  Localized strings are not supported until Windows Vista.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool SetServiceDescription(string description)
+        {
+            return SetServiceDescription(this.HService, description);
+        }
+        /// <summary>
+        /// Sets description to specified service 
+        /// </summary>
+        /// <param name="hService">hadle of service</param>
+        /// <param name="description">The description of the service. If this member is NULL, the description remains unchanged. If this value is an empty string (""), the current description is deleted. The service description must not exceed the size of a registry value of type REG_SZ. This member can specify a localized string using the following format: @[path\]dllname,-strID The string with identifier strID is loaded from dllname; the path is optional. For more information, see RegLoadMUIString. Windows Server 2003 and Windows XP/2000:  Localized strings are not supported until Windows Vista.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool SetServiceDescription(IntPtr hService, string description)
+        {
+            DrSrvHelper.SERVICE_DESCRIPTION srvDescription;
+            srvDescription.lpDescription = description;
+            IntPtr ptrInfo = Marshal.AllocHGlobal(DrSrvHelper.SERVICE_DESCRIPTION.SizeOf);
+            Marshal.StructureToPtr(srvDescription, ptrInfo, false);
+            if (!DrSrvHelper.ChangeServiceConfig2(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, ptrInfo)) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            Marshal.FreeHGlobal(ptrInfo);
+            return true;
+        }
+        #endregion SetServiceDescription
+        #region CreateService
+
+        /// <summary>
+        /// Creates a service object and adds it to the current service control manager database. This service will run as LOCAL_SYSTEM service. Sets handle of new service to current service handle field <paramref name="HService"/>. If <paramref name="HService"/> has an openned service handle this handle will closed.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to install. The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are not valid service name characters.</param>
+        /// <param name="displayName">The display name to be used by user interface programs to identify the service. This string has a maximum length of 256 characters. The name is case-preserved in the service control manager. Display name comparisons are always case-insensitive.</param>
+        /// <param name="description">The description of the service. If value is not empty or null function will set description for new service. The service description must not exceed the size of a registry value of type REG_SZ. This member can specify a localized string using the following format: @[path\]dllname,-strID The string with identifier strID is loaded from dllname; the path is optional. For more information, see RegLoadMUIString. Windows Server 2003 and Windows XP/2000:  Localized strings are not supported until Windows Vista.</param>
+        /// <param name="desiredAccess">The access to the service. Before granting the requested access, the system checks the access token of the calling process. For a list of values, see Service Security and Access Rights. <paramref name="SERVICE_ACCESS"/></param>
+        /// <param name="serviceType">The service type. This parameter can be one of the following values. <paramref name="SERVICE_TYPE"/></param>
+        /// <param name="startType">The service start options. This parameter can be one of the following values. <paramref name="SERVICE_START_TYPE"/></param>
+        /// <param name="errorControl">The severity of the error, and action taken, if this service fails to start. This parameter can be one of the following values. <paramref name="SERVICE_ERROR_TYPE"/> </param>
+        /// <param name="binaryPathName">The fully qualified path to the service binary file. If the path contains a space, it must be quoted so that it is correctly interpreted. For example, "d:\\my share\\myservice.exe" should be specified as "\"d:\\my share\\myservice.exe\"".
+        /// The path can also include arguments for an auto-start service. For example, "d:\\myshare\\myservice.exe arg1 arg2". These arguments are passed to the service entry point (typically the main function).
+        /// If you specify a path on another computer, the share must be accessible by the computer account of the local computer because this is the security context used in the remote call. However, this requirement allows any potential vulnerabilities in the remote computer to affect the local computer. Therefore, it is best to use a local file.</param>
+        /// <param name="dependencies">A pointer to a double null-terminated array of null-separated names of services or load ordering groups that the system must start before this service. Specify NULL or an empty string if the service has no dependencies. Dependency on a group means that this service can run if at least one member of the group is running after an attempt to start all members of the group.
+        /// You must prefix group names with SC_GROUP_IDENTIFIER so that they can be distinguished from a service name, because services and service groups share the same name space.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool CreateService(string serviceName,
+                                  string displayName,
+                                  string description,
+                                  DrSrvHelper.SERVICE_ACCESS desiredAccess,
+                                  DrSrvHelper.SERVICE_TYPE serviceType,
+                                  DrSrvHelper.SERVICE_START_TYPE startType,
+                                  DrSrvHelper.SERVICE_ERROR_TYPE errorControl,
+                                  string binaryPathName,
+                                  string dependencies)
+        {
+            return this.CreateService(serviceName,
+                                        displayName,
+                                        description,
+                                        desiredAccess,
+                                        serviceType,
+                                        startType,
+                                        errorControl,
+                                        binaryPathName,
+                                        null,
+                                        IntPtr.Zero,
+                                        dependencies,
+                                        null,
+                                        null);
+        }
+        /// <summary>
+        /// Creates a service object and adds it to the current service control manager database. Sets handle of new service to current service handle field <paramref name="HService"/>. If <paramref name="HService"/> has an openned service handle this handle will closed.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to install. The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are not valid service name characters.</param>
+        /// <param name="displayName">The display name to be used by user interface programs to identify the service. This string has a maximum length of 256 characters. The name is case-preserved in the service control manager. Display name comparisons are always case-insensitive.</param>
+        /// <param name="description">The description of the service. If value is not empty or null function will set description for new service. The service description must not exceed the size of a registry value of type REG_SZ. This member can specify a localized string using the following format: @[path\]dllname,-strID The string with identifier strID is loaded from dllname; the path is optional. For more information, see RegLoadMUIString. Windows Server 2003 and Windows XP/2000:  Localized strings are not supported until Windows Vista.</param>
+        /// <param name="desiredAccess">The access to the service. Before granting the requested access, the system checks the access token of the calling process. For a list of values, see Service Security and Access Rights. <paramref name="SERVICE_ACCESS"/></param>
+        /// <param name="serviceType">The service type. This parameter can be one of the following values. <paramref name="SERVICE_TYPE"/></param>
+        /// <param name="startType">The service start options. This parameter can be one of the following values. <paramref name="SERVICE_START_TYPE"/></param>
+        /// <param name="errorControl">The severity of the error, and action taken, if this service fails to start. This parameter can be one of the following values. <paramref name="SERVICE_ERROR_TYPE"/> </param>
+        /// <param name="binaryPathName">The fully qualified path to the service binary file. If the path contains a space, it must be quoted so that it is correctly interpreted. For example, "d:\\my share\\myservice.exe" should be specified as "\"d:\\my share\\myservice.exe\"".
+        /// The path can also include arguments for an auto-start service. For example, "d:\\myshare\\myservice.exe arg1 arg2". These arguments are passed to the service entry point (typically the main function).
+        /// If you specify a path on another computer, the share must be accessible by the computer account of the local computer because this is the security context used in the remote call. However, this requirement allows any potential vulnerabilities in the remote computer to affect the local computer. Therefore, it is best to use a local file.</param>
+        /// <param name="loadOrderGroup">The names of the load ordering group of which this service is a member. Specify NULL or an empty string if the service does not belong to a group.
+        /// The startup program uses load ordering groups to load groups of services in a specified order with respect to the other groups. The list of load ordering groups is contained in the following registry value:
+        /// HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceGroupOrder</param>
+        /// <param name="tagId">A pointer to a variable that receives a tag value that is unique in the group specified in the lpLoadOrderGroup parameter. Specify NULL if you are not changing the existing tag.
+        /// You can use a tag for ordering service startup within a load ordering group by specifying a tag order vector in the following registry value:
+        /// HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\GroupOrderList
+        /// Tags are only evaluated for driver services that have SERVICE_BOOT_START or SERVICE_SYSTEM_START start types.</param>
+        /// <param name="dependencies">A pointer to a double null-terminated array of null-separated names of services or load ordering groups that the system must start before this service. Specify NULL or an empty string if the service has no dependencies. Dependency on a group means that this service can run if at least one member of the group is running after an attempt to start all members of the group.
+        /// You must prefix group names with SC_GROUP_IDENTIFIER so that they can be distinguished from a service name, because services and service groups share the same name space.</param>
+        /// <param name="userName">The name of the account under which the service should run. If the service type is SERVICE_WIN32_OWN_PROCESS, use an account name in the form DomainName\UserName. The service process will be logged on as this user. If the account belongs to the built-in domain, you can specify .\UserName.
+        /// If this parameter is NULL, CreateService uses the LocalSystem account. If the service type specifies SERVICE_INTERACTIVE_PROCESS, the service must run in the LocalSystem account.
+        /// If this parameter is NT AUTHORITY\LocalService, CreateService uses the LocalService account. If the parameter is NT AUTHORITY\NetworkService, CreateService uses the NetworkService account.
+        /// A shared process can run as any user.
+        /// If the service type is SERVICE_KERNEL_DRIVER or SERVICE_FILE_SYSTEM_DRIVER, the name is the driver object name that the system uses to load the device driver. Specify NULL if the driver is to use a default object name created by the I/O system.
+        /// A service can be configured to use a managed account or a virtual account. If the service is configured to use a managed service account, the name is the managed service account name. If the service is configured to use a virtual account, specify the name as NT SERVICE\ServiceName. For more information about managed service accounts and virtual accounts, see the Service Accounts Step-by-Step Guide.
+        /// Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  Managed service accounts and virtual accounts are not supported until Windows 7 and Windows Server 2008 R2.</param>
+        /// <param name="password">The password to the account name specified by the lpServiceStartName parameter. Specify an empty string if the account has no password or if the service runs in the LocalService, NetworkService, or LocalSystem account. For more information, see Service Record List.
+        /// If the account name specified by the lpServiceStartName parameter is the name of a managed service account or virtual account name, the lpPassword parameter must be NULL.
+        /// Passwords are ignored for driver services.</param>
+        /// <param name="password"></param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool CreateService(string serviceName,
+                                  string displayName,
+                                  string description,
+                                  DrSrvHelper.SERVICE_ACCESS desiredAccess,
+                                  DrSrvHelper.SERVICE_TYPE serviceType,
+                                  DrSrvHelper.SERVICE_START_TYPE startType,
+                                  DrSrvHelper.SERVICE_ERROR_TYPE errorControl,
+                                  string binaryPathName,
+                                  string loadOrderGroup,
+                                  IntPtr tagId,
+                                  string dependencies,
+                                  string userName,
+                                  string password)
+        {
+            return this.CreateService(this.HSCManager,
+                                        serviceName,
+                                        displayName,
+                                        description,
+                                        desiredAccess,
+                                        serviceType,
+                                        startType,
+                                        errorControl,
+                                        binaryPathName,
+                                        loadOrderGroup,
+                                        tagId,
+                                        dependencies,
+                                        userName,
+                                        password);
+        }
+        /// <summary>
+        /// Creates a service object and adds it to the specified service control manager database. Sets handle of new service to current service handle field <paramref name="HService"/>. If <paramref name="HService"/> has an openned service handle this handle will closed.
+        /// </summary>
+        /// <param name="hSCManager">A handle to the service control manager database. This handle is returned by the OpenSCManager function and must have the SC_MANAGER_CREATE_SERVICE access right. For more information, see Service Security and Access Rights.</param>
+        /// <param name="serviceName">The name of the service to install. The maximum string length is 256 characters. The service control manager database preserves the case of the characters, but service name comparisons are always case insensitive. Forward-slash (/) and backslash (\) are not valid service name characters.</param>
+        /// <param name="displayName">The display name to be used by user interface programs to identify the service. This string has a maximum length of 256 characters. The name is case-preserved in the service control manager. Display name comparisons are always case-insensitive.</param>
+        /// <param name="description">The description of the service. If value is not empty or null function will set description for new service. The service description must not exceed the size of a registry value of type REG_SZ. This member can specify a localized string using the following format: @[path\]dllname,-strID The string with identifier strID is loaded from dllname; the path is optional. For more information, see RegLoadMUIString. Windows Server 2003 and Windows XP/2000:  Localized strings are not supported until Windows Vista.</param>
+        /// <param name="desiredAccess">The access to the service. Before granting the requested access, the system checks the access token of the calling process. For a list of values, see Service Security and Access Rights. <paramref name="SERVICE_ACCESS"/></param>
+        /// <param name="serviceType">The service type. This parameter can be one of the following values. <paramref name="SERVICE_TYPE"/></param>
+        /// <param name="startType">The service start options. This parameter can be one of the following values. <paramref name="SERVICE_START_TYPE"/></param>
+        /// <param name="errorControl">The severity of the error, and action taken, if this service fails to start. This parameter can be one of the following values. <paramref name="SERVICE_ERROR_TYPE"/> </param>
+        /// <param name="binaryPathName">The fully qualified path to the service binary file. If the path contains a space, it must be quoted so that it is correctly interpreted. For example, "d:\\my share\\myservice.exe" should be specified as "\"d:\\my share\\myservice.exe\"".
+        /// The path can also include arguments for an auto-start service. For example, "d:\\myshare\\myservice.exe arg1 arg2". These arguments are passed to the service entry point (typically the main function).
+        /// If you specify a path on another computer, the share must be accessible by the computer account of the local computer because this is the security context used in the remote call. However, this requirement allows any potential vulnerabilities in the remote computer to affect the local computer. Therefore, it is best to use a local file.</param>
+        /// <param name="loadOrderGroup">The names of the load ordering group of which this service is a member. Specify NULL or an empty string if the service does not belong to a group.
+        /// The startup program uses load ordering groups to load groups of services in a specified order with respect to the other groups. The list of load ordering groups is contained in the following registry value:
+        /// HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceGroupOrder</param>
+        /// <param name="tagId">A pointer to a variable that receives a tag value that is unique in the group specified in the lpLoadOrderGroup parameter. Specify NULL if you are not changing the existing tag.
+        /// You can use a tag for ordering service startup within a load ordering group by specifying a tag order vector in the following registry value:
+        /// HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\GroupOrderList
+        /// Tags are only evaluated for driver services that have SERVICE_BOOT_START or SERVICE_SYSTEM_START start types.</param>
+        /// <param name="dependencies">A pointer to a double null-terminated array of null-separated names of services or load ordering groups that the system must start before this service. Specify NULL or an empty string if the service has no dependencies. Dependency on a group means that this service can run if at least one member of the group is running after an attempt to start all members of the group.
+        /// You must prefix group names with SC_GROUP_IDENTIFIER so that they can be distinguished from a service name, because services and service groups share the same name space.</param>
+        /// <param name="userName">The name of the account under which the service should run. If the service type is SERVICE_WIN32_OWN_PROCESS, use an account name in the form DomainName\UserName. The service process will be logged on as this user. If the account belongs to the built-in domain, you can specify .\UserName.
+        /// If this parameter is NULL, CreateService uses the LocalSystem account. If the service type specifies SERVICE_INTERACTIVE_PROCESS, the service must run in the LocalSystem account.
+        /// If this parameter is NT AUTHORITY\LocalService, CreateService uses the LocalService account. If the parameter is NT AUTHORITY\NetworkService, CreateService uses the NetworkService account.
+        /// A shared process can run as any user.
+        /// If the service type is SERVICE_KERNEL_DRIVER or SERVICE_FILE_SYSTEM_DRIVER, the name is the driver object name that the system uses to load the device driver. Specify NULL if the driver is to use a default object name created by the I/O system.
+        /// A service can be configured to use a managed account or a virtual account. If the service is configured to use a managed service account, the name is the managed service account name. If the service is configured to use a virtual account, specify the name as NT SERVICE\ServiceName. For more information about managed service accounts and virtual accounts, see the Service Accounts Step-by-Step Guide.
+        /// Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  Managed service accounts and virtual accounts are not supported until Windows 7 and Windows Server 2008 R2.</param>
+        /// <param name="password">The password to the account name specified by the lpServiceStartName parameter. Specify an empty string if the account has no password or if the service runs in the LocalService, NetworkService, or LocalSystem account. For more information, see Service Record List.
+        /// If the account name specified by the lpServiceStartName parameter is the name of a managed service account or virtual account name, the lpPassword parameter must be NULL.
+        /// Passwords are ignored for driver services.</param>
+        /// <param name="password"></param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool CreateService(IntPtr hSCManager,
+                                  string serviceName,
+                                  string displayName,
+                                  string description,
+                                  DrSrvHelper.SERVICE_ACCESS desiredAccess,
+                                  DrSrvHelper.SERVICE_TYPE serviceType,
+                                  DrSrvHelper.SERVICE_START_TYPE startType,
+                                  DrSrvHelper.SERVICE_ERROR_TYPE errorControl,
+                                  string binaryPathName,
+                                  string loadOrderGroup,
+                                  IntPtr tagId,
+                                  string dependencies,
+                                  string userName,
+                                  string password)
+        {
+
+            var eBeforeArgs = new DrSrvEventArgsBeforeCreateService(hSCManager,
+                                                                    serviceName,
+                                                                    displayName,
+                                                                    description,
+                                                                    desiredAccess,
+                                                                    serviceType,
+                                                                    startType,
+                                                                    errorControl,
+                                                                    binaryPathName,
+                                                                    loadOrderGroup,
+                                                                    dependencies,
+                                                                    userName);
+
+            OnBeforeCreateService(eBeforeArgs);
+            if (eBeforeArgs.Cancel) return win32ErrorHandling(DrSrvHelper.ERROR_CANCELLED);
+
+            IntPtr hService = DrSrvHelper.CreateService(hSCManager,
+                                                        serviceName,
+                                                        displayName,
+                                                        desiredAccess,
+                                                        serviceType,
+                                                        startType,
+                                                        errorControl,
+                                                        binaryPathName,
+                                                        loadOrderGroup,
+                                                        tagId,
+                                                        dependencies,
+                                                        userName,
+                                                        password);
+            if (hService.ToInt32() <= 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            CloseHandle(this.HService);
+            this.HService = hService;
+            OnAfterCreateService(new DrSrvEventArgsAfterCreateService(hService,
+                                                                    serviceName,
+                                                                    displayName,
+                                                                    description,
+                                                                    desiredAccess,
+                                                                    serviceType,
+                                                                    startType,
+                                                                    errorControl,
+                                                                    binaryPathName,
+                                                                    loadOrderGroup,
+                                                                    dependencies,
+                                                                    userName));
+            if (String.IsNullOrEmpty(description)) return true;
+            return SetServiceDescription(description);
+        }
+        #endregion CreateService
     }
 }

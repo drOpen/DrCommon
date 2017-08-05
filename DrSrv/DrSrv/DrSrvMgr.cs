@@ -327,7 +327,50 @@ namespace DrOpen.DrCommon.DrSrv
             return true;
         }
         #endregion OpenService
+
+        #region GetServiceConfig
+        /// <summary>
+        /// Retrieves the configuration parameters of the specified service. Optional configuration parameters are available using the GetServiceConfig2 function.
+        /// </summary>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function, and it must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights</param>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public bool GetServiceConfig(IntPtr hService, out DrSrvHelper.QUERY_SERVICE_CONFIG config)
+        {
+            int needBuffer = 0;
+            var ptr = new IntPtr(0);
+            config = new DrSrvHelper.QUERY_SERVICE_CONFIG();
+            var res = DrSrvHelper.QueryServiceConfig(hService, ptr, needBuffer, ref needBuffer);
+            if (res != 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+
+            var err = Marshal.GetLastWin32Error();
+            // There is more service configuration information than would fit into the lpServiceConfig buffer. The number of bytes required to get all the information is returned in the pcbBytesNeeded parameter. Nothing is written to lpServiceConfig.
+            if (err != DrSrvHelper.ERROR_INSUFFICIENT_BUFFER) return win32ErrorHandling(err);
+            ptr = Marshal.AllocCoTaskMem(needBuffer);
+            res = DrSrvHelper.QueryServiceConfig(hService, ptr, needBuffer, ref needBuffer);
+            var c = (DrSrvHelper.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.QUERY_SERVICE_CONFIG));
+            
+
+            Marshal.FreeCoTaskMem(ptr);
+
+            return false;
+        }
+        #endregion GetServiceConfig
         #region GetServiceCurrentStatus
+        /// <summary>
+        /// Retrieves the current status of the specified service.
+        /// </summary>     
+        /// <param name="status">A SERVICE_STATUS structure that receives the status information.</param>
+        /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
+        public bool GetServiceCurrentStatus(string serviceName, out DrSrvHelper.SERVICE_STATUS status)
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS)))
+            {
+                return GetServiceCurrentStatus(this.HService, out status);
+            }
+            status = new DrSrvHelper.SERVICE_STATUS();
+            return false;
+        }
         /// <summary>
         /// Retrieves the current status of the specified service.
         /// </summary>     

@@ -225,6 +225,10 @@ namespace DrOpen.DrCommon.DrSrv
         #endregion win32 struct
 
         #region win32 constants
+
+
+
+
         //  The following are masks for the predefined standard access types
         //
         /// <summary>
@@ -250,8 +254,10 @@ namespace DrOpen.DrCommon.DrSrv
         public const int STANDARD_RIGHTS_EXECUTE = READ_CONTROL;
         public const int STANDARD_RIGHTS_ALL = 0x1F0000;
         public const int SPECIFIC_RIGHTS_ALL = 0xFFFF;
-
-
+        /// <summary>
+        /// The data area passed to a system call is too small.
+        /// </summary>
+        public const int  ERROR_INSUFFICIENT_BUFFER = 122;
         /// <summary>
         /// Value to indicate no change to an optional parameter
         /// </summary>

@@ -330,10 +330,35 @@ namespace DrOpen.DrCommon.DrSrv
 
         #region GetServiceConfig
         /// <summary>
-        /// Retrieves the configuration parameters of the specified service. Optional configuration parameters are available using the GetServiceConfig2 function.
+        /// Retrieves the configuration parameters of the current service. Optional configuration parameters are available using the GetServiceConfig2 function.
+        /// </summary>
+        /// <param name="serviceName">service name</param>
+        /// <param name="config">out class contains configuration information for an installed service. It is used by the QueryServiceConfig function.</param>
+        /// <returns></returns>
+        public bool GetServiceConfig(string serviceName, out DrSrvHelper.QUERY_SERVICE_CONFIG config)
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG)))
+            {
+                return GetServiceConfig(this.HService, out config);
+            }
+            config = new DrSrvHelper.QUERY_SERVICE_CONFIG();
+            return false;
+        }
+        /// <summary>
+        /// Retrieves the configuration parameters of the current service. Optional configuration parameters are available using the GetServiceConfig2 function.
         /// </summary>
         /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function, and it must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights</param>
-        /// <param name="config"></param>
+        /// <param name="config">out class contains configuration information for an installed service. It is used by the QueryServiceConfig function.</param>
+        /// <returns></returns>
+        public bool GetServiceConfig(out DrSrvHelper.QUERY_SERVICE_CONFIG config)
+        {
+            return GetServiceConfig(this.HService, out config);
+        }
+        /// <summary>
+        /// Retrieves the configuration parameters of the specified service handle. Optional configuration parameters are available using the GetServiceConfig2 function.
+        /// </summary>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function, and it must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights</param>
+        /// <param name="config">out class contains configuration information for an installed service. It is used by the QueryServiceConfig function.</param>
         /// <returns></returns>
         public bool GetServiceConfig(IntPtr hService, out DrSrvHelper.QUERY_SERVICE_CONFIG config)
         {
@@ -348,18 +373,22 @@ namespace DrOpen.DrCommon.DrSrv
             if (err != DrSrvHelper.ERROR_INSUFFICIENT_BUFFER) return win32ErrorHandling(err);
             ptr = Marshal.AllocCoTaskMem(needBuffer);
             res = DrSrvHelper.QueryServiceConfig(hService, ptr, needBuffer, ref needBuffer);
-            var c = (DrSrvHelper.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.QUERY_SERVICE_CONFIG));
-            
-
+            if (res == 0)
+            {
+                Marshal.FreeCoTaskMem(ptr);
+                return win32ErrorHandling(Marshal.GetLastWin32Error());
+            }
+            var c = (DrSrvHelper.QUERY_SERVICE_CONFIG_PTR)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.QUERY_SERVICE_CONFIG_PTR));
+            config = new DrSrvHelper.QUERY_SERVICE_CONFIG(c);
             Marshal.FreeCoTaskMem(ptr);
-
-            return false;
+            return true;
         }
         #endregion GetServiceConfig
         #region GetServiceCurrentStatus
         /// <summary>
         /// Retrieves the current status of the specified service.
         /// </summary>     
+        /// <param name="serviceName">service name</param>
         /// <param name="status">A SERVICE_STATUS structure that receives the status information.</param>
         /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
         public bool GetServiceCurrentStatus(string serviceName, out DrSrvHelper.SERVICE_STATUS status)
@@ -736,6 +765,45 @@ namespace DrOpen.DrCommon.DrSrv
             return true;
         }
         #endregion SetServiceDescription
+        #region GetServiceDescription()
+        public bool GetServiceDescription(string serviceName, out string description)
+        {
+            description = string.Empty;
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG)))
+            {
+                return GetServiceDescription(out description);
+            }
+            return false;
+        }
+        public bool GetServiceDescription(out string description)
+        {
+            return GetServiceDescription(this.HService, out description);
+        }
+        public bool GetServiceDescription(IntPtr hService, out string description)
+        {
+            description = string.Empty;
+            int needBuffer = 0;
+            var ptr = new IntPtr(0);
+            var res = DrSrvHelper.QueryServiceConfig2(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, ptr, needBuffer, ref needBuffer);
+            if (res != 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+
+            var err = Marshal.GetLastWin32Error();
+            
+            if (err != DrSrvHelper.ERROR_INSUFFICIENT_BUFFER) return win32ErrorHandling(err);
+            ptr = Marshal.AllocCoTaskMem(needBuffer);
+            res = DrSrvHelper.QueryServiceConfig2(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, ptr, needBuffer, ref needBuffer);
+            if (res == 0)
+            {
+                Marshal.FreeCoTaskMem(ptr);
+                return win32ErrorHandling(Marshal.GetLastWin32Error());
+            }
+            var d = (DrSrvHelper.SERVICE_DESCRIPTION)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.SERVICE_DESCRIPTION));
+            description = d.lpDescription;
+            Marshal.FreeCoTaskMem(ptr);
+            return true;
+
+        }
+            #endregion GetServiceDescription()
         #region CreateService
 
         /// <summary>

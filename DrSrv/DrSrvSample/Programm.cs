@@ -53,10 +53,13 @@ namespace DrSrvSample
             srvMgr.EventAfterServiceDelete += DoAfterServiceDelete;
             srvMgr.EventBeforeThrowWin32Error += DoBeforeThrowWin32Error;
 
-            srvMgr.OpenSCM(DrSrvHelper.SC_MANAGER.SC_MANAGER_ALL_ACCESS);
-            srvMgr.OpenService("TimeBroker", DrSrvHelper.SERVICE_ACCESS.SERVICE_START | DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS);
+            srvMgr.OpenSCM(DrSrvHelper.SC_MANAGER.SC_GENERIC_READ);
+            srvMgr.OpenService("Spooler", DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG);
+            DrSrvHelper.QUERY_SERVICE_CONFIG config;
+            srvMgr.GetServiceConfig(srvMgr.HService, out config);
 
 
+            srvMgr.OpenService("TimeBroker", DrSrvHelper.SERVICE_ACCESS.SERVICE_START | DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG);
             srvMgr.ServiceStop(10, true);
 
             DrSrvHelper.SERVICE_STATUS status;

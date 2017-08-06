@@ -61,11 +61,76 @@ namespace DrOpen.DrCommon.DrSrv
             /// </summary>
             public static readonly int SizeOf = Marshal.SizeOf(typeof(ENUM_SERVICE_STATUS));
         }
+
+
+        public class QUERY_SERVICE_CONFIG
+        {
+            public QUERY_SERVICE_CONFIG()
+            { }
+
+            internal QUERY_SERVICE_CONFIG(QUERY_SERVICE_CONFIG_PTR cfg)
+            {
+                this.binaryPathName = cfg.binaryPathName;
+                this.dependencies = GetStringArrayFromPtrArrayDoublyNullTerminated(cfg.dependencies);
+                this.displayName = cfg.displayName;
+                this.errorControl = cfg.errorControl;
+                this.loadOrderGroup = cfg.loadOrderGroup;
+                this.serviceType = cfg.serviceType;
+                this.startName = cfg.startName;
+                this.startType = cfg.startType;
+                this.tagID = cfg.tagID;
+            }
+            /// <summary>
+            /// The type of service. This member can be one of the following values.
+            /// </summary>
+            public SERVICE_TYPE serviceType;
+            /// <summary>
+            /// When to start the service. This member can be one of the following values.
+            /// </summary>
+            public SERVICE_START_TYPE startType;
+            /// <summary>
+            /// The severity of the error, and action taken, if this service fails to start. This member can be one of the following values.
+            /// </summary>
+            public SERVICE_ERROR_TYPE errorControl;
+            /// <summary>
+            /// The fully qualified path to the service binary file. The path can also include arguments for an auto-start service. These arguments are passed to the service entry point (typically the main function).
+            /// </summary>
+            public string binaryPathName;
+            /// <summary>
+            /// The name of the load ordering group to which this service belongs. If the member is NULL or an empty string, the service does not belong to a load ordering group.
+            /// The startup program uses load ordering groups to load groups of services in a specified order with respect to the other groups. The list of load ordering groups is contained in the following registry value:
+            /// HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceGroupOrder
+            /// </summary>
+            public string loadOrderGroup;
+            /// <summary>
+            /// A unique tag value for this service in the group specified by the lpLoadOrderGroup parameter. A value of zero indicates that the service has not been assigned a tag. You can use a tag for ordering service startup within a load order group by specifying a tag order vector in the registry located at:
+            /// HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\GroupOrderList
+            /// Tags are only evaluated for SERVICE_KERNEL_DRIVER and SERVICE_FILE_SYSTEM_DRIVER type services that have SERVICE_BOOT_START or SERVICE_SYSTEM_START start types.
+            /// </summary>
+            public int tagID;
+            /// <summary>
+            /// A pointer to an array of null-separated names of services or load ordering groups that must start before this service. The array is doubly null-terminated. If the pointer is NULL or if it points to an empty string, the service has no dependencies. If a group name is specified, it must be prefixed by the SC_GROUP_IDENTIFIER (defined in WinSvc.h) character to differentiate it from a service name, because services and service groups share the same name space. Dependency on a service means that this service can only run if the service it depends on is running. Dependency on a group means that this service can run if at least one member of the group is running after an attempt to start all members of the group.
+            /// </summary>
+            public string[] dependencies;
+            /// <summary>
+            /// If the service type is SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS, this member is the name of the account that the service process will be logged on as when it runs. This name can be of the form Domain\UserName. If the account belongs to the built-in domain, the name can be of the form .\UserName. The name can also be "LocalSystem" if the process is running under the LocalSystem account.
+            /// If the service type is SERVICE_KERNEL_DRIVER or SERVICE_FILE_SYSTEM_DRIVER, this member is the driver object name (that is, \FileSystem\Rdr or \Driver\Xns) which the input and output (I/O) system uses to load the device driver. If this member is NULL, the driver is to be run with a default object name created by the I/O system, based on the service name.
+            /// </summary>
+            public string startName;
+            /// <summary>
+            /// The display name to be used by service control programs to identify the service. This string has a maximum length of 256 characters. The name is case-preserved in the service control manager. Display name comparisons are always case-insensitive.
+            /// This parameter can specify a localized string using the following format:
+            /// @[Path\]DLLName,-StrID
+            /// The string with identifier StrID is loaded from DLLName; the Path is optional. For more information, see RegLoadMUIString.
+            /// Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows Vista.
+            /// </summary>
+            public string displayName;
+        };
         /// <summary>
         /// Contains configuration information for an installed service. It is used by the QueryServiceConfig function.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public class QUERY_SERVICE_CONFIG
+        internal class QUERY_SERVICE_CONFIG_PTR
         {
             /// <summary>
             /// The type of service. This member can be one of the following values.
@@ -100,8 +165,8 @@ namespace DrOpen.DrCommon.DrSrv
             /// <summary>
             /// A pointer to an array of null-separated names of services or load ordering groups that must start before this service. The array is doubly null-terminated. If the pointer is NULL or if it points to an empty string, the service has no dependencies. If a group name is specified, it must be prefixed by the SC_GROUP_IDENTIFIER (defined in WinSvc.h) character to differentiate it from a service name, because services and service groups share the same name space. Dependency on a service means that this service can only run if the service it depends on is running. Dependency on a group means that this service can run if at least one member of the group is running after an attempt to start all members of the group.
             /// </summary>
-            [MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
-            public string dependencies;
+            // [MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
+            public IntPtr dependencies;
             /// <summary>
             /// If the service type is SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS, this member is the name of the account that the service process will be logged on as when it runs. This name can be of the form Domain\UserName. If the account belongs to the built-in domain, the name can be of the form .\UserName. The name can also be "LocalSystem" if the process is running under the LocalSystem account.
             /// If the service type is SERVICE_KERNEL_DRIVER or SERVICE_FILE_SYSTEM_DRIVER, this member is the driver object name (that is, \FileSystem\Rdr or \Driver\Xns) which the input and output (I/O) system uses to load the device driver. If this member is NULL, the driver is to be run with a default object name created by the I/O system, based on the service name.
@@ -120,7 +185,7 @@ namespace DrOpen.DrCommon.DrSrv
             /// <summary>
             /// Returns size of this structure
             /// </summary>
-            public static readonly int SizeOf = Marshal.SizeOf(typeof(QUERY_SERVICE_CONFIG));
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(QUERY_SERVICE_CONFIG_PTR));
         };
         /// <summary>
         /// Represents the action the service controller should take on each failure of a service. A service is considered failed when it terminates without reporting a status of SERVICE_STOPPED to the service controller.
@@ -225,10 +290,6 @@ namespace DrOpen.DrCommon.DrSrv
         #endregion win32 struct
 
         #region win32 constants
-
-
-
-
         //  The following are masks for the predefined standard access types
         //
         /// <summary>
@@ -257,7 +318,7 @@ namespace DrOpen.DrCommon.DrSrv
         /// <summary>
         /// The data area passed to a system call is too small.
         /// </summary>
-        public const int  ERROR_INSUFFICIENT_BUFFER = 122;
+        public const int ERROR_INSUFFICIENT_BUFFER = 122;
         /// <summary>
         /// Value to indicate no change to an optional parameter
         /// </summary>
@@ -978,6 +1039,17 @@ namespace DrOpen.DrCommon.DrSrv
         /// <returns>If the function succeeds, the return value is nonzero.</returns>
         [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int QueryServiceConfig(IntPtr service, IntPtr queryServiceConfig, int bufferSize, ref int bytesNeeded);
+        /// <summary>
+        /// Retrieves the optional configuration parameters of the specified service.
+        /// </summary>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function and must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights.</param>
+        /// <param name="dwInfoLevel">The configuration information to be queried.</param>
+        /// <param name="buffer">A pointer to the buffer that receives the service configuration information. The format of this data depends on the value of the dwInfoLevel parameter. The maximum size of this array is 8K bytes. To determine the required size, specify NULL for this parameter and 0 for the cbBufSize parameter. The function fails and GetLastError returns ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded parameter receives the needed size.</param>
+        /// <param name="cbBufSize">The size of the structure pointed to by the lpBuffer parameter, in bytes.</param>
+        /// <param name="pcbBytesNeeded">A pointer to a variable that receives the number of bytes required to store the configuration information, if the function fails with ERROR_INSUFFICIENT_BUFFER.</param>
+        /// <returns></returns>
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern int QueryServiceConfig2(IntPtr hService, INFO_LEVEL dwInfoLevel, IntPtr buffer, int cbBufSize, ref int pcbBytesNeeded);
 
         /// <summary>
         /// Closes a handle to a service control manager or service object.
@@ -1065,6 +1137,29 @@ namespace DrOpen.DrCommon.DrSrv
 
 
         #endregion win32 declaration
+
+
+        /// <summary>
+        /// Converts from a pointer to an array of null-separated names to string[]
+        /// </summary>
+        /// <param name="ptr">A pointer to an array of null-separated names The array is doubly null-terminated.</param>
+        /// <returns></returns>
+        private static string[] GetStringArrayFromPtrArrayDoublyNullTerminated(IntPtr ptr)
+        {
+            var a = new string[] { };
+            IntPtr p = ptr;
+            string s = string.Empty;
+            while (true)
+            {
+                s = Marshal.PtrToStringAuto(p);
+                if (s.Length == 0) break;
+
+                Array.Resize<string>(ref a, a.Length + 1);
+                a[a.Length - 1] = s;
+                p = new IntPtr(p.ToInt64() + (s.Length + 1) * Marshal.SystemDefaultCharSize);
+            }
+            return a;
+        }
 
     }
 }

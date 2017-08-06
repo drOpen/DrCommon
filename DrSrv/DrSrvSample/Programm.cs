@@ -57,8 +57,16 @@ namespace DrSrvSample
             srvMgr.OpenService("Spooler", DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG);
             DrSrvHelper.QUERY_SERVICE_CONFIG config;
             srvMgr.GetServiceConfig(srvMgr.HService, out config);
-
-
+            string description;
+            bool delayAutostart;
+            srvMgr.GetServiceDescription(out description);
+            srvMgr.GetServiceDelayAutostartInfo(out delayAutostart);
+            srvMgr.OpenSCM(DrSrvHelper.SC_MANAGER.SC_MANAGER_ALL_ACCESS);
+            srvMgr.OpenService("wscsvc", DrSrvHelper.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG);
+            var info = new DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO();
+            info.fDelayedAutostart = true;
+            srvMgr.SetServiceConfig2<DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO>(srvMgr.HService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, info);
+            //srvMgr.SetServiceDelayAutostartInfo("wscsvc", true);
             srvMgr.OpenService("TimeBroker", DrSrvHelper.SERVICE_ACCESS.SERVICE_START | DrSrvHelper.SERVICE_ACCESS.SERVICE_STOP | DrSrvHelper.SERVICE_ACCESS.SERVICE_ENUMERATE_DEPENDENTS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_STATUS | DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG);
             srvMgr.ServiceStop(10, true);
 

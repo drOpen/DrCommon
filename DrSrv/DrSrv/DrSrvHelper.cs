@@ -269,7 +269,7 @@ namespace DrOpen.DrCommon.DrSrv
         /// Contains a service description.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct SERVICE_DESCRIPTION
+        public struct SERVICE_DESCRIPTION : ISizeOf
         {
             /// <summary>
             /// The description of the service. If this member is NULL, the description remains unchanged. If this value is an empty string (""), the current description is deleted.
@@ -286,6 +286,33 @@ namespace DrOpen.DrCommon.DrSrv
             /// Returns size of this structure
             /// </summary>
             public static readonly int SizeOf = Marshal.SizeOf(typeof(SERVICE_DESCRIPTION));
+            public int GetSizeOf()
+            {
+                return SizeOf;
+            }
+        }
+        /// <summary>
+        /// Contains the delayed auto-start setting of an auto-start service.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SERVICE_DELAYED_AUTO_START_INFO : ISizeOf
+        {
+            /// <summary>
+            /// If this member is TRUE, the service is started after other auto-start services are started plus a short delay. Otherwise, the service is started during system boot. This setting is ignored unless the service is an auto-start service.
+            /// </summary>
+            public bool fDelayedAutostart;
+            /// <summary>
+            /// Returns size of this structure
+            /// </summary>
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(SERVICE_DELAYED_AUTO_START_INFO));
+            public int GetSizeOf()
+            {
+                return SizeOf;
+            }
+        }
+        public interface ISizeOf
+        {
+             int GetSizeOf(); 
         }
         #endregion win32 struct
 

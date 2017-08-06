@@ -756,16 +756,174 @@ namespace DrOpen.DrCommon.DrSrv
         /// <returns>if the function succeeds, the return true, otherwise, the return false or throw win32exception depend on <paramref name="AllowThrowWin32Exception"/></returns>
         public bool SetServiceDescription(IntPtr hService, string description)
         {
-            DrSrvHelper.SERVICE_DESCRIPTION srvDescription;
-            srvDescription.lpDescription = description;
-            IntPtr ptrInfo = Marshal.AllocHGlobal(DrSrvHelper.SERVICE_DESCRIPTION.SizeOf);
-            Marshal.StructureToPtr(srvDescription, ptrInfo, false);
-            if (!DrSrvHelper.ChangeServiceConfig2(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, ptrInfo)) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            DrSrvHelper.SERVICE_DESCRIPTION info;
+            info.lpDescription = description;
+            return SetServiceConfig2<DrSrvHelper.SERVICE_DESCRIPTION>(DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, info);
+        }
+        #endregion SetServiceDescription
+        #region SetServiceDelayAutostartInfo
+        /// <summary>
+        /// Sets the delayed auto-start setting of an auto-start service.
+        /// </summary>
+        /// <param name="hService">a service name</param>
+        /// <param name="delayedAutostart">If this member is TRUE, the service is started after other auto-start services are started plus a short delay. Otherwise, the service is started during system boot. This setting is ignored unless the service is an auto-start service.</param>
+        /// <returns></returns>
+        public bool SetServiceDelayAutostartInfo(string serviceName, bool delayedAutostart)
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG)))
+            {
+                return SetServiceDelayAutostartInfo(delayedAutostart);
+            }
+            return false;
+        }
+        /// <summary>
+        /// Sets the delayed auto-start setting of an auto-start current service.
+        /// </summary>
+        /// <param name="delayedAutostart">If this member is TRUE, the service is started after other auto-start services are started plus a short delay. Otherwise, the service is started during system boot. This setting is ignored unless the service is an auto-start service.</param>
+        /// <returns></returns>
+        public bool SetServiceDelayAutostartInfo(bool delayedAutostart)
+        {
+            return SetServiceDelayAutostartInfo(this.HService, delayedAutostart);
+        }
+        /// <summary>
+        /// Sets the delayed auto-start setting of an auto-start service.
+        /// </summary>
+        /// <param name="hService">a handle of service</param>
+        /// <param name="delayedAutostart">If this member is TRUE, the service is started after other auto-start services are started plus a short delay. Otherwise, the service is started during system boot. This setting is ignored unless the service is an auto-start service.</param>
+        /// <returns></returns>
+        public bool SetServiceDelayAutostartInfo(IntPtr hService, bool delayedAutostart)
+        {
+            DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO info;
+            info.fDelayedAutostart = delayedAutostart;
+            return SetServiceConfig2<DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO>(DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, info);
+        }
+        #endregion SetServiceDelayAutostartInfo
+        #region SetServiceConfig2
+        /// <summary>
+        /// Changes the optional configuration parameters of a service.
+        /// </summary>
+        /// <typeparam name="T">structure of service info.</typeparam>
+        /// <param name="serviceName">a service name</param>
+        /// <param name="level">The configuration information to be changed. This parameter can be one of the following values <paramref name="DrSrvHelper.INFO_LEVEL"/> </param>
+        /// <param name="info">supported structure, for example, SERVICE_DELAYED_AUTO_START_INFO</param>
+        /// <returns></returns>
+        public bool SetServiceConfig2<T>(string serviceName, DrSrvHelper.INFO_LEVEL level, T info) where T : DrSrvHelper.ISizeOf
+        {
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG)))
+            {
+                return SetServiceConfig2<T>(level, info);
+            }
+            return false;
+        }
+        /// <summary>
+        /// Changes the optional configuration parameters of the current service.
+        /// </summary>
+        /// <typeparam name="T">structure of service info.</typeparam>
+        ///  If the service controller handles the SC_ACTION_RESTART action, hService must have the SERVICE_START access right.</param>
+        /// <param name="level">The configuration information to be changed. This parameter can be one of the following values <paramref name="DrSrvHelper.INFO_LEVEL"/> </param>
+        /// <param name="info">supported structure, for example, SERVICE_DELAYED_AUTO_START_INFO</param>
+        /// <returns></returns>
+        public bool SetServiceConfig2<T>(DrSrvHelper.INFO_LEVEL level, T info) where T : DrSrvHelper.ISizeOf
+        {
+            return SetServiceConfig2<T>(this.HService, level, info);
+        }
+        /// <summary>
+        /// Changes the optional configuration parameters of a service.
+        /// </summary>
+        /// <typeparam name="T">structure of service info.</typeparam>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function and must have the SERVICE_CHANGE_CONFIG access right. For more information, see Service Security and Access Rights.
+        ///  If the service controller handles the SC_ACTION_RESTART action, hService must have the SERVICE_START access right.</param>
+        /// <param name="level">The configuration information to be changed. This parameter can be one of the following values <paramref name="DrSrvHelper.INFO_LEVEL"/> </param>
+        /// <param name="info">supported structure, for example, SERVICE_DELAYED_AUTO_START_INFO</param>
+        /// <returns></returns>
+        public bool SetServiceConfig2<T>(IntPtr hService, DrSrvHelper.INFO_LEVEL level, T info) where T : DrSrvHelper.ISizeOf
+        {
+            IntPtr ptrInfo = Marshal.AllocHGlobal(info.GetSizeOf());
+            Marshal.StructureToPtr(info, ptrInfo, false);
+            if (!DrSrvHelper.ChangeServiceConfig2(hService, level, ptrInfo)) return win32ErrorHandling(Marshal.GetLastWin32Error());
             Marshal.FreeHGlobal(ptrInfo);
             return true;
         }
-        #endregion SetServiceDescription
+        #endregion SetServiceConfig2
+        #region GetServiceDelayAutostartInfo()
+
+        /// <summary>
+        /// Retrieves the optional configuration parameters of the specified service. Retruns out pointer to structure of DrSrvHelper.INFO_LEVEL. You should call Marshal.FreeCoTaskMem(ptr) 
+        /// </summary>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function and must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights.</param>
+        /// <param name="level">The configuration information to be queried. This parameter can be one of the following values from <paramref name="DrSrvHelper.INFO_LEVEL"/></param>
+        /// <param name="ptr">A pointer to the buffer that receives the service configuration information. The format of this data depends on the value of the dwInfoLevel parameter.
+        /// The maximum size of this array is 8K bytes. To determine the required size, specify NULL for this parameter and 0 for the cbBufSize parameter. The function fails and GetLastError returns ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded parameter receives the needed size.</param>
+        /// <returns></returns>
+        private bool getServiceConfig2(IntPtr hService, DrSrvHelper.INFO_LEVEL level, out IntPtr ptr)
+        {
+            int needBuffer = 0;
+            ptr = new IntPtr(0);
+            var res = DrSrvHelper.QueryServiceConfig2(hService, level, ptr, needBuffer, ref needBuffer);
+            if (res != 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+
+            var err = Marshal.GetLastWin32Error();
+
+            if (err != DrSrvHelper.ERROR_INSUFFICIENT_BUFFER) return win32ErrorHandling(err);
+            ptr = Marshal.AllocCoTaskMem(needBuffer);
+            res = DrSrvHelper.QueryServiceConfig2(hService, level, ptr, needBuffer, ref needBuffer);
+            if (res == 0)
+            {
+                Marshal.FreeCoTaskMem(ptr);
+                return win32ErrorHandling(Marshal.GetLastWin32Error());
+            }
+            return true;
+        }
+        /// <summary>
+        /// Returns the delayed auto-start setting of an auto-start specified service.
+        /// </summary>
+        /// <param name="serviceName">a service name</param>
+        /// <param name="delayedAutostart">returns the delayed auto-start setting of an auto-start service.</param>
+        /// <returns></returns>
+        public bool GetServiceDelayAutostartInfo(string serviceName, out bool delayedAutostart)
+        {
+            delayedAutostart = false;
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG)))
+            {
+                return GetServiceDelayAutostartInfo(out delayedAutostart);
+            }
+            return false;
+        }
+        /// <summary>
+        /// Returns the delayed auto-start setting of an auto-start current service
+        /// </summary>
+        /// <param name="delayedAutostart">returns the delayed auto-start setting of an auto-start service.</param>
+        /// <returns></returns>
+        public bool GetServiceDelayAutostartInfo(out bool delayedAutostart)
+        {
+            return GetServiceDelayAutostartInfo(this.HService, out delayedAutostart);
+        }
+        /// <summary>
+        /// Returns the delayed auto-start setting of an auto-start service.
+        /// </summary>
+        /// <param name="hService">a handle of service</param>
+        /// <param name="delayedAutostart">returns the delayed auto-start setting of an auto-start service.</param>
+        /// <returns></returns>
+        public bool GetServiceDelayAutostartInfo(IntPtr hService, out bool delayedAutostart)
+        {
+            delayedAutostart = false;
+            IntPtr ptr;
+            if (!getServiceConfig2(HService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out ptr)) return false;
+
+            var d = (DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO));
+            delayedAutostart = d.fDelayedAutostart;
+            Marshal.FreeCoTaskMem(ptr);
+            return true;
+
+        }
+        #endregion GetServiceDelayAutostartInfo()
         #region GetServiceDescription()
+        /// <summary>
+        /// Returns a service description.
+        /// </summary>
+        /// <param name="serviceName">a name of service</param>
+        /// <param name="description">returns a service description.</param>
+        /// <returns></returns>
         public bool GetServiceDescription(string serviceName, out string description)
         {
             description = string.Empty;
@@ -775,35 +933,33 @@ namespace DrOpen.DrCommon.DrSrv
             }
             return false;
         }
+        /// <summary>
+        /// Returns a current service description.
+        /// </summary>
+        /// <param name="description">returns a service description.</param>
+        /// <returns></returns>
         public bool GetServiceDescription(out string description)
         {
             return GetServiceDescription(this.HService, out description);
         }
+        /// <summary>
+        /// Returns a service description.
+        /// </summary>
+        /// <param name="hService">a handle of service</param>
+        /// <param name="description">returns a service description.</param>
+        /// <returns></returns>
         public bool GetServiceDescription(IntPtr hService, out string description)
         {
             description = string.Empty;
-            int needBuffer = 0;
-            var ptr = new IntPtr(0);
-            var res = DrSrvHelper.QueryServiceConfig2(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, ptr, needBuffer, ref needBuffer);
-            if (res != 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
-
-            var err = Marshal.GetLastWin32Error();
-            
-            if (err != DrSrvHelper.ERROR_INSUFFICIENT_BUFFER) return win32ErrorHandling(err);
-            ptr = Marshal.AllocCoTaskMem(needBuffer);
-            res = DrSrvHelper.QueryServiceConfig2(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, ptr, needBuffer, ref needBuffer);
-            if (res == 0)
-            {
-                Marshal.FreeCoTaskMem(ptr);
-                return win32ErrorHandling(Marshal.GetLastWin32Error());
-            }
+            IntPtr ptr;
+            if (!getServiceConfig2(HService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, out ptr)) return false;
             var d = (DrSrvHelper.SERVICE_DESCRIPTION)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.SERVICE_DESCRIPTION));
             description = d.lpDescription;
             Marshal.FreeCoTaskMem(ptr);
             return true;
 
         }
-            #endregion GetServiceDescription()
+        #endregion GetServiceDescription()
         #region CreateService
 
         /// <summary>

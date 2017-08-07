@@ -33,7 +33,6 @@ namespace DrOpen.DrCommon.DrSrv
 {
     public static class DrSrvHelper
     {
-
         #region win32 declaration
         #region win 32 struct
         /// <summary>
@@ -61,8 +60,6 @@ namespace DrOpen.DrCommon.DrSrv
             /// </summary>
             public static readonly int SizeOf = Marshal.SizeOf(typeof(ENUM_SERVICE_STATUS));
         }
-
-
         public class QUERY_SERVICE_CONFIG
         {
             public QUERY_SERVICE_CONFIG()
@@ -269,7 +266,7 @@ namespace DrOpen.DrCommon.DrSrv
         /// Contains a service description.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct SERVICE_DESCRIPTION : ISizeOf
+        public struct SERVICE_DESCRIPTION
         {
             /// <summary>
             /// The description of the service. If this member is NULL, the description remains unchanged. If this value is an empty string (""), the current description is deleted.
@@ -286,16 +283,12 @@ namespace DrOpen.DrCommon.DrSrv
             /// Returns size of this structure
             /// </summary>
             public static readonly int SizeOf = Marshal.SizeOf(typeof(SERVICE_DESCRIPTION));
-            public int GetSizeOf()
-            {
-                return SizeOf;
-            }
         }
         /// <summary>
         /// Contains the delayed auto-start setting of an auto-start service.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct SERVICE_DELAYED_AUTO_START_INFO : ISizeOf
+        public struct SERVICE_DELAYED_AUTO_START_INFO
         {
             /// <summary>
             /// If this member is TRUE, the service is started after other auto-start services are started plus a short delay. Otherwise, the service is started during system boot. This setting is ignored unless the service is an auto-start service.
@@ -305,17 +298,8 @@ namespace DrOpen.DrCommon.DrSrv
             /// Returns size of this structure
             /// </summary>
             public static readonly int SizeOf = Marshal.SizeOf(typeof(SERVICE_DELAYED_AUTO_START_INFO));
-            public int GetSizeOf()
-            {
-                return SizeOf;
-            }
-        }
-        public interface ISizeOf
-        {
-             int GetSizeOf(); 
         }
         #endregion win32 struct
-
         #region win32 constants
         //  The following are masks for the predefined standard access types
         //
@@ -573,7 +557,6 @@ namespace DrOpen.DrCommon.DrSrv
         public const int ERROR_SERVICE_NOT_IN_EXE = 1083;
         #endregion errors
         #endregion win32 constants
-
         #region win32 enum
 
         /// <summary>
@@ -984,7 +967,6 @@ namespace DrOpen.DrCommon.DrSrv
         }
 
         #endregion win32 enum
-
         #region DllImports
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -1161,11 +1143,7 @@ namespace DrOpen.DrCommon.DrSrv
                                                    IntPtr lpdwTagId, string lpDependencies, string lpServiceStartName, string lpPassword);
 
         #endregion DllImports
-
-
         #endregion win32 declaration
-
-
         /// <summary>
         /// Converts from a pointer to an array of null-separated names to string[]
         /// </summary>
@@ -1187,6 +1165,5 @@ namespace DrOpen.DrCommon.DrSrv
             }
             return a;
         }
-
     }
 }

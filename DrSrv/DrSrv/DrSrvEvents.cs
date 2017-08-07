@@ -178,7 +178,6 @@ namespace DrOpen.DrCommon.DrSrv
         public virtual IntPtr HService { get; private set; }
     }
     #endregion OpenService
-
     #region WaitExpectedServiceState
     public abstract class DrSrvEventArgsWaitServiceState : DrSrvEventArgService
     {
@@ -276,7 +275,6 @@ namespace DrOpen.DrCommon.DrSrv
     }
 
     #endregion ServiceControl
-
     #region ServiceStart
     public class DrSrvEventArgsAfterServiceStart : DrSrvEventArgService
     {
@@ -424,7 +422,6 @@ namespace DrOpen.DrCommon.DrSrv
         public bool Cancel { get; set; }
     }
     #endregion CreateService
-
     #region Win32Error
     public class DrSrvEventArgBeforeThrowWin32Error : EventArgs
     {
@@ -443,5 +440,4 @@ namespace DrOpen.DrCommon.DrSrv
     }
 
     #endregion Win32Error
-
 }

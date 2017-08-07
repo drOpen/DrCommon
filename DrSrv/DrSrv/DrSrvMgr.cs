@@ -212,7 +212,6 @@ namespace DrOpen.DrCommon.DrSrv
             if (!eBeforeArgs.Cancel) throw LastError;
             return false;
         }
-
         #region OpenSCM
         /// <summary>
         ///  Establishes a connection to the local service control manager with generic read access
@@ -327,7 +326,6 @@ namespace DrOpen.DrCommon.DrSrv
             return true;
         }
         #endregion OpenService
-
         #region GetServiceConfig
         /// <summary>
         /// Retrieves the configuration parameters of the current service. Optional configuration parameters are available using the GetServiceConfig2 function.
@@ -807,7 +805,7 @@ namespace DrOpen.DrCommon.DrSrv
         /// <param name="level">The configuration information to be changed. This parameter can be one of the following values <paramref name="DrSrvHelper.INFO_LEVEL"/> </param>
         /// <param name="info">supported structure, for example, SERVICE_DELAYED_AUTO_START_INFO</param>
         /// <returns></returns>
-        public bool SetServiceConfig2<T>(string serviceName, DrSrvHelper.INFO_LEVEL level, T info) where T : DrSrvHelper.ISizeOf
+        public bool SetServiceConfig2<T>(string serviceName, DrSrvHelper.INFO_LEVEL level, T info) where T : new()
         {
             if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG)))
             {
@@ -823,7 +821,7 @@ namespace DrOpen.DrCommon.DrSrv
         /// <param name="level">The configuration information to be changed. This parameter can be one of the following values <paramref name="DrSrvHelper.INFO_LEVEL"/> </param>
         /// <param name="info">supported structure, for example, SERVICE_DELAYED_AUTO_START_INFO</param>
         /// <returns></returns>
-        public bool SetServiceConfig2<T>(DrSrvHelper.INFO_LEVEL level, T info) where T : DrSrvHelper.ISizeOf
+        public bool SetServiceConfig2<T>(DrSrvHelper.INFO_LEVEL level, T info) where T : new()
         {
             return SetServiceConfig2<T>(this.HService, level, info);
         }
@@ -836,19 +834,129 @@ namespace DrOpen.DrCommon.DrSrv
         /// <param name="level">The configuration information to be changed. This parameter can be one of the following values <paramref name="DrSrvHelper.INFO_LEVEL"/> </param>
         /// <param name="info">supported structure, for example, SERVICE_DELAYED_AUTO_START_INFO</param>
         /// <returns></returns>
-        public bool SetServiceConfig2<T>(IntPtr hService, DrSrvHelper.INFO_LEVEL level, T info) where T : DrSrvHelper.ISizeOf
+        public bool SetServiceConfig2<T>(IntPtr hService, DrSrvHelper.INFO_LEVEL level, T info) where T : new()
         {
-            IntPtr ptrInfo = Marshal.AllocHGlobal(info.GetSizeOf());
+            IntPtr ptrInfo = Marshal.AllocHGlobal(Marshal.SizeOf(info.GetType()));
             Marshal.StructureToPtr(info, ptrInfo, false);
             if (!DrSrvHelper.ChangeServiceConfig2(hService, level, ptrInfo)) return win32ErrorHandling(Marshal.GetLastWin32Error());
             Marshal.FreeHGlobal(ptrInfo);
             return true;
         }
         #endregion SetServiceConfig2
-        #region GetServiceDelayAutostartInfo()
-
+        #region GetServiceConfig2
         /// <summary>
-        /// Retrieves the optional configuration parameters of the specified service. Retruns out pointer to structure of DrSrvHelper.INFO_LEVEL. You should call Marshal.FreeCoTaskMem(ptr) 
+        /// Retrieves the optional configuration parameters of the specified service.
+        /// </summary>
+        /// <typeparam name="T">optional configuration parametrs. 
+        /// <paramref name="DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_DESCRIPTION" /> ,
+        /// <paramref name="DrSrvHelper.SERVICE_FAILURE_ACTIONS" /> ,
+        /// <paramref name="DrSrvHelper.SERVICE_FAILURE_ACTIONS_FLAG" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_PREFERRED_NODE_INFO" />   - Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_PRESHUTDOWN_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_REQUIRED_PRIVILEGES_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_SERVICE_SID_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_TRIGGER_INFO" />  - Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_LAUNCH_PROTECTED" />  - Note  This value is supported starting with Windows 8.1.
+        /// </typeparam>
+        /// <param name="serviceName">a name of a service</param>
+        /// <param name="level">The configuration information to be queried. This parameter can be one of the following values
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO" /> = 3,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION" /> = 1,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_FAILURE_ACTIONS" /> = 2,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG" /> = 4,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_PREFERRED_NODE" /> = 9,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_PRESHUTDOWN_INFO" /> = 7,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO" /> = 6,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_SERVICE_SID_INFO" /> = 5,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_TRIGGER_INFO" /> = 8,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_LAUNCH_PROTECTED" /> = 12
+        /// </param>
+        /// <param name="info">out configuration information</param>
+        /// <returns></returns>
+        public bool GetServiceConfig2<T>(string serviceName, DrSrvHelper.INFO_LEVEL level, out T info) where T : new()
+        {
+            info = new T();
+            if (OpenService(serviceName, (DrSrvHelper.SERVICE_ACCESS.SERVICE_QUERY_CONFIG)))
+            {
+                return GetServiceConfig2<T>(this.HService, level, out info);
+            }
+            return false;
+        }
+        /// <summary>
+        /// Retrieves the optional configuration parameters of the current service.
+        /// </summary>
+        /// <typeparam name="T">optional configuration parametrs. 
+        /// <paramref name="DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_DESCRIPTION" /> ,
+        /// <paramref name="DrSrvHelper.SERVICE_FAILURE_ACTIONS" /> ,
+        /// <paramref name="DrSrvHelper.SERVICE_FAILURE_ACTIONS_FLAG" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_PREFERRED_NODE_INFO" />   - Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_PRESHUTDOWN_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_REQUIRED_PRIVILEGES_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_SERVICE_SID_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_TRIGGER_INFO" />  - Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_LAUNCH_PROTECTED" />  - Note  This value is supported starting with Windows 8.1.
+        /// </typeparam>
+        /// <param name="level">The configuration information to be queried. This parameter can be one of the following values
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO" /> = 3,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION" /> = 1,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_FAILURE_ACTIONS" /> = 2,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG" /> = 4,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_PREFERRED_NODE" /> = 9,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_PRESHUTDOWN_INFO" /> = 7,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO" /> = 6,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_SERVICE_SID_INFO" /> = 5,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_TRIGGER_INFO" /> = 8,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_LAUNCH_PROTECTED" /> = 12
+        /// </param>
+        /// <param name="info">out configuration information</param>
+        /// <returns></returns>
+        public bool GetServiceConfig2<T>(DrSrvHelper.INFO_LEVEL level, out T info) where T : new()
+        {
+            return GetServiceConfig2<T>(this.HService, level, out info);
+        }
+        /// <summary>
+        /// Retrieves the optional configuration parameters of the specified service.
+        /// </summary>
+        /// <typeparam name="T">optional configuration parametrs. 
+        /// <paramref name="DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_DESCRIPTION" /> ,
+        /// <paramref name="DrSrvHelper.SERVICE_FAILURE_ACTIONS" /> ,
+        /// <paramref name="DrSrvHelper.SERVICE_FAILURE_ACTIONS_FLAG" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_PREFERRED_NODE_INFO" />   - Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_PRESHUTDOWN_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_REQUIRED_PRIVILEGES_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_SERVICE_SID_INFO" />  - Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_TRIGGER_INFO" />  - Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value is not supported,
+        /// <paramref name="DrSrvHelper.SERVICE_LAUNCH_PROTECTED" />  - Note  This value is supported starting with Windows 8.1.
+        /// </typeparam>
+        /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function and must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights.</param>
+        /// <param name="level">The configuration information to be queried. This parameter can be one of the following values
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO" /> = 3,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION" /> = 1,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_FAILURE_ACTIONS" /> = 2,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG" /> = 4,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_PREFERRED_NODE" /> = 9,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_PRESHUTDOWN_INFO" /> = 7,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO" /> = 6,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_SERVICE_SID_INFO" /> = 5,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_TRIGGER_INFO" /> = 8,
+        /// <paramref name="DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_LAUNCH_PROTECTED" /> = 12
+        /// </param>
+        /// <param name="info">out configuration information</param>
+        /// <returns></returns>
+        public bool GetServiceConfig2<T>(IntPtr hService, DrSrvHelper.INFO_LEVEL level, out T info) where T : new()
+        {
+            IntPtr ptr;
+            info = new T();
+            if (!getServiceConfig2(hService, level, out ptr)) return false;
+            info = (T)Marshal.PtrToStructure(ptr, info.GetType());
+            Marshal.FreeCoTaskMem(ptr);
+            return true;
+        }
+        /// <summary>
+        /// Retrieves the optional configuration parameters of the specified service. Returns out pointer to structure of DrSrvHelper.INFO_LEVEL. You should call Marshal.FreeCoTaskMem(ptr) 
         /// </summary>
         /// <param name="hService">A handle to the service. This handle is returned by the OpenService or CreateService function and must have the SERVICE_QUERY_CONFIG access right. For more information, see Service Security and Access Rights.</param>
         /// <param name="level">The configuration information to be queried. This parameter can be one of the following values from <paramref name="DrSrvHelper.INFO_LEVEL"/></param>
@@ -874,6 +982,8 @@ namespace DrOpen.DrCommon.DrSrv
             }
             return true;
         }
+        #endregion GetServiceConfig2
+        #region GetServiceDelayAutostartInfo()
         /// <summary>
         /// Returns the delayed auto-start setting of an auto-start specified service.
         /// </summary>
@@ -906,15 +1016,11 @@ namespace DrOpen.DrCommon.DrSrv
         /// <returns></returns>
         public bool GetServiceDelayAutostartInfo(IntPtr hService, out bool delayedAutostart)
         {
+            DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO info;
             delayedAutostart = false;
-            IntPtr ptr;
-            if (!getServiceConfig2(HService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out ptr)) return false;
-
-            var d = (DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO));
-            delayedAutostart = d.fDelayedAutostart;
-            Marshal.FreeCoTaskMem(ptr);
+            if (!GetServiceConfig2<DrSrvHelper.SERVICE_DELAYED_AUTO_START_INFO>(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out info)) return false;
+            delayedAutostart = info.fDelayedAutostart;
             return true;
-
         }
         #endregion GetServiceDelayAutostartInfo()
         #region GetServiceDescription()
@@ -950,18 +1056,14 @@ namespace DrOpen.DrCommon.DrSrv
         /// <returns></returns>
         public bool GetServiceDescription(IntPtr hService, out string description)
         {
+            DrSrvHelper.SERVICE_DESCRIPTION info;
             description = string.Empty;
-            IntPtr ptr;
-            if (!getServiceConfig2(HService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, out ptr)) return false;
-            var d = (DrSrvHelper.SERVICE_DESCRIPTION)Marshal.PtrToStructure(ptr, typeof(DrSrvHelper.SERVICE_DESCRIPTION));
-            description = d.lpDescription;
-            Marshal.FreeCoTaskMem(ptr);
+            if (!GetServiceConfig2<DrSrvHelper.SERVICE_DESCRIPTION>(hService, DrSrvHelper.INFO_LEVEL.SERVICE_CONFIG_DESCRIPTION, out info)) return false;
+            description = info.lpDescription;
             return true;
-
         }
         #endregion GetServiceDescription()
         #region CreateService
-
         /// <summary>
         /// Creates a service object and adds it to the current service control manager database. This service will run as LOCAL_SYSTEM service. Sets handle of new service to current service handle field <paramref name="HService"/>. If <paramref name="HService"/> has an openned service handle this handle will closed.
         /// </summary>

@@ -180,24 +180,34 @@ namespace DrOpen.DrCommon.DrData
         /// </summary>
         /// <param name="currentType">current node type</param>
         /// <param name="expectedType">expected node type</param>
-        public static void ValidateExpectedNodeType(DDType currentType, DDType expectedType)
+        public static void ValidateExpectedNodeType(DDType currentType, params DDType[] expectedType)
         {
-            ValidateExpectedNodeType(currentType, expectedType.ToString());
+            if (expectedType == null) return;
+            foreach (var eType in expectedType)
+            {
+                if (currentType == eType) return;
+            }
+            throw new DDTypeExpectedException(currentType.Name, arrayToString<DDType>(expectedType));
         }
         /// <summary>
         /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
         /// </summary>
         /// <param name="currentType">current node type</param>
         /// <param name="expectedType">expected node type</param>
-        public static void ValidateExpectedNodeType(DDType currentType, string expectedType)
+        public static void ValidateExpectedNodeType(DDType currentType, params string[] expectedType)
         {
-            if (currentType.Name != expectedType) throw new DDTypeExpectedException(currentType.Name, expectedType);
+            if (expectedType == null) return;
+            foreach (var eType in expectedType)
+            {
+                if (currentType.Name == eType) return;
+            }
+            throw new DDTypeExpectedException(currentType.Name, arrayToString<string>(expectedType));
         }
         /// <summary>
         /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
         /// </summary>
         /// <param name="expectedType">expected node type</param>
-        public virtual void ValidateExpectedNodeType(string expectedType)
+        public virtual void ValidateExpectedNodeType(params string[] expectedType)
         {
             ValidateExpectedNodeType(this, expectedType);
         }
@@ -205,10 +215,27 @@ namespace DrOpen.DrCommon.DrData
         /// Validate current node type of with expected node type. If types are not equal throw new <see cref="DDTypeExpectedException"/> otherwise nothing.
         /// </summary>
         /// <param name="expectedType">expected node type</param>
-        public virtual void ValidateExpectedNodeType(DDType expectedType)
+        public virtual void ValidateExpectedNodeType(DDType[] expectedType)
         {
-            ValidateExpectedNodeType(expectedType.Name);
+            ValidateExpectedNodeType(this, expectedType);
         }
         #endregion validation
+
+        private static string arrayToString<T>(T[] a)
+        {
+            string res = string.Empty;
+            bool first = true;
+            foreach (var item in a)
+            {
+                if (first)
+                {
+                    first = false;
+                    res += item.ToString();
+                }
+                else
+                    res += ", " + item.ToString();
+            }
+            return res;
+        }
     }
 }

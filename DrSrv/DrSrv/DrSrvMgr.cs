@@ -252,7 +252,7 @@ namespace DrOpen.DrCommon.DrSrv
             CloseHandle(this.HSCManager);
             this.HSCManager = IntPtr.Zero;
             this.HSCManager = DrSrvHelper.OpenSCManager(serverName, null, (int)access);
-            if (this.HSCManager.ToInt32() <= 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            if (this.HSCManager == IntPtr.Zero) return win32ErrorHandling(Marshal.GetLastWin32Error());
             OnAfterOpenSCM(new DrSrvEventArgsAfterOpenSCM(serverName, access, this.HSCManager)); // raise event after open SCM
             return true;
         }
@@ -321,7 +321,7 @@ namespace DrOpen.DrCommon.DrSrv
             CloseHandle(this.HService);
             this.HService = IntPtr.Zero;
             this.HService = DrSrvHelper.OpenService(hSCManager, serviceName, (int)access);
-            if (this.HService.ToInt32() <= 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            if (this.HService == IntPtr.Zero) return win32ErrorHandling(Marshal.GetLastWin32Error());
             OnAfterOpenService(new DrSrvEventArgsAfterOpenService(serviceName, access, this.HSCManager, this.HService)); // raise event after open service
             return true;
         }
@@ -509,15 +509,15 @@ namespace DrOpen.DrCommon.DrSrv
             if (!DrSrvHelper.EnumDependentServices(hService, serviceState, lpServices, bytesNeeded, ref bytesNeeded, ref servicesReturned)) return win32ErrorHandling(Marshal.GetLastWin32Error());
 
             DrSrvHelper.ENUM_SERVICE_STATUS depService;
-            int iDepPtr = lpServices.ToInt32();
+            IntPtr iDepPtr = lpServices;
             if (servicesReturned != 0)
             {
                 dependentServices = new DrSrvHelper.ENUM_SERVICE_STATUS[servicesReturned];
                 for (int i = 0; i < servicesReturned; i++)
                 {
-                    depService = (DrSrvHelper.ENUM_SERVICE_STATUS)Marshal.PtrToStructure(new IntPtr(iDepPtr), typeof(DrSrvHelper.ENUM_SERVICE_STATUS));
+                    depService = (DrSrvHelper.ENUM_SERVICE_STATUS)Marshal.PtrToStructure(iDepPtr, typeof(DrSrvHelper.ENUM_SERVICE_STATUS));
                     dependentServices[i] = depService;
-                    iDepPtr += Marshal.SizeOf(depService);
+                    iDepPtr =  new IntPtr(iDepPtr.ToInt64() +  Marshal.SizeOf(depService));
                 }
             }
             // free buffer
@@ -1247,7 +1247,7 @@ namespace DrOpen.DrCommon.DrSrv
                                                         dependencies,
                                                         userName,
                                                         password);
-            if (hService.ToInt32() <= 0) return win32ErrorHandling(Marshal.GetLastWin32Error());
+            if (hService == IntPtr.Zero) return win32ErrorHandling(Marshal.GetLastWin32Error());
             CloseHandle(this.HService);
             this.HService = hService;
             OnAfterCreateService(new DrSrvEventArgsAfterCreateService(hService,

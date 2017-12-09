@@ -702,7 +702,7 @@ namespace DrOpen.DrCommon.DrSrv
             SERVICE_GENERIC_WRITE = (STANDARD_RIGHTS_WRITE | SERVICE_CHANGE_CONFIG),
             SERVICE_GENERIC_EXECUTE = (STANDARD_RIGHTS_EXECUTE | SERVICE_START | SERVICE_STOP | SERVICE_PAUSE_CONTINUE | SERVICE_USER_DEFINED_CONTROL),
         }
-
+        [Flags]
         public enum SERVICE_TYPE : int
         {
             /// <summary>
@@ -831,6 +831,7 @@ namespace DrOpen.DrCommon.DrSrv
         /// <summary>
         /// The control codes the service accepts and processes in its handler function (see Handler and HandlerEx). A user interface process can control a service by specifying a control command in the ControlService or ControlServiceEx function. By default, all services accept the SERVICE_CONTROL_INTERROGATE value. To accept the SERVICE_CONTROL_DEVICEEVENT value, the service must register to receive device events by using the RegisterDeviceNotification function.
         /// </summary>
+        [Flags]
         public enum SERVICE_ACCEPTED : int
         {
             /// <summary>

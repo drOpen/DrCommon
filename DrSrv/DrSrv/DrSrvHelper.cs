@@ -843,6 +843,11 @@ namespace DrOpen.DrCommon.DrSrv
             /// </summary>
             SERVICE_ACCEPT_PAUSE_CONTINUE = 0x2,
             /// <summary>
+            /// The service can perform preshutdown tasks. This control code enables the service to receive SERVICE_CONTROL_PRESHUTDOWN notifications. Note that ControlService and ControlServiceEx cannot send this notification; only the system can send it. 
+            /// Windows Server 2003 and Windows XP:  This value is not supported.
+            /// </summary>
+            SERVICE_ACCEPT_PRESHUTDOWN = 0x100,
+            /// <summary>
             /// The service is notified when system shutdown occurs.
             /// </summary>
             SERVICE_ACCEPT_SHUTDOWN = 0x4,

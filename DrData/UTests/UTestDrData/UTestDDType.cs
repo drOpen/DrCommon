@@ -62,13 +62,14 @@ namespace UTestDrData
         }
 
         [TestMethod]
-        public void TestTypeNotEqual()
+        public void TestTypeValueEqual()
         {
             var expected = "tYpE";
             var ddType1 = new DDType(expected);
             var ddType2 = new DDType(expected);
-            Assert.IsFalse(ddType1.Equals(ddType2), "Objects cannot be equals.");
-            Assert.IsFalse(ddType2.Equals(ddType1), "Objects cannot be equals.");
+            Assert.AreEqual(ddType1, ddType2);
+            Assert.IsTrue(ddType2.Equals(ddType2), "Objects have to equal.");
+            Assert.IsTrue(ddType2.Equals(ddType1), "Objects have to equal.");
         }
         /// <summary>
         /// check fix StackOverflow issue
@@ -80,7 +81,7 @@ namespace UTestDrData
             var ddType1 = new DDType(expected);
             var ddType2 = new DDType(expected);
 
-            Assert.AreNotEqual(ddType1, ddType2, "Objects should be equals.");
+            Assert.AreEqual(ddType1, ddType2, "Objects have to be equal.");
         }
         /// <summary>
         /// check fix StackOverflow issue
@@ -92,6 +93,28 @@ namespace UTestDrData
             var ddType1 = new DDType(expected);
 
             Assert.AreEqual(ddType1, (object)ddType1, "Objects should be equals.");
+        }
+        /// <summary>
+        /// DDType is working fine as a key in the Dictonaryh or hash
+        /// </summary>
+        [TestMethod]
+        public void TestDDTypeEqualIsValuable()
+        {
+            var d = new System.Collections.Generic.Dictionary<DDType, DDType>();
+            var t0 = new DDType("");
+            var t1 = new DDType("t1");
+            var t2 = new DDType("t2");
+            var t3 = new DDType("T2");
+
+            d.Add(t0, t0);
+            d.Add(t1, t1);
+            d.Add(t2, t2);
+            d.Add("T3", "T3");
+
+            Assert.AreEqual(d[t0], t0);
+            Assert.AreEqual(d[t1], t1);
+            Assert.AreEqual(d[t2], t2);
+            Assert.AreEqual(d["T3"], new DDType("T3"));
         }
     }
 }

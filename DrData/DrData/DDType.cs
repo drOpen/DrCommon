@@ -136,7 +136,8 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>true if the specified DDType is equal to the current DDType otherwise, false.</returns>
         public virtual bool Equals(DDType other)
         {
-            return base.Equals(other);
+            //return base.Equals(other);
+            return this == (DDType)other;
         }
         /// <summary>
         /// Determines whether the specified System.Object is equal to the current DDType. Returns true if the specified System.Object is equal to the current DDType otherwise, false

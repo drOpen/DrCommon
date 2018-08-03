@@ -206,12 +206,13 @@ namespace UTestDrDataEx
             Assert.AreEqual(names.Length, i, "Count of returned nodes should be equal count of expected nodes.");
         }
 
-        private static void AssertIncorrectNodeType(DDType type, DDType[] tIncorrect)
+        private static void AssertIncorrectNodeType(DDType type, DDType[] dDTypes)
         {
-            foreach (var t in tIncorrect)
+            foreach (var t in dDTypes)
             {
-                Assert.AreNotEqual(type, t);
+                if (t.Equals(t)) return;
             }
+            Assert.Fail("The node type '{0}' is not matched here.", type);
         }
         #endregion Traverse
     }

@@ -169,7 +169,7 @@ namespace DrOpen.DrCommon.DrDataSx
             writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE);
             XMLSerialize(v, writer);
             writer.WriteEndElement();
-        } 
+        }
         /// <summary>
         /// Serializes the specified DDValue into its XML representation and writes to a XML writer.
         /// The parent XML element &lt;v&gt; will be writed&lt;/v&gt;
@@ -184,6 +184,7 @@ namespace DrOpen.DrCommon.DrDataSx
             }
             else
             {
+               // if (v.Type != typeof(System.String)) // doesn't write System.String value type, it's default type
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, v.Type.ToString());
                 if (IsThisTypeXMLSerializeAsArray(v.Type))
                 {
@@ -198,6 +199,7 @@ namespace DrOpen.DrCommon.DrDataSx
                 {
                     writer.WriteString(v.ToString());
                 }
+
             }
         }
         /// <summary>
@@ -341,15 +343,31 @@ namespace DrOpen.DrCommon.DrDataSx
             int i = 0;
             string[] v = null;
 
+            // Exit if element is empty value, like <v t="System.String[]"/>
+            //           attribue empty array, like <a n="a3" t="System.String[]" />
+            if (((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE)) || 
+                 (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))) && (reader.IsEmptyElement))
+            {
+                reader.Read(); // go to next element
+                return v;
+            }
             reader.Read();
+            // Exit if element is empty value, like <v t="System.String[]"></v>
+            //           attribue empty array, like <a n="a3" t="System.String[]" /></a>
+            if (((reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE) || 
+                 (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE)) && (reader.NodeType == XmlNodeType.EndElement))
+            {
+                reader.ReadEndElement() ; // close openned element
+                return v;
+            }
             var initialDepth = reader.Depth;
-            if (reader.NodeType == XmlNodeType.None) return v; // Exit for element without child <n t="System.String[]"/>
+            if (reader.NodeType == XmlNodeType.None)  return v; // 
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
                 if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ARRAY_VALUE_ITEM) == false) || (reader.Depth > initialDepth))
                 {
-                    reader.Skip(); // Skip none <n> elements with childs and subchilds <n> elements 'Deep proptection'
+                    reader.Skip(); // Skip none <n> elements with childs and subchilds <n> elements 'Deep protection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection
                 }
                 else

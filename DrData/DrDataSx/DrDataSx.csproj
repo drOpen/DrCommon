@@ -58,7 +58,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DrData\DrData.csproj">
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
-      <Name>DrData</Name>
+      <Name>DrData %28DrData\DrData%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -651,7 +651,6 @@ namespace UTestDrData
             {
                 throw new AssertInconclusiveException(); // Warning!
             }
-
         }
         [TestMethod]
         public void TestCreateWithStringArrayMultipleValue()

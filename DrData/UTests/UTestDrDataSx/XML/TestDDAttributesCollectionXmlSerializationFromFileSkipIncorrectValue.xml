@@ -5,8 +5,8 @@
   <a/>
   <Test>ValueTest</Test>
   <Test/>
-  <a n=""/>
-  <a n="A"/>
+  <a n="" t=""/>
+  <a n="A" t=""/>
   <a n="B" t="System.String[]">
       <i/>
       <i>Value_A</i>

@@ -17,7 +17,7 @@
       </ac>
       <n n="a.b.d.e">
           <a n="value a.b.d.e->a" t="System.Int32" s="4">1</a>
-          <a n="value a.b.d.e->b"/>
+          <a n="value a.b.d.e->b" t=""/>
       </n>
     </n>
   </n>

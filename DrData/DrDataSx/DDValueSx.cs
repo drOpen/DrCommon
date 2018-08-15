@@ -107,11 +107,14 @@ namespace DrOpen.DrCommon.DrDataSx
         #endregion explicit operator
     }
 
+
     /// <summary>
     /// provides XML formating serialization and deserialization for DDValue of the 'DrData'
     /// </summary>
     public static class DDValueSxe
     {
+        public static Type DEFAULT_VALUE_TYPE = typeof(string);
+
         #region Serialize
         /// <summary>
         /// Serializes the specified DDValue into its XML representation and writes to a text writer.
@@ -178,14 +181,18 @@ namespace DrOpen.DrCommon.DrDataSx
         /// <param name="writer">XML writer used to write the XML document.</param>
         internal static void XMLSerialize(DDValue v, XmlWriter writer)
         {
-            if (v.Type == null)
+            if (v == null)
+            {
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, DDSchema.XML_SERIALIZE_VALUE_NULL);
+            }
+            else if (v.Type == null)
             {
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL);
             }
             else
             {
-               // if (v.Type != typeof(System.String)) // doesn't write System.String value type, it's default type
-                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, v.Type.ToString());
+                // doesn't write System.String value type, it's default type
+                if (v.Type != typeof(System.String)) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, v.Type.ToString());
                 if (IsThisTypeXMLSerializeAsArray(v.Type))
                 {
                     foreach (var element in v.ToStringArray())
@@ -291,9 +298,16 @@ namespace DrOpen.DrCommon.DrDataSx
             reader.MoveToContent();
 
             var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
-            if ((string.IsNullOrEmpty(t)) || (t == DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL))
+            if (t == null) // if attribute type doesn't set default type - string
+                t = DEFAULT_VALUE_TYPE.ToString();
+
+            if (t == String.Empty) // here is type attribute equals string.empty like t="", the value is null here
             {
-                v = new DDValue();                // data = null;
+                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+            }
+            else  if (t == DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL) // here is type is null like t="null", the value is new DDValue here
+            {
+                v = new DDValue(); // data and type are null here, but class has been initialezed yet
                 if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
             }
             else

@@ -174,6 +174,18 @@ namespace UTestDrDataSe
             ValidateXMLDeserialization(GetStockHierarhyWithArrayValue());
         }
 
+        [TestMethod]
+        public void TestNullSerialization()
+        {
+            var n = new DDNode();
+            var a = n.Attributes;
+            a.Add(null);
+            a.Add(new DDValue());
+            a.Add(new DDValue(null));
+            a.Add(String.Empty);
+            ValidateXMLDeserialization(n);
+        }
+
         public static void ValidateXMLDeserialization(DDNode original)
         {
             var xml = XMLSerialize(original);

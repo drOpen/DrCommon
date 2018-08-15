@@ -184,7 +184,8 @@ namespace DrOpen.DrCommon.DrDataSx
             {
                 writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE);
                 writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, a.Key);
-                if (a.Value != null) DDValueSxe.XMLSerialize(a.Value, writer);
+                //if (a.Value != null) DDValueSxe.XMLSerialize(a.Value, writer);
+                DDValueSxe.XMLSerialize(a.Value, writer);
                 writer.WriteEndElement();
             }
         }
@@ -302,11 +303,13 @@ namespace DrOpen.DrCommon.DrDataSx
             if (name != null)
             {
                 DDValue v = null;
-                if (t != null) v = DDValueSxe.Deserialize(reader);
+                //if (t != null) v = DDValueSxe.Deserialize(reader);
+                v = DDValueSxe.Deserialize(reader);
                 ac.Add(name, v);
+
             }
 
-            if ((name == null) || (t == null)) // reads and close empty node
+            else
             {
                 if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
                 if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element

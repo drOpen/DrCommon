@@ -13,7 +13,7 @@
       </a>
       <n n="a.b.d.e">
         <a n="value a.b.d.e-&gt;a" t="System.Int32" s="4">32</a>
-        <a n="value a.b.d.e-&gt;b" />
+        <a n="value a.b.d.e-&gt;b" t=""/>
         <a n="Test" />
       </n>
     </n>

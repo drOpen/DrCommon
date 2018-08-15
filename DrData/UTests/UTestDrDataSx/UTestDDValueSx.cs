@@ -26,7 +26,7 @@ namespace UTestDrDataSe
         [TestMethod]
         public void TestDDValueXmlSerializationNullFromXML()
         {
-            ValidateXMLDeserialization(new DDValue(), UTestDrDataCommon.GetMemoryStreamFromString("<" + DrOpen.DrCommon.DrDataSx.DDSchema.XML_SERIALIZE_NODE_VALUE + "/>"));
+            ValidateXMLDeserialization(new DDValue(), UTestDrDataCommon.GetMemoryStreamFromString("<" + DrOpen.DrCommon.DrDataSx.DDSchema.XML_SERIALIZE_NODE_VALUE + " t='" +   DrOpen.DrCommon.DrDataSx.DDSchema.XML_SERIALIZE_VALUE_TYPE_NULL +  "' />"));
         }
         [TestMethod]
         public void TestDDValueXmlSerializationNull()

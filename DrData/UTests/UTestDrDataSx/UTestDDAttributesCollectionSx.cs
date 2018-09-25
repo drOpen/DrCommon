@@ -137,7 +137,9 @@ namespace UTestDrDataSe
         public void TestDDAttributesCollectionXmlSerializationFromFileSkipIncorrectValue()
         {
             var a = new DDAttributesCollection();
-            a.Add(string.Empty, null);
+            a.Add(string.Empty, "AttributeValue");
+            a.Add("2", String.Empty);
+            a.Add("3", null);
             a.Add("A", null);
             a.Add("B", new DDValue(new string[] { "", "Value_A", "Value_B" }));
             ValidateXMLDeserialization(a, UTestDrDataCommon.GetMemoryStreamFromFile());

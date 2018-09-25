@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ac>
   Value
-  <a>AttributeValue</a>
-  <a/>
+  <a n="">AttributeValue</a>
+  <a n="2"/>
   <Test>ValueTest</Test>
   <Test/>
-  <a n="" t=""/>
+  <a n="3" t=""/>
   <a n="A" t=""/>
   <a n="B" t="System.String[]">
       <i/>

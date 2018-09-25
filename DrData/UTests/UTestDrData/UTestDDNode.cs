@@ -55,8 +55,6 @@ namespace UTestDrData
 
         static private DDNode GetStockHierarhy()
         {
-
-
             var a = new DDNode("a");
             a.Attributes.Add(aName1, "string");
             a.Attributes.Add("value a->b", true);

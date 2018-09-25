@@ -86,10 +86,10 @@ namespace DrOpen.DrCommon.DrData
             return Traverse(n, false, false, true);
         }
         /// <summary>
-        /// Traversal all node from a root include the root.
+        /// Traversal all node from a root. The root can be included.
         /// </summary>
-        /// <param name="n">set true for traverse the root</param>
-        /// <param name="returnRoot"></param>
+        /// <param name="n"></param>
+        /// <param name="returnRoot">set true if you would like recieve the root</param>
         /// <returns></returns>
         public static IEnumerable<DDNode> Traverse(this DDNode n, bool returnRoot)
         {
@@ -98,7 +98,7 @@ namespace DrOpen.DrCommon.DrData
         /// <summary>
         /// Traversal all node from root
         /// </summary>
-        /// <param name="n">set true for traverse the root</param>
+        /// <param name="returnRoot">set true for traverse the root</param>
         /// <param name="skipByType">set 'true' for skip nodes by specified types of nodes. Overwise, set 'false, for process only specified types of nodes </param>
         /// <param name="processChildNodeForSkippedNode">set 'true' for enumerate child nodes for skipped nodes by type. Overwise, set 'false, for skip node with children by type.</param>
         /// <param name="types">array of types of nodes to skip or process depends by <paramref name="skipByType"/></param>

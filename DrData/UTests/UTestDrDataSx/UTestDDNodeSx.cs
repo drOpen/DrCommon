@@ -200,8 +200,6 @@ namespace UTestDrDataSe
             ValidateDeserialization(original, (DDNode)deserialized);
         }
 
-
-
         public static MemoryStream XMLSerialize(DDNode value)
         {
 
@@ -230,6 +228,26 @@ namespace UTestDrDataSe
             Assert.AreNotEqual(original, deserialized, "Deserialized object should not be same as original object.");
         }
 
+        #region AutoGenerationName
+
+        [TestMethod]
+        public void TestDeserializationFromXMLAndAutoNameGeneration()
+        {
+
+            var n = DDNodeSxe.Deserialize(UTestDrDataCommon.GetMemoryStreamFromFile());
+            Assert.IsTrue(n.Type == String.Empty, "Type of nodes are not equals after deserialization with auto node name generation.");
+            foreach (var c in n)
+            {
+                Assert.IsTrue(c.Value.Type == "Type", "Type of nodes are not equals after deserialization with auto node name generation.");
+                var en = c.Value.Attributes.GetEnumerator();
+
+                en.MoveNext();
+            }
+            
+        }
+
+        #endregion AutoGenerationName
+
         #region Merge
 
         [TestMethod]
@@ -246,6 +264,7 @@ namespace UTestDrDataSe
             nDestination.Merge(nSource);
             Assert.IsTrue(nDestination == nSource, "The both nodes must be equals.");
         }
+
         [TestMethod]
         public void TestMergeEmptyNodeWithStock()
         {
@@ -262,6 +281,7 @@ namespace UTestDrDataSe
 
             Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
         }
+
         [TestMethod]
         public void TestMergeStockCollectionWithEmptyCollection()
         {
@@ -279,11 +299,13 @@ namespace UTestDrDataSe
 
             Assert.IsTrue(nDestination == nExpected, "The actual node is not equal expected node. See xml files in the bin folder.");
         }
+
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild()
         {
             TestMergeStockCollectionWithAnotherCollection(DDNode.DDNODE_MERGE_OPTION.ATTRIBUTES, ResolveConflict.THROW_EXCEPTION);
         }
+
         [TestMethod]
         public void TestMergeConflict()
         {
@@ -297,8 +319,8 @@ namespace UTestDrDataSe
             {
                 Assert.AreEqual(attStock1Name, e.Name); // attribute name
             }
-
         }
+
         [TestMethod]
         public void TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes()
         {
@@ -360,6 +382,7 @@ namespace UTestDrDataSe
             attr.Add("a2", new string[] {"2"});
             ValidateXMLDeserialization(nSource);
         }
+
         [TestMethod]
         public void TestDDNodeLostNodesAfterDeserializationEmptyStringArray2()
         {
@@ -406,15 +429,9 @@ namespace UTestDrDataSe
                 </n>
             </n>");
 
-
             ValidateDeserialization(nSource, nExpected);
-
         }
 
-
         #endregion bugs
-
-
-
     }
 }

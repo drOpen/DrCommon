@@ -190,7 +190,7 @@ namespace DrOpen.DrCommon.DrDataSx
             }
         }
         #endregion Serialize
-        #region Serialize
+        #region Deserialize
 
         /// <summary>
         /// Generates an new DDAttributesCollection from its XML representation.
@@ -300,20 +300,23 @@ namespace DrOpen.DrCommon.DrDataSx
             var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
             var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
 
-            if (name != null)
-            {
+            //if (name != null)
+            //{
                 DDValue v = null;
                 //if (t != null) v = DDValueSxe.Deserialize(reader);
                 v = DDValueSxe.Deserialize(reader);
-                ac.Add(name, v);
+                if (name != null)
+                    ac.Add(name, v);
+                else
+                    ac.Add(v);
 
-            }
+            //}
 
-            else
-            {
-                if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-                if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
-            }
+            //else
+            //{
+            //    if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
+            //    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
+            //}
         }
 
         /// <summary>
@@ -345,6 +348,6 @@ namespace DrOpen.DrCommon.DrDataSx
             }
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE_COLLECTION)) reader.ReadEndElement(); // need to close the opened element, only self type
         }
-        #endregion Serialize
+        #endregion Deserialize
     }
 }

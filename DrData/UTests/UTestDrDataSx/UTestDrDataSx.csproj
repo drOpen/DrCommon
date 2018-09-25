@@ -76,6 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="XML\TestDeserializationFromXMLAndAutoNameGeneration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\TestDDNodeXmlDeserializationFromFileLegacyAttributeCollectionWithHierarchy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

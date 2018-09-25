@@ -279,7 +279,10 @@ namespace DrOpen.DrCommon.DrDataSx
             var type = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
             if (type == null) type = string.Empty;
 
-            n = new DDNode(name, type);
+            if (name == null)
+                n = new DDNode(new DDType(type));
+            else
+                n = new DDNode(name, new DDType(type));
 
             if (isEmptyXMLElement(reader)) return n; // skip empty node <n/>
 

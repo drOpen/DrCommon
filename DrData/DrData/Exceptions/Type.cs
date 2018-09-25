@@ -127,13 +127,13 @@ namespace DrOpen.DrCommon.DrData.Exceptions
     {
         /// <summary>
         /// Initializes a new instance of the DDTypeIncorrectException class with the default error message.
-        /// <param name="name">Type name</param>
         /// </summary>
+        /// <param name="name">Type name</param>
         public DDTypeIncorrectException(string name)
             : base(name, string.Format(Res.Msg.OBJ_TYPE_IS_INCORRECT, name)) { }
-
         /// <summary>
         /// Initializes a new instance of the DDTypeIncorrectException class with the default error message.
+        /// </summary>
         /// <param name="type">Type</param>
         public DDTypeIncorrectException(Type type)
             : this((type == null ? NullTypeName : type.Name)) { }
@@ -200,7 +200,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// <summary>
         /// Initializes a new instance of the DDTypeExpectedException class with the default error message.
         /// <param name="currentType">Current type</param>
-        /// <param name="requestedTypeName">requested type</param>
+        /// <param name="requestedType">requested type</param>
         /// </summary>
         public DDTypeExpectedException(Type currentType, Type requestedType)
             : this((currentType == null ? NullTypeName : currentType.Name), (requestedType == null ? NullTypeName : requestedType.Name)) { }
@@ -235,7 +235,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// Initializes a new instance of the DDTypeExpectedException class with the default error message.
         /// </summary>
         /// <param name="currentType">Current type</param>
-        /// <param name="requestedTypeName">requested type</param>
+        /// <param name="requestedType">requested type</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDTypeExpectedException(Type currentType, Type requestedType, Exception innerException)
             : this((currentType == null ? NullTypeName : currentType.Name), (requestedType == null ? NullTypeName : requestedType.Name), innerException) { }
@@ -252,7 +252,7 @@ namespace DrOpen.DrCommon.DrData.Exceptions
         /// Initializes a new instance of the DDTypeExpectedException class with the specified error message.
         /// </summary>
         /// <param name="currentType">Current type</param>
-        /// <param name="requestedTypeName">requested type</param>
+        /// <param name="requestedType">requested type</param>
         /// <param name="message">A message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
         public DDTypeExpectedException(Type currentType, Type requestedType, string message, Exception innerException)

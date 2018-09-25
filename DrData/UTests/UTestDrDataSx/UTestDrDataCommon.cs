@@ -88,6 +88,7 @@ namespace UTestDrDataSe
                 fs.Read(bytes, 0, (int)fs.Length);
                 ms.Write(bytes, 0, (int)fs.Length);
             }
+            ms.Position = 0;
             return ms;
         }
         #endregion GetMemoryStreamFromFile

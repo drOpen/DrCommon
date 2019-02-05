@@ -7,8 +7,8 @@
     <ProjectGuid>{CEF8CDD2-404D-415F-AECF-4B92CEB3A23D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DrDataSe</RootNamespace>
-    <AssemblyName>DrDataSe</AssemblyName>
+    <RootNamespace>DrDataSx</RootNamespace>
+    <AssemblyName>DrDataSx</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

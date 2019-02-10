@@ -31,11 +31,26 @@ namespace UTestDrDataEx
             var r = new DDNode();
             foreach (var n in r.Traverse())
             {
-                Assert.Fail("Cought traversal for alone node, without children.");
+                Assert.Fail("The root only node was traversed but option process root node wasn't enebled.");
             }
             
         }
-
+        [TestMethod]
+        public void TestDDNodeExTraverseNodeWithoutChildAndReturnRoot()
+        {
+            var name = "Root";
+            var r = new DDNode(name);
+            int done = 0;
+            foreach (var n in r.Traverse(true))
+            {
+                if (n.Name == name) 
+                    done ++;
+                else
+                    Assert.Fail("The incorrect node '{0}' has been found.", n.Name);
+            }
+            if (done == 0) Assert.Fail("The root node wasn't traversed.");
+            if (done > 1) Assert.Fail("Travers has processed root node more than ones");
+        }
         [TestMethod]
         public void TestDDNodeExTraverse()
         {

@@ -105,7 +105,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public static IEnumerable<DDNode> Traverse(this DDNode n, bool returnRoot, bool skipByType, bool processChildNodeForSkippedNode, params DDType[] types)
         {
-            if (n.HasChildNodes == false) yield break;
+            if ((returnRoot == false) && (n.HasChildNodes == false)) yield break;
             var nCurrent = n;
             var queueNodes = new Queue<DDNode>(new[] { n });
             var isRootNode = true;

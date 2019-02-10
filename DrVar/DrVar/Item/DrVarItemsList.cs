@@ -144,6 +144,11 @@ namespace DrOpen.DrCommon.DrVar.Item
             return varItems.Count;
         }
 
+
+        public static DrVarItemsList GetItemsList(string value) {
+            return new DrVarItemsList(value);
+        }
+
         #region Enumerator
         /// <summary>
         /// Returns an enumerator that iterates through the DrVarItemsList (IEnumerator&lt;DrVarItem&gt;).

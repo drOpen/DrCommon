@@ -64,7 +64,7 @@ namespace DrOpen.DrCommon.DrVar.Eception
         /// </summary>
         /// <param name="name">incorrect variable name</param>
         public DrVarExceptionMissName(string name)
-            : base("The variable name '{0}' contains the variable. Dynamic variable name is restricted.", name)
+            : base(Res.Msg.MISS_VAR_NAME, name)
         {
             this.Name = name;
         }
@@ -72,14 +72,14 @@ namespace DrOpen.DrCommon.DrVar.Eception
     }
 
     /// <summary>
-    /// The end variable sign is missed 
+    /// The end of variable sign is missed 
     /// </summary>
     public class DrVarExceptionMissVarEnd: DrVarException
     {
         /// <summary>
-        /// Incorrect text
+        /// Incorrect value
         /// </summary>
-        public string Text { get; private set; }
+        public string Value { get; private set; }
         /// <summary>
         /// missed sign symbol
         /// </summary>
@@ -88,12 +88,36 @@ namespace DrOpen.DrCommon.DrVar.Eception
         /// Creates incorrect variable name exception
         /// </summary>
         /// <param name="name">incorrect variable name</param>
-        public DrVarExceptionMissVarEnd(string text, string missSign)
-            : base(Msg.CANNOT_BUILD_VAR_NOT_CLOSED_SYMBOL, text, missSign)
+        public DrVarExceptionMissVarEnd(string value, string missSign)
+            : base(Msg.CANNOT_BUILD_VAR_NOT_CLOSED_SYMBOL, value, missSign)
         {
-            this.Text = text;
+            this.Value = value;
             this.MissSign = missSign;
         }
 
+    }
+    /// <summary>
+    /// The variable has reference to itself
+    /// </summary>
+    public class DrVarExceptionLoop : DrVarException
+    {
+        /// <summary>
+        /// Variable name
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
+        /// Variable value
+        /// </summary>
+        public string Value { get; private set; }
+        /// <summary>
+        /// Creates loop variable exception
+        /// </summary>
+        /// <param name="name">incorrect variable name</param>
+        public DrVarExceptionLoop(string name, string value)
+            : base(Msg.LOOP_VAR, name, value)
+        {
+            this.Value = value;
+            this.Name = name;
+        }
     }
 }

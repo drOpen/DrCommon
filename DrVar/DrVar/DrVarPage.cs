@@ -30,19 +30,25 @@ using System.Text;
 using System.Collections.Generic;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrVar.Eception;
+using DrOpen.DrCommon.DrVar.Item;
 
 namespace DrOpen.DrCommon.DrVar
 {
     public class DrVarPage
     {
 
-        private DDNode pageRaw;
-        private DDNode page;
+        //private DDNode pageRaw;
+        //private DDNode page;
+        Dictionary<string, DrVarEntry> rawVarEntry;
+        Dictionary<string, DrVarEntry> varEntry;
+        public bool IsCompiled { get; private set; }
 
         #region DrVarPage
         public DrVarPage()
         {
-            pageRaw = new DDNode();
+            //pageRaw = new DDNode();
+            rawVarEntry = new Dictionary<string, DrVarEntry>();
+            varEntry = new Dictionary<string, DrVarEntry>();
         }
         public DrVarPage(DDNode node)
             : this()
@@ -56,30 +62,80 @@ namespace DrOpen.DrCommon.DrVar
         }
         #endregion DrVarPage
 
+
+        #region var
+        class DrVarEntry : ICloneable
+        {
+            public string Name { get; private set; }
+            public string Value { get; private set; }
+            public DrVarItemsList Items { get; private set; }
+
+            public DrVarEntry(string name, string value)
+            {
+                var DynNames = DrVarItemsList.GetItemsList(name);
+                if (DynNames.Count() != 0) throw new DrVarExceptionMissName(DynNames.ToArray<Item.DrVarItem>()[0].FullName);
+                this.Name = name;
+                this.Value = value;
+                this.Items = DrVarItemsList.GetItemsList(value);
+            }
+            /// <summary>
+            /// returns true if this variable doesn't have a referebce to another
+            /// </summary>
+            /// <returns>returns true if this variable doesn't have a referebce to another</returns>
+            public bool IsResolved()
+            {
+                return (this.Items.Count() == 0);
+            }
+
+            public object Clone()
+            {
+                return null;
+            }
+
+        }
+        #endregion var
+
         public void Add(DDNode node, params DDType[] t)
         {
             foreach (var n in node.Traverse(true, false, true, t))
             {
-                pageRaw.Attributes.Merge(n.Attributes, ResolveConflict.OVERWRITE);
+                foreach (var a in n.Attributes)
+                {
+                    if (rawVarEntry.ContainsKey(a.Key)) rawVarEntry.Remove(a.Key); // remove previously value of the same variable
+                    var entry = new DrVarEntry(a.Key, a.Value.ToString());
+                    if ((IsCompiled == true) && (entry.IsResolved() == false)) IsCompiled = false;
+                    rawVarEntry.Add(a.Key, entry); 
+                }
             }
+        }
+
+
+        private static Dictionary<string, DrVarEntry> Clone(Dictionary<string, DrVarEntry> d)
+        {
+            return new Dictionary<string, DrVarEntry>(d);
         }
 
         public void Compile()
         {
-            page = new DDNode();
-            page = pageRaw.Clone(false);
-
-
+            //page = new DDNode();
+            //page = pageRaw.Clone(false);
+            //ValidateVariablesName();
+            varEntry.Clear();
+            varEntry = Clone(rawVarEntry);
+            IsCompiled = true;
         }
 
-        public void ValidateVariablesName()
+
+
+        /*
+        private void ValidateVariablesName()
         {
             var item = new Item.DrVarItemsList();
             foreach (var a in page.Attributes.Names)
             {
-                if (item.Parse(a) != 0) throw new DrVarExceptionMissName(item.ToArray<Item.DrVarItem>() [0].FullName);
+                if (item.Parse(a) != 0) throw new DrVarExceptionMissName(item.ToArray<Item.DrVarItem>()[0].FullName);
             }
         }
-
+        */
     }
 }

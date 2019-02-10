@@ -68,5 +68,23 @@ namespace DrOpen.DrCommon.DrVar.Res {
                 return ResourceManager.GetString("CANNOT_BUILD_VAR_NOT_CLOSED_SYMBOL", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;{1}&apos; of variable name &apos;{0}&apos; has reference to itself..
+        /// </summary>
+        internal static string LOOP_VAR {
+            get {
+                return ResourceManager.GetString("LOOP_VAR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The variable name &apos;{0}&apos; contains the variable. Dynamic variable name is restricted..
+        /// </summary>
+        internal static string MISS_VAR_NAME {
+            get {
+                return ResourceManager.GetString("MISS_VAR_NAME", resourceCulture);
+            }
+        }
     }
 }

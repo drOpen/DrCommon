@@ -120,4 +120,10 @@
   <data name="CANNOT_BUILD_VAR_NOT_CLOSED_SYMBOL" xml:space="preserve">
     <value>Can't build list of variables by the string '{0}' because there is not closed '{1}' symbol of the substitution.</value>
   </data>
+  <data name="LOOP_VAR" xml:space="preserve">
+    <value>The value '{1}' of variable name '{0}' has reference to itself.</value>
+  </data>
+  <data name="MISS_VAR_NAME" xml:space="preserve">
+    <value>The variable name '{0}' contains the variable. Dynamic variable name is restricted.</value>
+  </data>
 </root>

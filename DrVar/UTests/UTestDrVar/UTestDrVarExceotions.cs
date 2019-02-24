@@ -18,7 +18,7 @@ namespace UTestDrVar
         public void UTestDrVarException_IncorrectVarName_ContainVar()
         {
             var n = new DDNode();
-            var vars = new Dictionary <string, string> { {"%var%", "%var%"}, {"% %", "% %"},  {"v%a%r", "%a%"}, {"va%r%", "%r%"} };
+            var vars = new Dictionary<string, string> { { "%var%", "%var%" }, { "% %", "% %" }, { "v%a%r", "%a%" }, { "va%r%", "%r%" } };
             foreach (var v in vars)
             {
                 n.Attributes.Clear();
@@ -28,7 +28,7 @@ namespace UTestDrVar
 
         }
 
-        private void CheckException_IncorrectVarName_ContainsVar(string varName , DDNode n)
+        private void CheckException_IncorrectVarName_ContainsVar(string varName, DDNode n)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace UTestDrVar
 
         }
 
-        private void CheckException_IncorrectVarName(string varName , DDNode n)
+        private void CheckException_IncorrectVarName(string varName, DDNode n)
         {
             try
             {
@@ -92,8 +92,9 @@ namespace UTestDrVar
         {
             var n = new DDNode();
             var aName = "var";
-            string[] vars = {"%var", "%", "v%ar", "var%"};
-            foreach (var v in vars) {
+            string[] vars = { "%var", "%", "v%ar", "var%" };
+            foreach (var v in vars)
+            {
                 n.Attributes.Add(aName, v, ResolveConflict.OVERWRITE);
                 CheckException_MissEnd(aName, n);
             }
@@ -103,21 +104,21 @@ namespace UTestDrVar
         private void CheckException_MissEnd(string aName, DDNode n)
         {
             var p = new DrVarPage();
-            p.Add(n);
             try
             {
-                p.Compile();
+                p.Add(n);
+                //p.Compile();
                 Assert.Fail("The incorrect variable '{0}' has been allowed.", n.Attributes[aName]);
             }
             catch (DrVarExceptionMissVarEnd e)
             {
-                Assert.IsTrue(DrVarSign.varSign.ToString() ==  e.MissSign, "Incorrect exception sign value '{0}'", e.MissSign);
-                Assert.IsTrue(n.Attributes[aName] ==  e.Value, "Incorrect exception sign value '{0}'", e.MissSign);
+                Assert.IsTrue(DrVarSign.varSign.ToString() == e.MissSign, "Incorrect exception sign value '{0}'", e.MissSign);
+                Assert.IsTrue(n.Attributes[aName] == e.Value, "Incorrect exception sign value '{0}'", e.MissSign);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Assert.Fail("The is incorrect exception type '{0}'. The exception message is '{1}'.", e.GetType(), e.Message); 
+                Assert.Fail("The is incorrect exception type '{0}'. The exception message is '{1}'.", e.GetType(), e.Message);
             }
         }
     }

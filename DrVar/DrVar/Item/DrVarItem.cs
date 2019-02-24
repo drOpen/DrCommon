@@ -28,7 +28,7 @@
 namespace DrOpen.DrCommon.DrVar.Item
 {
     /// <summary>
-    /// stored variable item
+    /// stored variable item, immutable structure
     /// </summary>
     internal struct DrVarItem 
     {

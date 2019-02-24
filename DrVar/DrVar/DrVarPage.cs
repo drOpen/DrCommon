@@ -39,16 +39,29 @@ namespace DrOpen.DrCommon.DrVar
 
         //private DDNode pageRaw;
         //private DDNode page;
+        public enum VAR_RESOLVE
+        {
+            VAR_UNRESOLVED_EXCEPTION = 1,
+            VAR_UNRESOLVED_KEEP_TEXT,
+            VAR_UNRESOLVED_USE_EMPTY
+        }
         Dictionary<string, DrVarEntry> rawVarEntry;
         Dictionary<string, DrVarEntry> varEntry;
         public bool IsCompiled { get; private set; }
+        public VAR_RESOLVE Resolver { get; set; }
 
         #region DrVarPage
+
         public DrVarPage()
         {
-            //pageRaw = new DDNode();
+            Resolver = VAR_RESOLVE.VAR_UNRESOLVED_KEEP_TEXT;
             rawVarEntry = new Dictionary<string, DrVarEntry>();
             varEntry = new Dictionary<string, DrVarEntry>();
+        }
+        public DrVarPage(VAR_RESOLVE r)
+            : this()
+        {
+            Resolver = r;
         }
         public DrVarPage(DDNode node)
             : this()
@@ -78,6 +91,14 @@ namespace DrOpen.DrCommon.DrVar
                 this.Value = value;
                 this.Items = DrVarItemsList.GetItemsList(value);
             }
+
+            public DrVarEntry(DrVarEntry entry)
+            {
+                this.Name = entry.Name;
+                this.Value = entry.Value;
+                this.Items = (DrVarItemsList)entry.Clone();
+            }
+
             /// <summary>
             /// returns true if this variable doesn't have a referebce to another
             /// </summary>
@@ -89,30 +110,59 @@ namespace DrOpen.DrCommon.DrVar
 
             public object Clone()
             {
-                return null;
+                return new DrVarEntry(this);
             }
 
         }
         #endregion var
 
+        #region Add
+        /// <summary>
+        /// Add variables from specified node and cildren. You can specify node types which contain variables. By default, all nodes will analyze 
+        /// </summary>
+        /// <param name="node">node contains variables </param>
+        /// <param name="t">node types which contains varibles</param>
         public void Add(DDNode node, params DDType[] t)
         {
             foreach (var n in node.Traverse(true, false, true, t))
             {
                 foreach (var a in n.Attributes)
                 {
-                    if (rawVarEntry.ContainsKey(a.Key)) rawVarEntry.Remove(a.Key); // remove previously value of the same variable
-                    var entry = new DrVarEntry(a.Key, a.Value.ToString());
-                    if ((IsCompiled == true) && (entry.IsResolved() == false)) IsCompiled = false;
-                    rawVarEntry.Add(a.Key, entry); 
+                    Add(a);
                 }
             }
         }
-
-
-        private static Dictionary<string, DrVarEntry> Clone(Dictionary<string, DrVarEntry> d)
+        /// <summary>
+        /// Add variable
+        /// </summary>
+        /// <param name="a">key value pair where key is variable name and value is variable value</param>
+        public void Add(KeyValuePair<string, DDValue> a)
         {
-            return new Dictionary<string, DrVarEntry>(d);
+            Add(a.Key, a.Value);
+        }
+
+        /// <summary>
+        /// Add variable
+        /// </summary>
+        /// <param name="name">variable name</param>
+        /// <param name="value">variable value</param>
+        public void Add(string name, string value)
+        {
+            if (rawVarEntry.ContainsKey(name))
+            {
+                if (IsCompiled) IsCompiled = false;
+                rawVarEntry.Remove(name); // remove previously value of the same variable
+            }
+            var entry = new DrVarEntry(name, value);
+            if ((IsCompiled == true) && (entry.IsResolved() == false)) IsCompiled = false;
+            rawVarEntry.Add(name, entry);
+        }
+
+        #endregion Add
+
+        private static Dictionary<string, DrVarEntry> Clone(Dictionary<string, DrVarEntry> dVarEntry)
+        {
+            return new Dictionary<string, DrVarEntry>(dVarEntry);
         }
 
         public void Compile()
@@ -122,9 +172,35 @@ namespace DrOpen.DrCommon.DrVar
             //ValidateVariablesName();
             varEntry.Clear();
             varEntry = Clone(rawVarEntry);
+            CompileSelf();
             IsCompiled = true;
         }
 
+        private void CompileSelf()
+        {
+            foreach (var en in varEntry)
+            {
+                if (en.Value.IsResolved() == false)
+                {
+                    CheckLoopAndThrowException(en.Value);
+
+                }
+
+            }
+        }
+        /// <summary>
+        /// Detects self var loop and if it exists will throw the DrVarExceptionLoop
+        /// </summary>
+        /// <param name="en">var entry for analyze</param>
+        /// <exception cref="DrVarExceptionLoop" />
+        private void CheckLoopAndThrowException(DrVarEntry en)
+        {
+            foreach (var it in en.Items)
+            {
+                if (it.Name == en.Name) // self reference detected
+                    throw new DrVarExceptionLoop(en.Name, en.Value);
+            }
+        }
 
 
         /*

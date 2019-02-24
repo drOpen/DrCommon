@@ -86,5 +86,14 @@ namespace DrOpen.DrCommon.DrVar.Res {
                 return ResourceManager.GetString("MISS_VAR_NAME", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot resolve variable &apos;{0}&apos; in the text &apos;{1}&apos;..
+        /// </summary>
+        internal static string UNRESOLED_VAR {
+            get {
+                return ResourceManager.GetString("UNRESOLED_VAR", resourceCulture);
+            }
+        }
     }
 }

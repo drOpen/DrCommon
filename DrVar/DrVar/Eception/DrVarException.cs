@@ -88,6 +88,7 @@ namespace DrOpen.DrCommon.DrVar.Eception
         /// Creates incorrect variable name exception
         /// </summary>
         /// <param name="name">incorrect variable name</param>
+        /// <param name="missSign">missed sign</param>
         public DrVarExceptionMissVarEnd(string value, string missSign)
             : base(Msg.CANNOT_BUILD_VAR_NOT_CLOSED_SYMBOL, value, missSign)
         {
@@ -113,10 +114,36 @@ namespace DrOpen.DrCommon.DrVar.Eception
         /// Creates loop variable exception
         /// </summary>
         /// <param name="name">incorrect variable name</param>
+        /// <param name="value">incorrect var value</param>
         public DrVarExceptionLoop(string name, string value)
             : base(Msg.LOOP_VAR, name, value)
         {
             this.Value = value;
+            this.Name = name;
+        }
+    }
+    /// <summary>
+    /// The variable was not resolved
+    /// </summary>
+    public class DrVarExceptionResolve: DrVarException
+    {
+        /// <summary>
+        /// Variable name
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
+        /// Text contains unresolved var
+        /// </summary>
+        public string  Text { get; private set; }
+        /// <summary>
+        /// Creates the unresolved variable exception
+        /// </summary>
+        /// <param name="name">unresolved variable name</param>
+        /// <param name="text">text contains unresolved var</param>
+        public DrVarExceptionResolve(string name, string text)
+            : base(Msg.UNRESOLED_VAR, name, text)
+        {
+            this.Text = text;
             this.Name = name;
         }
     }

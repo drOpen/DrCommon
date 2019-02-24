@@ -35,7 +35,7 @@ namespace DrOpen.DrCommon.DrVar.Item
     /// <summary>
     /// list of variables
     /// </summary>
-    internal class DrVarItemsList : IEnumerable<DrVarItem>
+    internal class DrVarItemsList : IEnumerable<DrVarItem>, ICloneable
     {
         internal DrVarItemsList()
         {
@@ -48,6 +48,21 @@ namespace DrOpen.DrCommon.DrVar.Item
         {
             Parse(value);
         }
+        /// <summary>
+        /// Initialize the clone of the list of variables 
+        /// </summary>
+        /// <param name="list"></param>
+        internal DrVarItemsList(DrVarItemsList list)
+        {
+            this.OpenedVarCounter = list.OpenedVarCounter;
+            this.ClosedVarCounter = list.ClosedVarCounter;
+            this.EscapeVarSymbolCounter = list.EscapeVarSymbolCounter;
+            this.varItems = new List<DrVarItem>(list);
+            //foreach(var it in list ) {
+            //    this.varItems.Add(it);
+            //}
+        }
+
         /// <summary>
         /// list of variables
         /// </summary>
@@ -170,6 +185,14 @@ namespace DrOpen.DrCommon.DrVar.Item
             return GetEnumerator();
         }
         #endregion Enumerator
+        /// <summary>
+        /// Returns the clone of this class
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            return new DrVarItemsList(this);
+        }
     }
 
 }

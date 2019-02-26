@@ -43,7 +43,7 @@ namespace DrOpen.DrCommon.DrVar
         {
             VAR_UNRESOLVED_EXCEPTION = 1,
             VAR_UNRESOLVED_KEEP_TEXT,
-            VAR_UNRESOLVED_USE_EMPTY
+            VAR_UNRESOLVED_PUT_EMPTY
         }
         Dictionary<string, DrVarEntry> rawVarEntry;
         Dictionary<string, DrVarEntry> varEntry;
@@ -99,6 +99,26 @@ namespace DrOpen.DrCommon.DrVar
                 this.Items = (DrVarItemsList)entry.Clone();
             }
 
+            internal int Resolve(DrVarItem item, string value)
+            {
+                var pref = this.Value.Substring(0, item.StartIndex);
+                var suff = this.Value.Substring(item.EndIndex, this.Value.Length - 1);
+                return Items.Parse(pref + value + suff);
+            }
+            /// <summary>
+            /// Detects self var loop and if it exists will throw the DrVarExceptionLoop
+            /// </summary>
+            /// <param name="en">var entry for analyze</param>
+            /// <exception cref="DrVarExceptionLoop" />
+            public void CheckLoopAndThrowException()
+            {
+                foreach (var it in Items)
+                {
+                    if (it.Name == Name) // self reference detected
+                        throw new DrVarExceptionLoop(Name, Value);
+                }
+            }
+
             /// <summary>
             /// returns true if this variable doesn't have a referebce to another
             /// </summary>
@@ -115,6 +135,7 @@ namespace DrOpen.DrCommon.DrVar
 
         }
         #endregion var
+
 
         #region Add
         /// <summary>
@@ -178,29 +199,35 @@ namespace DrOpen.DrCommon.DrVar
 
         private void CompileSelf()
         {
-            foreach (var en in varEntry)
+            foreach (var en in varEntry.Values)
             {
-                if (en.Value.IsResolved() == false)
+                while (en.IsResolved() == false)
                 {
-                    CheckLoopAndThrowException(en.Value);
-
+                    en.CheckLoopAndThrowException();
+                    var item = en.Items.First<DrVarItem>();
+                    var value = GetVarItemValue(item);
+                    en.Resolve(item, value); ;
                 }
-
             }
         }
         /// <summary>
-        /// Detects self var loop and if it exists will throw the DrVarExceptionLoop
+        /// Returns value of variable depends on <see cref="Resolver"/> rule. If <see cref="Resolver"/> equals <see cref="VAR_RESOLVE.VAR_UNRESOLVED_EXCEPTION"/> will throw according exception.
         /// </summary>
-        /// <param name="en">var entry for analyze</param>
-        /// <exception cref="DrVarExceptionLoop" />
-        private void CheckLoopAndThrowException(DrVarEntry en)
+        /// <param name="item">var item</param>
+        /// <returns></returns>
+        private string GetVarItemValue(DrVarItem item)
         {
-            foreach (var it in en.Items)
+            if (varEntry.ContainsKey(item.Name) == false)
             {
-                if (it.Name == en.Name) // self reference detected
-                    throw new DrVarExceptionLoop(en.Name, en.Value);
+                if (Resolver == VAR_RESOLVE.VAR_UNRESOLVED_EXCEPTION)
+                    throw new DrVarExceptionResolve(item.Name);
+                else
+                    return String.Empty;
             }
+            return varEntry[item.Name].Value;
         }
+
+
 
 
         /*

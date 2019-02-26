@@ -88,17 +88,18 @@ namespace DrOpen.DrCommon.DrVar.Item
 
 
         /// <summary>
-        /// Stored the number of characters beginning variables
+        /// Stores the number of characters beginning variables
         /// </summary>
         public int OpenedVarCounter { get; private set; }
         /// <summary>
-        /// Stored the number of characters closure variables
+        /// Stores the number of characters closure variables
         /// </summary>
         public int ClosedVarCounter { get; private set; }
         /// <summary>
-        /// Stored the number of characters the escape of variables
+        /// Stores the number of characters the escape of variables
         /// </summary>
         public int EscapeVarSymbolCounter { get; private set; }
+       
         /// <summary>
         /// Parses the string for the presence of variables and makes list of variables and returns quantity of variables
         /// </summary>
@@ -106,7 +107,6 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// <returns>Returns quantity of variables</returns>
         internal int Parse(string value)
         {
-
             if (value.Contains(DrVarSign.varSign.ToString())) //Exit if the string does not contain a variable indicating symbol.
             {
 

@@ -132,18 +132,12 @@ namespace DrOpen.DrCommon.DrVar.Eception
         /// </summary>
         public string Name { get; private set; }
         /// <summary>
-        /// Text contains unresolved var
-        /// </summary>
-        public string  Text { get; private set; }
-        /// <summary>
         /// Creates the unresolved variable exception
         /// </summary>
         /// <param name="name">unresolved variable name</param>
-        /// <param name="text">text contains unresolved var</param>
-        public DrVarExceptionResolve(string name, string text)
-            : base(Msg.UNRESOLED_VAR, name, text)
+        public DrVarExceptionResolve(string name)
+            : base(Msg.UNRESOLED_VAR, name)
         {
-            this.Text = text;
             this.Name = name;
         }
     }

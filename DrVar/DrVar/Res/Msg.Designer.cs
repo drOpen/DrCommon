@@ -88,7 +88,7 @@ namespace DrOpen.DrCommon.DrVar.Res {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot resolve variable &apos;{0}&apos; in the text &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Cannot resolve variable &apos;{0}&apos;..
         /// </summary>
         internal static string UNRESOLED_VAR {
             get {

@@ -127,6 +127,6 @@
     <value>The variable name '{0}' contains the variable. Dynamic variable name is restricted.</value>
   </data>
   <data name="UNRESOLED_VAR" xml:space="preserve">
-    <value>Cannot resolve variable '{0}' in the text '{1}'.</value>
+    <value>Cannot resolve variable '{0}'.</value>
   </data>
 </root>

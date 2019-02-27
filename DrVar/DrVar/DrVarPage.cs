@@ -101,9 +101,16 @@ namespace DrOpen.DrCommon.DrVar
 
             internal int Resolve(DrVarItem item, string value)
             {
-                var pref = this.Value.Substring(0, item.StartIndex);
-                var suff = this.Value.Substring(item.EndIndex, this.Value.Length - 1);
-                return Items.Parse(pref + value + suff);
+                if (item.FullName == value) // replaces with the same value ! loop protection
+                {
+                    return ( item.EndIndex + 1 >= this.Value.Length ) ? Items.Parse(String.Empty) : Items.Parse( this.Value.Substring(item.EndIndex + 1, this.Value.Length - 1)); // skip this item 
+                }
+                else
+                {
+                    var pref = this.Value.Substring(0, item.StartIndex);
+                    var suff = (item.EndIndex + 1 >= this.Value.Length ) ? String.Empty : this.Value.Substring(item.EndIndex + 1, this.Value.Length - 1);
+                    return Items.Parse(pref + value + suff);
+                }
             }
             /// <summary>
             /// Detects self var loop and if it exists will throw the DrVarExceptionLoop
@@ -221,8 +228,10 @@ namespace DrOpen.DrCommon.DrVar
             {
                 if (Resolver == VAR_RESOLVE.VAR_UNRESOLVED_EXCEPTION)
                     throw new DrVarExceptionResolve(item.Name);
-                else
+                else if (Resolver == VAR_RESOLVE.VAR_UNRESOLVED_PUT_EMPTY)
                     return String.Empty;
+                else
+                    return item.FullName;
             }
             return varEntry[item.Name].Value;
         }

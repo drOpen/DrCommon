@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="UTestDrVarExceptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UTestDrVarResolve.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\DrData\DrDataEx\DrDataEx.csproj">

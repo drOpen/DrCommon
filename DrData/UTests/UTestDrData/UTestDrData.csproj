@@ -66,6 +66,7 @@
     <Compile Include="UTestDDValue.cs" />
     <Compile Include="UTestDDNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UTestDDValueCasting.cs" />
     <Compile Include="UTestDrDataCommon.cs" />
   </ItemGroup>
   <ItemGroup>

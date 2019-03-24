@@ -502,20 +502,46 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>Returns array by specified type</returns>
         public virtual T[] GetValueAsArray<T>()
         {
-            if (typeof(T) == typeof(string)) //string array convertion
-            {
-                if (Size == 0) return new T[] { };
-                return (T[])((object)GetValueAsString().Split('\0'));
-            }
+            // ****** TBD *******
 
-            var sizePerElements = GetPrimitiveSize(typeof(T));
-            var result = new T[this.Size / sizePerElements];
-            for (int i = 0; i < this.Size / sizePerElements; i++)
+            if (Size == 0) return new T[] { }; // returns empty array of requested type
+                // if the requested type is string[]
+            if (typeof(T) == typeof(string))
             {
-                var tmp = new byte[sizePerElements];
-                Array.Copy(data, i * sizePerElements, tmp, 0, sizePerElements);
+                var s = ToStringArray();
+                var r = new T[s.Length];
+                Array.Copy(s, r, s.Length); // creates temporary array and copy data because stupid c# disallow cast (T) string[]
+                return r;
+            }
+            var sizePerElementsTarget = GetPrimitiveSize(typeof(T));
+            var sizePerElementsSource = 0; 
+            if (this.Type.IsArray)
+            {
+                sizePerElementsSource = GetPrimitiveSize(this.Type.GetElementType());
+            } else {
+                
+                sizePerElementsSource = GetPrimitiveSize(this.Type);
+            }
+                var lenght = this.Size / sizePerElementsSource;
+
+            var result = new T[lenght];
+            for (int i = 0; i < lenght; i++)
+            {
+                var tmp = new byte[sizePerElementsSource];
+                Array.Copy(data, i * sizePerElementsSource, tmp, 0, sizePerElementsSource);
                 result[i] = (T)GetValueObjByType(typeof(T), tmp);
             }
+            // --- start original ---
+            //var sizePerElements = GetPrimitiveSize(typeof(T));
+            //var result = new T[this.Size / sizePerElements];
+            //for (int i = 0; i < this.Size / sizePerElements; i++)
+            //{
+            //    var tmp = new byte[sizePerElements];
+            //   Array.Copy(data, i * sizePerElements, tmp, 0, sizePerElements);
+            //    result[i] = (T)GetValueObjByType(typeof(T), tmp);
+            //}
+            // --- end original ----
+
             return result;
         }
         /// <summary>

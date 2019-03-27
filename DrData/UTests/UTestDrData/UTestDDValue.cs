@@ -2956,8 +2956,12 @@ namespace UTestDrData
         [TestMethod]
         public void TestByteArrayDataToStringArray()
         {
-            var d = new DDValue(new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6 });
-            Assert.IsTrue(CompareStringArray(new string[] { d.GetValueAsHEX() }, d.ToStringArray()), "ToStringArray() should be return byte array as hex string array");
+            var b = new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0xff}; 
+            var d = new DDValue(b);
+            var s = new string[b.Length];
+            for (var i = 0; i < b.Length; i++)
+                s[i] = b[i].ToString(DDSchema.StringByteFormat);
+            Assert.IsTrue(CompareStringArray(s, d.ToStringArray()), "ToStringArray() should be return byte array as hex string array");
         }
         [TestMethod]
         public void TestBoolDataToStringArray()
@@ -3065,10 +3069,10 @@ namespace UTestDrData
         [TestMethod]
         public void TestSelfTransformFromStringArrayTo_ByteArray()
         {
-            var v = new DDValue(new[] { "1", "2", "3" });
+            var v = new DDValue(new[] { "1", "2", "3", "255" });
 
             v.ConvertFromStringTo(typeof(byte[]));
-            ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 }, v);
+            ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 , 0xff}, v);
 
         }
 

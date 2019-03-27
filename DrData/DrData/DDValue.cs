@@ -502,35 +502,59 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>Returns array by specified type</returns>
         public virtual T[] GetValueAsArray<T>()
         {
-            // ****** TBD *******
+            // ***
+            if (this.data == null) return null;
+            if (this.Size == 0) return new T[] { };// returns empty array of requested type
 
-            if (Size == 0) return new T[] { }; // returns empty array of requested type
-                // if the requested type is string[]
-            if (typeof(T) == typeof(string))
-            {
-                var s = ToStringArray();
-                var r = new T[s.Length];
-                Array.Copy(s, r, s.Length); // creates temporary array and copy data because stupid c# disallow cast (T) string[]
-                return r;
+            int sizePerElementsSource = 0;
+            long length = 0;
+            Type sourceElementType = (this.Type.IsArray ? this.Type.GetElementType() : this.Type);
+            T[] result;
+            // casts to string array
+            if (typeof(T) == typeof (string))  {
+                //  --- if both requested and current types are string or string array return it
+                if (sourceElementType == typeof(string)) return (T[])((object)GetValueAsString().Split('\0'));
+                // ***  --- if requested type is string and current type is byte array return string HEX array 
+                // if (this.Type == typeof(byte[])) return (T[]) (object) HEX(data) ;
+                // convert premitivies
+                sizePerElementsSource = GetPrimitiveSize(sourceElementType);
+                length= this.Size / sizePerElementsSource;
+                result = new T[length];
+                for (int i = 0; i < length; i++)
+                {
+                    var tmp = new byte[sizePerElementsSource];
+                    Array.Copy(data, i * sizePerElementsSource, tmp, 0, sizePerElementsSource);
+                    result[i] = (T)(object)GetObjAsStringByType(sourceElementType, GetValueObjByType(sourceElementType, tmp));
+                }
+                return result;
             }
+
+            // casts string to array of primitive 
+            // if (this.Type == typeof(string)) return new T[] {GetValueAs<T>()};
+            // casts string array to array of primitive
+            if ( sourceElementType == typeof(string)) 
+            {
+                var tmp = GetValueAsString().Split('\0');
+                result = new T[tmp.Length];
+                for (var i = 0; i < tmp.Length; i++ )
+                {
+                    result[i] = (T)ConvertFromStringTo(typeof(T), tmp[i]); //(T)GetValueObjByType(typeof(T), Encoding.UTF8.GetBytes(tmp[i]));
+                }
+                return result;
+            }
+           
+            // casts primitivies to primitivies
             var sizePerElementsTarget = GetPrimitiveSize(typeof(T));
-            var sizePerElementsSource = 0; 
-            if (this.Type.IsArray)
-            {
-                sizePerElementsSource = GetPrimitiveSize(this.Type.GetElementType());
-            } else {
-                
-                sizePerElementsSource = GetPrimitiveSize(this.Type);
-            }
-                var lenght = this.Size / sizePerElementsSource;
-
-            var result = new T[lenght];
+            sizePerElementsSource =   GetPrimitiveSize(sourceElementType);
+            var lenght = this.Size / sizePerElementsSource;
+            result = new T[lenght];
             for (int i = 0; i < lenght; i++)
             {
                 var tmp = new byte[sizePerElementsSource];
                 Array.Copy(data, i * sizePerElementsSource, tmp, 0, sizePerElementsSource);
                 result[i] = (T)GetValueObjByType(typeof(T), tmp);
             }
+            return result;
             // --- start original ---
             //var sizePerElements = GetPrimitiveSize(typeof(T));
             //var result = new T[this.Size / sizePerElements];
@@ -542,7 +566,6 @@ namespace DrOpen.DrCommon.DrData
             //}
             // --- end original ----
 
-            return result;
         }
         /// <summary>
         /// Get value by specified type
@@ -971,6 +994,7 @@ namespace DrOpen.DrCommon.DrData
             // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
             // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
             // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
+            if (type == typeof(byte)) return ((byte)value).ToString(DDSchema.StringByteFormat);
             if (type == typeof(Single)) return ((Single)value).ToString(DDSchema.StringRoundTripFormat);
             if (type == typeof(Double)) return ((Double)value).ToString(DDSchema.StringRoundTripFormat);
             if (type == typeof(float)) return ((float)value).ToString(DDSchema.StringRoundTripFormat);
@@ -997,22 +1021,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         public virtual string[] ToStringArray()
         {
-            if (data == null) return new string[] { };
-            if (Type == typeof(byte[])) return new string[] { HEX(data) };
-            if (Type.IsArray)
-            {
-                var array = (Array)GetValue();
-                var result = new string[array.Length];
-                var elementType = Type.GetElementType();
-                int i = 0;
-                foreach (var item in array)
-                {
-                    result[i] = GetObjAsStringByType(elementType, item);
-                    i++;
-                }
-                return result;
-            }
-            return new string[] { GetValue().ToString() };
+            return GetValueAsArray<string>();
         }
         #endregion  ToString
         #region HEX

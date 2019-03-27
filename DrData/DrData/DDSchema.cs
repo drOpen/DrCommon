@@ -44,6 +44,7 @@ namespace DrOpen.DrCommon.DrData
         #region string format
         public const string StringDateTimeFormat = "o"; //ISO 8601 format
         public const string StringRoundTripFormat = "r"; //round-trip format for Single, Double, and BigInteger types.
+        public const string StringByteFormat = ""; //"x2";
         #endregion string format
     }
 }

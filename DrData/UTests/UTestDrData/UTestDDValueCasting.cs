@@ -43,15 +43,22 @@ namespace UTestDrData
         private const string CLASS_CATEGORY = "DDValue";
 
         #region 2 string
-        [TestMethod]
-        [TestCategory(TEST_CATEGORY)]
-        [TestCategory(CLASS_CATEGORY)]
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestCastingNull()
         {
             string[] src = new string[] { null, null, null };
 
             var trg = new int[src.Length]; 
             CheckArrayCast2Array<string, int>(src, trg);
+        }
+
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestCastingInt2String()
+        {
+            int[] src = new int[] { int.MinValue, 0, int.MaxValue };
+            var trg = ConvertArray2StringArray<int>(src);
+            CheckItemCast2Array<int, string>(src, trg);
+            CheckItemCast2Array<string, int>(trg, src);
         }
 
         #endregion 2 string
@@ -235,7 +242,7 @@ namespace UTestDrData
             CheckItemCast2Array<string, double>(trg, src);
         }
 
-        private void CheckItemCast2Array<S, T>(S[] src, T[] trg)
+        private void CheckItemCast2Array<S, T>(S[] src, T[] trg) 
         {
             for (var i = 0; i < src.Length; i++)
             {
@@ -246,6 +253,9 @@ namespace UTestDrData
                     "The element of string array '{0}' doesn't much 'DDValue.ToString()' result '{1}'. The first element must be equal 'DDValue.ToString()' result.", res[0].ToString(), trg[i].ToString());
                 Assert.AreEqual(res[0], trg[i],
                     "The element value of result '{0}' doesn't equal '{1}'. The value of the first element must be equal '{1}'.", res[0], trg[i]);
+                var cast = (T)(new DDValue(src[i]).GetValueAs<T>() );
+                Assert.AreEqual(cast, trg[i],
+                    "Value '{0} is not equal to '{1}' after casting from '{2}' to '{3}'.", cast.ToString(), trg[i].ToString(), typeof(S).Name, typeof(T).Name);
             }
         }
 

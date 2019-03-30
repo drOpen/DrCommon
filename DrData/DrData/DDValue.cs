@@ -29,6 +29,7 @@ using System.Text;
 using DrOpen.DrCommon.DrData.Res;
 using DrOpen.DrCommon.DrData.Exceptions;
 using System.Runtime.Serialization;
+using System.Globalization;
 
 namespace DrOpen.DrCommon.DrData
 {
@@ -511,14 +512,15 @@ namespace DrOpen.DrCommon.DrData
             Type sourceElementType = (this.Type.IsArray ? this.Type.GetElementType() : this.Type);
             T[] result;
             // casts to string array
-            if (typeof(T) == typeof (string))  {
+            if (typeof(T) == typeof(string))
+            {
                 //  --- if both requested and current types are string or string array return it
                 if (sourceElementType == typeof(string)) return (T[])((object)GetValueAsString().Split('\0'));
                 // ***  --- if requested type is string and current type is byte array return string HEX array 
                 // if (this.Type == typeof(byte[])) return (T[]) (object) HEX(data) ;
                 // convert premitivies
                 sizePerElementsSource = GetPrimitiveSize(sourceElementType);
-                length= this.Size / sizePerElementsSource;
+                length = this.Size / sizePerElementsSource;
                 result = new T[length];
                 for (int i = 0; i < length; i++)
                 {
@@ -532,20 +534,21 @@ namespace DrOpen.DrCommon.DrData
             // casts string to array of primitive 
             // if (this.Type == typeof(string)) return new T[] {GetValueAs<T>()};
             // casts string array to array of primitive
-            if ( sourceElementType == typeof(string)) 
+            if (sourceElementType == typeof(string))
             {
                 var tmp = GetValueAsString().Split('\0');
                 result = new T[tmp.Length];
-                for (var i = 0; i < tmp.Length; i++ )
+                for (var i = 0; i < tmp.Length; i++)
                 {
-                    result[i] = (T)ConvertFromStringTo(typeof(T), tmp[i]); //(T)GetValueObjByType(typeof(T), Encoding.UTF8.GetBytes(tmp[i]));
+                    if (tmp[i].Length != 0) // if string is empty saves the default value of type  
+                        result[i] = (T)ConvertFromStringTo(typeof(T), tmp[i]); //(T)GetValueObjByType(typeof(T), Encoding.UTF8.GetBytes(tmp[i]));
                 }
                 return result;
             }
-           
+
             // casts primitivies to primitivies
             var sizePerElementsTarget = GetPrimitiveSize(typeof(T));
-            sizePerElementsSource =   GetPrimitiveSize(sourceElementType);
+            sizePerElementsSource = GetPrimitiveSize(sourceElementType);
             var lenght = this.Size / sizePerElementsSource;
             result = new T[lenght];
             for (int i = 0; i < lenght; i++)
@@ -555,17 +558,6 @@ namespace DrOpen.DrCommon.DrData
                 result[i] = (T)GetValueObjByType(typeof(T), tmp);
             }
             return result;
-            // --- start original ---
-            //var sizePerElements = GetPrimitiveSize(typeof(T));
-            //var result = new T[this.Size / sizePerElements];
-            //for (int i = 0; i < this.Size / sizePerElements; i++)
-            //{
-            //    var tmp = new byte[sizePerElements];
-            //   Array.Copy(data, i * sizePerElements, tmp, 0, sizePerElements);
-            //    result[i] = (T)GetValueObjByType(typeof(T), tmp);
-            //}
-            // --- end original ----
-
         }
         /// <summary>
         /// Get value by specified type
@@ -575,6 +567,32 @@ namespace DrOpen.DrCommon.DrData
         public virtual T GetValueAs<T>()
         {
             return (T)GetValueObjByType(typeof(T), data);
+        }
+        /// <summary>
+        /// Returns default value for specific type. For string retirns String.Empty
+        /// </summary>
+        /// <typeparam name="T">supported types</typeparam>
+        /// <returns></returns>
+        protected static T GetDefaultValueByType<T>()
+        {
+            if (!typeof(T).IsArray)
+            {
+                if (typeof(T) == typeof(string)) return (T)(object)String.Empty;
+                if (typeof(T) == typeof(DateTime)) return (T)(object)new DateTime();
+                if (typeof(T) == typeof(byte)) return (T)(object)new Byte();
+                if (typeof(T) == typeof(char)) return (T)(object)new Char();
+                if (typeof(T) == typeof(short)) return (T)(object)new short();
+                if (typeof(T) == typeof(ushort)) return (T)(object)new ushort();
+                if (typeof(T) == typeof(int)) return (T)(object)new int();
+                if (typeof(T) == typeof(uint)) return (T)(object)new uint();
+                if (typeof(T) == typeof(long)) return (T)(object)new long();
+                if (typeof(T) == typeof(ulong)) return (T)(object)new ulong();
+                if (typeof(T) == typeof(float)) return (T)(object)new float();
+                if (typeof(T) == typeof(double)) return (T)(object)new double();
+                if (typeof(T) == typeof(bool)) return (T)(object)new bool();
+                if (typeof(T) == typeof(Guid)) return (T)(object)new Guid();
+            }
+            throw new DDTypeIncorrectException(typeof(T).ToString());
         }
 
         protected static object GetValueObjByType(Type type, byte[] data)
@@ -1125,7 +1143,15 @@ namespace DrOpen.DrCommon.DrData
                 if (type == typeof(byte[])) return HEX(value);
                 if (type == typeof(byte)) return Convert.ToByte(value);
                 if (type == typeof(string)) return value.ToString();
-                if (type == typeof(DateTime)) return Convert.ToDateTime(value);
+
+                if (type == typeof(DateTime))
+                {
+                    DateTime res;
+                    if (DateTime.TryParseExact(value, DDSchema.StringDateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out res))
+                        return res;
+                    else
+                        return Convert.ToDateTime(value);
+                }
                 if (type == typeof(bool)) return Convert.ToBoolean(value);
                 if (type == typeof(char)) return Convert.ToChar(value);
                 if (type == typeof(float)) return Convert.ToSingle(value);
@@ -1156,15 +1182,15 @@ namespace DrOpen.DrCommon.DrData
             try
             {
                 var elType = type.GetElementType();
-                var objArray =  GetStubArrayByType(type, value.Length) ;
-                
-                int i = 0 ;
+                var objArray = GetStubArrayByType(type, value.Length);
+
+                int i = 0;
                 foreach (var item in value)
                 {
-                    objArray.SetValue( ConvertFromStringTo(elType, item), i );
+                    objArray.SetValue(ConvertFromStringTo(elType, item), i);
                     i++;
                 }
-                return  Convert.ChangeType(objArray, type);
+                return Convert.ChangeType(objArray, type);
             }
             catch (Exception e)
             {

@@ -86,7 +86,7 @@ namespace DrOpen.DrCommon.DrVar
             public DrVarEntry(string name, string value)
             {
                 var DynNames = DrVarItemsList.GetItemsList(name);
-                if (DynNames.Count() != 0) throw new DrVarExceptionMissName(DynNames.ToArray<Item.DrVarItem>()[0].FullName);
+                if (DynNames.Count() != 0) throw new DrVarExceptionMissName(DynNames.First<DrVarItem>().FullName);
                 this.Name = name;
                 this.Value = value;
                 this.Items = DrVarItemsList.GetItemsList(value);

@@ -120,9 +120,15 @@ namespace DrOpen.DrCommon.DrVar
 
         #endregion Add
 
-        private static Dictionary<string, DrVarEntry> Clone(Dictionary<string, DrVarEntry> dVarEntry)
+        private static Dictionary<string, DrVarEntry> Clone(Dictionary<string, DrVarEntry> varEntries)
         {
-            return new Dictionary<string, DrVarEntry>(dVarEntry);
+            var t = new Dictionary<string, DrVarEntry>(varEntries.Count);
+            foreach (var en in varEntries)
+            {
+                t.Add(en.Key, en.Value.Clone());
+            }
+
+            return t;
         }
 
         public void Compile()

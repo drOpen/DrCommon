@@ -25,12 +25,14 @@
 
  */
 
+using System;
 namespace DrOpen.DrCommon.DrVar.Item
 {
     /// <summary>
     /// stored variable item, immutable structure
     /// </summary>
-    internal struct DrVarItem 
+    internal struct DrVarItem : ICloneable
+
     {
         /// <summary>
         /// Initializes a new instance of the variable item
@@ -49,6 +51,10 @@ namespace DrOpen.DrCommon.DrVar.Item
             Name = name;
             FullName = fullName;
         }
+
+        internal DrVarItem(DrVarItem it) : this(it.StartIndex, it.EndIndex, it.Name, it.FullName)
+        { }
+
         /// <summary>
         /// Gets/sets the start index of substitution symbol
         /// </summary>
@@ -65,5 +71,15 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// Gets/sets the name of substitution with substitution symbols
         /// </summary>
         public string FullName { private set; get; }
+
+        public DrVarItem Clone()
+        {
+            return new DrVarItem(this);
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
     }
 }

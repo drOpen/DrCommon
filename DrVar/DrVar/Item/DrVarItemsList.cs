@@ -57,10 +57,10 @@ namespace DrOpen.DrCommon.DrVar.Item
             this.OpenedVarCounter = list.OpenedVarCounter;
             this.ClosedVarCounter = list.ClosedVarCounter;
             this.EscapeVarSymbolCounter = list.EscapeVarSymbolCounter;
-            this.varItems = new List<DrVarItem>(list);
-            //foreach(var it in list ) {
-            //    this.varItems.Add(it);
-            //}
+            this.varItems = new List<DrVarItem>(list.varItems.Count);
+            foreach(var it in list ) {
+                this.varItems.Add(it.Clone());
+            }
         }
 
         /// <summary>
@@ -107,6 +107,7 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// <returns>Returns quantity of variables</returns>
         internal int Parse(string value)
         {
+            varItems.Clear();
             if (value.Contains(DrVarSign.varSign.ToString())) //Exit if the string does not contain a variable indicating symbol.
             {
 
@@ -185,13 +186,18 @@ namespace DrOpen.DrCommon.DrVar.Item
             return GetEnumerator();
         }
         #endregion Enumerator
+
+        public DrVarItemsList Clone()
+        {
+            return new DrVarItemsList(this);
+        }
         /// <summary>
         /// Returns the clone of this class
         /// </summary>
         /// <returns></returns>
-        public object Clone()
+        object ICloneable.Clone()
         {
-            return new DrVarItemsList(this);
+            return this.Clone();
         }
     }
 

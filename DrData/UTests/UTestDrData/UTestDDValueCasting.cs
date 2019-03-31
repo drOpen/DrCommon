@@ -146,13 +146,12 @@ namespace UTestDrData
         [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestConvertSByte()
         {
-            var src = sbyte.MinValue;
+            var src = byte.MinValue;
             var v = new DDValue(src);
            
             var res = Convert.ToSByte((object)v);
-            var trg = v.GetValueAsSByte();
+            var trg = (sbyte)(v.GetValueAsByte() - 128);
             Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
-            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
         }
         [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestConvertFloat()
@@ -248,7 +247,6 @@ namespace UTestDrData
             src = new int[] {byte.MinValue, byte.MinValue, 0 , byte.MaxValue, byte.MaxValue};
             CheckItemCast2Array<byte, int>(trg, src);
         }
-
         [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestCastingDateTime2Long2DateTime()
         {

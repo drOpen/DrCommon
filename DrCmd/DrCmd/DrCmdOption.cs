@@ -599,7 +599,11 @@ namespace DrOpen.DrCommon.DrCmd
             }
             if (Option.Attributes.Contains(DrCmdOptionSettings.ValueType)) // if ValueType is specified value will be converted to specified Type
             {
-                if ((value.Type == typeof(System.String)) || (value.Type == typeof(System.String[]))) value.ConvertFromStringTo(Option.Attributes[DrCmdOptionSettings.ValueType].GetValueAsString());
+                if ((value.Type == typeof(System.String)) || (value.Type == typeof(System.String[])))
+                {
+                    var t = System.Type.GetType(Option.Attributes[DrCmdOptionSettings.ValueType].GetValueAsString());
+                    value.ConvertTo(t);
+                }
             }
             Option.Attributes.Add(DrCmdOptionSettings.Value, value);
         }

@@ -576,6 +576,7 @@ namespace UTestDrCmd
                 Assert.IsTrue(e.Value == incorrectValue, "The exception value for convertion is not correct.");
             }
         }
+       /*
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
         public void TestConvertResultValue_ConvertTypeStringArray2StringException()
         {
@@ -599,6 +600,8 @@ namespace UTestDrCmd
                 Assert.IsTrue(e.TypeName == valueTypeName, "The exception value Type for convertion is not correct.");
             }
         }
+        */
+        /*
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
         public void TestConvertResultValue_ConvertTypeString2StringArrayException()
         {
@@ -622,6 +625,7 @@ namespace UTestDrCmd
                 Assert.IsTrue(e.TypeName == valueTypeName, "The exception value Type for convertion is not correct.");
             }
         }
+        */
         [TestMethod, TestCategory("DrCmdParser"), TestCategory("ConvertResultValue")]
         public void TestConvertResultValue_ConvertType2IntArrayException()
         {

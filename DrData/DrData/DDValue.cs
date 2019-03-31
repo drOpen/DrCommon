@@ -169,8 +169,6 @@ namespace DrOpen.DrCommon.DrData
         {
             // if (type == typeof(byte[])) return (byte[])value; // it does not work
             if (type == typeof(byte)) return new[] {(byte)value};
-            if (type == typeof(sbyte)) return new[] {(byte)(sbyte)value};
-
             if (type == typeof(string)) return Encoding.UTF8.GetBytes(value.ToString());
             if (type == typeof(DateTime)) return BitConverter.GetBytes(((DateTime)value).ToBinary());
             if (type == typeof(bool)) return BitConverter.GetBytes((bool)value);
@@ -220,7 +218,7 @@ namespace DrOpen.DrCommon.DrData
 
         /// <summary>
         /// Convert string to byte[] by specified type.
-        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double or an array of the above types
+        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, decimal, double or an array of the above types
         /// </summary>
         /// <param name="type">convert by specified type</param>
         /// <param name="value">string to convert</param>
@@ -375,14 +373,6 @@ namespace DrOpen.DrCommon.DrData
         {
             return new DDValue(value);
         }
-        public static implicit operator DDValue(sbyte value)
-        {
-            return new DDValue(value);
-        }
-        public static implicit operator DDValue(sbyte[] value)
-        {
-            return new DDValue(value);
-        }
         #endregion -> DDValue
         #region  DDValue ->
         public static implicit operator int(DDValue value)
@@ -505,59 +495,56 @@ namespace DrOpen.DrCommon.DrData
         {
             return value.GetValueAsByteArray();
         }
-        public static implicit operator sbyte(DDValue value)
-        {
-            return value.GetValueAsSByte();
-        }
-        public static implicit operator sbyte[](DDValue value)
-        {
-            return value.GetValueAsSByteArray();
-        }
         #endregion  DDValue ->
         #endregion implicit operator
         #region GetValue
 
         /// <summary>
-        /// Get value by type
+        /// Get value by current type
         /// </summary>
         /// <returns></returns>
         public virtual object GetValue()
         {
-
-            if (Type == typeof(string)) return GetValueAsString();
-            if (Type == typeof(string[])) return GetValueAsStringArray();
-            if (Type == typeof(DateTime)) return GetValueAsDateTime();
-            if (Type == typeof(DateTime[])) return GetValueAsDateTimeArray();
-            if (Type == typeof(byte)) return GetValueAsByte();
-            if (Type == typeof(byte[])) return GetValueAsByteArray();
-            if (Type == typeof(sbyte)) return GetValueAsSByte();
-            if (Type == typeof(sbyte[])) return GetValueAsSByteArray();
-            if (Type == typeof(short)) return GetValueAsShort();
-            if (Type == typeof(short[])) return GetValueAsShortArray();
-            if (Type == typeof(ushort)) return GetValueAsUShort();
-            if (Type == typeof(ushort[])) return GetValueAsUShortArray();
-            if (Type == typeof(int)) return GetValueAsInt();
-            if (Type == typeof(int[])) return GetValueAsIntArray();
-            if (Type == typeof(uint)) return GetValueAsUInt();
-            if (Type == typeof(uint[])) return GetValueAsUIntArray();
-            if (Type == typeof(long)) return GetValueAsLong();
-            if (Type == typeof(long[])) return GetValueAsLongArray();
-            if (Type == typeof(ulong)) return GetValueAsULong();
-            if (Type == typeof(ulong[])) return GetValueAsULongArray();
-            if (Type == typeof(char)) return GetValueAsChar();
-            if (Type == typeof(char[])) return GetValueAsCharArray();
-            if (Type == typeof(float)) return GetValueAsFloat();
-            if (Type == typeof(float[])) return GetValueAsFloatArray();
-            if (Type == typeof(decimal)) return GetValueAsDecimal();
-            if (Type == typeof(decimal[])) return GetValueAsDecimalArray();
-            if (Type == typeof(double)) return GetValueAsDouble();
-            if (Type == typeof(double[])) return GetValueAsDoubleArray();
-            if (Type == typeof(bool)) return GetValueAsBool();
-            if (Type == typeof(bool[])) return GetValueAsBoolArray();
-            if (Type == typeof(Guid)) return GetValueAsGuid();
-            if (Type == typeof(Guid[])) return GetValueAsGuidArray();
-            if (Type == null) return null;
-
+            return GetValue(this.Type);
+        }
+        /// <summary>
+        /// Returns value by specified type
+        /// </summary>
+        /// <param name="t">type</param>
+        /// <returns></returns>
+        protected virtual object GetValue(Type t)
+        {
+            if (t == typeof(string)) return GetValueAsString();
+            if (t== typeof(string[])) return GetValueAsStringArray();
+            if (t== typeof(DateTime)) return GetValueAsDateTime();
+            if (t== typeof(DateTime[])) return GetValueAsDateTimeArray();
+            if (t== typeof(byte)) return GetValueAsByte();
+            if (t== typeof(byte[])) return GetValueAsByteArray();
+            if (t== typeof(short)) return GetValueAsShort();
+            if (t== typeof(short[])) return GetValueAsShortArray();
+            if (t== typeof(ushort)) return GetValueAsUShort();
+            if (t== typeof(ushort[])) return GetValueAsUShortArray();
+            if (t== typeof(int)) return GetValueAsInt();
+            if (t== typeof(int[])) return GetValueAsIntArray();
+            if (t== typeof(uint)) return GetValueAsUInt();
+            if (t== typeof(uint[])) return GetValueAsUIntArray();
+            if (t== typeof(long)) return GetValueAsLong();
+            if (t== typeof(long[])) return GetValueAsLongArray();
+            if (t== typeof(ulong)) return GetValueAsULong();
+            if (t== typeof(ulong[])) return GetValueAsULongArray();
+            if (t== typeof(char)) return GetValueAsChar();
+            if (t== typeof(char[])) return GetValueAsCharArray();
+            if (t== typeof(float)) return GetValueAsFloat();
+            if (t== typeof(float[])) return GetValueAsFloatArray();
+            if (t== typeof(decimal)) return GetValueAsDecimal();
+            if (t== typeof(decimal[])) return GetValueAsDecimalArray();
+            if (t== typeof(double)) return GetValueAsDouble();
+            if (t== typeof(double[])) return GetValueAsDoubleArray();
+            if (t== typeof(bool)) return GetValueAsBool();
+            if (t== typeof(bool[])) return GetValueAsBoolArray();
+            if (t== typeof(Guid)) return GetValueAsGuid();
+            if (t== typeof(Guid[])) return GetValueAsGuidArray();
+            if (t== null) return null;
             throw new DDTypeIncorrectException(Type.ToString());
         }
         /// <summary>
@@ -715,8 +702,6 @@ namespace DrOpen.DrCommon.DrData
 
             if (type == typeof(byte)) return data[0];
             if (type == typeof(byte[])) return data;
-            if (type == typeof(sbyte)) return data[0];
-            if (type == typeof(sbyte[])) return data;
 
             if (type == typeof(short)) return BitConverter.ToInt16(data, 0);
             if (type == typeof(ushort)) return BitConverter.ToUInt16(data, 0);
@@ -742,18 +727,6 @@ namespace DrOpen.DrCommon.DrData
         {
             return data[0];
         }
-        public virtual sbyte[] GetValueAsSByteArray()
-        {
-            var res = new sbyte[data.Length];
-            for (int i = 0; i < res.Length; i++)
-                res[i] = (sbyte)data[i];
-            return res;
-        }
-        public virtual sbyte GetValueAsSByte()
-        {
-            return (sbyte)data[0];
-        }
-
         public virtual string GetValueAsString()
         {
             return GetValueAs<string>(); //Encoding.UTF8.GetString(data);
@@ -901,7 +874,7 @@ namespace DrOpen.DrCommon.DrData
 
         /// <summary>
         /// Checks the type.
-        /// Supports the following types: string, char, bool, byte, DateTime, short, int, float, long, ushort, uint, ulong, double and Guid or an array of the above types. 
+        /// Supports the following types: string, char, bool, byte, sbye, DateTime, short, int, float, long, ushort, uint, ulong, double, decimal and Guid or an array of the above types. 
         /// Nullable array type is not supported.
         /// </summary>
         /// <param name="type">type for validation</param>
@@ -925,7 +898,6 @@ namespace DrOpen.DrCommon.DrData
                     type == typeof(char) ||
                     type == typeof(bool) ||
                     type == typeof(byte) ||
-                    type == typeof(sbyte) ||
                     type == typeof(short) ||
                     type == typeof(float) ||
                     type == typeof(long) ||
@@ -964,7 +936,6 @@ namespace DrOpen.DrCommon.DrData
         protected static int GetPrimitiveSize(Type type)
         {
             if (type == typeof(byte)) return sizeof(byte);
-            if (type == typeof(sbyte)) return sizeof(sbyte);
             if (type == typeof(short)) return sizeof(short);
             if (type == typeof(ushort)) return sizeof(ushort);
             if (type == typeof(int)) return sizeof(int);
@@ -1145,7 +1116,6 @@ namespace DrOpen.DrCommon.DrData
             // Workarround for MS ToString() issue for Single, Double, and BigInteger types.
             // for example: Single.MaxValue -> 3.40282347E+38, after ToString() -> 3.402823E+38, - lost data
             // The round-trip ("R") format: http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx#RFormatString
-            if (type == typeof(byte)) return ((byte)value).ToString(DDSchema.StringByteFormat);
             if (type == typeof(Single)) return ((Single)value).ToString(DDSchema.StringRoundTripFormat);
             if (type == typeof(Double)) return ((Double)value).ToString(DDSchema.StringRoundTripFormat);
             if (type == typeof(float)) return ((float)value).ToString(DDSchema.StringRoundTripFormat);
@@ -1214,27 +1184,36 @@ namespace DrOpen.DrCommon.DrData
         #endregion HEX
         #region Convert
         /// <summary>
-        /// Converts this value to specified type from string or string array. Change themselves and their data type.
-        /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
-        /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
+        /// Converts current value to specified array type. Specify elemnt type 'int' not array type 'int[]'
         /// </summary>
-        /// <param name="elType">convert to specified type</param>
-        /// <returns></returns>
-        public void ConvertTo(string newType)
-        {
-            ConvertTo(Type.GetType(newType));
-        }
-
-        /// <summary>
-        /// Converts this value to specified type from string or string array. Change themselves and their data type.
-        /// If original type is not string or string array the <exception cref="DDTypeConvertException">DDTypeConvertExceptions</exception> will be thrown.<para> </para>
-        /// If original type is null the <exception cref="DDTypeNullException">DDTypeNullException</exception> will be thrown.<para> </para>
-        /// </summary>
-        /// <param name="elType">convert to specified type</param>
-        /// <returns></returns>
-        public void ConvertTo(Type newType)
+        /// <typeparam name="T">Element type, for example, 'bool'. Don't specify array type 'bool[]'.</typeparam>
+        public void ConvertToArray<T>()
         {
             if (this.Type == null) throw new DDTypeNullException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
+            DDValue tmp = new DDValue(GetValueAsArray<T>());
+            this.data = tmp.data;
+            this.type = tmp.type;
+        }
+        /// <summary>
+        /// Converts current value to specify type. Don't specify array type
+        /// </summary>
+        /// <typeparam name="T">New type</typeparam>
+        public void ConvertTo<T>()
+        {
+            if (this.Type == null) throw new DDTypeNullException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
+            DDValue tmp = new DDValue(GetValueAs<T>());
+            this.data = tmp.data;
+            this.type = tmp.type;
+        }
+        public void ConvertTo(Type t)
+        {
+            DDValue tmp = new DDValue(GetValue(t));
+            this.data = tmp.data;
+            this.type = tmp.type;
+        }
+        /*
+        public void ConvertTo(Type newType)
+        {
             if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.FullName, newType.FullName, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
             if (this.Type.IsArray != newType.IsArray) throw new DDTypeConvertException(this.type.FullName, newType.FullName, string.Format(Msg.CANNOT_TRANSFORM_ARRAY_TYPE_TO_NOT_ARRAY, this.type.FullName, newType.FullName));
             if ((newType == typeof(string) || (newType == typeof(string[])))) return; // nothing to do
@@ -1260,6 +1239,7 @@ namespace DrOpen.DrCommon.DrData
             }
             this.type = newType;
         }
+         */
         #endregion Convert
         #region Convert Static
         /// <summary>
@@ -1275,7 +1255,6 @@ namespace DrOpen.DrCommon.DrData
             {
                 if (type == typeof(byte[])) return HEX(value);
                 if (type == typeof(byte)) return Convert.ToByte(value);
-                if (type == typeof(sbyte)) return Convert.ToSByte(value);
                 if (type == typeof(string)) return value.ToString();
 
                 if (type == typeof(DateTime))
@@ -1345,7 +1324,6 @@ namespace DrOpen.DrCommon.DrData
             {
                 var t = type.GetElementType();
                 if (t == typeof(byte)) return new byte[lenght];
-                if (t == typeof(sbyte)) return new sbyte[lenght];
                 if (t == typeof(string)) return new string[lenght];
                 if (t == typeof(DateTime)) return new DateTime[lenght];
                 if (t == typeof(bool)) return new bool[lenght];
@@ -1463,7 +1441,7 @@ namespace DrOpen.DrCommon.DrData
         /// <returns></returns>
         sbyte IConvertible.ToSByte(IFormatProvider provider)
         {
-            return (sbyte)GetValueAsByte();
+            return (sbyte)(GetValueAsByte()-128);
         }
         /// <summary>
         /// returns value as float

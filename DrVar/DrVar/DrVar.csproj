@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DrVarEntry.cs" />
     <Compile Include="DrVarPage.cs" />
     <Compile Include="DrVarSign.cs" />
     <Compile Include="DrVarManager.cs" />

@@ -267,7 +267,6 @@ namespace UTestDrData
                                 {
                                         new object[1]{null},
                                         new object(),
-                                        new sbyte(),
                                         new int?[6] { null, 1, 2, null, 3, null }
                                 };
 
@@ -2877,7 +2876,6 @@ namespace UTestDrData
             Assert.IsFalse(a.Equals(b), "Equal doesn't work.");
         }
         #endregion test byte[]
-
         #region test guid
 
         [TestMethod]
@@ -3063,10 +3061,10 @@ namespace UTestDrData
             var v = new DDValue(0);
             try
             {
-                v.ConvertTo(typeof(string));
+                v.ConvertTo<object>();
                 Assert.Fail("Can transfrom from not string type.");
             }
-            catch (DDTypeConvertException)
+            catch (DDTypeIncorrectException)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -3075,7 +3073,7 @@ namespace UTestDrData
             var v = new DDValue();
             try
             {
-                v.ConvertTo(typeof(string));
+                v.ConvertTo<string>();
                 Assert.Fail("Can transfrom from null.");
             }
 
@@ -3088,10 +3086,10 @@ namespace UTestDrData
             var v = new DDValue("0");
             try
             {
-                v.ConvertTo(typeof(int[]));
+                v.ConvertTo<int[]>();
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (DDTypeConvertException)
+            catch (DDTypeIncorrectException)
             {/* it's ok*/}
         }
         [TestMethod]
@@ -3100,40 +3098,40 @@ namespace UTestDrData
             var v = new DDValue(new[] { "true", "false", "true" });
             try
             {
-                v.ConvertTo(typeof(bool));
+                v.ConvertTo<bool>();
                 Assert.Fail("Can transfrom from string to string array.");
             }
-            catch (DDTypeConvertException)
+            catch (DDValueConvertException)
             {/* it's ok*/}
         }
         [TestMethod]
         public void TestSelfTransformFromStringTo_Empty()
         {
             var v = new DDValue(String.Empty);
-            v.ConvertTo(typeof(bool)); // incorrect data = 0 ToDo
-            //ValidateBool(v, a);
+            v.ConvertTo<bool>(); // incorrect data = 0 ToDo
+            ValidateBool(false, v);
 
         }
         [TestMethod]
         public void TestSelfTransformFromStringTo_BoolTrue()
         {
             var v = new DDValue("true");
-            v.ConvertTo(typeof(bool));
-            ValidateBool(v, true);
+            v.ConvertTo<bool>();
+            ValidateBool(true, v);
         }
         [TestMethod]
         public void TestSelfTransformFromStringTo_BoolFalse()
         {
             var v = new DDValue("false");
-            v.ConvertTo(typeof(bool));
-            ValidateBool(v, false);
+            v.ConvertToArray<bool>();
+            ValidateBoolArray(new bool[] {false}, v);
         }
         [TestMethod]
         public void TestSelfTransformFromStringArrayTo_BoolArray()
         {
             var v = new DDValue(new[] { "true", "false", "true" });
 
-            v.ConvertTo(typeof(bool[]));
+            v.ConvertToArray<bool>();
             ValidateBoolArray(new bool[] { true, false, true }, v);
 
         }
@@ -3142,7 +3140,7 @@ namespace UTestDrData
         {
             var v = new DDValue(new[] { "1", "2", "3", "255" });
 
-            v.ConvertTo(typeof(byte[]));
+            v.ConvertToArray<byte>();
             ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 , 0xff}, v);
 
         }
@@ -3487,6 +3485,15 @@ namespace UTestDrData
         }
 
         private bool CompareByteArray(byte[] a, byte[] b)
+        {
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i]) return false;
+            }
+            return true;
+        }
+
+        private bool CompareSByteArray(sbyte[] a, sbyte[] b)
         {
             for (int i = 0; i < a.Length; i++)
             {

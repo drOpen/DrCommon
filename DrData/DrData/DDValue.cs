@@ -503,7 +503,6 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>Returns array by specified type</returns>
         public virtual T[] GetValueAsArray<T>()
         {
-            // ***
             if (this.data == null) return null;
             if (this.Size == 0) return new T[] { };// returns empty array of requested type
 
@@ -566,10 +565,50 @@ namespace DrOpen.DrCommon.DrData
         /// <returns>Returns value by specified type</returns>
         public virtual T GetValueAs<T>()
         {
-            return (T)GetValueObjByType(typeof(T), data);
+            if (data == null) return default(T); // check Nullable type
+            Type t = typeof(T);
+            if (Nullable.GetUnderlyingType(t) != null) 
+            {
+                t = Nullable.GetUnderlyingType(t); // Returns the underlying type argument of the specified nullable type. 
+            }
+            if (this.Size == 0) return GetDefaultValueByType<T>();// returns empty array of requested type
+
+            int sizePerElementsSource = 0;
+            long length = 0;
+            Type sourceElementType = (this.Type.IsArray ? this.Type.GetElementType() : this.Type);
+            // casts to string 
+            if (t == typeof(string))
+            {
+                //  --- if both requested and current types are string or string array return it
+                if (sourceElementType == typeof(string)) return (T)GetValueObjByType(t, data);
+                // convert premitivies
+                sizePerElementsSource = GetPrimitiveSize(sourceElementType);
+                var tmp = new byte[sizePerElementsSource];
+                Array.Copy(data, 0, tmp, 0, sizePerElementsSource);
+                return (T)(object)GetObjAsStringByType(sourceElementType, GetValueObjByType(sourceElementType, tmp));
+            }
+
+            // casts string to primitive 
+            if (sourceElementType == typeof(string))
+            {
+                var tmp = (string)GetValueObjByType(sourceElementType, data);
+                if (tmp.Length != 0) // if string is empty saves the default value of type  
+                    return (T)ConvertFromStringTo(t, tmp);
+                else
+                    return GetDefaultValueByType<T>();
+            }
+
+            // casts primitivies to primitivies
+            var sizePerElementsTarget = GetPrimitiveSize(t);
+            sizePerElementsSource = GetPrimitiveSize(sourceElementType);
+            var lenght = this.Size / sizePerElementsSource;
+            var b = new byte[sizePerElementsSource];
+            Array.Copy(data, 0, b, 0, sizePerElementsSource);
+            return (T)GetValueObjByType(t, b);
+
         }
         /// <summary>
-        /// Returns default value for specific type. For string retirns String.Empty
+        /// Returns String.Empty for string and default value for all others supported types.
         /// </summary>
         /// <typeparam name="T">supported types</typeparam>
         /// <returns></returns>
@@ -578,6 +617,8 @@ namespace DrOpen.DrCommon.DrData
             if (!typeof(T).IsArray)
             {
                 if (typeof(T) == typeof(string)) return (T)(object)String.Empty;
+                if (ValidateType(typeof(T))) return default(T);
+              /*
                 if (typeof(T) == typeof(DateTime)) return (T)(object)new DateTime();
                 if (typeof(T) == typeof(byte)) return (T)(object)new Byte();
                 if (typeof(T) == typeof(char)) return (T)(object)new Char();
@@ -591,13 +632,14 @@ namespace DrOpen.DrCommon.DrData
                 if (typeof(T) == typeof(double)) return (T)(object)new double();
                 if (typeof(T) == typeof(bool)) return (T)(object)new bool();
                 if (typeof(T) == typeof(Guid)) return (T)(object)new Guid();
+               */
             }
             throw new DDTypeIncorrectException(typeof(T).ToString());
         }
 
         protected static object GetValueObjByType(Type type, byte[] data)
         {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (Nullable.GetUnderlyingType(type) != null)
             {
                 if (data == null) return null; // check Nullable type
                 type = Nullable.GetUnderlyingType(type); // Returns the underlying type argument of the specified nullable type. 

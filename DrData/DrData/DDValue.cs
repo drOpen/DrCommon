@@ -37,7 +37,7 @@ namespace DrOpen.DrCommon.DrData
     /// Data warehouse
     /// </summary>
     [Serializable]
-    public class DDValue : IEquatable<DDValue>, ICloneable, IComparable, ISerializable
+    public class DDValue : IEquatable<DDValue>, IConvertible, ICloneable, IComparable, ISerializable
     {
         #region DDValue
         /// <summary>
@@ -168,13 +168,15 @@ namespace DrOpen.DrCommon.DrData
         public static byte[] GetByteArray(Type type, object value)
         {
             // if (type == typeof(byte[])) return (byte[])value; // it does not work
-            if (type == typeof(byte)) return new[] { (byte)value };
+            if (type == typeof(byte)) return new[] {(byte)value};
+            if (type == typeof(sbyte)) return new[] {(byte)(sbyte)value};
 
             if (type == typeof(string)) return Encoding.UTF8.GetBytes(value.ToString());
             if (type == typeof(DateTime)) return BitConverter.GetBytes(((DateTime)value).ToBinary());
             if (type == typeof(bool)) return BitConverter.GetBytes((bool)value);
             if (type == typeof(char)) return BitConverter.GetBytes((char)value);
             if (type == typeof(float)) return BitConverter.GetBytes((float)value);
+            if (type == typeof(decimal)) return  GetByteArrayFromDecimal((decimal)value); 
             if (type == typeof(double)) return BitConverter.GetBytes((double)value);
             if (type == typeof(short)) return BitConverter.GetBytes((short)value);
             if (type == typeof(int)) return BitConverter.GetBytes((int)value);
@@ -188,6 +190,32 @@ namespace DrOpen.DrCommon.DrData
             if (type.IsArray) return JoinByteArray((Array)value);
 
             throw new DDTypeIncorrectException(type.ToString());
+        }
+
+        /// <summary>
+        /// Converts decimal to byte array
+        /// </summary>
+        /// <param name="dec">decimal number for converting</param>
+        /// <returns></returns>
+        private static byte[] GetByteArrayFromDecimal(decimal dec)
+        {
+             var bits = decimal.GetBits(dec);
+             var bytes = new byte[bits.Length * sizeof(int)];
+             for (int i = 0; i < bits.Length; i++)
+                 BitConverter.GetBytes(bits[i]).CopyTo(bytes, i * sizeof(int));
+             return bytes;
+        }
+        /// <summary>
+        /// Converts bytes array to decimal
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        private static decimal GetDecimalFromByteArray(byte[] b)
+        {
+            var bits = new int [sizeof(int)];
+            for(int i = 0; i < sizeof(int); i++)
+                bits[i] = BitConverter.ToInt32(b, i * sizeof(int));
+            return new decimal(bits);
         }
 
         /// <summary>
@@ -275,6 +303,14 @@ namespace DrOpen.DrCommon.DrData
         {
             return new DDValue(value);
         }
+        public static implicit operator DDValue(decimal value)
+        {
+            return new DDValue(value);
+        }
+        public static implicit operator DDValue(decimal[] value)
+        {
+            return new DDValue(value);
+        }
         public static implicit operator DDValue(double value)
         {
             return new DDValue(value);
@@ -339,6 +375,14 @@ namespace DrOpen.DrCommon.DrData
         {
             return new DDValue(value);
         }
+        public static implicit operator DDValue(sbyte value)
+        {
+            return new DDValue(value);
+        }
+        public static implicit operator DDValue(sbyte[] value)
+        {
+            return new DDValue(value);
+        }
         #endregion -> DDValue
         #region  DDValue ->
         public static implicit operator int(DDValue value)
@@ -388,6 +432,14 @@ namespace DrOpen.DrCommon.DrData
         public static implicit operator ushort[](DDValue value)
         {
             return value.GetValueAsUShortArray();
+        }
+        public static implicit operator decimal(DDValue value)
+        {
+            return value.GetValueAsDecimal();
+        }
+        public static implicit operator decimal[](DDValue value)
+        {
+            return value.GetValueAsDecimalArray();
         }
         public static implicit operator double(DDValue value)
         {
@@ -453,6 +505,14 @@ namespace DrOpen.DrCommon.DrData
         {
             return value.GetValueAsByteArray();
         }
+        public static implicit operator sbyte(DDValue value)
+        {
+            return value.GetValueAsSByte();
+        }
+        public static implicit operator sbyte[](DDValue value)
+        {
+            return value.GetValueAsSByteArray();
+        }
         #endregion  DDValue ->
         #endregion implicit operator
         #region GetValue
@@ -470,6 +530,8 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(DateTime[])) return GetValueAsDateTimeArray();
             if (Type == typeof(byte)) return GetValueAsByte();
             if (Type == typeof(byte[])) return GetValueAsByteArray();
+            if (Type == typeof(sbyte)) return GetValueAsSByte();
+            if (Type == typeof(sbyte[])) return GetValueAsSByteArray();
             if (Type == typeof(short)) return GetValueAsShort();
             if (Type == typeof(short[])) return GetValueAsShortArray();
             if (Type == typeof(ushort)) return GetValueAsUShort();
@@ -486,6 +548,8 @@ namespace DrOpen.DrCommon.DrData
             if (Type == typeof(char[])) return GetValueAsCharArray();
             if (Type == typeof(float)) return GetValueAsFloat();
             if (Type == typeof(float[])) return GetValueAsFloatArray();
+            if (Type == typeof(decimal)) return GetValueAsDecimal();
+            if (Type == typeof(decimal[])) return GetValueAsDecimalArray();
             if (Type == typeof(double)) return GetValueAsDouble();
             if (Type == typeof(double[])) return GetValueAsDoubleArray();
             if (Type == typeof(bool)) return GetValueAsBool();
@@ -552,7 +616,7 @@ namespace DrOpen.DrCommon.DrData
             result = new T[lenght];
             for (int i = 0; i < lenght; i++)
             {
-                var tmp = new byte[sizePerElementsSource];
+                var tmp = new byte[(sizePerElementsSource > sizePerElementsTarget ? sizePerElementsSource : sizePerElementsTarget)];
                 Array.Copy(data, i * sizePerElementsSource, tmp, 0, sizePerElementsSource);
                 result[i] = (T)GetValueObjByType(typeof(T), tmp);
             }
@@ -602,7 +666,7 @@ namespace DrOpen.DrCommon.DrData
             var sizePerElementsTarget = GetPrimitiveSize(t);
             sizePerElementsSource = GetPrimitiveSize(sourceElementType);
             var lenght = this.Size / sizePerElementsSource;
-            var b = new byte[sizePerElementsSource];
+            var b = new byte[(sizePerElementsSource > sizePerElementsTarget ? sizePerElementsSource : sizePerElementsTarget)];
             Array.Copy(data, 0, b, 0, sizePerElementsSource);
             return (T)GetValueObjByType(t, b);
 
@@ -651,6 +715,8 @@ namespace DrOpen.DrCommon.DrData
 
             if (type == typeof(byte)) return data[0];
             if (type == typeof(byte[])) return data;
+            if (type == typeof(sbyte)) return data[0];
+            if (type == typeof(sbyte[])) return data;
 
             if (type == typeof(short)) return BitConverter.ToInt16(data, 0);
             if (type == typeof(ushort)) return BitConverter.ToUInt16(data, 0);
@@ -661,6 +727,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(char)) return BitConverter.ToChar(data, 0);
             if (type == typeof(float)) return BitConverter.ToSingle(data, 0);
             if (type == typeof(double)) return BitConverter.ToDouble(data, 0);
+            if (type == typeof(decimal)) return GetDecimalFromByteArray(data);  //Convert.ToDecimal(BitConverter.ToDouble(data, 0));
             if (type == typeof(bool)) return BitConverter.ToBoolean(data, 0);
             if (type == typeof(Guid)) return new Guid(data);
 
@@ -674,6 +741,17 @@ namespace DrOpen.DrCommon.DrData
         public virtual byte GetValueAsByte()
         {
             return data[0];
+        }
+        public virtual sbyte[] GetValueAsSByteArray()
+        {
+            var res = new sbyte[data.Length];
+            for (int i = 0; i < res.Length; i++)
+                res[i] = (sbyte)data[i];
+            return res;
+        }
+        public virtual sbyte GetValueAsSByte()
+        {
+            return (sbyte)data[0];
         }
 
         public virtual string GetValueAsString()
@@ -774,6 +852,15 @@ namespace DrOpen.DrCommon.DrData
             return GetValueAsArray<uint>();
         }
 
+        public virtual decimal GetValueAsDecimal()
+        {
+            return GetValueAs<decimal>();//BitConverter.Decimaldata, 0);
+        }
+        public virtual decimal[] GetValueAsDecimalArray()
+        {
+            return GetValueAsArray<decimal>();
+        }
+
         public virtual long GetValueAsLong()
         {
             return GetValueAs<long>();//BitConverter.ToInt64(data, 0);
@@ -838,6 +925,7 @@ namespace DrOpen.DrCommon.DrData
                     type == typeof(char) ||
                     type == typeof(bool) ||
                     type == typeof(byte) ||
+                    type == typeof(sbyte) ||
                     type == typeof(short) ||
                     type == typeof(float) ||
                     type == typeof(long) ||
@@ -845,6 +933,7 @@ namespace DrOpen.DrCommon.DrData
                     type == typeof(uint) ||
                     type == typeof(ulong) ||
                     type == typeof(double) ||
+                    type == typeof(decimal) ||
                     type == typeof(Guid)
                 );
         }
@@ -875,6 +964,7 @@ namespace DrOpen.DrCommon.DrData
         protected static int GetPrimitiveSize(Type type)
         {
             if (type == typeof(byte)) return sizeof(byte);
+            if (type == typeof(sbyte)) return sizeof(sbyte);
             if (type == typeof(short)) return sizeof(short);
             if (type == typeof(ushort)) return sizeof(ushort);
             if (type == typeof(int)) return sizeof(int);
@@ -885,6 +975,7 @@ namespace DrOpen.DrCommon.DrData
             if (type == typeof(float)) return sizeof(float);
             if (type == typeof(double)) return sizeof(double);
             if (type == typeof(bool)) return sizeof(bool);
+            if (type == typeof(decimal)) return sizeof(decimal);
             if (type == typeof(DateTime)) return sizeof(Int64);
             if (type == typeof(Guid)) return Guid.Empty.ToByteArray().Length;
             throw new DDTypeIncorrectException(type.ToString());
@@ -1129,9 +1220,9 @@ namespace DrOpen.DrCommon.DrData
         /// </summary>
         /// <param name="elType">convert to specified type</param>
         /// <returns></returns>
-        public void ConvertFromStringTo(string newType)
+        public void ConvertTo(string newType)
         {
-            ConvertFromStringTo(Type.GetType(newType));
+            ConvertTo(Type.GetType(newType));
         }
 
         /// <summary>
@@ -1141,7 +1232,7 @@ namespace DrOpen.DrCommon.DrData
         /// </summary>
         /// <param name="elType">convert to specified type</param>
         /// <returns></returns>
-        public void ConvertFromStringTo(Type newType)
+        public void ConvertTo(Type newType)
         {
             if (this.Type == null) throw new DDTypeNullException(Msg.CANNOT_TRANSFORM_NULL_TYPE);
             if ((this.Type != typeof(string) && (this.Type != typeof(string[])))) throw new DDTypeConvertException(this.type.FullName, newType.FullName, string.Format(Msg.CANNOT_CONVERT_FROM_NONE_STRING_OR_STRING_ARRAY_TYPE, newType.Name, this.type.Name));
@@ -1184,6 +1275,7 @@ namespace DrOpen.DrCommon.DrData
             {
                 if (type == typeof(byte[])) return HEX(value);
                 if (type == typeof(byte)) return Convert.ToByte(value);
+                if (type == typeof(sbyte)) return Convert.ToSByte(value);
                 if (type == typeof(string)) return value.ToString();
 
                 if (type == typeof(DateTime))
@@ -1204,6 +1296,7 @@ namespace DrOpen.DrCommon.DrData
                 if (type == typeof(ushort)) return Convert.ToUInt16(value);
                 if (type == typeof(uint)) return Convert.ToUInt32(value);
                 if (type == typeof(ulong)) return Convert.ToUInt64(value);
+                if (type == typeof(decimal)) return Convert.ToDecimal(value);
                 if (type == typeof(Guid)) return new Guid(value);
             }
             catch (Exception e)
@@ -1252,6 +1345,7 @@ namespace DrOpen.DrCommon.DrData
             {
                 var t = type.GetElementType();
                 if (t == typeof(byte)) return new byte[lenght];
+                if (t == typeof(sbyte)) return new sbyte[lenght];
                 if (t == typeof(string)) return new string[lenght];
                 if (t == typeof(DateTime)) return new DateTime[lenght];
                 if (t == typeof(bool)) return new bool[lenght];
@@ -1264,10 +1358,168 @@ namespace DrOpen.DrCommon.DrData
                 if (t == typeof(ushort)) return new ushort[lenght];
                 if (t == typeof(uint)) return new uint[lenght];
                 if (t == typeof(ulong)) return new ulong[lenght];
+                if (t == typeof(decimal)) return new decimal[lenght];
                 if (t == typeof(Guid)) return new Guid[lenght];
+
             }
             throw new DDTypeIncorrectException(type.ToString());
         }
         #endregion Convert Static
+
+        #region IConvertible
+        /// <summary>
+        /// Returns the TypeCode for this instance.
+        /// </summary>
+        /// <returns>The enumerated constant that is the TypeCode of the class or value type that implements this interface.</returns>
+        public TypeCode GetTypeCode()
+        {
+            return TypeCode.Object; 
+        }
+        /// <summary>
+        /// Converts the value of this instance to an equivalent Boolean value using the specified culture-specific formatting information.
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        bool IConvertible.ToBoolean(IFormatProvider provider)
+        {
+            return GetValueAsBool();
+        }
+        /// <summary>
+        /// Converts the value of this instance to an equivalent 8-bit unsigned integer using the specified culture-specific formatting information.
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        byte IConvertible.ToByte(IFormatProvider provider)
+        {
+            return GetValueAsByte();
+        }
+        /// <summary>
+        /// Converts the value of this instance to an equivalent Unicode character using the specified culture-specific formatting information.
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        char IConvertible.ToChar(IFormatProvider provider)
+        {
+            return GetValueAsChar();
+        }
+        /// <summary>
+        /// returns value as Date Time format
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        {
+            return GetValueAsDateTime();
+        }
+        /// <summary>
+        /// returns value as decimal
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        {
+            return GetValueAsDecimal();    
+        }
+        /// <summary>
+        /// returns value as double
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        double IConvertible.ToDouble(IFormatProvider provider)
+        {
+            return GetValueAsDouble();
+        }
+        /// <summary>
+        /// returns value as short
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        short IConvertible.ToInt16(IFormatProvider provider)
+        {
+            return GetValueAsShort();
+        }
+        /// <summary>
+        /// returns value as int
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        int IConvertible.ToInt32(IFormatProvider provider)
+        {
+            return GetValueAsInt();
+        }
+        /// <summary>
+        /// returns value as long
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        long IConvertible.ToInt64(IFormatProvider provider)
+        {
+            return GetValueAsLong();
+        }
+        /// <summary>
+        /// returns value as sbyte
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        {
+            return (sbyte)GetValueAsByte();
+        }
+        /// <summary>
+        /// returns value as float
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        float IConvertible.ToSingle(IFormatProvider provider)
+        {
+            return GetValueAsFloat();
+        }
+        /// <summary>
+        /// returns value as string
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        string IConvertible.ToString(IFormatProvider provider)
+        {
+            return GetValueAsString();
+        }
+        /// <summary>
+        /// Converts the value of this instance to an Object of the specified Type that has an equivalent value, using the specified culture-specific formatting information.
+        /// </summary>
+        /// <param name="conversionType">The Type to which the value of this instance is converted.</param>
+        /// <param name="provider">An IFormatProvider interface implementation that supplies culture-specific formatting information.</param>
+        /// <returns>An Object instance of type conversionType whose value is equivalent to the value of this instance.</returns>
+        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+        {
+            return Convert.ChangeType(GetValue(), conversionType);
+        }
+        /// <summary>
+        /// returns value as ushort
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        {
+            return GetValueAsUShort();
+        }
+        /// <summary>
+        /// returns value as uint
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        uint IConvertible.ToUInt32(IFormatProvider provider)
+        {
+            return GetValueAsUInt();
+        }
+        /// <summary>
+        /// Return value as ulong
+        /// </summary>
+        /// <param name="provider">this parametr will be ignored</param>
+        /// <returns></returns>
+        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        {
+            return GetValueAsULong();
+        }
+        #endregion IConvertible
     }
 }

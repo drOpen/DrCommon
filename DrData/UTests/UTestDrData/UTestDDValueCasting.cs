@@ -42,7 +42,175 @@ namespace UTestDrData
         private const string TEST_CATEGORY = "Value Casting";
         private const string CLASS_CATEGORY = "DDValue";
 
-        #region 2 string
+        #region IConvertible
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertDecimal()
+        {
+            var src = 1m / 3m;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToDecimal((object)v);
+            var trg = v.GetValueAsDecimal();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertBoolean()
+        {
+            var src = true;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToBoolean((object)v);
+            var trg = v.GetValueAsBool();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertByte()
+        {
+            var src = byte.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToByte((object)v);
+            var trg = v.GetValueAsByte();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertChar()
+        {
+            var src = 'A';
+            var v = new DDValue(src);
+           
+            var res = Convert.ToChar((object)v);
+            var trg = v.GetValueAsChar();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertDateTime()
+        {
+            var src = DateTime.Now;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToDateTime((object)v);
+            var trg = v.GetValueAsDateTime();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertDouble()
+        {
+            var src = Double.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToDouble((object)v);
+            var trg = v.GetValueAsDouble();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertShort()
+        {
+            var src = short.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToInt16((object)v);
+            var trg = v.GetValueAsShort();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertInt()
+        {
+            var src = int.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToInt32((object)v);
+            var trg = v.GetValueAsInt();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertLong()
+        {
+            var src = long.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToInt64((object)v);
+            var trg = v.GetValueAsLong();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertSByte()
+        {
+            var src = sbyte.MinValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToSByte((object)v);
+            var trg = v.GetValueAsSByte();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertFloat()
+        {
+            var src = float.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToSingle((object)v);
+            var trg = v.GetValueAsFloat();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertStrig()
+        {
+            var src = "Юникод";
+            var v = new DDValue(src);
+           
+            var res = Convert.ToString((object)v);
+            var trg = v.GetValueAsString();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertUShort()
+        {
+            var src = ushort.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToUInt16((object)v);
+            var trg = v.GetValueAsUShort();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertUInt()
+        {
+            var src = uint.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToUInt32((object)v);
+            var trg = v.GetValueAsUInt();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestConvertULong()
+        {
+            var src = ulong.MaxValue;
+            var v = new DDValue(src);
+           
+            var res = Convert.ToUInt64((object)v);
+            var trg = v.GetValueAsULong();
+            Assert.AreEqual(res, trg, "The converted result '{0}' doesn't much expected '{1}'.", res.ToString(), trg.ToString()); 
+            Assert.AreEqual(res, src, "The converted result '{0}' doesn't much source '{1}'.", res.ToString(), src.ToString()); 
+        }
+        #endregion IConvertible
+        #region cast
         [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestCastingNull()
         {
@@ -61,12 +229,45 @@ namespace UTestDrData
             CheckItemCast2Array<string, int>(trg, src);
         }
 
-        #endregion 2 string
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestCastingInt2Bool2Int()
+        {
+            int[] src = new int[] { int.MinValue, 0, int.MaxValue };
+            var trg = new bool[] { false, false, true };
+            CheckItemCast2Array<int, bool>(src, trg);
+            src = new int[] { 0, 0, 1 };
+            CheckItemCast2Array<bool , int>(trg, src);
+        }
 
-        #region 2 string array
-        [TestMethod]
-        [TestCategory(TEST_CATEGORY)]
-        [TestCategory(CLASS_CATEGORY)]
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestCastingInt2Byte2Int()
+        {
+            int[] src = new int[] { int.MinValue, Byte.MinValue, 0, byte.MaxValue, int.MaxValue };
+            var trg = new byte[] { byte.MinValue, byte.MinValue, 0 , byte.MaxValue, byte.MaxValue };
+            CheckItemCast2Array<int, byte>(src, trg);
+            src = new int[] {byte.MinValue, byte.MinValue, 0 , byte.MaxValue, byte.MaxValue};
+            CheckItemCast2Array<byte, int>(trg, src);
+        }
+
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestCastingDateTime2Long2DateTime()
+        {
+            var now = DateTime.Now;
+            var nowUtc = DateTime.UtcNow;
+
+            var a = new DDValue();
+            
+
+            var src= new DateTime[] { DateTime.MinValue, now, nowUtc, DateTime.MaxValue };
+            var trg = new long[] { DateTime.MinValue.ToBinary(), now.ToBinary(), nowUtc.ToBinary(), DateTime.MaxValue.ToBinary() };
+            CheckItemCast2Array<DateTime, long>(src, trg);
+            CheckItemCast2Array<long, DateTime>(trg, src);
+        }
+
+        #endregion cast
+
+        #region array 2 string arra2 array 
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestCastingArrayInt2String2Int()
         {
             var src = new int[] { Int32.MaxValue, -1, 0, 1, Int32.MaxValue };
@@ -77,9 +278,7 @@ namespace UTestDrData
             CheckItemCast2Array<string, int>(trg, src);
         }
 
-        [TestMethod]
-        [TestCategory(TEST_CATEGORY)]
-        [TestCategory(CLASS_CATEGORY)]
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestCastingArrayUInt2String2UInt()
         {
             var src = new uint[] { UInt32.MinValue,  0, 1, UInt32.MaxValue };
@@ -227,9 +426,20 @@ namespace UTestDrData
             CheckItemCast2Array<string, float>(trg, src);
         }
 
-        [TestMethod]
-        [TestCategory(TEST_CATEGORY)]
-        [TestCategory(CLASS_CATEGORY)]
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
+        public void TestCastingArrayDecimal2String2Decimal()
+        {
+            var src = new decimal[] { decimal.Divide(1, 3), decimal.MinValue, decimal.MinusOne, decimal.One, decimal.Zero, decimal.MaxValue };
+            var trg = new string[src.Length]; 
+            for (var i = 0; i < src.Length; i++)
+                trg[i] = src[i].ToString();
+            CheckArrayCast2Array<decimal, string>(src, trg);
+            CheckItemCast2Array<decimal, string>(src, trg);
+            CheckArrayCast2Array<string, decimal>(trg, src);
+            CheckItemCast2Array<string, decimal>(trg, src);
+        }
+
+        [TestMethod, TestCategory(TEST_CATEGORY), TestCategory(CLASS_CATEGORY)]
         public void TestCastingArrayDouble2String2Double()
         {
             var src = new double[] {double.Epsilon, double.MaxValue, double.MinValue, double.NaN, double.PositiveInfinity, double.NegativeInfinity, 0};
@@ -278,7 +488,7 @@ namespace UTestDrData
                 Assert.AreEqual<T>(res[i], trg[i], "The element value of result array '{0}' doesn't equal expected value '{1}'.", res[i], trg[i]);
             }
         }
-        #endregion 2 string array
+        #endregion array 2 string array 2 array
 
     }
 }

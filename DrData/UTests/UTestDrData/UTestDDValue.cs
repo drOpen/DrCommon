@@ -1619,77 +1619,77 @@ namespace UTestDrData
         }
 
         #endregion test uint[]
-        #region test Double
+        #region test decimal
         [TestMethod]
-        public void TestCreateWithDouble0Value()
+        public void TestCreateWithDecimal0Value()
         {
-            Double test = 0;
+            var test = 0M;
             var a = new DDValue(test);
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
         }
         [TestMethod]
-        public void TestCreateWithDoubleMinValue()
+        public void TestCreateWithDecimalMinValue()
         {
-            Double test = Double.MinValue;
+            var test = Decimal.MinValue;
             var a = new DDValue(test);
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
         }
 
         [TestMethod]
-        public void TestCreateSetDoubleMaxValue()
+        public void TestCreateSetDecimalMaxValue()
         {
-            Double test = Double.MaxValue;
+            var test = Decimal.MaxValue;
             var a = new DDValue();
             a.SetValue(test);
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
         }
 
         [TestMethod]
-        public void TestCreateSetImpicitDoubleValue()
+        public void TestCreateSetImpicitDecimalValue()
         {
-            Double test = 123;
+            decimal test = 1M / 3M;
             var a = new DDValue();
             a = test;
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
         }
 
         [TestMethod]
-        public void TestChangeDoubleValue()
+        public void TestChangeDecimalleValue()
         {
-            Double test = 123;
+            Decimal test = 10M / 3M;
             var a = new DDValue();
             a = test;
-            ValidateDouble(test, a);
-            test = 0;
+            ValidateDecimal(test, a);
+            test = 0M;
             a = test;
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
         }
         [TestMethod]
-        public void TestChangeTypeFromDoubleToInt()
+        public void TestChangeTypeFromDecimalToInt()
         {
-            Double test = Double.MaxValue;
+            var test = Decimal.MaxValue;
             var a = new DDValue();
             a = test;
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
             var b = int.MinValue;
             a = b;
             ValidateInt(b, a);
             CommonChangeObjectTypeValidation(a, test);
         }
         [TestMethod]
-        public void TestDoubleToFromHex()
+        public void TestDecimalToFromHex()
         {
-            Double test = Double.MaxValue;
+            var test = Decimal.MaxValue - 1m /3m;
             var a = new DDValue(test);
-            ValidateDouble(test, a);
+            ValidateDecimal(test, a);
             var hexValue = a.GetValueAsHEX();
             var b = new DDValue();
             b.SetHEXValue(test.GetType(), hexValue);
-            ValidateDouble(test, b);
+            ValidateDecimal(test, b);
             Assert.IsTrue(a == b, "The to/from HEX convertion doesn't work.");
             Assert.IsFalse(a.Equals(b), "Equal doesn't work.");
         }
-        #endregion test double
+        #endregion test decimal
         #region test double[]
         [TestMethod]
         public void TestCreateWithDoubleArray()
@@ -1794,6 +1794,77 @@ namespace UTestDrData
             Assert.IsTrue(CompareStringArray(a, b), "After HEX convertion new data is not equals oroginal data.");
         }
         #endregion test double[]
+        #region test Double
+        [TestMethod]
+        public void TestCreateWithDouble0Value()
+        {
+            Double test = 0;
+            var a = new DDValue(test);
+            ValidateDouble(test, a);
+        }
+        [TestMethod]
+        public void TestCreateWithDoubleMinValue()
+        {
+            Double test = Double.MinValue;
+            var a = new DDValue(test);
+            ValidateDouble(test, a);
+        }
+
+        [TestMethod]
+        public void TestCreateSetDoubleMaxValue()
+        {
+            Double test = Double.MaxValue;
+            var a = new DDValue();
+            a.SetValue(test);
+            ValidateDouble(test, a);
+        }
+
+        [TestMethod]
+        public void TestCreateSetImpicitDoubleValue()
+        {
+            Double test = 123;
+            var a = new DDValue();
+            a = test;
+            ValidateDouble(test, a);
+        }
+
+        [TestMethod]
+        public void TestChangeDoubleValue()
+        {
+            Double test = 123;
+            var a = new DDValue();
+            a = test;
+            ValidateDouble(test, a);
+            test = 0;
+            a = test;
+            ValidateDouble(test, a);
+        }
+        [TestMethod]
+        public void TestChangeTypeFromDoubleToInt()
+        {
+            Double test = Double.MaxValue;
+            var a = new DDValue();
+            a = test;
+            ValidateDouble(test, a);
+            var b = int.MinValue;
+            a = b;
+            ValidateInt(b, a);
+            CommonChangeObjectTypeValidation(a, test);
+        }
+        [TestMethod]
+        public void TestDoubleToFromHex()
+        {
+            Double test = Double.MaxValue;
+            var a = new DDValue(test);
+            ValidateDouble(test, a);
+            var hexValue = a.GetValueAsHEX();
+            var b = new DDValue();
+            b.SetHEXValue(test.GetType(), hexValue);
+            ValidateDouble(test, b);
+            Assert.IsTrue(a == b, "The to/from HEX convertion doesn't work.");
+            Assert.IsFalse(a.Equals(b), "Equal doesn't work.");
+        }
+        #endregion test double
         #region test Float
         [TestMethod]
         public void TestCreateWithFloat0Value()
@@ -2992,7 +3063,7 @@ namespace UTestDrData
             var v = new DDValue(0);
             try
             {
-                v.ConvertFromStringTo(typeof(string));
+                v.ConvertTo(typeof(string));
                 Assert.Fail("Can transfrom from not string type.");
             }
             catch (DDTypeConvertException)
@@ -3004,7 +3075,7 @@ namespace UTestDrData
             var v = new DDValue();
             try
             {
-                v.ConvertFromStringTo(typeof(string));
+                v.ConvertTo(typeof(string));
                 Assert.Fail("Can transfrom from null.");
             }
 
@@ -3017,7 +3088,7 @@ namespace UTestDrData
             var v = new DDValue("0");
             try
             {
-                v.ConvertFromStringTo(typeof(int[]));
+                v.ConvertTo(typeof(int[]));
                 Assert.Fail("Can transfrom from string to string array.");
             }
             catch (DDTypeConvertException)
@@ -3029,7 +3100,7 @@ namespace UTestDrData
             var v = new DDValue(new[] { "true", "false", "true" });
             try
             {
-                v.ConvertFromStringTo(typeof(bool));
+                v.ConvertTo(typeof(bool));
                 Assert.Fail("Can transfrom from string to string array.");
             }
             catch (DDTypeConvertException)
@@ -3039,7 +3110,7 @@ namespace UTestDrData
         public void TestSelfTransformFromStringTo_Empty()
         {
             var v = new DDValue(String.Empty);
-            v.ConvertFromStringTo(typeof(bool)); // incorrect data = 0 ToDo
+            v.ConvertTo(typeof(bool)); // incorrect data = 0 ToDo
             //ValidateBool(v, a);
 
         }
@@ -3047,14 +3118,14 @@ namespace UTestDrData
         public void TestSelfTransformFromStringTo_BoolTrue()
         {
             var v = new DDValue("true");
-            v.ConvertFromStringTo(typeof(bool));
+            v.ConvertTo(typeof(bool));
             ValidateBool(v, true);
         }
         [TestMethod]
         public void TestSelfTransformFromStringTo_BoolFalse()
         {
             var v = new DDValue("false");
-            v.ConvertFromStringTo(typeof(bool));
+            v.ConvertTo(typeof(bool));
             ValidateBool(v, false);
         }
         [TestMethod]
@@ -3062,7 +3133,7 @@ namespace UTestDrData
         {
             var v = new DDValue(new[] { "true", "false", "true" });
 
-            v.ConvertFromStringTo(typeof(bool[]));
+            v.ConvertTo(typeof(bool[]));
             ValidateBoolArray(new bool[] { true, false, true }, v);
 
         }
@@ -3071,7 +3142,7 @@ namespace UTestDrData
         {
             var v = new DDValue(new[] { "1", "2", "3", "255" });
 
-            v.ConvertFromStringTo(typeof(byte[]));
+            v.ConvertTo(typeof(byte[]));
             ValidateByteArray(new byte[] { 0x1, 0x2, 0x3 , 0xff}, v);
 
         }
@@ -3172,6 +3243,16 @@ namespace UTestDrData
             Assert.IsTrue(resGetValue == i, "The implicit double conversion is not matched expected text.");
             Assert.IsTrue(data == i, "The implicit double conversion is not matched expected text.");
             Assert.IsTrue(data.GetValueAsDouble() == i, "The explicit double conversion is not matched expected text.");
+        }
+        private void ValidateDecimal(decimal i, DDValue data)
+        {
+            CommonObjectValidation(i, data);
+            decimal resImpicit = data;
+            Assert.IsTrue(resImpicit == i, "The implicit double conversion is not matched expected double.");
+            var resGetValue = (decimal)data.GetValue();
+            Assert.IsTrue(resGetValue == i, "The implicit double conversion is not matched expected text.");
+            Assert.IsTrue(data == i, "The implicit double conversion is not matched expected text.");
+            Assert.IsTrue(data.GetValueAsDecimal() == i, "The explicit double conversion is not matched expected text.");
         }
         private void ValidateUInt(uint i, DDValue attr)
         {
@@ -3371,6 +3452,17 @@ namespace UTestDrData
             var resGetValue = (float[])data.GetValue();
             Assert.IsTrue(resGetValue == data, string.Format("The implicit '{0}' conversion is not matched expected text.", array.GetType().Name));
             Assert.IsTrue(CompareArray<float>(data.GetValueAsFloatArray(), array), String.Format("The explicit '{0}' conversion is not matched expected '{0}'.", array.GetType().Name));
+            Assert.IsTrue(data.ToString() == array.ToString(), String.Format("The ToString() '{0}' conversion is not matched expected text.", array.GetType().Name));
+        }
+        private void ValidateDecimalArray(decimal[] array, DDValue data)
+        {
+            CommonObjectValidation(array, data);
+            decimal[] resImpicit = data;
+            Assert.IsTrue(resImpicit == data, string.Format("The implicit '{0}' conversion is not matched expected '{0}'.", array.GetType().Name));
+            Assert.IsTrue(data == array, string.Format("The implicit '{0}' conversion is not matched expected '{0}'.", array.GetType().Name));
+            var resGetValue = (decimal[])data.GetValue();
+            Assert.IsTrue(resGetValue == data, string.Format("The implicit '{0}' conversion is not matched expected text.", array.GetType().Name));
+            Assert.IsTrue(CompareArray<decimal>(data.GetValueAsDecimalArray(), array), String.Format("The explicit '{0}' conversion is not matched expected '{0}'.", array.GetType().Name));
             Assert.IsTrue(data.ToString() == array.ToString(), String.Format("The ToString() '{0}' conversion is not matched expected text.", array.GetType().Name));
         }
         private void ValidateDoubleArray(double[] array, DDValue data)

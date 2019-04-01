@@ -25,43 +25,58 @@
 
  */
 using System;
-using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrVar.Eception;
-using DrOpen.DrCommon.DrVar.Item;
+using DrOpen.DrCommon.DrVar.Exceptions;
+using DrOpen.DrCommon.DrVar.Resolver.Token;
+using DrOpen.DrCommon.DrVar.Resolver.Entry;
+using DrOpen.DrCommon.DrVar.Resolver;
 
 namespace DrOpen.DrCommon.DrVar
 {
     public class DrVarPage
     {
 
-        //private DDNode pageRaw;
-        //private DDNode page;
-        public enum VAR_RESOLVE
+       
+        [Flags]
+        public enum VAR_DEEP_RESOLVE : int
         {
-            VAR_UNRESOLVED_EXCEPTION = 1,
-            VAR_UNRESOLVED_KEEP_TEXT,
-            VAR_UNRESOLVED_PUT_EMPTY
+            DEEP_ROOT = 1,
+            DEEP_ROOT_ONLY = 2,
+            DEEP_CHILDREN = 4,
+            DEPP_ROOT_AND_CHILDREN = DEEP_ROOT | DEEP_CHILDREN
         }
-        Dictionary<string, DrVarEntry> rawVarEntry;
-        Dictionary<string, DrVarEntry> varEntry;
-        public bool IsCompiled { get; private set; }
-        public VAR_RESOLVE Resolver { get; set; }
+
+        private DrVarEntryDic rawVarEntryDic;
+        private DrVarEntryDic  varEntryDic;
+        public RES_CONFLICT_OPTION ConflictOption { get; set; }
+
+        public static RES_CONFLICT_OPTION DefaultConflictOption = RES_CONFLICT_OPTION.RES_UNRESOLVED_KEEP_TEXT ;
 
         #region DrVarPage
 
         public DrVarPage()
         {
-            Resolver = VAR_RESOLVE.VAR_UNRESOLVED_KEEP_TEXT;
-            rawVarEntry = new Dictionary<string, DrVarEntry>();
-            varEntry = new Dictionary<string, DrVarEntry>();
+            ConflictOption = DefaultConflictOption;
+            //rawVarEntryDic = new DrVarEntryDic ();
+            //varEntryDic = new DrVarEntryDic();
         }
-        public DrVarPage(VAR_RESOLVE r)
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        public DrVarPage(DrVarPage varPage)
+        {
+            ConflictOption = varPage.ConflictOption;
+            rawVarEntryDic = varPage.rawVarEntryDic.Clone();
+            varEntryDic = varPage.varEntryDic.Clone();
+        }
+
+
+        public DrVarPage(RES_CONFLICT_OPTION conflictOption)
             : this()
         {
-            Resolver = r;
+            ConflictOption = conflictOption;
         }
         public DrVarPage(DDNode node)
             : this()
@@ -78,29 +93,24 @@ namespace DrOpen.DrCommon.DrVar
 
         #region Add
         /// <summary>
-        /// Add variables from specified node and cildren. You can specify node types which contain variables. By default, all nodes will analyze 
+        /// Add variables from specified node and children. You can specify node types which contain variables. By default, all nodes will analyze 
         /// </summary>
         /// <param name="node">node contains variables </param>
         /// <param name="t">node types which contains varibles</param>
         public void Add(DDNode node, params DDType[] t)
         {
             foreach (var n in node.Traverse(true, false, true, t))
-            {
                 foreach (var a in n.Attributes)
-                {
                     Add(a);
-                }
-            }
         }
         /// <summary>
         /// Add variable
         /// </summary>
-        /// <param name="a">key value pair where key is variable name and value is variable value</param>
-        public void Add(KeyValuePair<string, DDValue> a)
+        /// <param name="v">key value pair where key is variable name and value is variable value</param>
+        public void Add(KeyValuePair<string, DDValue> v)
         {
-            Add(a.Key, a.Value);
+            Add(v.Key, v.Value);
         }
-
         /// <summary>
         /// Add variable
         /// </summary>
@@ -108,75 +118,148 @@ namespace DrOpen.DrCommon.DrVar
         /// <param name="value">variable value</param>
         public void Add(string name, string value)
         {
-            if (rawVarEntry.ContainsKey(name))
-            {
-                if (IsCompiled) IsCompiled = false;
-                rawVarEntry.Remove(name); // remove previously value of the same variable
-            }
-            var entry = new DrVarEntry(name, value);
-            if ((IsCompiled == true) && (entry.IsResolved() == false)) IsCompiled = false;
-            rawVarEntry.Add(name, entry);
+            varEntryDic.Add(name, value);
         }
-
         #endregion Add
 
-        private static Dictionary<string, DrVarEntry> Clone(Dictionary<string, DrVarEntry> varEntries)
+
+        public void Resolve(string s)
         {
-            var t = new Dictionary<string, DrVarEntry>(varEntries.Count);
-            foreach (var en in varEntries)
+
+            var par = new DrVarTokenList(s);
+            if (par.AreThereVars)
             {
-                t.Add(en.Key, en.Value.Clone());
+
             }
 
-            return t;
+            foreach (var en in varEntryDic.Values)
+            {
+                while (en.IsResolved() == false)
+                {
+                   // var item = en.Items.First<DrVarItem>();
+                   // var value = GetVarItemValue(item);
+                   // en.Resolve(item, value); ;
+                }
+            }
+
         }
 
-        public void Compile()
+        public void Resolve(DDValue v)
         {
-            //page = new DDNode();
-            //page = pageRaw.Clone(false);
-            //ValidateVariablesName();
-            varEntry.Clear();
-            varEntry = Clone(rawVarEntry);
-            CompileSelf();
-            IsCompiled = true;
+            if (v.Type == typeof(string)) 
+            {
+                Resolve(v.GetValueAs<string>());
+            }
+
+            if (v.Type == (typeof(string[])))
+            {
+                var tmp = v.GetValueAsArray<string>();
+                foreach (var s in v.GetValueAsArray<string>())
+                {
+
+                }
+            }
         }
 
-        private void CompileSelf()
+        public void Resolve(DDNode n, VAR_DEEP_RESOLVE deep, params DDType[] t)
         {
-            foreach (var en in varEntry.Values)
+            //if (!IsResolved) ResolveSelf();
+            // process root only
+            if ((deep & VAR_DEEP_RESOLVE.DEEP_ROOT_ONLY) == VAR_DEEP_RESOLVE.DEEP_ROOT_ONLY)
+            {
+                foreach (var v in n.Attributes.Values)
+                    Resolve(v);
+            }
+            else
+            {
+                var root = (deep & VAR_DEEP_RESOLVE.DEEP_ROOT) == VAR_DEEP_RESOLVE.DEEP_ROOT;
+                var children = (deep & VAR_DEEP_RESOLVE.DEEP_CHILDREN) == VAR_DEEP_RESOLVE.DEEP_CHILDREN;
+
+                foreach (var it in n.Traverse(root, (t != null && t.Length != 0), children, t))
+                    foreach (var v in it.Attributes.Values)
+                        Resolve(v);
+            }
+        }
+
+
+        private void ResolveSelf()
+        {
+            if (varEntryDic.IsResolved) return;
+
+            varEntryDic = rawVarEntryDic.Clone();
+            foreach (var en in varEntryDic.Values)
             {
                 while (en.IsResolved() == false)
                 {
                     en.CheckLoopAndThrowException();
-                    var item = en.Items.First<DrVarItem>();
-                    var value = GetVarItemValue(item);
-                    en.Resolve(item, value); ;
+                    //var item = en.Items.First<DrVarItem>();
+                    //var value = GetVarItemValue(item);
+                    //en.Resolve(item, value); ;
                 }
             }
         }
         /// <summary>
-        /// Returns value of variable depends on <see cref="Resolver"/> rule. If <see cref="Resolver"/> equals <see cref="VAR_RESOLVE.VAR_UNRESOLVED_EXCEPTION"/> will throw according exception.
+        /// Returns raw variables as attribute collection of a DDNode
+        /// </summary>
+        /// <returns></returns>
+        public DDNode GetVarRaw()
+        {
+            return GetVarRaw(null);
+        }
+        /// <summary>
+        /// Returns raw variables as attribute collection of a DDNode with specified node type
+        /// </summary>
+        /// <param name="t">node type</param>
+        /// <returns></returns>
+        public DDNode GetVarRaw(DDType t)
+        {
+            return rawVarEntryDic.Convert(t);
+        }
+
+        /// <summary>
+        /// Returns resolved variables as attribute collection of a DDNode
+        /// </summary>
+        /// <returns></returns>
+        public DDNode GetVarResolved()
+        {
+            return GetVarResolved(null);
+        }
+        /// <summary>
+        /// Returns resolved variables as attribute collection of a DDNode with specified node type
+        /// </summary>
+        /// <param name="t">node type</param>
+        /// <returns></returns>
+        public DDNode GetVarResolved(DDType t)
+        {
+            ResolveSelf();
+            return varEntryDic.Convert(t);
+        }
+
+
+
+        /// <summary>
+        /// Returns value of variable depends on <see cref="ConflictOption"/> rule. If <see cref="ConflictOption"/> equals <see cref="VAR_CONFLICT_OPTION.VAR_UNRESOLVED_EXCEPTION"/> will throw according exception.
         /// </summary>
         /// <param name="item">var item</param>
         /// <returns></returns>
-        private string GetVarItemValue(DrVarItem item)
+        private string GetVarItemValue(DrVarToken item)
         {
-            if (varEntry.ContainsKey(item.Name) == false)
+            if (varEntryDic.Contains(item.Name) == false)
             {
-                if (Resolver == VAR_RESOLVE.VAR_UNRESOLVED_EXCEPTION)
+                if (ConflictOption == RES_CONFLICT_OPTION.RES_UNRESOLVED_EXCEPTION )
                     throw new DrVarExceptionResolve(item.Name);
-                else if (Resolver == VAR_RESOLVE.VAR_UNRESOLVED_PUT_EMPTY)
+                else if (ConflictOption == RES_CONFLICT_OPTION.RES_UNRESOLVED_PUT_EMPTY)
                     return String.Empty;
                 else
                     return item.FullName;
             }
-            return varEntry[item.Name].Value;
+            return varEntryDic[item.Name].Value;
         }
 
 
 
 
+       
         /*
         private void ValidateVariablesName()
         {

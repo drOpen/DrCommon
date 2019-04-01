@@ -1,5 +1,5 @@
 ﻿/*
-  DrVarItem.cs -- stored variable item for 'DrVar' general purpose Builder variables 1.1.0, February 09, 2019
+  DrVarToken.cs -- stored variable token for 'DrVar' general purpose variables builder 1.1.0, February 09, 2019
  
   Copyright (c) 2013-2019 Kudryashov Andrey aka dr
  
@@ -26,12 +26,12 @@
  */
 
 using System;
-namespace DrOpen.DrCommon.DrVar.Item
+namespace DrOpen.DrCommon.DrVar.Resolver.Token
 {
     /// <summary>
-    /// stored variable item, immutable structure
+    /// stored variable token, immutable structure
     /// </summary>
-    internal struct DrVarItem : ICloneable
+    internal struct DrVarToken : ICloneable
 
     {
         /// <summary>
@@ -41,7 +41,7 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// <param name="endIndex">end index of substitution symbol</param>
         /// <param name="name">name of substitution without substitution symbols</param>
         /// <param name="fullName">name of substitution with substitution symbols</param>
-        internal DrVarItem(int startIndex,
+        internal DrVarToken(int startIndex,
                            int endIndex,
                            string name,
                            string fullName): this()
@@ -52,8 +52,19 @@ namespace DrOpen.DrCommon.DrVar.Item
             FullName = fullName;
         }
 
-        internal DrVarItem(DrVarItem it) : this(it.StartIndex, it.EndIndex, it.Name, it.FullName)
+        internal DrVarToken(DrVarToken it) : this(it.StartIndex, it.EndIndex, it.Name, it.FullName)
         { }
+
+        /// <summary>
+        /// Updates token positions. If <c>StartIndex</c> or <c>EndIndex</c> to the right of <paramref name="fromPosition"/>fromPosition</> they will change on the <paramref name="diffLength"/>
+        /// </summary>
+        /// <param name="fromPosition"></param>
+        /// <param name="diffLength"></param>
+        public void ShiftToken(int fromPosition, int diffLength)
+        {
+            if (this.StartIndex > fromPosition) this.StartIndex += diffLength;
+            if (this.EndIndex > fromPosition) this.EndIndex += diffLength;
+        }
 
         /// <summary>
         /// Gets/sets the start index of substitution symbol
@@ -72,9 +83,9 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// </summary>
         public string FullName { private set; get; }
 
-        public DrVarItem Clone()
+        public DrVarToken Clone()
         {
-            return new DrVarItem(this);
+            return new DrVarToken(this);
         }
 
         object ICloneable.Clone()

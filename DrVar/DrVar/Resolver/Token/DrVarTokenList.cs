@@ -1,5 +1,5 @@
 ﻿/*
-  DrVarItemsList.cs -- list of variables for 'DrVar' general purpose Builder variables 1.1.0, February 09, 2019
+  DrVarTokenList.cs -- list of tokens for 'DrVar' general purpose variables builder 1.1.0, February 09, 2019
   
   Copyright (c) 2013-2019 Kudryashov Andrey aka dr
  
@@ -28,23 +28,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using DrOpen.DrCommon.DrVar.Eception;
+using DrOpen.DrCommon.DrVar.Exceptions;
 
-namespace DrOpen.DrCommon.DrVar.Item
+namespace DrOpen.DrCommon.DrVar.Resolver.Token
 {
     /// <summary>
-    /// list of variables
+    /// list of variables tokens
     /// </summary>
-    internal class DrVarItemsList : IEnumerable<DrVarItem>, ICloneable
+    internal class DrVarTokenList : IEnumerable<DrVarToken>, ICloneable
     {
-        internal DrVarItemsList()
+        internal DrVarTokenList()
         {
-            varItems = new List<DrVarItem>();
+            varTokenList = new List<DrVarToken>();
         }
         /// <summary>
         /// Initializes a new instance of the list of variables
         /// </summary>
-        internal DrVarItemsList(string value) : this ()
+        internal DrVarTokenList(string value) : this ()
         {
             Parse(value);
         }
@@ -52,21 +52,21 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// Initialize the clone of the list of variables 
         /// </summary>
         /// <param name="list"></param>
-        internal DrVarItemsList(DrVarItemsList list)
+        internal DrVarTokenList(DrVarTokenList list)
         {
             this.OpenedVarCounter = list.OpenedVarCounter;
             this.ClosedVarCounter = list.ClosedVarCounter;
             this.EscapeVarSymbolCounter = list.EscapeVarSymbolCounter;
-            this.varItems = new List<DrVarItem>(list.varItems.Count);
+            this.varTokenList = new List<DrVarToken>(list.varTokenList.Count);
             foreach(var it in list ) {
-                this.varItems.Add(it.Clone());
+                this.varTokenList.Add(it.Clone());
             }
         }
 
         /// <summary>
         /// list of variables
         /// </summary>
-        private List<DrVarItem> varItems;
+        private List<DrVarToken> varTokenList;
 
         #region GetVarSymbol
         public string VarSymbol
@@ -81,7 +81,7 @@ namespace DrOpen.DrCommon.DrVar.Item
 
         public bool AreThereVars
         {
-            get { return varItems.Count != 0; }
+            get { return varTokenList.Count != 0; }
         }
 
         #endregion GetVarSymbol
@@ -107,7 +107,7 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// <returns>Returns quantity of variables</returns>
         internal int Parse(string value)
         {
-            varItems.Clear();
+            varTokenList.Clear();
             if (value.Contains(DrVarSign.varSign.ToString())) //Exit if the string does not contain a variable indicating symbol.
             {
 
@@ -127,7 +127,7 @@ namespace DrOpen.DrCommon.DrVar.Item
                     {
                         if (isVarNameStarted)
                         {
-                            varItems.Add(new DrVarItem(iCurrentPosition - varName.Length - 2, iCurrentPosition, varName, DrVarSign.varSign + varName + DrVarSign.varSign)); //add new variable item to list
+                            varTokenList.Add(new DrVarToken(iCurrentPosition - varName.Length - 2, iCurrentPosition, varName, DrVarSign.varSign + varName + DrVarSign.varSign)); //add new variable item to list
                             varName = String.Empty; // clear name of variable
                             ClosedVarCounter++; // Increase the number of characters closure variables
                         }
@@ -157,12 +157,30 @@ namespace DrOpen.DrCommon.DrVar.Item
                 }
                 if (OpenedVarCounter != (ClosedVarCounter + EscapeVarSymbolCounter * 2)) throw new DrVarExceptionMissVarEnd(value, DrVarSign.varSign.ToString());
             }
-            return varItems.Count;
+            return varTokenList.Count;
+        }
+        /// <summary>
+        /// Removes resolved token from token List
+        /// </summary>
+        /// <param name="token">token to remove</param>
+        /// <param name="newLength">new length </param>
+        public void Remove(DrVarToken token, int newLength)
+        {
+            // shift token positions;
+            var diff = newLength - (token.EndIndex - token.StartIndex);
+            if (diff != 0)
+            {
+                for (int i = 0; i < varTokenList.Count; i++)
+                {
+                    varTokenList[i].ShiftToken(token.EndIndex, diff);
+                }
+            }
+            varTokenList.Remove(token);
         }
 
 
-        public static DrVarItemsList GetItemsList(string value) {
-            return new DrVarItemsList(value);
+        public static DrVarTokenList GetItemsList(string value) {
+            return new DrVarTokenList(value);
         }
 
         #region Enumerator
@@ -170,9 +188,9 @@ namespace DrOpen.DrCommon.DrVar.Item
         /// Returns an enumerator that iterates through the DrVarItemsList (IEnumerator&lt;DrVarItem&gt;).
         /// </summary>
         /// <returns>IEnumerator&lt;DrVarItem&gt;</returns>
-        public IEnumerator<DrVarItem> GetEnumerator()
+        public IEnumerator<DrVarToken> GetEnumerator()
         {
-            foreach (var item in varItems)
+            foreach (var item in varTokenList)
             {
                 yield return item;
             }
@@ -187,9 +205,9 @@ namespace DrOpen.DrCommon.DrVar.Item
         }
         #endregion Enumerator
 
-        public DrVarItemsList Clone()
+        public DrVarTokenList Clone()
         {
-            return new DrVarItemsList(this);
+            return new DrVarTokenList(this);
         }
         /// <summary>
         /// Returns the clone of this class

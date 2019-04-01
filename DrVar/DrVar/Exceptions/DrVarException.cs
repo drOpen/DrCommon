@@ -28,12 +28,12 @@ using System;
 using System.Text;
 using DrOpen.DrCommon.DrVar.Res;
 
-namespace DrOpen.DrCommon.DrVar.Eception
+namespace DrOpen.DrCommon.DrVar.Exceptions
 {
     /// <summary>
     /// General DrVar exception. All DrVar exceptions inherited from this exception
     /// </summary>
-    public class DrVarException : Exception
+    public class DrVarException : System.Exception
     {
         /// <summary>
         /// Creates the general DrVar exception with a message

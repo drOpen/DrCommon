@@ -30,61 +30,60 @@ using System.Collections.Generic;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrVar.Exceptions;
 using DrOpen.DrCommon.DrVar.Resolver.Token;
-using DrOpen.DrCommon.DrVar.Resolver.Entry;
+using DrOpen.DrCommon.DrVar.Resolver.Item;
 using DrOpen.DrCommon.DrVar.Resolver;
 
 namespace DrOpen.DrCommon.DrVar
 {
-    public class DrVarPage
+
+    [Flags]
+    public enum RESOLVE_LEVEL : int
+    {
+        ROOT = 1,
+        ROOT_ONLY = 2,
+        CHILDREN = 4,
+        ROOT_AND_CHILDREN = ROOT | CHILDREN
+    }
+
+    internal class DrVarPage
     {
 
        
-        [Flags]
-        public enum VAR_DEEP_RESOLVE : int
-        {
-            DEEP_ROOT = 1,
-            DEEP_ROOT_ONLY = 2,
-            DEEP_CHILDREN = 4,
-            DEPP_ROOT_AND_CHILDREN = DEEP_ROOT | DEEP_CHILDREN
-        }
+       
 
-        private DrVarEntryDic rawVarEntryDic;
-        private DrVarEntryDic  varEntryDic;
-        public RES_CONFLICT_OPTION ConflictOption { get; set; }
-
-        public static RES_CONFLICT_OPTION DefaultConflictOption = RES_CONFLICT_OPTION.RES_UNRESOLVED_KEEP_TEXT ;
-
+        private DrVarItemManager itemManagerRaw;
+        private DrVarItemManager  itemManager;
+        public DrVarTokenMaster TokenMaster { get; private set; }
+        public RESOLVE_LEVEL ResolveLevel { get; private set; }
         #region DrVarPage
 
-        public DrVarPage()
+        public DrVarPage(DrVarTokenMaster tokenMaster, RESOLVE_LEVEL resLevel = RESOLVE_LEVEL.ROOT_AND_CHILDREN, RESOLVE_AMBIGUITY_OPTION resAmbiguity = RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)
         {
-            ConflictOption = DefaultConflictOption;
-            //rawVarEntryDic = new DrVarEntryDic ();
-            //varEntryDic = new DrVarEntryDic();
+            this.TokenMaster = tokenMaster;
+            this.ResolveLevel = resLevel;
+            this.itemManager = new DrVarItemManager(tokenMaster, resAmbiguity);
+            this.itemManagerRaw = new DrVarItemManager(tokenMaster, resAmbiguity);
+
         }
         /// <summary>
         /// Copy constructor
         /// </summary>
-        public DrVarPage(DrVarPage varPage)
+        public DrVarPage(DrVarPage page)
         {
-            ConflictOption = varPage.ConflictOption;
-            rawVarEntryDic = varPage.rawVarEntryDic.Clone();
-            varEntryDic = varPage.varEntryDic.Clone();
+            this.TokenMaster = page.TokenMaster;
+            this.ResolveLevel = page.ResolveLevel;
+            this.itemManagerRaw = page.itemManagerRaw.Clone();
+            this.itemManager = page.itemManager.Clone();
         }
 
 
-        public DrVarPage(RES_CONFLICT_OPTION conflictOption)
-            : this()
-        {
-            ConflictOption = conflictOption;
-        }
-        public DrVarPage(DDNode node)
-            : this()
+        public DrVarPage(DrVarTokenMaster tokenMaster, DDNode node)
+            : this(tokenMaster)
         {
             this.Add(node);
         }
-        public DrVarPage(DDNode node, params DDType[] t)
-            : this()
+        public DrVarPage(DrVarTokenMaster tokenMaster, DDNode node, params DDType[] t)
+            : this(tokenMaster)
         {
             this.Add(node, t);
         }
@@ -118,7 +117,7 @@ namespace DrOpen.DrCommon.DrVar
         /// <param name="value">variable value</param>
         public void Add(string name, string value)
         {
-            varEntryDic.Add(name, value);
+            itemManager.Add(name, value);
         }
         #endregion Add
 
@@ -126,15 +125,15 @@ namespace DrOpen.DrCommon.DrVar
         public void Resolve(string s)
         {
 
-            var par = new DrVarTokenList(s);
+            var par = new DrVarTokenStack(s, TokenMaster.TokenSign, TokenMaster.TokenEscape);
             if (par.AreThereVars)
             {
 
             }
 
-            foreach (var en in varEntryDic.Values)
+            foreach (var en in itemManager.Values)
             {
-                while (en.IsResolved() == false)
+                while (en.IsResolved == false)
                 {
                    // var item = en.Items.First<DrVarItem>();
                    // var value = GetVarItemValue(item);
@@ -161,19 +160,19 @@ namespace DrOpen.DrCommon.DrVar
             }
         }
 
-        public void Resolve(DDNode n, VAR_DEEP_RESOLVE deep, params DDType[] t)
+        public void Resolve(DDNode n, RESOLVE_LEVEL deep, params DDType[] t)
         {
             //if (!IsResolved) ResolveSelf();
             // process root only
-            if ((deep & VAR_DEEP_RESOLVE.DEEP_ROOT_ONLY) == VAR_DEEP_RESOLVE.DEEP_ROOT_ONLY)
+            if ((deep & RESOLVE_LEVEL.ROOT_ONLY) == RESOLVE_LEVEL.ROOT_ONLY)
             {
                 foreach (var v in n.Attributes.Values)
                     Resolve(v);
             }
             else
             {
-                var root = (deep & VAR_DEEP_RESOLVE.DEEP_ROOT) == VAR_DEEP_RESOLVE.DEEP_ROOT;
-                var children = (deep & VAR_DEEP_RESOLVE.DEEP_CHILDREN) == VAR_DEEP_RESOLVE.DEEP_CHILDREN;
+                var root = (deep & RESOLVE_LEVEL.ROOT) == RESOLVE_LEVEL.ROOT;
+                var children = (deep & RESOLVE_LEVEL.CHILDREN) == RESOLVE_LEVEL.CHILDREN;
 
                 foreach (var it in n.Traverse(root, (t != null && t.Length != 0), children, t))
                     foreach (var v in it.Attributes.Values)
@@ -184,12 +183,12 @@ namespace DrOpen.DrCommon.DrVar
 
         private void ResolveSelf()
         {
-            if (varEntryDic.IsResolved) return;
+            if (itemManager.IsResolved) return;
 
-            varEntryDic = rawVarEntryDic.Clone();
-            foreach (var en in varEntryDic.Values)
+            itemManager = itemManagerRaw.Clone();
+            foreach (var en in itemManager.Values)
             {
-                while (en.IsResolved() == false)
+                while (en.IsResolved == false)
                 {
                     en.CheckLoopAndThrowException();
                     //var item = en.Items.First<DrVarItem>();
@@ -213,7 +212,7 @@ namespace DrOpen.DrCommon.DrVar
         /// <returns></returns>
         public DDNode GetVarRaw(DDType t)
         {
-            return rawVarEntryDic.Convert(t);
+            return itemManagerRaw.Convert(t);
         }
 
         /// <summary>
@@ -232,29 +231,9 @@ namespace DrOpen.DrCommon.DrVar
         public DDNode GetVarResolved(DDType t)
         {
             ResolveSelf();
-            return varEntryDic.Convert(t);
+            return itemManager.Convert(t);
         }
 
-
-
-        /// <summary>
-        /// Returns value of variable depends on <see cref="ConflictOption"/> rule. If <see cref="ConflictOption"/> equals <see cref="VAR_CONFLICT_OPTION.VAR_UNRESOLVED_EXCEPTION"/> will throw according exception.
-        /// </summary>
-        /// <param name="item">var item</param>
-        /// <returns></returns>
-        private string GetVarItemValue(DrVarToken item)
-        {
-            if (varEntryDic.Contains(item.Name) == false)
-            {
-                if (ConflictOption == RES_CONFLICT_OPTION.RES_UNRESOLVED_EXCEPTION )
-                    throw new DrVarExceptionResolve(item.Name);
-                else if (ConflictOption == RES_CONFLICT_OPTION.RES_UNRESOLVED_PUT_EMPTY)
-                    return String.Empty;
-                else
-                    return item.FullName;
-            }
-            return varEntryDic[item.Name].Value;
-        }
 
 
 

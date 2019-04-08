@@ -35,53 +35,44 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
     /// <summary>
     /// list of variables tokens
     /// </summary>
-    internal class DrVarTokenList : IEnumerable<DrVarToken>, ICloneable
+    internal class DrVarTokenStack : IEnumerable<DrVarToken>, ICloneable
     {
-        internal DrVarTokenList()
-        {
-            varTokenList = new List<DrVarToken>();
-        }
         /// <summary>
         /// Initializes a new instance of the list of variables
         /// </summary>
-        internal DrVarTokenList(string value) : this ()
+        public DrVarTokenStack(string sign, string escapeSign)
+        {
+            this.VarSymbol = sign;
+            this.EscapeVarSymbol = escapeSign;
+        }
+        public DrVarTokenStack(string value, string sign, string escapeSign)
+            : this(sign, escapeSign)
         {
             Parse(value);
         }
-        /// <summary>
-        /// Initialize the clone of the list of variables 
-        /// </summary>
-        /// <param name="list"></param>
-        internal DrVarTokenList(DrVarTokenList list)
+        public DrVarTokenStack(DrVarTokenStack tokenStack)
         {
-            this.OpenedVarCounter = list.OpenedVarCounter;
-            this.ClosedVarCounter = list.ClosedVarCounter;
-            this.EscapeVarSymbolCounter = list.EscapeVarSymbolCounter;
-            this.varTokenList = new List<DrVarToken>(list.varTokenList.Count);
-            foreach(var it in list ) {
-                this.varTokenList.Add(it.Clone());
-            }
+            this.VarSymbol = tokenStack.VarSymbol;
+            this.EscapeVarSymbol = tokenStack.EscapeVarSymbol;
+            this.OpenedVarCounter = tokenStack.OpenedVarCounter;
+            this.ClosedVarCounter = tokenStack.ClosedVarCounter;
+            this.EscapeVarSymbolCounter = tokenStack.EscapeVarSymbolCounter;
+            this.varTokenStack = new Stack<DrVarToken>(tokenStack.varTokenStack);
         }
-
         /// <summary>
         /// list of variables
         /// </summary>
-        private List<DrVarToken> varTokenList;
+        private Stack<DrVarToken> varTokenStack;
 
         #region GetVarSymbol
-        public string VarSymbol
-        {
-            get { return DrVar.DrVarSign.varSign.ToString(); }
-        }
 
-        public string EscapeVarSymbol
-        {
-            get { return DrVarSign.escapeVarSign; }
-        }
+        public string VarSymbol { get; private set; }
+
+        public string EscapeVarSymbol { get; private set; }
 
         public bool AreThereVars
         {
-            get { return varTokenList.Count != 0; }
+            get { return varTokenStack.Count != 0; }
         }
 
         #endregion GetVarSymbol
@@ -99,7 +90,7 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
         /// Stores the number of characters the escape of variables
         /// </summary>
         public int EscapeVarSymbolCounter { get; private set; }
-       
+
         /// <summary>
         /// Parses the string for the presence of variables and makes list of variables and returns quantity of variables
         /// </summary>
@@ -107,12 +98,12 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
         /// <returns>Returns quantity of variables</returns>
         internal int Parse(string value)
         {
-            varTokenList.Clear();
+            varTokenStack = new Stack<DrVarToken>();
             if (value.Contains(DrVarSign.varSign.ToString())) //Exit if the string does not contain a variable indicating symbol.
             {
 
                 int iCurrentPosition = 0;
-                
+
                 int opennedVarFlag = 0; // Stored number of not closed characters of variables
                 bool isPreviosVarEscaped = false;
                 bool isPreviosCharVar = false; // Stored status about previous character of variable
@@ -127,7 +118,7 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
                     {
                         if (isVarNameStarted)
                         {
-                            varTokenList.Add(new DrVarToken(iCurrentPosition - varName.Length - 2, iCurrentPosition, varName, DrVarSign.varSign + varName + DrVarSign.varSign)); //add new variable item to list
+                            varTokenStack.Push(new DrVarToken(iCurrentPosition - varName.Length - 2, iCurrentPosition, varName, DrVarSign.varSign + varName + DrVarSign.varSign)); //add new variable item to list
                             varName = String.Empty; // clear name of variable
                             ClosedVarCounter++; // Increase the number of characters closure variables
                         }
@@ -157,30 +148,22 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
                 }
                 if (OpenedVarCounter != (ClosedVarCounter + EscapeVarSymbolCounter * 2)) throw new DrVarExceptionMissVarEnd(value, DrVarSign.varSign.ToString());
             }
-            return varTokenList.Count;
+            return varTokenStack.Count;
         }
-        /// <summary>
-        /// Removes resolved token from token List
-        /// </summary>
-        /// <param name="token">token to remove</param>
-        /// <param name="newLength">new length </param>
-        public void Remove(DrVarToken token, int newLength)
+
+        public int Count()
         {
-            // shift token positions;
-            var diff = newLength - (token.EndIndex - token.StartIndex);
-            if (diff != 0)
-            {
-                for (int i = 0; i < varTokenList.Count; i++)
-                {
-                    varTokenList[i].ShiftToken(token.EndIndex, diff);
-                }
-            }
-            varTokenList.Remove(token);
+            return varTokenStack.Count;
         }
 
 
-        public static DrVarTokenList GetItemsList(string value) {
-            return new DrVarTokenList(value);
+        public DrVarToken Peek()
+        {
+            return varTokenStack.Peek();
+        }
+        public DrVarToken Pop()
+        {
+            return varTokenStack.Pop();
         }
 
         #region Enumerator
@@ -190,7 +173,7 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
         /// <returns>IEnumerator&lt;DrVarItem&gt;</returns>
         public IEnumerator<DrVarToken> GetEnumerator()
         {
-            foreach (var item in varTokenList)
+            foreach (var item in varTokenStack)
             {
                 yield return item;
             }
@@ -205,17 +188,14 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
         }
         #endregion Enumerator
 
-        public DrVarTokenList Clone()
+        public DrVarTokenStack Clone()
         {
-            return new DrVarTokenList(this);
+            return new DrVarTokenStack(this);
         }
-        /// <summary>
-        /// Returns the clone of this class
-        /// </summary>
-        /// <returns></returns>
+
         object ICloneable.Clone()
         {
-            return this.Clone();
+            return Clone();
         }
     }
 

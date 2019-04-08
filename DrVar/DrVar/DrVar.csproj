@@ -38,15 +38,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Resolver\DrResolver.cs" />
-    <Compile Include="Resolver\Entry\DrVarEntry.cs" />
+    <Compile Include="Resolver\IResolver.cs" />
+    <Compile Include="Resolver\Item\DrVarItem.cs" />
     <Compile Include="DrVarPage.cs" />
     <Compile Include="DrVarSign.cs" />
-    <Compile Include="DrVarManager.cs" />
     <Compile Include="Exceptions\DrVarException.cs" />
-    <Compile Include="Resolver\Entry\DrVarEntryDic.cs" />
+    <Compile Include="Resolver\Item\DrVarItemManager.cs" />
     <Compile Include="Resolver\Token\DrVarToken.cs" />
-    <Compile Include="Resolver\Token\DrVarTokenList.cs" />
+    <Compile Include="Resolver\DrVarTokenMaster.cs" />
+    <Compile Include="Resolver\Token\DrVarTokenStack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Res\Msg.Designer.cs">
       <AutoGen>True</AutoGen>

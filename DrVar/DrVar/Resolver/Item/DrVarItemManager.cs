@@ -28,33 +28,44 @@ using DrOpen.DrCommon.DrData;
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 using System.Text;
 
-namespace DrOpen.DrCommon.DrVar.Resolver.Entry
+namespace DrOpen.DrCommon.DrVar.Resolver.Item
 {
-    internal class DrVarEntryDic: IEnumerable<KeyValuePair<string, DrVarEntry>>, ICloneable
+    internal class DrVarItemManager: IEnumerable<KeyValuePair<string, DrVarItem>>, ICloneable, IResolved, IVarManager
     {
 
+        public RESOLVE_AMBIGUITY_OPTION ResAmbiguity {get; private set;}
         public bool IsResolved { get; private set; }
-        private Dictionary<string, DrVarEntry> varEntryDic;
+        private Dictionary<string, DrVarItem> iDic;
+        public DrVarTokenMaster TokenMaster { get; private set; }
+        public DrVarItemManager(DrVarTokenMaster tMaster, RESOLVE_AMBIGUITY_OPTION resAbiguity = RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)
+        {
+            this.TokenMaster = tMaster;
+            this.ResAmbiguity = resAbiguity;
+            this.iDic = new Dictionary<string, DrVarItem>();
+        }
         /// <summary>
         /// copy constructor
         /// </summary>
-        /// <param name="vel"></param>
-        public DrVarEntryDic(DrVarEntryDic vel)
+        /// <param name="items"></param>
+        public DrVarItemManager(DrVarItemManager items)
         {
-            foreach (var en in vel)
+            foreach (var it in items)
             {
-                varEntryDic.Add(en.Key, en.Value);
+                iDic.Add(it.Key, it.Value);
             }
-            IsResolved = vel.IsResolved;
+            this.IsResolved = items.IsResolved;
+            this.TokenMaster = items.TokenMaster;
+            this.ResAmbiguity = items.ResAmbiguity;
         }
 
         public bool Contains(string name)
         {
-            return varEntryDic.ContainsKey(name);
+            return iDic.ContainsKey(name);
         }
+
+
 
         #region Add
         /// <summary>
@@ -88,16 +99,16 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Entry
         /// <param name="value">variable value</param>
         public void Add(string name, string value)
         {
-            if (varEntryDic.ContainsKey(name))
+            if (iDic.ContainsKey(name))
             {
                 if (IsResolved) IsResolved = false;
-                varEntryDic.Remove(name); // remove previous variable by name
+                iDic.Remove(name); // remove previous variable by name
             }
-            var entry = new DrVarEntry(name, value);
-            if ((IsResolved == true) && (entry.IsResolved() == false)) IsResolved = false;
-            varEntryDic.Add(name, entry);
+            var entry = new DrVarItem(name, value, TokenMaster.GetTokenStack(value) );
+            if ((IsResolved == true) && (entry.IsResolved == false)) IsResolved = false;
+            iDic.Add(name, entry);
         }
-
+        
         #endregion Add
 
 
@@ -117,9 +128,9 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Entry
         #endregion Converter
 
         #region Enumerator
-        public IEnumerator<KeyValuePair<string, DrVarEntry>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, DrVarItem>> GetEnumerator()
         {
-            foreach (var item in varEntryDic)
+            foreach (var item in iDic)
             {
                 yield return item;
             }
@@ -132,23 +143,23 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Entry
         /// <summary>
         /// Gets a collection containing the names of child
         /// </summary>
-        public Dictionary<string, DrVarEntry>.KeyCollection Names
+        public Dictionary<string, DrVarItem>.KeyCollection Names
         {
-            get { return this.varEntryDic.Keys; }
+            get { return this.iDic.Keys; }
         }
         /// <summary>
         /// Gets a collection containing the values of child
         /// </summary>
-        public virtual Dictionary<string, DrVarEntry>.ValueCollection Values
+        public virtual Dictionary<string, DrVarItem>.ValueCollection Values
         {
-            get { return this.varEntryDic.Values; }
+            get { return this.iDic.Values; }
         }
         #endregion Names/Values
         #endregion Enumerator
 
-        public DrVarEntryDic Clone()
+        public DrVarItemManager Clone()
         {
-            return new DrVarEntryDic(this);
+            return new DrVarItemManager(this);
         }
         /// <summary>
         /// Returns the clone of this class
@@ -159,5 +170,18 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Entry
             return this.Clone();
         }
 
+
+        public string GetValue(string varName)
+        {
+            if (this.iDic.ContainsKey(varName))
+                return iDic[varName].Value;
+
+            if (this.ResAmbiguity == RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_PUT_EMPTY)
+                return String.Empty;
+            if (this.ResAmbiguity == RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)
+                return this.TokenMaster.TokenSign + varName + this.TokenMaster.TokenSign;
+
+            throw new Exceptions.DrVarExceptionResolve(varName);
+        }
     }
 }

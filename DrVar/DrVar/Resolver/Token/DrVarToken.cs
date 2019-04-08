@@ -41,7 +41,7 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
         /// <param name="endIndex">end index of substitution symbol</param>
         /// <param name="name">name of substitution without substitution symbols</param>
         /// <param name="fullName">name of substitution with substitution symbols</param>
-        internal DrVarToken(int startIndex,
+        public DrVarToken(int startIndex,
                            int endIndex,
                            string name,
                            string fullName): this()
@@ -52,19 +52,8 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Token
             FullName = fullName;
         }
 
-        internal DrVarToken(DrVarToken it) : this(it.StartIndex, it.EndIndex, it.Name, it.FullName)
+        internal DrVarToken(DrVarToken token) : this(token.StartIndex, token.EndIndex, token.Name, token.FullName)
         { }
-
-        /// <summary>
-        /// Updates token positions. If <c>StartIndex</c> or <c>EndIndex</c> to the right of <paramref name="fromPosition"/>fromPosition</> they will change on the <paramref name="diffLength"/>
-        /// </summary>
-        /// <param name="fromPosition"></param>
-        /// <param name="diffLength"></param>
-        public void ShiftToken(int fromPosition, int diffLength)
-        {
-            if (this.StartIndex > fromPosition) this.StartIndex += diffLength;
-            if (this.EndIndex > fromPosition) this.EndIndex += diffLength;
-        }
 
         /// <summary>
         /// Gets/sets the start index of substitution symbol

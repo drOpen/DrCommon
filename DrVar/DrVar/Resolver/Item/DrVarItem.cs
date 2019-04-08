@@ -28,47 +28,47 @@ using DrOpen.DrCommon.DrVar.Exceptions;
 using DrOpen.DrCommon.DrVar.Resolver.Token;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace DrOpen.DrCommon.DrVar.Resolver.Entry
+namespace DrOpen.DrCommon.DrVar.Resolver.Item
 {
-    internal class DrVarEntry : ICloneable
+    internal class DrVarItem : ICloneable, IResolved
     {
         public string Name { get; private set; }
         public string Value { get; private set; }
-        public DrVarTokenList Items { get; private set; }
+        public DrVarTokenStack Token { get; private set; }
 
-        public DrVarEntry(string name, string value)
+        public DrVarItem(string name, string value, DrVarTokenStack token)
         {
-            var DynNames = DrVarTokenList.GetItemsList(name);
-            if (DynNames.Count() != 0) throw new DrVarExceptionMissName(DynNames.First<DrVarToken>().FullName);
+            //var DynNames = DrVarTokenStack.GetItemsList(name);
+            //if (DynNames.Count() != 0) throw new DrVarExceptionMissName(DynNames.First<DrVarToken>().FullName);
             this.Name = name;
             this.Value = value;
-            this.Items = DrVarTokenList.GetItemsList(value);
+            this.Token = token; 
         }
 
-        public DrVarEntry(DrVarEntry entry)
+        public DrVarItem(DrVarItem varItem)
         {
-            this.Name = entry.Name;
-            this.Value = entry.Value;
-            this.Items = entry.Items.Clone();
+            this.Name = varItem.Name;
+            this.Value = varItem.Value;
+            this.Token = varItem.Token.Clone();
         }
-
+/*
         internal int Resolve(DrVarToken item, string value)
         {
             if (item.FullName == value) // replaces with the same value ! loop protection
             {
-                return (item.EndIndex + 1 >= this.Value.Length) ? Items.Parse(String.Empty) : Items.Parse(this.Value.Substring(item.EndIndex , this.Value.Length - item.EndIndex)); // skip this item 
+                return (item.EndIndex + 1 >= this.Value.Length) ? Token.Parse(String.Empty) : Token.Parse(this.Value.Substring(item.EndIndex , this.Value.Length - item.EndIndex)); // skip this item 
             }
             else
             {
                 var pref = this.Value.Substring(0, item.StartIndex);
                 var suff = (item.EndIndex + 1 >= this.Value.Length) ? String.Empty : this.Value.Substring(item.EndIndex , this.Value.Length - item.EndIndex );
                 this.Value = pref + value + suff;
-                return Items.Parse(this.Value);
+                return Token.Parse(this.Value);
             }
         }
+*/
         /// <summary>
         /// Detects self var loop and if it exists will throw the DrVarExceptionLoop
         /// </summary>
@@ -76,32 +76,32 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Entry
         /// <exception cref="DrVarExceptionLoop" />
         public void CheckLoopAndThrowException()
         {
-            foreach (var it in Items)
+            foreach (var it in Token)
             {
                 if (it.Name == Name) // self reference detected
                     throw new DrVarExceptionLoop(Name, Value);
             }
         }
 
-        /// <summary>
-        /// returns true if this variable doesn't have a referebce to another
-        /// </summary>
-        /// <returns>returns true if this variable doesn't have a referebce to another</returns>
-        public bool IsResolved()
-        {
-            return (this.Items.Count() == 0);
-        }
 
-
-        public DrVarEntry Clone()
+        public DrVarItem Clone()
         {
-            return new DrVarEntry(this);
+            return new DrVarItem(this);
         }
 
         object ICloneable.Clone()
         {
-            return (DrVarEntry)Clone();
+            return (DrVarItem)Clone();
         }
 
+
+        /// <summary>
+        /// returns true if this variable doesn't have a referebce to another
+        /// </summary>
+        /// <returns>returns true if this variable doesn't have a referebce to another</returns>
+        public bool IsResolved
+        {
+            get { return (this.Token.Count() == 0); }
+        }
     }
 }

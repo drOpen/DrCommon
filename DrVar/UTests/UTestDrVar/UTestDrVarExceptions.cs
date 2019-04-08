@@ -4,7 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using DrOpen.DrCommon.DrData;
 using DrOpen.DrCommon.DrVar;
-using DrOpen.DrCommon.DrVar.Eception;
+using DrOpen.DrCommon.DrVar.Resolver;
+using DrOpen.DrCommon.DrVar.Resolver.Item;
+using DrOpen.DrCommon.DrVar.Resolver.Token;
+using DrOpen.DrCommon.DrVar.Exceptions;
 
 namespace UTestDrVar
 {
@@ -14,6 +17,11 @@ namespace UTestDrVar
         const string UTestProjectCategory = "DrVar";
         const string UTestClassCategory = "DrVarExcaption";
 
+        private static DrVarPage GetVarPage(RESOLVE_LEVEL resLevel = RESOLVE_LEVEL.ROOT_AND_CHILDREN , 
+                                            RESOLVE_AMBIGUITY_OPTION resAmbiguity = RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)
+        {
+            return new DrVarPage(new DrOpen.DrCommon.DrVar.Resolver.DrVarTokenMaster(), resLevel, resAmbiguity);
+        }
         /// <summary>
         /// Get an exception incorrect variable name. Every variable name has not contain a variable
         /// </summary>
@@ -35,7 +43,7 @@ namespace UTestDrVar
         {
             try
             {
-                var p = new DrVarPage();
+                var p = GetVarPage(); 
                 p.Add(n);
                 Assert.Fail("The incorrect variable name '{0}' has been allowed.", varName);
             }
@@ -71,9 +79,9 @@ namespace UTestDrVar
         {
             try
             {
-                var p = new DrVarPage();
+                var p = GetVarPage();
                 p.Add(n);
-                p.Compile();
+                p.Resolve("");
                 Assert.Fail("Variable loop '{0}' has been allowed.", varName);
             }
             catch (DrVarExceptionLoop e)
@@ -110,10 +118,10 @@ namespace UTestDrVar
         {
             try
             {
-                var p = new DrVarPage();
-                p.Resolver = DrVarPage.VAR_RESOLVE.VAR_UNRESOLVED_EXCEPTION;
+                var p = GetVarPage(RESOLVE_LEVEL.ROOT_AND_CHILDREN  ,RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_EXCEPTION);
+
                 p.Add(n);
-                p.Compile();
+                p.Resolve("");
                 Assert.Fail("Unresolved variable is forbited by rule but '{0}' has been allowed by checker.", varName);
             }
             catch (DrVarExceptionResolve e)
@@ -146,7 +154,7 @@ namespace UTestDrVar
         {
             try
             {
-                var p = new DrVarPage();
+                var p = GetVarPage(); 
                 p.Add(n);
                 Assert.Fail("The incorrect variable name '{0}' has been allowed.", varName);
             }
@@ -181,7 +189,7 @@ namespace UTestDrVar
 
         private void CheckException_MissEnd(string aName, DDNode n)
         {
-            var p = new DrVarPage();
+            var p = GetVarPage(); 
             try
             {
                 p.Add(n);

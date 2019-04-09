@@ -32,10 +32,10 @@ using System.Text;
 
 namespace DrOpen.DrCommon.DrVar.Resolver.Item
 {
-    internal class DrVarItemManager: IEnumerable<KeyValuePair<string, DrVarItem>>, ICloneable, IResolved, IVarManager
+    internal class DrVarItemManager : IEnumerable<KeyValuePair<string, DrVarItem>>, ICloneable, IResolved, IVarManager
     {
 
-        public RESOLVE_AMBIGUITY_OPTION ResAmbiguity {get; private set;}
+        public RESOLVE_AMBIGUITY_OPTION ResAmbiguity { get; private set; }
         public bool IsResolved { get; private set; }
         private Dictionary<string, DrVarItem> iDic;
         public DrVarTokenMaster TokenMaster { get; private set; }
@@ -45,6 +45,14 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Item
             this.ResAmbiguity = resAbiguity;
             this.iDic = new Dictionary<string, DrVarItem>();
         }
+        public DrVarItemManager(DrVarTokenMaster tMaster, DDAttributesCollection attributes,  RESOLVE_AMBIGUITY_OPTION resAbiguity = RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)
+        {
+            this.TokenMaster = tMaster;
+            this.ResAmbiguity = resAbiguity;
+            this.iDic = new Dictionary<string, DrVarItem>();
+            this.Add(attributes);
+        }
+        /// <summary>
         /// <summary>
         /// copy constructor
         /// </summary>
@@ -77,12 +85,18 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Item
         {
             foreach (var n in node.Traverse(true, false, true, t))
             {
-                foreach (var a in n.Attributes)
-                {
-                    Add(a);
-                }
+                Add(n.Attributes);
             }
         }
+
+        public void Add(DDAttributesCollection attributes)
+        {
+            foreach (var a in attributes)
+            {
+                Add(a);
+            }
+        }
+
         /// <summary>
         /// Add variable
         /// </summary>
@@ -104,11 +118,11 @@ namespace DrOpen.DrCommon.DrVar.Resolver.Item
                 if (IsResolved) IsResolved = false;
                 iDic.Remove(name); // remove previous variable by name
             }
-            var entry = new DrVarItem(name, value, TokenMaster.GetTokenStack(value) );
+            var entry = new DrVarItem(name, value, TokenMaster.GetTokenStack(value));
             if ((IsResolved == true) && (entry.IsResolved == false)) IsResolved = false;
             iDic.Add(name, entry);
         }
-        
+
         #endregion Add
 
 

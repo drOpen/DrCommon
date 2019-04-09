@@ -15,7 +15,7 @@ namespace UTestDrVar
     public class UTestDrVarExceptions
     {
         const string UTestProjectCategory = "DrVar";
-        const string UTestClassCategory = "DrVarExcaption";
+        const string UTestClassCategory = "DrVarException";
 
         private static DrVarPage GetVarPage(RESOLVE_LEVEL resLevel = RESOLVE_LEVEL.ROOT_AND_CHILDREN , 
                                             RESOLVE_AMBIGUITY_OPTION resAmbiguity = RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)

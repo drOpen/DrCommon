@@ -45,25 +45,25 @@ namespace DrOpen.DrCommon.DrVar
         ROOT_AND_CHILDREN = ROOT | CHILDREN
     }
 
-    internal class DrVarPage
+    internal class DrVarPage : IResolved
     {
 
-       
-       
-
-        private DrVarItemManager itemManagerRaw;
-        private DrVarItemManager  itemManager;
+        private DDAttributesCollection varsCollectionRaw;
+        private DrVarItemManager itemManager;
         public DrVarTokenMaster TokenMaster { get; private set; }
+        public RESOLVE_AMBIGUITY_OPTION ResolveAmbiguity { get; private set; }
         public RESOLVE_LEVEL ResolveLevel { get; private set; }
+        public bool IsResolved { get; private set; }
         #region DrVarPage
 
         public DrVarPage(DrVarTokenMaster tokenMaster, RESOLVE_LEVEL resLevel = RESOLVE_LEVEL.ROOT_AND_CHILDREN, RESOLVE_AMBIGUITY_OPTION resAmbiguity = RESOLVE_AMBIGUITY_OPTION.RES_UNRESOLVED_KEEP_TEXT)
         {
             this.TokenMaster = tokenMaster;
             this.ResolveLevel = resLevel;
-            this.itemManager = new DrVarItemManager(tokenMaster, resAmbiguity);
-            this.itemManagerRaw = new DrVarItemManager(tokenMaster, resAmbiguity);
-
+            this.ResolveAmbiguity = resAmbiguity;
+            //this.itemManager = new DrVarItemManager(tokenMaster, resAmbiguity);
+            this.varsCollectionRaw = new DDAttributesCollection();
+            this.IsResolved = false;
         }
         /// <summary>
         /// Copy constructor
@@ -72,8 +72,10 @@ namespace DrOpen.DrCommon.DrVar
         {
             this.TokenMaster = page.TokenMaster;
             this.ResolveLevel = page.ResolveLevel;
-            this.itemManagerRaw = page.itemManagerRaw.Clone();
+            this.ResolveAmbiguity = page.ResolveAmbiguity;
+            this.varsCollectionRaw = page.varsCollectionRaw.Clone();
             this.itemManager = page.itemManager.Clone();
+            this.IsResolved = page.IsResolved;
         }
 
 
@@ -105,26 +107,31 @@ namespace DrOpen.DrCommon.DrVar
         /// <summary>
         /// Add variable
         /// </summary>
-        /// <param name="v">key value pair where key is variable name and value is variable value</param>
-        public void Add(KeyValuePair<string, DDValue> v)
-        {
-            Add(v.Key, v.Value);
-        }
-        /// <summary>
-        /// Add variable
-        /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="value">variable value</param>
         public void Add(string name, string value)
         {
-            itemManager.Add(name, value);
+            Add(new KeyValuePair<string,DDValue>(name, value));
         }
         #endregion Add
+        /// <summary>
+        /// Add variable
+        /// </summary>
+        /// <param name="v">key value pair where key is variable name and value is variable value</param>
+        public void Add(KeyValuePair<string, DDValue> v)
+        {
+            if (varsCollectionRaw.Contains(v.Key)) varsCollectionRaw.Remove(v.Key);
+            varsCollectionRaw.Add(v.Key, v.Value);
+            if (this.IsResolved) this.IsResolved = false;
+        }
 
 
         public void Resolve(string s)
         {
 
+            ResolveSelf();
+
+            
             var par = new DrVarTokenStack(s, TokenMaster.TokenSign, TokenMaster.TokenEscape);
             if (par.AreThereVars)
             {
@@ -135,9 +142,9 @@ namespace DrOpen.DrCommon.DrVar
             {
                 while (en.IsResolved == false)
                 {
-                   // var item = en.Items.First<DrVarItem>();
-                   // var value = GetVarItemValue(item);
-                   // en.Resolve(item, value); ;
+                    // var item = en.Items.First<DrVarItem>();
+                    // var value = GetVarItemValue(item);
+                    // en.Resolve(item, value); ;
                 }
             }
 
@@ -145,7 +152,7 @@ namespace DrOpen.DrCommon.DrVar
 
         public void Resolve(DDValue v)
         {
-            if (v.Type == typeof(string)) 
+            if (v.Type == typeof(string))
             {
                 Resolve(v.GetValueAs<string>());
             }
@@ -183,11 +190,11 @@ namespace DrOpen.DrCommon.DrVar
 
         private void ResolveSelf()
         {
-            if (itemManager.IsResolved) return;
+            if (this.IsResolved == false) itemManager = new DrVarItemManager(this.TokenMaster, varsCollectionRaw, ResolveAmbiguity);
 
-            itemManager = itemManagerRaw.Clone();
             foreach (var en in itemManager.Values)
             {
+               
                 while (en.IsResolved == false)
                 {
                     en.CheckLoopAndThrowException();
@@ -212,7 +219,7 @@ namespace DrOpen.DrCommon.DrVar
         /// <returns></returns>
         public DDNode GetVarRaw(DDType t)
         {
-            return itemManagerRaw.Convert(t);
+            return varsCollectionRaw.Convert(t);
         }
 
         /// <summary>
@@ -238,7 +245,7 @@ namespace DrOpen.DrCommon.DrVar
 
 
 
-       
+
         /*
         private void ValidateVariablesName()
         {
@@ -249,5 +256,7 @@ namespace DrOpen.DrCommon.DrVar
             }
         }
         */
+
+
     }
 }

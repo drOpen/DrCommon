@@ -335,8 +335,6 @@ namespace UTestDrDataSn
 
         private void TestMergeNodeWithAnotherNode(DDNode nDestination, DDNode.DDNODE_MERGE_OPTION option, ResolveConflict res)
         {
-            var nSourceRoot = new DDNode(Guid.Empty.ToString(), String.Empty);
-            var nDestinationRoot = new DDNode(Guid.Empty.ToString(), String.Empty);
 
             var nSource = XMLDeserialize(UTestDrDataCommon.GetMemoryStreamFromFile(".\\XML\\" + UTestDrDataCommon.GetTestMethodName() + ".Source.xml"));
             UTestDrDataCommon.WriteMemmoryStreamToFile(XMLSerialize(nDestination), UTestDrDataCommon.GetTestMethodName() + ".Destination.xml");

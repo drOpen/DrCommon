@@ -26,7 +26,13 @@ namespace printer.cs
             }
 
             DDNode dddn = new DDNode();
-            dddn.Merge(ddn);
+
+
+            using (XmlReader reader = XmlReader.Create(spath))
+            {
+                dddn = DDNodeSne.Deserialize(reader);
+                Console.WriteLine("Deserialized");
+            }
 
             using (XmlWriter writer = XmlWriter.Create(dpath))
             {
@@ -34,13 +40,9 @@ namespace printer.cs
                 Console.WriteLine("Serialized");
             }
 
-            //using (XmlReader reader = XmlReader.Create(spath))
-            //{
-            //    dddn = DDNodeSne.Deserialize(reader);
-            //    Console.WriteLine("Deserialized");
-            //}
 
-            
+
+
 
 
             Console.Read();
@@ -49,18 +51,13 @@ namespace printer.cs
         static private DDNode GetStockHierarhyWithArrayValue()
         {
             var root = new DDNode(Guid.Empty.ToString(), String.Empty);
-            var a = new DDNode("a");
-            a.Attributes.Add("value a->a", "string");
-            a.Attributes.Add("value a->b", true);
-            var a_b = a.Add("a.b");
-            var a_c = a.Add("a.c");
-            a_c.Attributes.Add("value a.c->a", "string");
-            a_c.Attributes.Add("value a.c->b", true);
-            var a_b_d = a_b.Add("a.b.d");
-            var a_b_d_e = a_b_d.Add("a.b.d.e");
-            a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
-            a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
-            root.Add(a);
+            var n = new DDNode();
+            var a = n.Attributes;
+            a.Add(null);
+            a.Add(new DDValue());
+            a.Add(new DDValue(null));
+            a.Add(String.Empty);
+            root.Add(n);
             return root;
         }
     }

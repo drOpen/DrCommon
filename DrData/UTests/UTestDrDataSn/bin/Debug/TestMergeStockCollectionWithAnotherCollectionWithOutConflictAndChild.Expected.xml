@@ -3,8 +3,6 @@
   <n n="a">
     <a n="value a-&gt;a" t="2" v="string" />
     <a n="value a-&gt;b" t="7" v="True" />
-    <a n="attr1" t="2" v="string" />
-    <a n="attr2" t="7" v="True" />
     <n n="a.b">
       <n n="a.b.d">
         <n n="a.b.d.e">

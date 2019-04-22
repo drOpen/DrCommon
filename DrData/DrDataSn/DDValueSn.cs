@@ -204,10 +204,8 @@ namespace DrOpen.DrCommon.DrDataSn
                         if (v.Type == typeof(Byte[]))
                             attrVal = "HEX:" + attrVal;
 
-                        if (attrVal != String.Empty)
-                        {
-                            writer.WriteAttributeString("v", attrVal);
-                        }
+                        writer.WriteAttributeString("v", attrVal);
+                        
                     }
                 }
             }

@@ -53,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrSrv", "DrSrv\DrSrv\DrSrv.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrDataEx", "DrData\UTests\UTestDrDataEx\UTestDrDataEx.csproj", "{F59D8C8F-D7E7-42F2-969B-21D883E1F5C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataSn", "DrDataSn\DrDataSn.csproj", "{AE9A4DFC-429C-4D64-A458-CE1F23704A6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataSn", "DrData\DrDataSn\DrDataSn.csproj", "{AE9A4DFC-429C-4D64-A458-CE1F23704A6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

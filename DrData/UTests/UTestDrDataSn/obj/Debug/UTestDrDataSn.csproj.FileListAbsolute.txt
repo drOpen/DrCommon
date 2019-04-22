@@ -18,3 +18,5 @@ D:\Code\DrCommon\DrData\UTests\UTestDrDataSn\obj\Debug\UTestDrDataSn.csproj.Core
 D:\Code\DrCommon\DrData\UTests\UTestDrDataSn\obj\Debug\UTestDrDataSn.csproj.CopyComplete
 D:\Code\DrCommon\DrData\UTests\UTestDrDataSn\obj\Debug\UTestDrDataSn.dll
 D:\Code\DrCommon\DrData\UTests\UTestDrDataSn\obj\Debug\UTestDrDataSn.pdb
+D:\Code\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDNodeXmlSerializationWithoutAttributeCollection.xml
+D:\Code\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDNodeXmlSerializationFromFileSkipIncorrectedData.xml

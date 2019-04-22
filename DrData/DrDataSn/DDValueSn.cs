@@ -189,22 +189,23 @@ namespace DrOpen.DrCommon.DrDataSn
                 {
                     writer.WriteAttributeString("t", ConvertToAcnType(v.Type));
 
-                    if (v != null)
+                    if (IsThisTypeXMLSerializeAsArray(v.Type))
                     {
-                        if (IsThisTypeXMLSerializeAsArray(v.Type))
+                        foreach (var element in v.ToStringArray())
                         {
-                            foreach (var element in v.ToStringArray())
-                            {
-                                writer.WriteStartElement("v");
-                                writer.WriteAttributeString("v", element);
-                                writer.WriteEndElement();
-                            }
+                            writer.WriteStartElement("v");
+                            writer.WriteAttributeString("v", element);
+                            writer.WriteEndElement();
                         }
-                        else
+                    }
+                    else
+                    {
+                        String attrVal = v.ToString();
+                        if (v.Type == typeof(Byte[]))
+                            attrVal = "HEX:" + attrVal;
+
+                        if (attrVal != String.Empty)
                         {
-                            String attrVal = v.ToString();
-                            if (v.Type == typeof(Byte[]))
-                                attrVal = "HEX:" + attrVal;
                             writer.WriteAttributeString("v", attrVal);
                         }
                     }
@@ -299,24 +300,25 @@ namespace DrOpen.DrCommon.DrDataSn
             var t = reader.GetAttribute("t");
             if (t == null) // if attribute type doesn't set default type - string
                 t = DEFAULT_VALUE_TYPE.ToString();
+
+            var type = ParseAcnType(t);
+            if (type == null) throw new DDTypeIncorrectException(t);
+
+            if (IsThisTypeXMLSerializeAsArray(type))
+            {
+                var value = ReadXmlValueArray(reader);
+                if (value == null) value = new string[] { }; // support empty array
+                v = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));
+            }
             else
             {
-                var type = ParseAcnType(t);
-                if (type == null) throw new DDTypeIncorrectException(t);
-                if (IsThisTypeXMLSerializeAsArray(type))
-                {
-                    var value = ReadXmlValueArray(reader);
-                    if (value == null) value = new string[] { }; // support empty array
-                    v = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));
-                }
-                else
-                {
-                    String attrVal = reader["v"];
-                    if (type == typeof(Byte[]))
-                        attrVal = attrVal.Replace("HEX:", "");
-                    v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
-                }
+                String attrVal = reader["v"];
+                if (type == typeof(Byte[]))
+                    attrVal = attrVal.Replace("HEX:", "");
+
+                v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
             }
+            
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == "v")) reader.ReadEndElement(); // Need to close the opened element </n>, only self
             return v;
         }

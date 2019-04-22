@@ -110,6 +110,15 @@ namespace UTestDrDataSn
             ValidateXMLDeserialization(root);
         }
 
+        [TestMethod]
+        public void TestDDNodeXmlSerializationWithoutAttributeCollection()
+        {
+            var stream = UTestDrDataCommon.GetMemoryStreamFromFile();
+            stream.Position = 0;
+            var deserialized = XMLDeserialize(stream); // check looping
+
+        }
+
         public static void ValidateXMLDeserialization(DDNode original)
         {
             var xml = XMLSerialize(original);
@@ -141,6 +150,21 @@ namespace UTestDrDataSn
             stream.Position = 0;
             var serializer = new XmlSerializer(typeof(DDNodeSn));
             return (DDNodeSn)serializer.Deserialize(stream);
+        }
+
+        [TestMethod]
+        public void TestDDNodeXmlSerializationHierarchy()
+        {
+            var root = new DDNode(Guid.Empty.ToString(), String.Empty);
+            var child_level_1 = root.Add("Child_Level_1");
+            var child_level_2 = child_level_1.Add("Child_Level_2");
+            ValidateXMLDeserialization(root);
+        }
+
+        [TestMethod]
+        public void TestDDNodeXmlSerializationFromFileSkipIncorrectedData()
+        {
+            ValidateXMLDeserialization(GetStockHierarhy(), UTestDrDataCommon.GetMemoryStreamFromFile());
         }
 
         #endregion IXmlSerializable

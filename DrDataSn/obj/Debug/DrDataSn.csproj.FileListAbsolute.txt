@@ -1,0 +1,11 @@
+D:\Code\DrCommon\DrDataSn\bin\Debug\License.txt
+D:\Code\DrCommon\DrDataSn\bin\Debug\DrDataSn.dll
+D:\Code\DrCommon\DrDataSn\bin\Debug\DrDataSn.pdb
+D:\Code\DrCommon\DrDataSn\bin\Debug\DrData.dll
+D:\Code\DrCommon\DrDataSn\bin\Debug\DrData.pdb
+D:\Code\DrCommon\DrDataSn\bin\Debug\DrData.xml
+D:\Code\DrCommon\DrDataSn\obj\Debug\DrDataSn.csprojAssemblyReference.cache
+D:\Code\DrCommon\DrDataSn\obj\Debug\DrDataSn.csproj.CoreCompileInputs.cache
+D:\Code\DrCommon\DrDataSn\obj\Debug\DrDataSn.csproj.CopyComplete
+D:\Code\DrCommon\DrDataSn\obj\Debug\DrDataSn.dll
+D:\Code\DrCommon\DrDataSn\obj\Debug\DrDataSn.pdb

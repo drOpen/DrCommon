@@ -1,0 +1,10 @@
+D:\Code\DrCommon\DrData\DrData\bin\Debug\License.txt
+D:\Code\DrCommon\DrData\DrData\bin\Debug\DrData.XML
+D:\Code\DrCommon\DrData\DrData\bin\Debug\DrData.dll
+D:\Code\DrCommon\DrData\DrData\bin\Debug\DrData.pdb
+D:\Code\DrCommon\DrData\DrData\obj\Debug\DrData.csprojAssemblyReference.cache
+D:\Code\DrCommon\DrData\DrData\obj\Debug\DrData.Res.Msg.resources
+D:\Code\DrCommon\DrData\DrData\obj\Debug\DrData.csproj.GenerateResource.cache
+D:\Code\DrCommon\DrData\DrData\obj\Debug\DrData.csproj.CoreCompileInputs.cache
+D:\Code\DrCommon\DrData\DrData\obj\Debug\DrData.dll
+D:\Code\DrCommon\DrData\DrData\obj\Debug\DrData.pdb

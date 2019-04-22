@@ -183,60 +183,33 @@ namespace DrOpen.DrCommon.DrDataSn
         /// <param name="writer">XML writer used to write the XML document.</param>
         internal static void XMLSerialize(DDValue v, XmlWriter writer)
         {
-            if (v.Type != null)
+            if (v != null)
             {
-                writer.WriteAttributeString("t", ConvertToAcnType(v.Type));
-
-                if (v != null)
+                if (v.Type != null)
                 {
-                    if (IsThisTypeXMLSerializeAsArray(v.Type))
+                    writer.WriteAttributeString("t", ConvertToAcnType(v.Type));
+
+                    if (v != null)
                     {
-                        foreach (var element in v.ToStringArray())
+                        if (IsThisTypeXMLSerializeAsArray(v.Type))
                         {
-                            writer.WriteStartElement("v");
-                            writer.WriteAttributeString("v", element);
-                            writer.WriteEndElement();
+                            foreach (var element in v.ToStringArray())
+                            {
+                                writer.WriteStartElement("v");
+                                writer.WriteAttributeString("v", element);
+                                writer.WriteEndElement();
+                            }
                         }
-                    }
-                    else
-                    {
-                        String attrVal = v.ToString();
-                        if (v.Type == typeof(Byte[]))
-                            attrVal = "HEX:" + attrVal;
-                        writer.WriteAttributeString("v", attrVal);
+                        else
+                        {
+                            String attrVal = v.ToString();
+                            if (v.Type == typeof(Byte[]))
+                                attrVal = "HEX:" + attrVal;
+                            writer.WriteAttributeString("v", attrVal);
+                        }
                     }
                 }
             }
-
-
-            //if (v == null)
-            //{
-            //    writer.WriteAttributeString("t", "");
-            //}
-
-            //else if (v.Type == null)
-            //{
-            //    writer.WriteAttributeString("t", "");
-            //}
-            //else
-            //{
-            //    // doesn't write System.String value type, it's default type
-            //    if (v.Type != typeof(System.String)) writer.WriteAttributeString("t", v.Type.ToString());
-            //    if (IsThisTypeXMLSerializeAsArray(v.Type))
-            //    {
-            //        foreach (var element in v.ToStringArray())
-            //        {
-            //            writer.WriteStartElement("i");
-            //            writer.WriteString(element);
-            //            writer.WriteEndElement();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        writer.WriteString(v.ToString());
-            //    }
-
-            //}
         }
         /// <summary>
         /// Return true if this type should be serialization per each array element

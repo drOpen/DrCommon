@@ -25,7 +25,8 @@ namespace UTestDrDataSn
 
         static private DDNode GetStockHierarhy()
         {
-            var a = new DDNode(Guid.Empty.ToString(), String.Empty);
+            var root = new DDNode(Guid.Empty.ToString(), String.Empty);
+            var a = new DDNode("a");
             a.Attributes.Add(attStock1Name, "string");
             a.Attributes.Add("value a->b", true);
             var a_b = a.Add("a.b");
@@ -36,7 +37,8 @@ namespace UTestDrDataSn
             var a_b_d_e = a_b_d.Add("a.b.d.e");
             a_b_d_e.Attributes.Add("value a.b.d.e->a", 1);
             a_b_d_e.Attributes.Add("value a.b.d.e->b", null);
-            return a;
+            root.Add(a);
+            return root;
         }
 
         static private DDNode GetStockHierarhyWithArrayValue()
@@ -84,6 +86,28 @@ namespace UTestDrDataSn
             n.Attributes.Add("_a", "a");
             n.Add("B").Attributes.Add("_b", "b");
             ValidateXMLDeserialization(n);
+        }
+
+        [TestMethod]
+        public void TestDDNodeXmlSerializationNode()
+        {
+            var root = GetStockHierarhy();
+            ValidateXMLDeserialization(root);
+        }
+
+        [TestMethod]
+        public void TestDDNodeXmlSerializationSingleNodeAndAtribute()
+        {
+            var n = new DDNode(Guid.Empty.ToString(), String.Empty);
+            n.Attributes.Add(true);
+            ValidateXMLDeserialization(n);
+        }
+
+        [TestMethod]
+        public void TestDDNodeXmlSerializationEmpty()
+        {
+            var root = new DDNode(Guid.Empty.ToString(), String.Empty);
+            ValidateXMLDeserialization(root);
         }
 
         public static void ValidateXMLDeserialization(DDNode original)

@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataSn", "DrData\DrDataSn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrDataSn", "DrData\UTests\UTestDrDataSn\UTestDrDataSn.csproj", "{9A7FCF15-37BB-4CF1-8BE3-4046E192F9F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "printer.cs", "printer.cs\printer.cs.csproj", "{0BC94447-FF81-4A13-9B10-43D8DFC77071}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,10 @@ Global
 		{9A7FCF15-37BB-4CF1-8BE3-4046E192F9F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A7FCF15-37BB-4CF1-8BE3-4046E192F9F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A7FCF15-37BB-4CF1-8BE3-4046E192F9F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BC94447-FF81-4A13-9B10-43D8DFC77071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BC94447-FF81-4A13-9B10-43D8DFC77071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BC94447-FF81-4A13-9B10-43D8DFC77071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BC94447-FF81-4A13-9B10-43D8DFC77071}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -183,6 +189,7 @@ Global
 		{F59D8C8F-D7E7-42F2-969B-21D883E1F5C7} = {473DD4B9-FCD6-4580-8A56-58C634225F53}
 		{AE9A4DFC-429C-4D64-A458-CE1F23704A6F} = {D82CDFC3-F9E2-4F27-9D8D-B5D0E122961F}
 		{9A7FCF15-37BB-4CF1-8BE3-4046E192F9F7} = {473DD4B9-FCD6-4580-8A56-58C634225F53}
+		{0BC94447-FF81-4A13-9B10-43D8DFC77071} = {D82CDFC3-F9E2-4F27-9D8D-B5D0E122961F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {47C43A62-8A96-415C-89F6-C04ADD046E37}

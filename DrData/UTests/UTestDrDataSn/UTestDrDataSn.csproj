@@ -74,6 +74,45 @@
     <Content Include="XML\TestDDNodeXmlSerializationWithoutAttributeCollection.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XML\TestDeserializationFromXMLAndAutoNameGeneration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeEmptyNodeWithStock.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflict.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflict.Source.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndAttributes.Source.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOutConflictAndChild.Source.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflict.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithOverwriteConflict.Source.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflict.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflict.Source.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestMergeStockCollectionWithEmptyCollection.Expected.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

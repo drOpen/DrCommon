@@ -307,8 +307,8 @@ namespace DrOpen.DrCommon.DrDataSn
             v = DDValueSne.Deserialize(reader);
             if (name != null)
                 ac.Add(name, v);
-            else
-                ac.Add(v);
+            //else
+            //    ac.Add(v);
 
             //}
 

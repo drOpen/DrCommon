@@ -298,25 +298,36 @@ namespace DrOpen.DrCommon.DrDataSn
             reader.MoveToContent();
 
             var t = reader.GetAttribute("t");
-            if (t == null) // if attribute type doesn't set default type - string
-                t = DEFAULT_VALUE_TYPE.ToString();
+            String attrVal = reader["v"];
 
-            var type = ParseAcnType(t);
-            if (type == null) throw new DDTypeIncorrectException(t);
-
-            if (IsThisTypeXMLSerializeAsArray(type))
+            if (t == null)
             {
-                var value = ReadXmlValueArray(reader);
-                if (value == null) value = new string[] { }; // support empty array
-                v = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));
+                var type = DEFAULT_VALUE_TYPE;
+                if (attrVal != null)
+                {
+                    v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
+                }
             }
-            else
+            else 
             {
-                String attrVal = reader["v"];
-                if (type == typeof(Byte[]))
-                    attrVal = attrVal.Replace("HEX:", "");
+                var type = ParseAcnType(t);
+                if (type == null) throw new DDTypeIncorrectException(t);
+                if (IsThisTypeXMLSerializeAsArray(type))
+                {
+                    var value = ReadXmlValueArray(reader);
+                    if (value == null) value = new string[] { }; // support empty array
+                    v = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));
+                }
+                else
+                {
+                    if (type == typeof(Byte[]))
+                        attrVal = attrVal.Replace("HEX:", "");
 
-                v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
+                    if (type == typeof(String) & attrVal == null)
+                        v = new DDValue(null);
+                    else
+                        v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
+                }
             }
             
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == "v")) reader.ReadEndElement(); // Need to close the opened element </n>, only self
@@ -339,7 +350,8 @@ namespace DrOpen.DrCommon.DrDataSn
             //    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
             //}
             var value = reader["v"];
-            reader.Read();
+            if (reader.Name == "v")
+                
             if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
             return value;
         }
@@ -371,6 +383,7 @@ namespace DrOpen.DrCommon.DrDataSn
                     i++;
                 }
                 reader.MoveToContent();
+                reader.Read();
             }
             return v;
         }
@@ -400,6 +413,8 @@ namespace DrOpen.DrCommon.DrDataSn
         {
             switch (intType)
             {
+                case "1":
+                    return typeof(String);
                 case "2":
                     return typeof(String);
                 case "258":

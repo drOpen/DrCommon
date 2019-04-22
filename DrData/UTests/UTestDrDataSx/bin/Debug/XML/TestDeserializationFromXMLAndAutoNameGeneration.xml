@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<n>
+  <n t="Type">
+    <a>AttributeValue</a>
+    <a/>
+    <a t=""/>
+    <a n="A" t=""/>
+    <a t="System.String[]">
+      <i/>
+      <i>Value_A</i>
+      <i>Value_B</i>
+    </a>
+  </n>
+  <n t="Type">
+    <a/>
+  </n>
+</n>

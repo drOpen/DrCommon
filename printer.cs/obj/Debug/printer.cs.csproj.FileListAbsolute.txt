@@ -1,0 +1,14 @@
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\License.txt
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\printer.cs.exe.config
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\printer.cs.exe
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\printer.cs.pdb
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\DrData.dll
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\DrDataSn.dll
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\DrDataSn.pdb
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\DrData.pdb
+C:\WorkNew\DrCommon\printer.cs\bin\Debug\DrData.xml
+C:\WorkNew\DrCommon\printer.cs\obj\Debug\printer.cs.csprojAssemblyReference.cache
+C:\WorkNew\DrCommon\printer.cs\obj\Debug\printer.cs.csproj.CoreCompileInputs.cache
+C:\WorkNew\DrCommon\printer.cs\obj\Debug\printer.cs.csproj.CopyComplete
+C:\WorkNew\DrCommon\printer.cs\obj\Debug\printer.cs.exe
+C:\WorkNew\DrCommon\printer.cs\obj\Debug\printer.cs.pdb

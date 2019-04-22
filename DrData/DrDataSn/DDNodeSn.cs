@@ -167,9 +167,18 @@ namespace DrOpen.DrCommon.DrDataSn
         /// <param name="writer">XML writer used to write the XML document.</param>
         public static void Serialize(this DDNode n, XmlWriter writer)
         {
-            writer.WriteStartElement("n");
-            XMLSerialize(n, writer);
-            writer.WriteEndElement();
+            if (n.IsRoot)
+            {
+                writer.WriteStartElement("nr");
+                XMLSerialize(n, writer);
+                writer.WriteEndElement();
+            }
+            else
+            {
+                writer.WriteStartElement("n");
+                XMLSerialize(n, writer);
+                writer.WriteEndElement();
+            }
         }
 
 
@@ -305,7 +314,7 @@ namespace DrOpen.DrCommon.DrDataSn
             {
                 if (reader.Depth > initialDepth)
                     reader.Skip(); // 'Deep protection'
-                else if ((reader.IsStartElement("a")) || (reader.IsStartElement("ac")))
+                else if (reader.IsStartElement("a"))
                 {
                     n.Attributes.Deserialize(reader);
                     reader.Read();

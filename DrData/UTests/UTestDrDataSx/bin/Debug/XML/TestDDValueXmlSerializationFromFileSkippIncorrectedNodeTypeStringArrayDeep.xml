@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<v t="System.String[]">
+  NodeValue
+  <i>
+    <i>valA</i>
+  </i>
+  <Test>
+    <i>valB</i>
+  </Test>
+  <v>
+    Value
+  </v>
+</v>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<nr>
+  <n n="name" t="type">
+    <a>
+      <a n="bool" t="7" v="false"></a>
+      <a n="int" t="3" v="-1"></a>
+    </a>
+    <n n="ChildNode">
+      <n n="SubChildNode">
+          <a n="string" t="2" v="string"></a>
+      </n>
+    </n>
+  </n>
+</nr>
+

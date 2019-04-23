@@ -208,6 +208,10 @@ namespace DrOpen.DrCommon.DrDataSn
                         
                     }
                 }
+                else
+                {
+                    writer.WriteAttributeString("t", "");
+                }
             }
         }
         /// <summary>
@@ -295,39 +299,45 @@ namespace DrOpen.DrCommon.DrDataSn
             DDValue v = null;
             reader.MoveToContent();
 
-            var t = reader.GetAttribute("t");
-            String attrVal = reader["v"];
-
-            if (t == null)
+            var xmlType = reader.GetAttribute("t");
+            var attrType = DEFAULT_VALUE_TYPE;
+            String xmlVal = reader["v"];
+            
+            if (xmlType == null)
             {
-                var type = DEFAULT_VALUE_TYPE;
-                if (attrVal != null)
-                {
-                    v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
-                }
+                if (xmlVal == null)
+                    v = null;
+                else
+                    v = new DDValue(DDValue.ConvertFromStringTo(attrType, xmlVal));
             }
-            else 
+            else if (xmlType == String.Empty)
             {
-                var type = ParseAcnType(t);
-                if (type == null) throw new DDTypeIncorrectException(t);
-                if (IsThisTypeXMLSerializeAsArray(type))
+                if (xmlVal == null)
+                    v = new DDValue();
+                else
+                    v = new DDValue(DDValue.ConvertFromStringTo(attrType, xmlVal));
+            }
+            else
+            {
+                attrType = ParseAcnType(xmlType);
+                if (IsThisTypeXMLSerializeAsArray(attrType))
                 {
                     var value = ReadXmlValueArray(reader);
                     if (value == null) value = new string[] { }; // support empty array
-                    v = new DDValue(DDValue.ConvertFromStringArrayTo(type, value));
+                    v = new DDValue(DDValue.ConvertFromStringArrayTo(attrType, value));
                 }
                 else
                 {
-                    if (type == typeof(Byte[]))
-                        attrVal = attrVal.Replace("HEX:", "");
+                    if (attrType == typeof(Byte[]))
+                        xmlVal = xmlVal.Replace("HEX:", "");
 
-                    if (type == typeof(String) & attrVal == null)
+                    if (attrType == typeof(String) & xmlVal == null)
                         v = new DDValue(null);
                     else
-                        v = new DDValue(DDValue.ConvertFromStringTo(type, attrVal));
+                        v = new DDValue(DDValue.ConvertFromStringTo(attrType, xmlVal));
                 }
+
             }
-            
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == "v")) reader.ReadEndElement(); // Need to close the opened element </n>, only self
             return v;
         }

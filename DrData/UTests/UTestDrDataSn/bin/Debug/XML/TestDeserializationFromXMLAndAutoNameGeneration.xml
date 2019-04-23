@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<n>
+  <n t="Type">
+    <a v="AttributeValue"></a>
+    <a/>
+    <a t=""/>
+    <a n="A" t=""/>
+    <a t="258">
+      <v v="Value_A"></v>
+      <v v="Value_B"></v>
+    </a>
+  </n>
+  <n t="Type"></n>
+</n>

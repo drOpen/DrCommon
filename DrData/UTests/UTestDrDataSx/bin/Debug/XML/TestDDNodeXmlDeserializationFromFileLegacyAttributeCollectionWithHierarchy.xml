@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<n n="name" t="type">
+  <ac>
+    <a n="bool" t="System.Boolean">false</a>
+    <a n="int" t="System.Int32">-1</a>
+  </ac>
+  <n n="ChildNode">
+    <n n="SubChildNode">
+      <ac>
+        <a n="string" t="System.String">string</a>
+      </ac>
+    </n>
+  </n>
+</n>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<nr>
+  <n n="a">
+    <a n="value a-&gt;a" t="2" v="string" />
+    <a n="value a-&gt;b" t="7" v="True" />
+    <n n="a.b">
+      <n n="a.b.d">
+        <n n="a.b.d.e">
+          <a n="value a.b.d.e-&gt;a" t="3" v="1" />
+          <a n="value a.b.d.e-&gt;b" />
+        </n>
+      </n>
+    </n>
+    <n n="a.c">
+      <a n="value a.c-&gt;a" t="2" v="string" />
+      <a n="value a.c-&gt;b" t="7" v="True" />
+    </n>
+  </n>
+  <n n="Source">
+    <a n="value a-&gt;a" t="2" v="string" />
+    <a n="value a-&gt;b" t="7" v="True" />
+    <n n="a.b">
+      <n n="a.b.d">
+        <a n="Array" t="258">
+          <v v="Value_A" />
+        </a>
+      </n>
+    </n>
+    <n n="A.C">
+      <a n="value a.c-&gt;a" t="2" v="STRING" />
+      <a n="value a.c-&gt;b" t="7" v="False" />
+    </n>
+  </n>
+</nr>

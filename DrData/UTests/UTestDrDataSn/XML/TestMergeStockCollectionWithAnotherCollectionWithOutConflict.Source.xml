@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<nr>
+  <n n="Source" r="True" c="2">
+    <a n="attr1" t="2" v="string" />
+    <a n="attr2" t="7" v="True" />
+    <n n="A.B" c="1">
+      <n n="a.b.d" c="1">
+        <n n="a.b.d.e">
+          <a n="value a.b.d.e-&gt;a" t="3" v="1" />
+          <a n="value a.b.d.e-&gt;b" />
+        </n>
+      </n>
+    </n>
+    <n n="A.C">
+      <a n="value a.c-&gt;a" t="2" v="string" />
+      <a n="value a.c-&gt;b" t="7" v="True" />
+    </n>
+  </n>  
+</nr>

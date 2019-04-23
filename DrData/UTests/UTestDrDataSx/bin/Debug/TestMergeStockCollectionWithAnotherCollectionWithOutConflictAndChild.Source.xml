@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<n n="Source">
+  <a n="attr1">string</a>
+  <a n="attr2" t="System.Boolean">True</a>
+  <n n="a.b">
+    <n n="a.b.d">
+      <n n="a.b.d.e">
+        <a n="value a.b.d.e-&gt;a" t="System.Int32">1</a>
+        <a n="value a.b.d.e-&gt;b" t="" />
+      </n>
+    </n>
+  </n>
+  <n n="a.c">
+    <a n="value a.c-&gt;a">string</a>
+    <a n="value a.c-&gt;b" t="System.Boolean">True</a>
+    <a n="value a.c-&gt;c" t="System.DateTime">2013-06-14T16:15:30.0000000+04:00</a>
+  </n>
+</n>

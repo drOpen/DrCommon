@@ -1,0 +1,29 @@
+﻿<?xml version="1.0"?>
+<n n="a" r="True" c="2">
+  IncorrectValue
+    IncorrectValue
+    <a n="value a->a" i="IncorrectAttribute" t="System.String" s="6">string</a>
+    <a n="value a->b" t="System.Boolean" s="1">True</a>
+  <n n="a.b" c="1">
+    IncorrectValue
+    <TestNode/>
+    <ac Incorrecta="1"/>
+    <n n="a.b.d" c="1">
+      <Test>
+        IncorrectValue<Test/>
+      </Test>
+      <ac>
+        <n n="a.b.d.e"/>
+      </ac>
+      <n n="a.b.d.e">
+          <a n="value a.b.d.e->a" t="System.Int32" s="4">1</a>
+          <a n="value a.b.d.e->b" t=""/>
+      </n>
+    </n>
+  </n>
+  <n n="a.c">
+      <a n="value a.c->a" t="System.String" s="6">string</a>
+      <a n="value a.c->b" t="System.Boolean" s="1">True</a>
+      <a n="value a.c->c" t="System.DateTime" s="8">2013-06-14T16:15:30.0000000+04:00</a>
+  </n>
+</n>

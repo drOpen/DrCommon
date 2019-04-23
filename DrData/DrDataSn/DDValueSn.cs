@@ -29,85 +29,12 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
 using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrData.Exceptions;
 
 
 namespace DrOpen.DrCommon.DrDataSn
 {
-    ///// <summary>
-    ///// provides XML formating serialization and deserialization for DDValue of the 'DrData'
-    ///// </summary>
-    //[XmlRoot(ElementName = "v")]
-    //public class DDValueSn : IXmlSerializable
-    //{
-    //    private DDValueSn()
-    //    { }
-    //    private DDValueSn(DDValue v)
-    //    {
-    //        this.v = v;
-    //    }
-    //    /// <summary>
-    //    /// returns/unboxes DDValue 
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    public DDValue GetDDValue()
-    //    {
-    //        return this.v;
-    //    }
-
-    //    private DDValue v;
-
-    //    #region IXmlSerializable
-    //    /// <summary>
-    //    /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, 
-    //    /// if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
-    //    /// </summary>
-    //    /// <returns>null</returns>
-    //    public XmlSchema GetSchema() { return null; }
-    //    /// <summary>
-    //    /// Converts an object into its XML representation.
-    //    /// </summary>
-    //    /// <param name="writer"></param>
-    //    public virtual void WriteXml(XmlWriter writer)
-    //    {
-    //        DDValueSne.XMLSerialize(v, writer);
-    //    }
-    //    /// <summary>
-    //    /// Generates an object from its XML representation.
-    //    /// </summary>
-    //    /// <param name="reader"></param>
-    //    public virtual void ReadXml(XmlReader reader)
-    //    {
-    //        this.v = DDValueSne.Deserialize(reader);
-    //    }
-    //    #endregion IXmlSerializabl
-
-    //    #region explicit operator
-    //    /// <summary>
-    //    /// boxes DDValue to for XML formating serialization and deserialization
-    //    /// </summary>
-    //    /// <param name="n">DDValue for box</param>
-    //    /// <returns></returns>
-    //    public static explicit operator DDValueSn(DDValue v)
-    //    {
-    //        return (v == null ? null : new DDValueSn(v));
-    //    }
-    //    /// <summary>
-    //    /// unbox DDValue
-    //    /// </summary>
-    //    /// <param name="n"></param>
-    //    /// <returns></returns>
-    //    public static implicit operator DDValue(DDValueSn v)
-    //    {
-    //        return (v == null ? null : v.v);
-    //    }
-    //    #endregion explicit operator
-    //}
-
     /// <summary>
     /// provides XML formating serialization and deserialization for DDValue of the 'DrData'
     /// </summary>

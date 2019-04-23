@@ -28,85 +28,11 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
 using DrOpen.DrCommon.DrData;
 
 namespace DrOpen.DrCommon.DrDataSn
 {
-    /// <summary>
-    /// provides XML formating serialization and deserialization for DDAttributesCollection of the 'DrData'
-    /// </summary>
-    //[XmlRoot(ElementName = "ac")]
-    //public class DDAttributesCollectionSn : IXmlSerializable
-    //{
-    //    private DDAttributesCollectionSn()
-    //    { }
-    //    private DDAttributesCollectionSn(DDAttributesCollection v)
-    //    {
-    //        this.ac = v;
-    //    }
-    //    /// <summary>
-    //    /// returns/unboxes DDAttributesCollection 
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    public DDAttributesCollection GetDDAttributesCollection()
-    //    {
-    //        return this.ac;
-    //    }
-
-    //    private DDAttributesCollection ac;
-
-
-    //    #region IXmlSerializable
-    //    /// <summary>
-    //    /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
-    //    /// </summary>
-    //    /// <returns>null</returns>
-    //    public XmlSchema GetSchema() { return null; }
-    //    /// <summary>
-    //    /// Converts an object into its XML representation.
-    //    /// </summary>
-    //    /// <param name="writer"></param>
-    //    public virtual void WriteXml(XmlWriter writer)
-    //    {
-    //        DDAttributesCollectionSne.XMLSerialize(this.ac, writer);
-    //    }
-    //    /// <summary>
-    //    /// Generates an object from its XML representation.
-    //    /// </summary>
-    //    /// <param name="reader"></param>
-    //    public virtual void ReadXml(XmlReader reader)
-    //    {
-    //        this.ac = DDAttributesCollectionSne.Deserialize(reader);
-    //    }
-
-
-    //    #endregion IXmlSerializable
-    //    #region explicit operator
-    //    /// <summary>
-    //    /// boxes DDAttributesCollection to for XML formating serialization and deserialization
-    //    /// </summary>
-    //    /// <param name="n">DDNode for box</param>
-    //    /// <returns></returns>
-    //    public static explicit operator DDAttributesCollectionSn(DDAttributesCollection ac)
-    //    {
-    //        return (ac == null ? null : new DDAttributesCollectionSn(ac));
-    //    }
-    //    /// <summary>
-    //    /// unbox DDNode
-    //    /// </summary>
-    //    /// <param name="n"></param>
-    //    /// <returns></returns>
-    //    public static implicit operator DDAttributesCollection(DDAttributesCollectionSn ac)
-    //    {
-    //        return (ac == null ? null : ac.ac);
-    //    }
-
-    //    #endregion explicit operator
-    //}
-
     /// <summary>
     /// provides XML formating serialization and deserialization for DDAttributesCollection of the 'DrData'
     /// </summary>

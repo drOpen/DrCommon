@@ -350,5 +350,79 @@ namespace UTestDrDataSn
         }
 
         #endregion Merge
+        #region bugs
+        [TestMethod]
+        public void TestDDNodeLostNodesAfterDeserializationEmptyStringArray1()
+        {
+            var root = new DDNode(Guid.Empty.ToString(), String.Empty);
+            var nSource = new DDNode("Source");
+            var attr = nSource.Add("1").Attributes;
+            attr.Add("a1", new Guid());
+            attr.Add("a3", new string[] { });
+            attr.Add("a2", new string[] { "1" });
+            attr = nSource.Add("2").Attributes;
+            attr.Add("a1", new Guid());
+            attr.Add("a3", new string[] { });
+            attr.Add("a2", new string[] { "2" });
+            root.Add(nSource);
+            ValidateXMLDeserialization(root);
+        }
+
+        [TestMethod]
+        public void TestDDNodeLostNodesAfterDeserializationEmptyStringArray2()
+        {
+            var root = new DDNode(Guid.Empty.ToString(), String.Empty);
+            var nSource = new DDNode("Root");
+            var attr = nSource.Add("1").Attributes;
+            attr.Add("a1", new Guid());
+            attr.Add("a2", new string[] { "1" });
+            attr.Add("a3", new string[] { });
+            attr = nSource.Add("2").Attributes;
+            attr.Add("a1", new Guid());
+            attr.Add("a2", new string[] { "2" });
+            attr.Add("a3", new string[] { });
+            root.Add(nSource);
+            ValidateXMLDeserialization(root);
+        }
+
+        [TestMethod]
+        public void TestDDNodeLostNodesAfterDeserializationEmptyStringArray3IsEmptyElementFalse()
+        {
+            var root = new DDNode(Guid.Empty.ToString(), String.Empty);
+            var nExpected = new DDNode("Root");
+            var attr = nExpected.Add("1").Attributes;
+            attr.Add("a1", new Guid());
+            attr.Add("a2", new string[] { "1" });
+            attr.Add("a3", new string[] { });
+            attr = nExpected.Add("2").Attributes;
+            attr.Add("a1", new Guid());
+            attr.Add("a3", new string[] { });
+            attr.Add("a2", new string[] { "2" });
+            root.Add(nExpected);
+
+            var nSource = DDNodeSne.Deserialize(@"<?xml version='1.0'?>
+                <nr>
+                    <n n='Root'>
+                    <n n='1'>
+                        <a n='a1' t='13' v='00000000-0000-0000-0000-000000000000'></a>
+                        <a n='a2' t='258'>
+                            <v v='1'></v>
+                        </a>
+                        <a n='a3' t='258'></a>
+                    </n>
+                    <n n='2'>
+                        <a n='a1' t='13' v='00000000-0000-0000-0000-000000000000'></a>
+                        <a n='a3' t='258'></a>
+                        <a n='a2' t='258'>
+                            <v v='2'></v>
+                        </a>
+                    </n>
+                </n>
+            </nr>");
+            ValidateDeserialization(nSource, root);
+        }
+
+        #endregion bugs
+
     }
 }

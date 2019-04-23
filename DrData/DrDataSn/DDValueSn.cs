@@ -38,75 +38,75 @@ using DrOpen.DrCommon.DrData.Exceptions;
 
 namespace DrOpen.DrCommon.DrDataSn
 {
-    /// <summary>
-    /// provides XML formating serialization and deserialization for DDValue of the 'DrData'
-    /// </summary>
-    [XmlRoot(ElementName = "v")]
-    public class DDValueSn : IXmlSerializable
-    {
-        private DDValueSn()
-        { }
-        private DDValueSn(DDValue v)
-        {
-            this.v = v;
-        }
-        /// <summary>
-        /// returns/unboxes DDValue 
-        /// </summary>
-        /// <returns></returns>
-        public DDValue GetDDValue()
-        {
-            return this.v;
-        }
+    ///// <summary>
+    ///// provides XML formating serialization and deserialization for DDValue of the 'DrData'
+    ///// </summary>
+    //[XmlRoot(ElementName = "v")]
+    //public class DDValueSn : IXmlSerializable
+    //{
+    //    private DDValueSn()
+    //    { }
+    //    private DDValueSn(DDValue v)
+    //    {
+    //        this.v = v;
+    //    }
+    //    /// <summary>
+    //    /// returns/unboxes DDValue 
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public DDValue GetDDValue()
+    //    {
+    //        return this.v;
+    //    }
 
-        private DDValue v;
+    //    private DDValue v;
 
-        #region IXmlSerializable
-        /// <summary>
-        /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, 
-        /// if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
-        /// </summary>
-        /// <returns>null</returns>
-        public XmlSchema GetSchema() { return null; }
-        /// <summary>
-        /// Converts an object into its XML representation.
-        /// </summary>
-        /// <param name="writer"></param>
-        public virtual void WriteXml(XmlWriter writer)
-        {
-            DDValueSne.XMLSerialize(v, writer);
-        }
-        /// <summary>
-        /// Generates an object from its XML representation.
-        /// </summary>
-        /// <param name="reader"></param>
-        public virtual void ReadXml(XmlReader reader)
-        {
-            this.v = DDValueSne.Deserialize(reader);
-        }
-        #endregion IXmlSerializabl
+    //    #region IXmlSerializable
+    //    /// <summary>
+    //    /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null) from this method, and instead, 
+    //    /// if specifying a custom schema is required, apply the XmlSchemaProviderAttribute to the class.
+    //    /// </summary>
+    //    /// <returns>null</returns>
+    //    public XmlSchema GetSchema() { return null; }
+    //    /// <summary>
+    //    /// Converts an object into its XML representation.
+    //    /// </summary>
+    //    /// <param name="writer"></param>
+    //    public virtual void WriteXml(XmlWriter writer)
+    //    {
+    //        DDValueSne.XMLSerialize(v, writer);
+    //    }
+    //    /// <summary>
+    //    /// Generates an object from its XML representation.
+    //    /// </summary>
+    //    /// <param name="reader"></param>
+    //    public virtual void ReadXml(XmlReader reader)
+    //    {
+    //        this.v = DDValueSne.Deserialize(reader);
+    //    }
+    //    #endregion IXmlSerializabl
 
-        #region explicit operator
-        /// <summary>
-        /// boxes DDValue to for XML formating serialization and deserialization
-        /// </summary>
-        /// <param name="n">DDValue for box</param>
-        /// <returns></returns>
-        public static explicit operator DDValueSn(DDValue v)
-        {
-            return (v == null ? null : new DDValueSn(v));
-        }
-        /// <summary>
-        /// unbox DDValue
-        /// </summary>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        public static implicit operator DDValue(DDValueSn v)
-        {
-            return (v == null ? null : v.v);
-        }
-        #endregion explicit operator
-    }
+    //    #region explicit operator
+    //    /// <summary>
+    //    /// boxes DDValue to for XML formating serialization and deserialization
+    //    /// </summary>
+    //    /// <param name="n">DDValue for box</param>
+    //    /// <returns></returns>
+    //    public static explicit operator DDValueSn(DDValue v)
+    //    {
+    //        return (v == null ? null : new DDValueSn(v));
+    //    }
+    //    /// <summary>
+    //    /// unbox DDValue
+    //    /// </summary>
+    //    /// <param name="n"></param>
+    //    /// <returns></returns>
+    //    public static implicit operator DDValue(DDValueSn v)
+    //    {
+    //        return (v == null ? null : v.v);
+    //    }
+    //    #endregion explicit operator
+    //}
 
     /// <summary>
     /// provides XML formating serialization and deserialization for DDValue of the 'DrData'
@@ -170,7 +170,7 @@ namespace DrOpen.DrCommon.DrDataSn
         /// <param name="writer">XML writer used to write the XML document.</param>
         public static void Serialize(this DDValue v, XmlWriter writer)
         {
-            writer.WriteStartElement("v");
+            writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE);
             XMLSerialize(v, writer);
             writer.WriteEndElement();
         }
@@ -187,14 +187,14 @@ namespace DrOpen.DrCommon.DrDataSn
             {
                 if (v.Type != null)
                 {
-                    writer.WriteAttributeString("t", ConvertToAcnType(v.Type));
+                    writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, ConvertToAcnType(v.Type));
 
                     if (IsThisTypeXMLSerializeAsArray(v.Type))
                     {
                         foreach (var element in v.ToStringArray())
                         {
-                            writer.WriteStartElement("v");
-                            writer.WriteAttributeString("v", element);
+                            writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE);
+                            writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_VALUE, element);
                             writer.WriteEndElement();
                         }
                     }
@@ -205,19 +205,19 @@ namespace DrOpen.DrCommon.DrDataSn
                         if (v.Type == typeof(Byte[]))
                             attrVal = "HEX:" + attrVal;
 
-                        writer.WriteAttributeString("v", attrVal);
+                        writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_VALUE, attrVal);
                         
                     }
                 }
                 else
                 {
-                    writer.WriteAttributeString("t", "");
-                    writer.WriteAttributeString("v", "");
+                    writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, "");
+                    writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_VALUE, "");
                 }
             }
             else
             {
-                writer.WriteAttributeString("t", "");
+                writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, "");
             }
         }
         /// <summary>
@@ -305,9 +305,9 @@ namespace DrOpen.DrCommon.DrDataSn
             DDValue v = null;
             reader.MoveToContent();
 
-            var xmlType = reader.GetAttribute("t");
+            var xmlType = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
             var attrType = DEFAULT_VALUE_TYPE;
-            String xmlVal = reader["v"];
+            String xmlVal = reader[DDSchema.XML_SERIALIZE_ATTRIBUTE_VALUE];
             
             if (xmlType == null)
             {
@@ -346,7 +346,7 @@ namespace DrOpen.DrCommon.DrDataSn
                 }
 
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == "v")) reader.ReadEndElement(); // Need to close the opened element </n>, only self
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE_VALUE)) reader.ReadEndElement(); // Need to close the opened element </n>, only self
             reader.Read();
             return v;
         }
@@ -366,8 +366,7 @@ namespace DrOpen.DrCommon.DrDataSn
             //    reader.Read(); // read n of element
             //    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
             //}
-            var value = reader["v"];
-            if (reader.Name == "v")
+            var value = reader[DDSchema.XML_SERIALIZE_ATTRIBUTE_VALUE];
                 
             if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
             return value;
@@ -388,7 +387,7 @@ namespace DrOpen.DrCommon.DrDataSn
 
             while ((reader.Depth >= initialDepth)) // do all childs
             {
-                if ((reader.IsStartElement("v") == false) || (reader.Depth > initialDepth))
+                if ((reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_VALUE) == false) || (reader.Depth > initialDepth))
                 {
                     reader.Skip(); // Skip none <n> elements with childs and subchilds <n> elements 'Deep protection'
                     if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element after deep protection

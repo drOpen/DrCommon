@@ -38,7 +38,7 @@ namespace DrOpen.DrCommon.DrDataSn
     /// <summary>
     /// provides XML formating serialization and deserialization for DDNode of the 'DrData'
     /// </summary>
-    [XmlRoot(ElementName = "nr")]
+    [XmlRoot(ElementName = DDSchema.XML_SERIALIZE_NODE_ROOT)]
     public class DDNodeSn: IXmlSerializable
     {
         private DDNodeSn()
@@ -169,13 +169,13 @@ namespace DrOpen.DrCommon.DrDataSn
         {
             if (n.IsRoot)
             {
-                writer.WriteStartElement("nr");
+                writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE_ROOT);
                 XMLSerialize(n, writer);
                 writer.WriteEndElement();
             }
             else
             {
-                writer.WriteStartElement("n");
+                writer.WriteStartElement(DDSchema.XML_SERIALIZE_NODE);
                 XMLSerialize(n, writer);
                 writer.WriteEndElement();
             }
@@ -196,8 +196,8 @@ namespace DrOpen.DrCommon.DrDataSn
 
             if (!n.IsRoot)
             {
-                if (!String.IsNullOrEmpty(n.Name)) writer.WriteAttributeString("n", n.Name);
-                if (!String.IsNullOrEmpty(n.Type)) writer.WriteAttributeString("t", n.Type);    
+                if (!String.IsNullOrEmpty(n.Name)) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME, n.Name);
+                if (!String.IsNullOrEmpty(n.Type)) writer.WriteAttributeString(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE, n.Type);    
             }
             if (n.Attributes != null) DDAttributesCollectionSne.XMLSerialize(n.Attributes, writer);
 
@@ -290,11 +290,11 @@ namespace DrOpen.DrCommon.DrDataSn
             DDNode n = null;
             reader.MoveToContent();
 
-            var name = reader.GetAttribute("n");
-            var type = reader.GetAttribute("t");
+            var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
+            var type = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
             if (type == null) type = string.Empty;
 
-            if (reader.Name == "nr")
+            if (reader.Name == DDSchema.XML_SERIALIZE_NODE_ROOT)
             {
                 n = new DDNode(Guid.Empty.ToString(), new DDType(type));
             }
@@ -314,18 +314,18 @@ namespace DrOpen.DrCommon.DrDataSn
             {
                 if (reader.Depth > initialDepth)
                     reader.Skip(); // 'Deep protection'
-                else if (reader.IsStartElement("a"))
+                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE_ATTRIBUTE))
                 {
                     n.Attributes.Deserialize(reader);
                 }
-                else if (reader.IsStartElement("n"))
+                else if (reader.IsStartElement(DDSchema.XML_SERIALIZE_NODE))
                     n.Add(Deserialize(reader));
                 else
                     reader.Skip(); // Skip none <n>,<a>,<n> elements with childs and subchilds. 
 
                 if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
             }
-            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == "n")) reader.ReadEndElement(); // Need to close the opened element, only self type
+            if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == DDSchema.XML_SERIALIZE_NODE)) reader.ReadEndElement(); // Need to close the opened element, only self type
             return n;
         }
 

@@ -7,7 +7,7 @@
       <n n="a.b.d">
         <n n="a.b.d.e">
           <a n="value a.b.d.e-&gt;a" t="3" v="1" />
-          <a n="value a.b.d.e-&gt;b" />
+          <a n="value a.b.d.e-&gt;b" t="" />
         </n>
       </n>
     </n>
@@ -23,7 +23,7 @@
       <n n="a.b.d">
         <n n="a.b.d.e">
           <a n="value a.b.d.e-&gt;a" t="3" v="1" />
-          <a n="value a.b.d.e-&gt;b" />
+          <a n="value a.b.d.e-&gt;b" t="" />
         </n>
       </n>
     </n>

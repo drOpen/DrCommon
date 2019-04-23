@@ -201,6 +201,7 @@ namespace DrOpen.DrCommon.DrDataSn
                     else
                     {
                         String attrVal = v.ToString();
+
                         if (v.Type == typeof(Byte[]))
                             attrVal = "HEX:" + attrVal;
 
@@ -211,7 +212,12 @@ namespace DrOpen.DrCommon.DrDataSn
                 else
                 {
                     writer.WriteAttributeString("t", "");
+                    writer.WriteAttributeString("v", "");
                 }
+            }
+            else
+            {
+                writer.WriteAttributeString("t", "");
             }
         }
         /// <summary>
@@ -313,6 +319,8 @@ namespace DrOpen.DrCommon.DrDataSn
             else if (xmlType == String.Empty)
             {
                 if (xmlVal == null)
+                    v = null;
+                else if (xmlVal == String.Empty)
                     v = new DDValue();
                 else
                     v = new DDValue(DDValue.ConvertFromStringTo(attrType, xmlVal));
@@ -339,6 +347,7 @@ namespace DrOpen.DrCommon.DrDataSn
 
             }
             if ((reader.NodeType == XmlNodeType.EndElement) && (reader.Name == "v")) reader.ReadEndElement(); // Need to close the opened element </n>, only self
+            reader.Read();
             return v;
         }
 

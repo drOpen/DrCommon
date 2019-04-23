@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UTestDDAttributeCollectionSn.cs" />
     <Compile Include="UTestDrDataCommon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UTestDDNodeSn.cs" />
@@ -68,6 +69,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="XML\TestDDAttributesCollectionXmlSerializationFromFileEmpty.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="XML\TestDDAttributesCollectionXmlSerializationFromFileSkipIncorrectValue.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\TestDDNodeXmlSerializationFromFileSkipIncorrectedData.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -8,8 +8,8 @@
   <a n="3" t=""/>
   <a n="A" t=""/>
   <a n="B" t="System.String[]">
-      <i/>
-      <i>Value_A</i>
-      <i>Value_B</i>
-    </a>
+    <i/>
+    <i>Value_A</i>
+    <i>Value_B</i>
+  </a>
 </ac>

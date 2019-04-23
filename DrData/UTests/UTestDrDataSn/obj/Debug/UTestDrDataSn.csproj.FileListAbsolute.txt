@@ -55,3 +55,5 @@ C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestMergeStockColl
 C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflict.Expected.xml
 C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestMergeStockCollectionWithAnotherCollectionWithSkipConflict.Source.xml
 C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestMergeStockCollectionWithEmptyCollection.Expected.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDAttributesCollectionXmlSerializationFromFileEmpty.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDAttributesCollectionXmlSerializationFromFileSkipIncorrectValue.xml

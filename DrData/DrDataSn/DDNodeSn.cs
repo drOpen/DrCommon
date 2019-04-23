@@ -317,7 +317,6 @@ namespace DrOpen.DrCommon.DrDataSn
                 else if (reader.IsStartElement("a"))
                 {
                     n.Attributes.Deserialize(reader);
-                    reader.Read();
                 }
                 else if (reader.IsStartElement("n"))
                     n.Add(Deserialize(reader));

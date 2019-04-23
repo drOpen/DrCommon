@@ -57,3 +57,8 @@ C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestMergeStockColl
 C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestMergeStockCollectionWithEmptyCollection.Expected.xml
 C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDAttributesCollectionXmlSerializationFromFileEmpty.xml
 C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDAttributesCollectionXmlSerializationFromFileSkipIncorrectValue.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDValueXmlSerializationFromFileEmptyString.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArray.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArrayDeep.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringArrayDeepWithValue.xml
+C:\WorkNew\DrCommon\DrData\UTests\UTestDrDataSn\bin\Debug\XML\TestDDValueXmlSerializationFromFileSkippIncorrectedNodeTypeStringEmpty.xml

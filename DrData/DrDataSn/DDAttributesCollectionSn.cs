@@ -222,23 +222,10 @@ namespace DrOpen.DrCommon.DrDataSn
             var name = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_NAME);
             var t = reader.GetAttribute(DDSchema.XML_SERIALIZE_ATTRIBUTE_TYPE);
 
-            //if (name != null)
-            //{
             DDValue v = null;
-            //if (t != null) v = DDValueSxe.Deserialize(reader);
             v = DDValueSne.Deserialize(reader);
             if (name != null)
                 ac.Add(name, v);
-            //else
-            //    ac.Add(v);
-
-            //}
-
-            //else
-            //{
-            //    if (reader.NodeType == XmlNodeType.Element) reader.ReadStartElement();
-            //    if (reader.NodeType == XmlNodeType.EndElement) reader.ReadEndElement(); // need to close the opened element
-            //}
         }   
 
         #endregion Deserialize

@@ -1,4 +1,0 @@
-DrData
-========
-
-data abstraction layer

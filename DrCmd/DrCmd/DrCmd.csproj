@@ -51,7 +51,7 @@
     <Compile Include="TextBuilder\DrCmdTextBuilderFormat.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DrData\DrData\DrData.csproj">
+    <ProjectReference Include="..\..\..\DrData\c#\DrData\DrData.csproj">
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
       <Name>DrData</Name>
     </ProjectReference>
@@ -68,7 +68,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License.txt">
+    <Content Include="License.DrCmd.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

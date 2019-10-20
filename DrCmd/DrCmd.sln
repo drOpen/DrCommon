@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrCmd", "DrCommon\DrCmd\DrCmd\DrCmd.csproj", "{41B2C4CD-1E67-43A8-B070-050AE063C64C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrCmd", "DrCmd\DrCmd.csproj", "{41B2C4CD-1E67-43A8-B070-050AE063C64C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrData", "DrCommon\DrData\DrData\DrData.csproj", "{C984C775-1807-4157-BA4B-5D5FCCCE577B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrData", "..\..\DrData\c#\DrData\DrData.csproj", "{C984C775-1807-4157-BA4B-5D5FCCCE577B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrCmdSample", "DrCommon\DrCmd\DrCmdSample\DrCmdSample.csproj", "{7201F0BD-CE0C-4480-B561-74CB7DF704DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrCmdSample", "DrCmdSample\DrCmdSample.csproj", "{7201F0BD-CE0C-4480-B561-74CB7DF704DB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UTests", "UTests", "{473DD4B9-FCD6-4580-8A56-58C634225F53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrCmd", "DrCommon\DrCmd\UTests\UTestDrCmd\UTestDrCmd.csproj", "{6A725783-4C9B-477C-90F3-4EE98A1194CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTestDrCmd", "UTests\UTestDrCmd\UTestDrCmd.csproj", "{6A725783-4C9B-477C-90F3-4EE98A1194CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrExt", "DrCommon\DrExt\DrExt\DrExt.csproj", "{328E84F0-642D-4281-AAC7-7FFD2EC804A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrExt", "..\DrExt\DrExt\DrExt.csproj", "{328E84F0-642D-4281-AAC7-7FFD2EC804A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

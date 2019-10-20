@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrVar", "DrVar\DrVar.csproj", "{477F9969-F48F-4339-93BA-AB223AE08866}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrData", "..\DrData\DrData\DrData.csproj", "{C984C775-1807-4157-BA4B-5D5FCCCE577B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrData", "..\..\DrData\c#\DrData\DrData.csproj", "{C984C775-1807-4157-BA4B-5D5FCCCE577B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataEx", "..\DrData\DrDataEx\DrDataEx.csproj", "{CB8174C6-6CA6-4CEF-B84C-27C5E726466D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrDataEx", "..\..\DrData\c#\DrDataEx\DrDataEx.csproj", "{CB8174C6-6CA6-4CEF-B84C-27C5E726466D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UTests", "UTests", "{06F74874-E587-4292-BE94-50DC1B45D8E4}"
 EndProject

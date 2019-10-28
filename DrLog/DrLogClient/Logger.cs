@@ -26,8 +26,8 @@
  */
 using System;
 using System.Diagnostics;
-using DrOpen.DrCommon.DrData;
-using DrLogClient.Res;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrCommon.DrLog.DrLogClient.Res;
 
 namespace DrOpen.DrCommon.DrLog.DrLogClient
 {

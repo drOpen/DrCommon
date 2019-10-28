@@ -24,15 +24,13 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
  */
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using System;
 using System.Collections.Generic;
 using System.Timers;
 
-namespace DrOpen.DrCommon.DrMsgQueue
+namespace  DrOpen.DrCommon.DrMsgQueue
 {
-    /// <summary>
-    /// Manager message queue
     /// </summary>
     public class DDManagerMsgQueue: IDisposable
     {

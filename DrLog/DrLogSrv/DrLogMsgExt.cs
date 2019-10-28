@@ -24,7 +24,7 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
  */
 
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using System;
 using System.Text;
 

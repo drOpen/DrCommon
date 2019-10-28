@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DrLogClient.Res {
+namespace DrOpen.DrCommon.DrLog.DrLogClient.Res {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace DrLogClient.Res {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrLogClient.Res.Msg", typeof(Msg).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrOpen.DrCommon.DrLog.DrLogClient.Res.Msg", typeof(Msg).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

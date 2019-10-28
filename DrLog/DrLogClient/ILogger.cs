@@ -25,7 +25,7 @@
 
  */
 using System;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject ;
 
 namespace DrOpen.DrCommon.DrLog.DrLogClient
 {

@@ -24,8 +24,8 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
  */
-using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrDataSx;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrData.DrDataSx;
 using System;
 using System.Collections;
 using System.Collections.Generic;

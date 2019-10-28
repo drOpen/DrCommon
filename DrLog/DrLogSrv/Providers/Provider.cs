@@ -25,7 +25,7 @@
  */
 
 using System;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using DrOpen.DrCommon.DrLog.DrLogSrv;
 using DrOpen.DrCommon.DrLog.DrLogSrv.Res;
 

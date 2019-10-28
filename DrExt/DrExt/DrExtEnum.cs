@@ -25,7 +25,7 @@
  */
 
 using System;
-using DrExt.Res;
+using DrOpen.DrCommon.DrExt.Res;
 
 namespace DrOpen.DrCommon.DrExt
 {

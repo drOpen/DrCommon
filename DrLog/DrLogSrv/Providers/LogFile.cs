@@ -26,7 +26,7 @@
 
 using System;
 using System.Text;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using System.IO;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
@@ -183,7 +183,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
 
         public static string GetType()
         {
-            throw new DrData.Exceptions.DDTypeNullException();
+            throw new DrData.DrDataObject.Exceptions.DDTypeNullException();
         }
 
         public static DDNode GetDefaultConfig()

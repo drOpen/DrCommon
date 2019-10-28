@@ -27,9 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DrCmd.Res;
-using DrExt.Win32;
-using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrCommon.DrExt.Win32;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrData.DrDataObject.Exceptions;
 
 namespace DrOpen.DrCommon.DrCmd
 {

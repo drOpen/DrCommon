@@ -7,7 +7,7 @@
     <ProjectGuid>{EAF5F2EB-407E-4CFB-A153-284C18EE2B9F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DrLinkedDictionary</RootNamespace>
+    <RootNamespace>DrOpen.DrCommon.DrLinkedDictionary</RootNamespace>
     <AssemblyName>DrLinkedDictionary</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -50,13 +50,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\DrData\c#\DrData\DrData.csproj">
-      <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
-      <Name>DrData</Name>
-    </ProjectReference>
+    <Content Include="License.LinkedDictonary.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License.LinkedDictonary.txt" />
+    <ProjectReference Include="..\..\..\DrData\c#\DrDataObject\DrDataObject.csproj">
+      <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
+      <Name>DrDataObject</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

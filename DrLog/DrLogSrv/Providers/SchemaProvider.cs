@@ -26,7 +26,7 @@
 
 using System;
 
-namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
+namespace DrOpen.DrCommon.DrLog.DrLogSrv
 {
     /// <summary>
     /// Common constants for configuration schema of provider

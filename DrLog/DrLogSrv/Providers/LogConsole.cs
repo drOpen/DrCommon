@@ -26,7 +26,7 @@
 
 using System;
 using System.Text;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv.Providers
 {

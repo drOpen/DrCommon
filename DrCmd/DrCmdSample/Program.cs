@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using DrOpen.DrCommon.DrExt;
-using DrOpen.DrCommon.DrDataSx;
+using DrOpen.DrData.DrDataSx;
 
 namespace DrOpen.DrCommon.DrCmd
 {

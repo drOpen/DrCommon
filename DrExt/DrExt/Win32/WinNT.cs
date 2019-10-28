@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DrExt.Win32
+namespace DrOpen.DrCommon.DrExt.Win32
 {
     public static class WinNT
     {

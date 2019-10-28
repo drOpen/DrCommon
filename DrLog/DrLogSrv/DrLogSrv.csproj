@@ -7,7 +7,7 @@
     <ProjectGuid>{EDC9C078-4E68-41F0-AFDB-EF5750F7C452}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DrLogSrv</RootNamespace>
+    <RootNamespace>DrOpen.DrCommon.DrLog.DrLogSrv</RootNamespace>
     <AssemblyName>DrLogSrv</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -54,9 +54,9 @@
     <Compile Include="Providers\IProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\DrData\c#\DrData\DrData.csproj">
+    <ProjectReference Include="..\..\..\DrData\c#\DrDataObject\DrDataObject.csproj">
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
-      <Name>DrData</Name>
+      <Name>DrDataObject</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DrMsgQueue\DrMsgQueue\DrMsgQueue.csproj">
       <Project>{7bf3889e-ec69-4d31-b090-a04b469f05e0}</Project>

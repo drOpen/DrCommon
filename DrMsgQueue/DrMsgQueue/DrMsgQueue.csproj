@@ -7,7 +7,7 @@
     <ProjectGuid>{7BF3889E-EC69-4D31-B090-A04B469F05E0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DrMsgQueue</RootNamespace>
+    <RootNamespace>DrOpen.DrCommon.DrMsgQueue</RootNamespace>
     <AssemblyName>DrMsgQueue</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -48,13 +48,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\DrData\c#\DrDataObject\DrDataObject.csproj">
+      <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
+      <Name>DrDataObject</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\DrData\c#\DrDataSx\DrDataSx.csproj">
       <Project>{cef8cdd2-404d-415f-aecf-4b92ceb3a23d}</Project>
       <Name>DrDataSx</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DrData\c#\DrData\DrData.csproj">
-      <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
-      <Name>DrData</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

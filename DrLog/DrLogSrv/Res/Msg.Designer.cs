@@ -39,7 +39,7 @@ namespace DrOpen.DrCommon.DrLog.DrLogSrv.Res {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrLogSrv.Res.Msg", typeof(Msg).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrOpen.DrCommon.DrLog.DrLogSrv.Res.Msg", typeof(Msg).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

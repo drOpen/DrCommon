@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DrLinkedDictionary.Res {
+namespace DrOpen.DrCommon.DrLinkedDictionary.Res
+{
     using System;
     
     
@@ -39,7 +40,7 @@ namespace DrLinkedDictionary.Res {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrLinkedDictionary.Res.Msg", typeof(Msg).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrOpen.DrCommon.DrLinkedDictionary.Res.Msg", typeof(Msg).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DrOpen.DrCommon.DrLog.DrLogSrv.Providers;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using DrOpen.DrCommon.DrLog.DrLogClient;
 
 

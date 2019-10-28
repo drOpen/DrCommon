@@ -1,6 +1,6 @@
 ﻿using DrOpen.DrCommon.DrCmd;
-using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrDataSx;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrData.DrDataSx;
 using DrOpen.DrCommon.DrExt;
 using DrOpen.DrCommon.DrLog.DrLogClient;
 using System;

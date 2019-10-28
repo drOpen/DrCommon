@@ -28,8 +28,8 @@
 using System;
 using System.Text;
 using DrOpen.DrCommon.DrMsgQueue;
-using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrData.DrDataObject.Exceptions;
 using DrOpen.DrCommon.DrLog.DrLogSrv.Providers;
 
 namespace DrOpen.DrCommon.DrLog.DrLogSrv

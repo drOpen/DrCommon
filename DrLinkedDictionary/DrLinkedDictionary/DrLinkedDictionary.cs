@@ -27,7 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace DrLinkedDictionary
+namespace DrOpen.DrCommon.DrLinkedDictionary
 {
 
     /// <summary>

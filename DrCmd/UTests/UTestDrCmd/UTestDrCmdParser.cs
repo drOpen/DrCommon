@@ -27,11 +27,11 @@
 
 
 using System;
-using DrOpen.DrCommon.DrData;
+using DrOpen.DrData.DrDataObject;
 using DrOpen.DrCommon.DrCmd;
 using DrOpen.DrCommon.DrExt;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrData.DrDataObject.Exceptions;
 
 namespace UTestDrCmd
 {

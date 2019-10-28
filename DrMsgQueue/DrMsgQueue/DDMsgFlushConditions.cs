@@ -24,8 +24,8 @@
       Kudryashov Andrey <kudryashov.andrey at gmail.com>
 
  */
-using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrData.DrDataObject.Exceptions;
 using System;
 
 namespace DrOpen.DrCommon.DrMsgQueue

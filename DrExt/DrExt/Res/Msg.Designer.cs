@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DrExt.Res {
+namespace DrOpen.DrCommon.DrExt.Res
+{
     using System;
     
     
@@ -39,7 +40,7 @@ namespace DrExt.Res {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrExt.Res.Msg", typeof(Msg).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DrOpen.DrCommon.DrExt.Res.Msg", typeof(Msg).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

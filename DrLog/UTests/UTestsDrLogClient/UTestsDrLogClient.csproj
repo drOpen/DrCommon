@@ -58,9 +58,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\DrData\c#\DrData\DrData.csproj">
+    <ProjectReference Include="..\..\..\..\DrData\c#\DrDataObject\DrDataObject.csproj">
       <Project>{c984c775-1807-4157-ba4b-5d5fccce577b}</Project>
-      <Name>DrData</Name>
+      <Name>DrDataObject</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DrLogClient\DrLogClient.csproj">
       <Project>{85a2ba01-cb54-4fc0-bc6c-92700fd9979c}</Project>

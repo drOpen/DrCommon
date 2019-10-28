@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DrOpen.DrCommon.DrData ;
+using DrOpen.DrData.DrDataObject ;
 using DrOpen.DrCommon.DrMsgQueue;
 using System.Xml;
 using System.Xml.Schema;

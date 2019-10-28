@@ -28,8 +28,8 @@ using System.Collections.Generic;
 using System.Text;
 using DrCmd.Res;
 using DrOpen.DrCommon.DrCmd;
-using DrOpen.DrCommon.DrData;
-using DrOpen.DrCommon.DrData.Exceptions;
+using DrOpen.DrData.DrDataObject;
+using DrOpen.DrData.DrDataObject.Exceptions;
 using DrOpen.DrCommon.DrExt;
 
 namespace DrOpen.DrCommon.DrCmd
